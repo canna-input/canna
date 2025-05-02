@@ -27,7 +27,7 @@
 #include <stdio.h>
 #include <fcntl.h>
 
-RCSID("$Id: comm.c,v 1.4.2.1 2003/10/09 15:29:12 aida_s Exp $");
+RCSID("$Id: comm.c,v 1.4.2.2 2003/12/27 17:15:24 aida_s Exp $");
 
 /* TODO: better error reporting */
 

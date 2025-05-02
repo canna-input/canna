@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[]="@(#) $Id: misc.c,v 1.16.2.2 2003/10/12 11:58:17 aida_s Exp $";
+static char rcs_id[]="@(#) $Id: misc.c,v 1.16.2.3 2003/12/27 17:15:24 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */

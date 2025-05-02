@@ -1,4 +1,5 @@
-XCOMM $Id: Imakefile,v 1.4 2003/09/27 06:18:39 aida_s Exp $
+XCOMM $Id: Imakefile,v 1.4.2.1 2003/12/27 17:15:23 aida_s Exp $
+#include "../../../Canna.conf"
 
 #ifdef __EMX__
       CANNAROOT = ..\\..\\..
@@ -15,7 +16,7 @@ XCOMM $Id: Imakefile,v 1.4 2003/09/27 06:18:39 aida_s Exp $
         PUBDICS = a.p k.p s.p t.p n.p h.p m.p y.p r.p w.p x.p
 
 AllTarget($(TARGETS))
-SingleProgramTarget(pod,pod.o,,)
+NormalProgramTarget(pod,pod.o,$(DEPRKINDEPLIB),$(RKINDEPLIB),)
 DependTarget()
 LintTarget()
 

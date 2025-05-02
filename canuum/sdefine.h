@@ -1,6 +1,6 @@
 /*
  *  sdefine.h,v 1.3 2001/06/14 18:16:08 ura Exp
- *  Canna: $Id: sdefine.h,v 1.3.4.1 2003/10/12 11:58:17 aida_s Exp $
+ *  Canna: $Id: sdefine.h,v 1.3.4.2 2003/12/27 17:15:21 aida_s Exp $
  */
 
 /*

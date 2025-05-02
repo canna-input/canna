@@ -21,7 +21,7 @@
  */
 
 #ifndef	lint
-static char rcsid[] = "@(#) 112.1 $Id: splitwd.c,v 1.2.4.1 2003/10/09 15:29:11 aida_s Exp $";
+static char rcsid[] = "@(#) 112.1 $Id: splitwd.c,v 1.2.4.2 2003/12/27 17:15:23 aida_s Exp $";
 #endif
     
 #include	<stdio.h>

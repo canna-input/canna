@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: convert.c,v 1.10 2003/09/22 04:48:17 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: convert.c,v 1.10.2.1 2003/12/27 17:15:24 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */
@@ -53,7 +53,7 @@ static char rcs_id[] = "@(#) 102.1 $Id: convert.c,v 1.10 2003/09/22 04:48:17 aid
 #endif
 #define MIN RKI_MIN
 static int ProcReq0 pro((char *buf, int size));
-static const char *ProtoName[];
+extern const char *ProtoName[];
 
 #ifdef DEBUGPROTO
 static void
@@ -90,17 +90,21 @@ typedef struct {
   int (*extdat) pro((char *, int));
 } oreqproc;
 
-static oreqproc Vector[];
+extern oreqproc Vector[];
 #ifdef EXTENSION
-static oreqproc ExtensionVector[];
+extern oreqproc ExtensionVector[];
 #endif /* EXTENSION */
-static const char *ExtensionName[][2] ;
+#ifdef USE_EUC_PROTOCOL
+extern const char *ExtensionName[][2] ;
+#endif /* USE_EUC_PROTOCOL */
 
 static IRReq	Request ;
+#ifdef USE_EUC_PROTOCOL
 static IRAck	Acknowledge ;
 static char
 local_buffer[ LOCAL_BUFSIZE ],
 local_buffer2[ LOCAL_BUFSIZE ] ;
+#endif /* USE_EUC_PROTOCOL */
 
 unsigned int
 TotalRequestTypeCount[ MAXREQUESTNO ] ;
@@ -200,6 +204,7 @@ ClientPtr *clientp ; /* ARGSUSED */
     return( -1 ) ;
 }
 
+#ifdef USE_EUC_PROTOCOL
 #ifdef DEBUG
 static int
 WriteClient(client, buf, size)
@@ -214,6 +219,7 @@ size_t size;
 #else
 # define WriteClient(c, b, s) ClientBuf_store_reply((c)->client_buf, b, s)
 #endif
+#endif /* USE_EUC_PROTOCOL */
 
 static int
 SendTypeE1Reply2(client_buf, stat)
@@ -226,6 +232,8 @@ int stat;
 
     return ClientBuf_store_reply(client_buf, buf, sizeof buf);
 }
+
+#ifdef USE_EUC_PROTOCOL
 
 #define SendType0Reply SendTypeE1Reply
 
@@ -241,7 +249,6 @@ int stat;
     return WriteClient(client, buf, sizeof(buf));
 }
 
-#ifdef USE_EUC_PROTOCOL
 static int
 SendTypeE2Reply(client, stat, cnt, str, slen)
 register ClientPtr client;
@@ -338,8 +345,6 @@ int stat, cnt, slen;
 #define SendTypeE7Reply(client, size) \
     WriteClient(client, Acknowledge.SendAckBuffer, size)
 
-#endif /* USE_EUC_PROTOCOL */
-
 static const char *
 irerrhdr(client)
 ClientPtr client;
@@ -356,6 +361,8 @@ ClientPtr client;
 {
     PrintMsg( "%s Context Err\n", irerrhdr(client));
 }
+
+#endif /* USE_EUC_PROTOCOL */
 
 static int
 ir_initialize(clientp, client_buf)
@@ -2040,7 +2047,7 @@ char *dirname, *dicname, *info ;
 
 #endif /* PROTO */
 
-static oreqproc Vector[] =
+oreqproc Vector[] =
 {
 #ifdef USE_EUC_PROTOCOL
 /* 0x00 */	{ ir_error,		   ProcReq0 },
@@ -2122,7 +2129,7 @@ static oreqproc ExtensionVector[] =
 } ;
 #endif /* EXTENSION */
 
-static const char *ProtoName[] = {
+const char *ProtoName[] = {
     "IR_INIT",
     "IR_FIN",	
     "IR_CRE_CON",	
@@ -2183,7 +2190,7 @@ const char *DebugProc[][2] = {
 } ;			
 #endif
 
-static const char *ExtensionName[][2] = {
+const char *ExtensionName[][2] = {
     /* Request Name		Start Protocol Number */					
 #ifdef EXTENSION
     { REMOTE_DIC_UTIL,		"65536" }, /* 0x10000 */

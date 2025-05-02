@@ -1,10 +1,10 @@
-/* $Id: Imakefile,v 1.12.2.1 2003/10/12 11:58:17 aida_s Exp $ */
+/* $Id: Imakefile,v 1.12.2.2 2003/12/27 17:15:20 aida_s Exp $ */
 #include "./Canna.conf"
 
 #define IHaveSubdirs
 #define PassCDebugFlags 'CDEBUGFLAGS=$(CDEBUGFLAGS)'
 #ifndef ConfigureEnv
-# define ConfigureEnv CPPFLAGS='$(ALLDEFINES)' CC='$(CC)' CFLAGS='$(PURE_CFLAGS)'
+# define ConfigureEnv CW_CPPFLAGS='$(ALLDEFINES)' CW_CC='$(CC)' CW_CFLAGS='$(PURE_CFLAGS)'
 #endif
 #ifndef ConfigureArgs
 # define ConfigureArgs
@@ -20,7 +20,7 @@
         INCLUDE = ./include/canna
      RKIINCLUDE = ./include/RKindep
         DEFINES = $(CANNA_DEFINES)
-CONFIGURE_CMD = ConfigureEnv IN_MAKE=yes ./configure --prefix=$(cannaPrefix) ConfigureArgs
+CONFIGURE_CMD = ConfigureEnv IN_MAKE=yes ./confwrapper . ./configure --prefix=$(cannaPrefix) ConfigureArgs
 PURE_CFLAGS = $(CDEBUGFLAGS) $(CCOPTIONS) /* $(THREADS_CFLAGS) $(MODULE_CFLAGS) */
 supportOldWchar = SupportOldWchar
 
@@ -44,9 +44,12 @@ cannaconf.h: Canna.conf
 	@echo "creating $@"
 #ifdef OS2Architecture
 	@echo "#ifndef CANNACONF_H" > junkjunk
-	@echo "#define CANNACONF_H" > junkjunk
-	@echo "#include \"accanna.h\"" > junkjunk
-	@echo "/* for cannaserver */" > junkjunk
+	@echo "#define CANNACONF_H" >> junkjunk
+	@echo "#include \"accanna.h\"" >> junkjunk
+	@echo "#ifdef malloc" >> junkjunk
+	@echo "# undef malloc" >> junkjunk
+	@echo "#endif" >> junkjunk
+	@echo "/* for cannaserver */" >> junkjunk
 	@echo "#define DICHOME '$(DicDir)'" >> junkjunk
 	@echo "#define ERRDIR '$(ErrDir)'" >> junkjunk
 	@echo "#define USE_INET_SOCKET" >> junkjunk
@@ -71,6 +74,9 @@ cannaconf.h: Canna.conf
 	@(echo "#ifndef CANNACONF_H";\
 	 echo "#define CANNACONF_H";  \
 	 echo "#include \"accanna.h\"";  \
+	 echo "#ifdef malloc"; \
+	 echo "# undef malloc"; \
+	 echo "#endif"; \
 	 echo "/* for cannaserver */";  \
 	 echo "#define DICHOME \"$(DicDir)\"";  \
 	 echo "#define ERRDIR \"$(ErrDir)\"";   \

@@ -24,12 +24,12 @@
 #include "ccompat.h"
 #include "RKindep/ecfuncs.h"
 
-RCSID("$Id: cfuncs.c,v 1.2 2003/08/05 12:03:03 aida_s Exp $");
+RCSID("$Id: cfuncs.c,v 1.2.2.1 2003/12/27 17:15:24 aida_s Exp $");
 
 #undef malloc
 #undef calloc
 
-#ifndef HAVE_MALLOC
+#if !HAVE_MALLOC
 void *
 RkiMalloc(size)
 size_t size;

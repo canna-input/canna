@@ -1,3 +1,57 @@
+2004-01-02 AIDA Shinra <shinra@j10n.org>
+
+	* Canna 3.7p1 release.
+	* CHANGES.jp: updated
+	* canna/patchlevel.h: bump to 3.7p1
+
+2003-12-29 AIDA Shinra <shinra@j10n.org>
+
+	* Canna.conf.dist(sharedLibExtension): HPArchitecture is also defined
+	  on Linux with hppa. Make sure the system is really HP-UX.
+	  ([Canna-dev 280])
+	* confwrapper: CC="$ccadd $CC" is foolish ([Canna-dev 281])
+
+2003-12-28 AIDA Shinra <shinra@j10n.org>
+
+	* Canna.conf.dist(SHLIBLDFLAGS): Assign "-G -z text" on SVR4
+	  because Solaris appends "-M mapfile" and therefore we need to
+	  generate mapfile.
+	* server/wconvert.c(ExtensionVector): remove "static"
+	* CHANGES.jp: make mention of glibc
+
+2003-12-28 AIDA Shinra <shinra@j10n.org>
+
+	* Sync with HEAD. All changes were fixes of bugs or portability
+	  problems, therefore I merged all of them.
+	* CHANGES.jp: forgot IPv6 feature
+	* Canna.conf.dist(CppSedMagic): Remove #pragma inserted by the
+	  default gcc-3.3 that ships with MacOS X 10.3. Recent snapshot
+	  of XFree86 specifies /usr/bin/cpp3 as CppCmd so we don't need
+	  redefine CppSedMagic.
+	* Imakefile: Use confwrapper. #undef malloc in cannaconf.h.
+	  Fix OS2Architecture.
+	* configure.ac: add proper arguments of AC_INIT and RCSID
+	* confwrapper: added to remove something like ` ` in CPPFLAGS
+	  and others
+	* confwrapper.sub: ditto
+	* mkrelease.sh: always use autoconf 2.59
+	* canuum/Imakefile: use confwrapper
+	* dic/ideo/pubdic/Imakefile: link libRKindep
+	* lib/RKC/conf.c(Lexer_next): skip #pragma
+	  (host_str_defaults): put a dummy member
+	  (top_num_defaults): ditto
+	* lib/RKindep/cfuncs.c: #ifndef HAVE_MALLOC -> #if !HAVE_MALLOC
+	* lib/RKindep/cfuncs.h: Newer autoconf defines HAVE_MALLOC to 0 but
+	  older undefines it. Accept both.
+	* server/convert.c: Forward declaration of file scope array is not
+	  confirm to the standard. Fixed. Added some #ifdef USE_EUC_PROTOCOL.
+	* server/wconvert.c: ditto
+
+2003-12-13 AIDA Shinra <shinra@j10n.org>
+
+	* CHANGES.jp: modify description of old "security bug"
+
+
 2003-12-12 AIDA Shinra <shinra@j10n.org>
 
 	* Canna 3.7 release.
@@ -1717,4 +1771,4 @@
 
 	* Virgin import of Canna3.5b2.
 
-$Id: ChangeLog,v 1.155.2.7 2003/12/12 09:53:07 aida_s Exp $
+$Id: ChangeLog,v 1.155.2.12 2004/01/02 12:23:05 aida_s Exp $

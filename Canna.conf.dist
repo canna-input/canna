@@ -95,7 +95,7 @@
  *              そろっていないので #define しておいてください。
  */
 /*
- * $Id: Canna.conf.dist,v 1.23 2003/10/02 07:40:29 aida_s Exp $
+ * $Id: Canna.conf.dist,v 1.23.2.3 2003/12/28 16:10:30 aida_s Exp $
  */
 
 /* rootにならずにインストールする時はこれを定義して下さい */
@@ -183,7 +183,7 @@ cannaDsoRev = 1.2
 #if defined(cygwinArchitecture)
 /* import libraryの方を指定しておく。DLL本体は/usr/X11R6/binに入る。 */
 sharedLibExtension = a
-#elif defined(HPArchitecture)
+#elif defined(HPArchitecture) && !defined(LinuxArchitecture)
 sharedLibExtension = sl.$(cannaDsoRev)
 #elif defined(DarwinArchitecture)
 sharedLibExtension = $(cannaDsoRev).dylib
@@ -304,8 +304,10 @@ RKINDEPLIB = -L$(CANNAROOT)/lib/RKindep -lRKindep
 LDOPTIONS = $(CDEBUGFLAGS) $(CCOPTIONS) $(LOCAL_LDFLAGS)
 #if ModernElfLink
 /* best effort */
-# ifdef CannaGccElfArchitecture
+# if defined(CannaGccElfArchitecture)
 SHLIBLDFLAGS = -shared -Wl,-rpath,$(libCannaDir)
+# elif defined(SVR4Architecture)
+SHLIBLDFLAGS = -G -z text
 # endif
 USRLIBDIRPATH = $(libCannaDir)
 CCENVSETUP = LD_RUN_PATH=$(USRLIBDIRPATH)
@@ -595,6 +597,16 @@ clean::									@@\
 # undef LinkBuildLibrary
 #endif
 #define LinkBuildLibrary(lib) $(_NULLCMD_)
+
+#if defined(DarwinArchitecture) && OSMajorVersion >= 7 \
+    && defined(XFree86Version) && defined(XF86_VERSION_NUMERIC)
+# if XFree86Version < XF86_VERSION_NUMERIC(4, 3, 99, 16, 0)
+#  ifdef CppSedMagic
+#   undef CppSedMagic
+#  endif
+#  define CppSedMagic sed -e '/^#  *[0-9][0-9]*  *.*$$/d' -e '/# *pragma /d' -e '/^XCOMM$$/s//#/' -e '/^XCOMM[^a-zA-Z0-9_]/s/^XCOMM/#/'
+# endif
+#endif /* Apple X11 and MacOS X 10.3 */
 
 /* 以下定義が欠けている場合のための代替定義 */
 #ifndef ProgramTargetName

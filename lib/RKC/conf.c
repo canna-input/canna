@@ -37,7 +37,7 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 
-RCSID("$Id: conf.c,v 1.12 2003/10/05 09:27:02 aida_s Exp $");
+RCSID("$Id: conf.c,v 1.12.2.1 2003/12/27 17:15:24 aida_s Exp $");
 #define	MY_UINT32MAX 0xffffffffU
 #define UINT32_NUMLEN 10
 
@@ -517,9 +517,15 @@ restart:
   }
   if (cx->curr == cx->rdend)
     goto eof;
-  else if (cx->linetop && ch == '#'
-      && (cx->curr + 2 <= cx->rdend) && cx->curr[1] == ' ') {
-    const char *p = cx->curr + 2;
+  else if (cx->linetop && ch == '#') {
+    const char *p = cx->curr + 1;
+    while (p != cx->rdend && *p != '\n' && isspace(*p))
+      ++p;
+    if (p == cx->rdend || *p == '\n')
+      goto not_a_directive;
+    if (p + sizeof "pragma X" - 1 <= cx->rdend
+	&& !memcmp(p, "pragma ", sizeof "pragma " - 1))
+      goto skiptoeol;
     if (p + sizeof "line X" - 1 <= cx->rdend
 	&& !memcmp(p, "line ", sizeof "line " - 1))
       p += sizeof "line " - 1;
@@ -533,14 +539,19 @@ restart:
       numbuf[count] = '\0';
       cx->lineno = (unsigned int)strtol(numbuf, NULL, 10);
       p = memchr(p, '\n', cx->rdend - p);
-      if (!p) {
-	cx->curr = cx->rdend;
-	goto eof;
-      } else {
-	cx->curr = p + 1;
-	goto restart;
-      }
+      goto skiptoeol;
     }
+    goto not_a_directive;
+skiptoeol:
+    p = memchr(p, '\n', cx->rdend - p);
+    if (!p) {
+      cx->curr = cx->rdend;
+      goto eof;
+    } else {
+      cx->curr = p + 1;
+      goto restart;
+    }
+not_a_directive:;
   }
   cx->linetop = 0;
   if (isdigit(ch))
@@ -1477,13 +1488,15 @@ const StrDefaultRec top_str_defaults[] = {
 };
 
 const StrDefaultRec host_str_defaults[] = {
+  { CONF_DUMMYCODE, NULL },
 };
 
 const NumberDefaultRec top_num_defaults[] = {
+  { CONF_DUMMYCODE, 0u },
 };
 
 const NumberDefaultRec host_num_defaults[] = {
-  { CONF_SERVER_TIMEOUT, 1500 },
+  { CONF_SERVER_TIMEOUT, 1500u },
 };
 
 const char *

@@ -20,7 +20,7 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. 
  */
 
-/* $Id: cfuncs.h,v 1.1 2003/03/24 04:04:25 aida_s Exp $ */
+/* $Id: cfuncs.h,v 1.1.2.1 2003/12/27 17:15:24 aida_s Exp $ */
 
 #ifndef	RKINDEP_CFUNCS_H
 #define RKINDEP_CFUNCS_H
@@ -34,6 +34,9 @@ extern "C" {
 #endif
 
 #ifndef HAVE_MALLOC
+# define HAVE_MALLOC 0
+#endif
+#if !HAVE_MALLOC
 extern void *RkiMalloc pro((size_t size));
 extern void *RkiCalloc pro((size_t num, size_t size));
 # define malloc(size) RkiMalloc(size)

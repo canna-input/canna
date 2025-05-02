@@ -1,0 +1,22 @@
+#! /bin/sh
+# $Id: confwrapper,v 1.4.2.2 2003/12/28 16:10:30 aida_s Exp $
+
+filter="$1/confwrapper.sub filter"
+
+# Use var=`xx "yy"` instead of "`xx "yy"`". This IS more portable and
+# does what we want.
+cppflagsadd=`eval "$filter CPPFLAGS $CW_CPPFLAGS"`
+test "${CC+set}" = set || CC=`eval "$filter CC $CW_CC"`
+cflagsadd=`eval "$filter CFLAGS $CW_CFLAGS"`
+CPPFLAGS="$cppflagsadd $CPPFLAGS"
+CFLAGS="$cflagsadd $CFLAGS"
+export CPPFLAGS CC CFLAGS
+echo "CPPFLAGS=\"$CPPFLAGS\""
+echo "CC=\"$CC\""
+echo "CFLAGS=\"$CFLAGS\""
+
+cmd="$2"
+shift
+shift
+echo "$cmd $@"
+exec "$cmd" "$@"

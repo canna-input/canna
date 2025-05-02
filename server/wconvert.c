@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: wconvert.c,v 1.11 2003/09/24 14:50:40 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: wconvert.c,v 1.11.2.2 2003/12/27 23:30:53 aida_s Exp $";
 #endif
 
 #define EXTPROTO 1
@@ -85,10 +85,10 @@ typedef struct {
   int (*extdat) pro((BYTE *));
 } reqproc;
 
-static const char *WideProtoName[], *ExtensionRequest[];
-static const reqproc WideVector[];
+extern const char *WideProtoName[], *ExtensionRequest[];
+extern const reqproc WideVector[];
 #ifdef EXTENSION
-static const reqproc ExtensionWideVector[];
+extern const reqproc ExtensionWideVector[];
 #endif
 
 static int RkThrough pro((int cx, int command, char *buf,
@@ -2847,7 +2847,7 @@ char *buf;
 }
 /* #endif *//* DEBUG_TOOL */					/* S000:end */
 
-static const reqproc WideVector[] =
+const reqproc WideVector[] =
 {
 /* 0x00 */	{ ir_error,		   ProcWideReq0 },
 /* 0x01 */	{ ir_error /* hack */,	   ProcWideReq0 },
@@ -2888,7 +2888,7 @@ static const reqproc WideVector[] =
 /* 0x24 */	{ irw_killserver,	   ProcWideReq1 },
 } ;
 
-static const char *ExtensionRequest[] = {
+const char *ExtensionRequest[] = {
     /* Request Name */
 #ifdef EXTENSION
     /*
@@ -2910,7 +2910,7 @@ static const char *ExtensionRequest[] = {
 } ;
 
 #ifdef EXTENSION
-static const reqproc ExtensionWideVector[] =
+const reqproc ExtensionWideVector[] =
 {
 /* 0x00 */	{ ir_error,		   ProcWideReq0 },
 /* 0x01 */	{ irw_server_stat,	   ProcWideReq1 },		
@@ -2927,7 +2927,7 @@ static const reqproc ExtensionWideVector[] =
 #endif /* EXTENSION */
 
 
-static const char *WideProtoName[] = {
+const char *WideProtoName[] = {
     "Initialize",
     "Finalize",
     "CreateContext",
