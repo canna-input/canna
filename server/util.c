@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "$Id: util.c,v 4.16 1996/11/06 10:09:47 kon Exp $";
+static char rcs_id[] = "$Id: util.c,v 1.3 2002/10/20 08:20:33 aida_s Exp $";
 #endif
 
 #include "widedef.h"

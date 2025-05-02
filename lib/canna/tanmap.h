@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char tanmap_id[] = "@(#) 102.1 $Id: tanmap.h,v 9.6 1996/10/31 06:12:38 kon Exp $";
+static char tanmap_id[] = "@(#) 102.1 $Id: tanmap.h,v 1.1.1.1 2002/10/19 08:27:51 aida_s Exp $";
 #endif /* lint */
 
 extern TanKouhoIchiran pro((uiContext)), DoFuncSequence pro((uiContext));

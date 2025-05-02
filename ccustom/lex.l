@@ -1,7 +1,7 @@
 %{ /* -*-mode: text-*- */
 
 static char lex_rcs_id[]=
-"@(#) 102.1 $Id: lex.l,v 1.13 1996/10/23 01:16:42 kon Exp $";
+"@(#) 102.1 $Id: lex.l,v 1.1.1.1 2002/10/19 08:27:31 aida_s Exp $";
 /* Copyright 1992 NEC Corporation, Tokyo, Japan.
  *
  * Permission to use, copy, modify, distribute and sell this software

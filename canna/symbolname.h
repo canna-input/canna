@@ -20,7 +20,7 @@
  * PERFORMANCE OF THIS SOFTWARE. 
  */
 
-/* $Id: symbolname.h,v 6.7 1996/11/06 01:46:47 kon Exp $
+/* $Id: symbolname.h,v 1.1.1.1 2002/10/19 08:27:28 aida_s Exp $
  */
 
 #define S_HenkanNyuuryokuMode	"henkan-nyuuryoku-mode"

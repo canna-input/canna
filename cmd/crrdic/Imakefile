@@ -1,11 +1,11 @@
-/* $Id: Imakefile,v 1.8 1996/11/27 07:12:00 kon Exp $ */
+/* $Id: Imakefile,v 1.2 2002/10/20 04:10:26 aida_s Exp $ */
 #include "../../Canna.conf"
 
       CANNAROOT = ../..
        INCLUDES = -I$(CANNAROOT)/include
            SRCS = crrdic.c
 
-#ifdef __EMX__
+#if defined(__EMX__) || defined(__CYGWIN32__)
 AllTarget(crrdic.exe)
 #else
 AllTarget(crrdic)

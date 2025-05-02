@@ -1,4 +1,4 @@
-/* $Id: Imakefile,v 1.12 1996/11/27 07:02:12 kon Exp $ */
+/* $Id: Imakefile,v 1.2 2002/10/20 04:10:25 aida_s Exp $ */
 #include "../../Canna.conf"
 
        CANNAROOT = ../..
@@ -18,7 +18,7 @@
             SRCS = main.c
           TARGET = cannacheck
 
-#ifdef __EMX__
+#if defined(__EMX__) || defined(__CYGWIN32__)
 AllTarget($(TARGET).exe)
 #else
 AllTarget($(TARGET))

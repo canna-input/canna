@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static char rcsid[]="@(#) 102.1 $Id: dicar.c,v 1.31 1996/11/27 08:20:23 kon Exp $";
+static char rcsid[]="@(#) 102.1 $Id: dicar.c,v 1.2 2002/10/20 04:10:27 aida_s Exp $";
 #endif
 
 /*
@@ -125,6 +125,9 @@ char *name;
   if ((newfd = open(name, O_RDONLY)) < 0) {
     (void)fprintf(stderr, "%s: %s cannot read.\n", program, name);
   }
+#ifdef __CYGWIN32__
+  setmode(newfd, O_BINARY);
+#endif
   return newfd;
 }
 
@@ -137,6 +140,9 @@ char *name;
   if ((newfd = open(name, O_WRONLY | O_CREAT | O_TRUNC, 0666)) < 0) {
     (void)fprintf(stderr, "%s: %s cannot create\n", program, name);
   }
+#ifdef __CYGWIN32__
+  setmode(newfd, O_BINARY);
+#endif
   return newfd;
 }
 

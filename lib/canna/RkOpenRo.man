@@ -19,7 +19,7 @@
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 .\" PERFORMANCE OF THIS SOFTWARE. 
 .\"
-.\" $Id: RkOpenRo.man,v 7.1 1994/04/21 06:51:44 kuma Exp $ NEC;
+.\" $Id: RkOpenRo.man,v 1.1.1.1 2002/10/19 08:27:48 aida_s Exp $ NEC;
 .TH "RKOPENROMA" "3"
 .SH "NAME"
 \f4RkOpenRoma\f1 \- open the dictionary to use for Romaji-kana conversion

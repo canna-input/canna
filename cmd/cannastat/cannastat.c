@@ -22,7 +22,7 @@
 
 #ifndef lint
 static char sccs_id[]="@(#) NEC UNIX( PC-UX/EWS-UX ) cannastat.c 2.1 91/11/11 11:06:30";
-static char rcs_id[] = "$Id: cannastat.c,v 2.1 1996/09/03 03:44:11 kon Exp $";
+static char rcs_id[] = "$Id: cannastat.c,v 1.1.1.1 2002/10/19 08:27:32 aida_s Exp $";
 #endif
 
 /*

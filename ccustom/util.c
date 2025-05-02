@@ -71,19 +71,12 @@
 
  */
 
-static char sccs_id[] = "@(#) 102.1 $Id: util.c,v 1.7 1996/11/07 01:22:21 kon Exp $";
+static char sccs_id[] = "@(#) 102.1 $Id: util.c,v 1.2 2002/10/20 14:29:56 aida_s Exp $";
 
 #define _WCHAR16 /* そうじゃないものをコンパイルする時ははずしてね */
                  /* 本当は動的に切り替えられるはず */
 
 #include "canna.h"
-
-#ifdef __STDC__
-#include <stdlib.h>
-#else
-extern char *malloc(), *realloc(), *calloc();
-extern void free();
-#endif
 
 #ifdef SOMEONE_USE_THIS
 /* 誰も使っていないみたい。 */

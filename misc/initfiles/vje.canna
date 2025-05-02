@@ -22,7 +22,7 @@
 ;; Using this customize file gives you a Japanese Input Interface
 ;; like vje-β does.
 
-;;  $Id: vje.canna,v 2.11 1996/10/25 05:23:04 kon Exp $
+;;  $Id: vje.canna,v 1.1.1.1 2002/10/19 08:27:53 aida_s Exp $
 
 ;;; ローマ字かな変換の設定
 (setq romkana-table "vje.cbp")

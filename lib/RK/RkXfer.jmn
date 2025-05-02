@@ -19,7 +19,7 @@
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 .\" PERFORMANCE OF THIS SOFTWARE. 
 .\"
-.\" $Id: RkXfer.jmn,v 2.1 1994/04/21 08:31:43 kuma Exp $ NEC;
+.\" $Id: RkXfer.jmn,v 1.1.1.1 2002/10/19 08:27:45 aida_s Exp $ NEC;
 .TH RKXFER 3 "4 April 1991"
 .SH "名前"
 RkXfer \- カレント候補の変更

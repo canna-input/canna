@@ -19,7 +19,7 @@
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 .\" PERFORMANCE OF THIS SOFTWARE.
 .\"
-.\" $Id: catdic.jmn,v 1.5 1994/05/17 01:48:23 hamada Exp $
+.\" $Id: catdic.jmn,v 1.1.1.1 2002/10/19 08:27:33 aida_s Exp $
 .nr X 0
 .if \nX=0 .ds X} catdic 1 "日本語機能ユーティリティ" "\&"
 .TH \*(X}

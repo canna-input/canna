@@ -23,7 +23,7 @@
  *
  */
 
-static	char	rcs_id[] = "@(#) 102.1 $Id: ccustom.c,v 2.9 1996/11/07 01:22:00 kon Exp $";
+static	char	rcs_id[] = "@(#) 102.1 $Id: ccustom.c,v 1.2 2002/10/20 14:29:56 aida_s Exp $";
 
 #ifdef __FreeBSD__
 #include <ncurses.h>
@@ -32,13 +32,7 @@ static	char	rcs_id[] = "@(#) 102.1 $Id: ccustom.c,v 2.9 1996/11/07 01:22:00 kon 
 #endif
 #include <signal.h>
 #include "ccustom.h"
-
-#ifdef __STDC__
-#include <stdlib.h>
-#else
-extern char *malloc(), *realloc(), *calloc();
-extern void free();
-#endif
+#include "ccompat.h"
 
 #if (defined(SVR4) || defined(__STDC__)) && !defined(__FreeBSD__)
 #define HAVE_LOCALE

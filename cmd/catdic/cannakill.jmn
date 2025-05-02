@@ -19,7 +19,7 @@
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 .\" PERFORMANCE OF THIS SOFTWARE.
 .\"
-.\" $Id: cannakill.jmn,v 3.1 1994/12/06 00:52:45 misao Exp $
+.\" $Id: cannakill.jmn,v 1.2 2002/10/22 15:19:13 aida_s Exp $
 .nr X 0
 .if \nX=0 .ds X} cannakill 1M "日本語機能ユーティリティ" "\&"
 .TH \*(X}
@@ -30,14 +30,14 @@ cannakill \- かな漢字変換サーバ cannaserver を終了させる
 .SH "説明"
 .PP
 かな漢字変換サーバ cannaserver(1M) を終了させます。これにより 
-cannaserver(1M) はロックファイルを削除し，オープンしていた辞書をすべて
+cannaserver(1M) はソケットを削除し，オープンしていた辞書をすべて
 クローズし処理を終了します。
 .PP
 cannakill(1M) で cannaserver(1M) を終了させることができるのは，
 cannaserver(1M) を起動したユーザかあるいはスーパユーザに限られます。
 .SH "関連ファイル"
-.IP "@(LockDir)/@(LockFile)" 36
-ロックファイル
+.IP "@(UnixSockDir)/@(UnixSockName)[:num]" 36
+ソケット
 .SH "関連コマンド"
 .PP
 cannaserver(1M), cannastat(1), cannacheck(1)

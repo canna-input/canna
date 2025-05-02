@@ -1,13 +1,9 @@
 
 
-             日本語入力システム『かんな』Version 3.5 について
+             日本語入力システム『かんな』Version 3.6 について
 
-                             三竿        夕子
-                         misao@uxd.fc.nec.co.jp
-                             今          昭
-                          kon@uxd.fc.nec.co.jp
-
-                        １９９６年  １２月  ２日
+                             Canna Project
+		     http://canna.sourceforge.jp/
 
 
 0. はじめる前に
@@ -20,7 +16,7 @@
 1. はじめに
 
   本ディレクトリより下にありますファイルは日本語入力システム『かんな』
-  Version 3.5 を構成するファイルです。『かんな』は日本語入力のための統
+  Version 3.6 を構成するファイルです。『かんな』は日本語入力のための統
   一的なユーザインタフェースを提供します。
 
   ※注: 『かんな』は開発コード『いろは』で開発された日本語入力システム
@@ -273,13 +269,26 @@
   (7) コンパイルするときに以下の warning が出る。
         Undefind row vectors: BM
 
+  (8) canuumにセキュリティーホールが複数発見されている。
+
+
 6. 謝辞
 
-  『かんな』Version 3.5 は 1996 年 11 月からβリリースを行い、βリリー
-  スを通してメーリングリストなどにてさまざまな方に協力していただきまし
-  た。それぞれの版のコンパイル報告を下さったり、また、コンパイル時の問
-  題の指摘、見つけにくいバグの指摘、さらにはパッチの案を届けてください
-  ました以下の方々に感謝いたします。
+  『かんな』は元々、今氏を中心に、NECでフリーソフトウェアとして開発され
+  ました。素晴らしいソフトウェアを開発してくださいましたNECに感謝いたし
+  ます。
+
+  また、現在『かんな』の開発や配布に必要なサービスのほとんどを提供して
+  下さっている、sourceforge.jpの皆さんに感謝を申し上げます。
+
+  Debian GNU/Linuxのパッチからは、多くのコードを借用させていただきまし
+  た。Debianの開発者の皆さん、特にパッケージメンテナの柳原良亮氏、石川
+  睦氏に感謝します。
+
+  また、NEC時代にも、メーリングリストなどを通して、さまざまな方が開発
+  に協力してくださいました。それぞれの版のコンパイル報告、コンパイル時
+  の問題の指摘、見つけにくいバグの指摘、さらにはパッチなど、さまざまな
+  形で『かんな』を発展させてくださいました以下の皆さんに感謝します。
 
   日本IBMの上野博氏、浜名湖地域ネットワーク研究会の小池志郎氏、フリー
   ライターの羽根秀也氏、つばい氏。
@@ -338,6 +347,28 @@
   スファイルなどをミラーしていただいています。各サイトの担当者の方々に
   感謝いたします。
 
+/* Copyright (c) 2002 Canna Project. All rights reserved.
+ *
+ * Permission to use, copy, modify, distribute and sell this software
+ * and its documentation for any purpose is hereby granted without
+ * fee, provided that the above copyright notice appear in all copies
+ * and that both that copyright notice and this permission notice
+ * appear in supporting documentation, and that the name of the
+ * author and contributors not be used in advertising or publicity
+ * pertaining to distribution of the software without specific, written
+ * prior permission.  The author and contributors no representations
+ * about the suitability of this software for any purpose.  It is
+ * provided "as is" without express or implied warranty.
+ *
+ * THE AUTHOR AND CONTRIBUTORS DISCLAIMS ALL WARRANTIES WITH REGARD TO
+ * THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS, IN NO EVENT SHALL THE AUTHOR AND CONTRIBUTORS BE LIABLE FOR
+ * ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER
+ * RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
+ * CONTRACT, NEGLIGENCE OR OTHER TORTUOUS ACTION, ARISING OUT OF OR IN
+ * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. 
+ */
+
 /* Copyright 1994 NEC Corporation, Tokyo, Japan.
  *
  * Permission to use, copy, modify, distribute and sell this software
@@ -360,4 +391,4 @@
  * PERFORMANCE OF THIS SOFTWARE. 
  */
 
-($Id: README.jp,v 2.21 1996/12/02 08:11:23 misao Exp $)
+($Id: README.jp,v 1.3 2002/10/23 13:58:14 aida_s Exp $)

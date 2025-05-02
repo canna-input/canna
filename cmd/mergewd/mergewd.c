@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static char rcsid[]="@(#) 112.1 $Id: mergewd.c,v 1.26 1996/11/27 07:17:46 kon Exp $";
+static char rcsid[]="@(#) 112.1 $Id: mergewd.c,v 1.1.1.1 2002/10/19 08:27:34 aida_s Exp $";
 #endif
 
 #include	"RKintern.h" 

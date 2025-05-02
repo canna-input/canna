@@ -69,24 +69,16 @@
  */
 
 #ifndef lint
-static char rcsid[] = "$Id: canna.c,v 2.6 1996/11/07 01:21:33 kon Exp $";
+static char rcsid[] = "$Id: canna.c,v 1.2 2002/10/20 14:29:56 aida_s Exp $";
 #endif
 
 #include "commonhd.h"
 #include "sdefine.h"
 #include "sheader.h"
 #include "config.h"
+#include "ccompat.h"
 
 #include <errno.h>
-
-#ifdef __STDC__
-#include <stdlib.h>
-#define pro(x) x
-#else
-extern char *malloc(), *realloc(), *calloc();
-extern void free();
-#define pro(x) ()
-#endif
 
 #ifndef _WCHAR_T
 #define _WCHAR_T

@@ -23,7 +23,7 @@
  *
  */
 
-static	char	rcs_id[] = "@(#) 102.1 $Id: wiroha.c,v 1.10 1992/07/28 12:20:24 kon Exp $";
+static	char	rcs_id[] = "@(#) 102.1 $Id: wiroha.c,v 1.1.1.1 2002/10/19 08:27:32 aida_s Exp $";
 
 #include <stdio.h>
 

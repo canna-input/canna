@@ -1,12 +1,12 @@
-/* $Id: Imakefile,v 1.9 1996/11/27 07:12:24 kon Exp $ */
+/* $Id: Imakefile,v 1.3 2002/10/20 14:29:57 aida_s Exp $ */
 #include "../../Canna.conf"
 
       CANNAROOT = ../..
-       INCLUDES =
+       INCLUDES = -I$(CANNAROOT)/include
 LOCAL_LIBRARIES = $(CANNAROOT)/lib/RK/libRK.a
            SRCS = crxgram.c
 
-#ifdef __EMX__
+#if defined(__EMX__) || defined(__CYGWIN32__)
 AllTarget(crxgram.exe)
 #else
 AllTarget(crxgram)

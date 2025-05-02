@@ -20,7 +20,7 @@
  * PERFORMANCE OF THIS SOFTWARE. 
  */
 
-static	char	rcs_id[] = "@(#) 102.1 $Id: parse.c,v 3.11 1994/12/20 05:37:50 hamada Exp $";
+static	char	rcs_id[] = "@(#) 102.1 $Id: parse.c,v 1.1.1.1 2002/10/19 08:27:32 aida_s Exp $";
 
 #include <stdio.h>
 #ifndef NEWGEN

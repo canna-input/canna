@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char bunmap_id[] = "@(#) 102.1 $Id: bunmap.h,v 9.1 1996/04/12 12:19:34 kon Exp $";
+static char bunmap_id[] = "@(#) 102.1 $Id: bunmap.h,v 1.1.1.1 2002/10/19 08:27:48 aida_s Exp $";
 #endif /* lint */
 
 extern DoFuncSequence(),UseOtherKeymap();

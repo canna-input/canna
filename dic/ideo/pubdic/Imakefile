@@ -1,13 +1,15 @@
-XCOMM $Id: Imakefile,v 1.10 1996/12/02 10:37:49 kon Exp $
+XCOMM $Id: Imakefile,v 1.2 2002/10/20 14:29:58 aida_s Exp $
 
 #ifdef __EMX__
       CANNAROOT = ..\\..\\..
     CANNACMDDIR = $(CANNAROOT)\\cmd
           MERGE = $(CANNACMDDIR)\\mergewd\\mergeword
+       INCLUDES = -I$(CANNAROOT)\\include
 #else
       CANNAROOT = ../../..
     CANNACMDDIR = $(CANNAROOT)/cmd
           MERGE = $(CANNACMDDIR)/mergewd/mergeword
+       INCLUDES = -I$(CANNAROOT)/include
 #endif
         TARGETS = iroha.t
         PUBDICS = a.p k.p s.p t.p n.p h.p m.p y.p r.p w.p x.p

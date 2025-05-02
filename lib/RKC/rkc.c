@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "$Id: rkc.c,v 7.20 1996/11/27 07:21:11 kon Exp $";
+static char rcs_id[] = "$Id: rkc.c,v 1.2 2002/10/20 14:29:59 aida_s Exp $";
 #endif
 
 /*
@@ -65,18 +65,6 @@ static char rcs_id[] = "$Id: rkc.c,v 7.20 1996/11/27 07:21:11 kon Exp $";
 #endif
 #include    <signal.h>
 	
-#if defined(USG) || defined(SYSV) || defined(SVR4) || defined(WIN)
-#include <string.h>
-#else
-#include <strings.h>
-#endif
-
-#ifdef __STDC__
-#include <stdlib.h>
-#elif !defined(WIN32)
-extern char *malloc();
-#endif
-
 /* CX:	コンテクストテーブル
  *	必要なレコードだけをmallocで作成する。
  *	^^^^^^^^^^^^^^^^^^

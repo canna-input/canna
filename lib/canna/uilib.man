@@ -19,7 +19,7 @@
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 .\" PERFORMANCE OF THIS SOFTWARE. 
 .\"
-.\" $Id: uilib.man,v 1.4 1994/01/27 11:10:53 kuma Exp $ NEC;
+.\" $Id: uilib.man,v 1.1.1.1 2002/10/19 08:27:51 aida_s Exp $ NEC;
 .if t .pn 575
 .TH UILIBINTRO 3
 .SH "NAME"

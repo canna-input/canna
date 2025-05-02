@@ -21,17 +21,17 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[]="$Id: dd.c,v 3.16 1996/11/27 07:20:19 kon Exp $";
+static char rcsid[]="$Id: dd.c,v 1.4 2002/10/20 15:48:11 aida_s Exp $";
 #endif
 /*LINTLIBRARY*/
 
 #include	"RKintern.h"
 
-#if defined(USG) || defined(SYSV) || defined(SVR4) || defined(WIN)
-#include <string.h>
-#else
-#include <strings.h>
+#ifdef __CYGWIN32__
+#include <fcntl.h> /* for O_BINARY */
 #endif
+
+#include <errno.h>
 
 #include	<stdio.h>
 /* #include	<pwd.h> */
@@ -928,19 +928,14 @@ _RkRealizeDD(dd)
     goto return_ret;
   }
 #else
-#ifdef __EMX__
-  if (stat(dd->dd_path, &statbuf)) {
-#else
-  if (close(open(dd->dd_path, 0, 0664)) < 0) {
-#endif
-    if (mkdir(dd->dd_path, MKDIR_MODE) < 0) {
+    if (mkdir(dd->dd_path, MKDIR_MODE) < 0 &&
+	errno != EEXIST) {
       goto return_ret;
     }
     /* change owner
     if (pw)
     chown(dd->dd_path, getuid(), pw->pw_gid);
     */
-  }
 #endif /* WIN */
   /* dics.dir */
   (void)strcpy(dicsdir, dd->dd_path);
@@ -1007,6 +1002,9 @@ _RkRealizeDD(dd)
     }
     goto return_ret;
   };
+#ifdef __CYGWIN32__
+  setmode(fdes, O_BINARY);
+#endif
 /* header */
 #ifndef WIN
   tloc = time(0);
@@ -1743,7 +1741,7 @@ int mode;
   }
 
   if (newflags != dd->dd_flags) {
-    dicsdir = malloc(strlen(dd->dd_path + strlen("/dics.dir") + 1));
+    dicsdir = malloc(strlen(dd->dd_path) + strlen("/dics.dir") + 1);
     if (dicsdir) {
       int filemode;
 

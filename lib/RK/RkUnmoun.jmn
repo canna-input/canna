@@ -19,7 +19,7 @@
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 .\" PERFORMANCE OF THIS SOFTWARE. 
 .\"
-.\" $Id: RkUnmoun.jmn,v 2.1 1994/04/21 08:31:40 kuma Exp $ NEC;
+.\" $Id: RkUnmoun.jmn,v 1.1.1.1 2002/10/19 08:27:45 aida_s Exp $ NEC;
 .TH RKUNMOUNTDIC 3 "4 April 1991"
 .SH "名前"
 RkUnmountDic \- 辞書リストからの辞書の削除

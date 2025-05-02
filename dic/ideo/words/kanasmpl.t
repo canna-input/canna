@@ -19,7 +19,7 @@
 # OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 # PERFORMANCE OF THIS SOFTWARE. 
 #
-# $Id: kanasmpl.t,v 1.3 1994/01/27 11:07:24 kuma Exp $
+# $Id: kanasmpl.t,v 1.1.1.1 2002/10/19 08:27:40 aida_s Exp $
 #
 あーかいぶ #T30 アーカイブ
 あーきてくちゃ #T35 アーキテクチャ

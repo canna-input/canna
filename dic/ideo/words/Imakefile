@@ -1,4 +1,4 @@
-/* $Id: Imakefile,v 4.7 1996/11/27 07:14:55 kon Exp $ */
+/* $Id: Imakefile,v 1.2 2002/10/20 04:10:29 aida_s Exp $ */
 #include "../../../Canna.conf"
 
 #ifdef __EMX__
@@ -39,12 +39,12 @@ AllTarget($(TARGETS))
 
 iroha.cbd iroha.cld: $(pubdicDir)/iroha.t bushu.cbd $(FUZOKUGODIC)
 	$(CRXDIC) -D $(FUZOKUGODIC) -m -o iroha.cbd -n iroha $(pubdicDir)/iroha.t
-	$(CRFREQ) -o iroha.cld iroha.cbd iroha.mwd
+	$(CRFREQ) -div 512 -o iroha.cld iroha.cbd iroha.mwd
 	cat bushu.cbd >> iroha.cbd
 
 iroha.d iroha.fq: $(pubdicDir)/iroha.t bushu.d $(FUZOKUGODIC)
 	$(CRXDIC) -D $(FUZOKUGODIC) -m -o iroha.d -n iroha $(pubdicDir)/iroha.t
-	$(CRFREQ) -o iroha.fq iroha.d iroha.mwd
+	$(CRFREQ) -div 512 -o iroha.fq iroha.d iroha.mwd
 	cat bushu.d >> iroha.d
 
 clean::

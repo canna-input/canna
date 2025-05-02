@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char jishumap_id[] = "@(#) 102.1 $Id: jishumap.h,v 9.4 1996/08/01 13:24:56 kon Exp $";
+static char jishumap_id[] = "@(#) 102.1 $Id: jishumap.h,v 1.1.1.1 2002/10/19 08:27:49 aida_s Exp $";
 #endif /* lint */
 
 extern DoFuncSequence pro((uiContext)),UseOtherKeymap pro((uiContext));

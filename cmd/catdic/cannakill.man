@@ -19,7 +19,7 @@
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 .\" PERFORMANCE OF THIS SOFTWARE.
 .\"
-.\" $Id: cannakill.man,v 3.1 1994/12/06 00:51:37 misao Exp $
+.\" $Id: cannakill.man,v 1.2 2002/10/22 15:19:13 aida_s Exp $
 .TH CANNAKILL 1M
 .SH "NAME"
 cannakill \- Terminate operation of the Kana-Kanji conversion server
@@ -29,14 +29,14 @@ cannaserver
 .SH "DESCRIPTION"
 .PP
 cannakill terminates operation of Kana-Kanji conversion server
-cannaserver(1M).  This causes the server to delete the lock file and
+cannaserver(1M).  This causes the server to delete the socket and
 close all open dictionaries before terminating its processing.
 .PP
 The user who has started cannaserver(1M) or the super user can only
 use cannakill(1M) to terminate operation of canncannaer.
 .SH "FILES"
-.IP "@(LockDir)/@(LockFile)" 36
-Lock file
+.IP "@(UnixSockDir)/@(UnixSockName)[:num]" 36
+Socket
 .SH "SEE ALSO"
 .PP
 cannaserver(1M), cannastat(1), cannacheck(1)

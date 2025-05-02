@@ -19,7 +19,7 @@
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 .\" PERFORMANCE OF THIS SOFTWARE. 
 .\"
-.\" $Id: RkRemoun.man,v 2.1 1994/04/21 00:47:08 kuma Exp $ NEC;
+.\" $Id: RkRemoun.man,v 1.1.1.1 2002/10/19 08:27:45 aida_s Exp $ NEC;
 .TH "RKREMOUNTDIC" "3"
 .SH "NAME"
 \f4RkRemountDic\f1 \- modify the priority order of a dictionary already in the dictionary list

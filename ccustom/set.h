@@ -24,7 +24,7 @@
  */
 
 /*
-static	char	rcs_id[] = "@(#) 102.1 $Id: set.h,v 3.2 1995/03/06 01:02:45 misao Exp $";
+static	char	rcs_id[] = "@(#) 102.1 $Id: set.h,v 1.1.1.1 2002/10/19 08:27:32 aida_s Exp $";
 */
 
 /* #include "symbolname.h" */

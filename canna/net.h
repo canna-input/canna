@@ -21,7 +21,7 @@
  */
 
 /* sccs_id[]="@(#) NEC UNIX( PC-UX/EWS-UX ) net.h 1.1 90/11/01 16:25:42"; */
-/* $Id: net.h,v 1.4 1994/06/02 10:55:41 kon Exp $ */
+/* $Id: net.h,v 1.2 2002/10/20 04:10:25 aida_s Exp $ */
 
 #if defined(nec_ews_svr2) || defined(pcux)
 #include <sys/types.h>
@@ -33,5 +33,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#ifdef UNIXCONN
 #include <sys/un.h>
+#endif
 #endif

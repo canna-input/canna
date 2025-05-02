@@ -8,4 +8,4 @@ pubdic+ をベースに作成したものです。
 
 それぞれについて詳細は README.pubdic+ をご参照ください。
 
-($Id: README.txt,v 1.3 1996/12/02 09:22:08 kon Exp $)
+($Id: README.txt,v 1.1.1.1 2002/10/19 08:27:35 aida_s Exp $)

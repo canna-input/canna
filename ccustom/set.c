@@ -23,7 +23,7 @@
  *
  */
 
-static	char	rcs_id[] = "@(#) 102.1 $Id: set.c,v 2.5 1994/12/20 05:37:53 hamada Exp $";
+static	char	rcs_id[] = "@(#) 102.1 $Id: set.c,v 1.1.1.1 2002/10/19 08:27:32 aida_s Exp $";
 
 /*#include "mfdef.h"*/
 #include <stdio.h>

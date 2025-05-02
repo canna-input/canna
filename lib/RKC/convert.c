@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "$Id: convert.c,v 8.6 1996/05/22 13:02:57 kon Exp $";
+static char rcs_id[] = "$Id: convert.c,v 1.2 2002/10/20 14:29:59 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */
@@ -37,12 +37,6 @@ static char rcs_id[] = "$Id: convert.c,v 8.6 1996/05/22 13:02:57 kon Exp $";
 #include <errno.h>
 #include <sys/types.h>
 #include <signal.h>
-
-#if defined(USG) || defined(SYSV) || defined(SVR4) || defined(WIN)
-#include <string.h>
-#else
-#include <strings.h>
-#endif
 
 /* 単語登録で辞書が作れなくなるので、とりあえずコメントアウト
 #if CANNA_LIGHT

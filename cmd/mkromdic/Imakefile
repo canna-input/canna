@@ -1,4 +1,4 @@
-/* $Id: Imakefile,v 2.2 1994/04/13 00:36:10 kon Exp $ */
+/* $Id: Imakefile,v 1.2 2002/10/20 04:10:28 aida_s Exp $ */
 #include "../../Canna.conf"
 
       CANNAROOT = ../..
@@ -6,6 +6,9 @@
            SRCS = mkromdic.cpp
 
         DEFINES = -I$(CANNAROOT)/include $(SCRIPTS_DEFINES) -DCPP=$(CPP)
+#ifdef __CYGWIN32__
+DEFINES := $(DEFINES) -Ui386
+#endif
 
 AllTarget($(PROGRAMS))
 

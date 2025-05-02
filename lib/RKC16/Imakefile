@@ -1,4 +1,4 @@
-/* $Id: Imakefile,v 2.4 1996/10/22 13:35:43 kon Exp $ */
+/* $Id: Imakefile,v 1.1.1.1 2002/10/19 08:27:47 aida_s Exp $ */
 #include "../../Canna.conf"
 
 #if defined(engineSwitch) && DoNormalLib

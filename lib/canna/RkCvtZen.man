@@ -19,7 +19,7 @@
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 .\" PERFORMANCE OF THIS SOFTWARE. 
 .\"
-.\" $Id: RkCvtZen.man,v 7.1 1994/04/21 06:51:36 kuma Exp $ NEC;
+.\" $Id: RkCvtZen.man,v 1.1.1.1 2002/10/19 08:27:47 aida_s Exp $ NEC;
 .TH "RKCVTZEN" "3"
 .SH "NAME"
 \f4RkCvtZen\f1 \- convert ASCII characters and single-width katakana to double-width characters

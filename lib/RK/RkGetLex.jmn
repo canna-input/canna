@@ -19,7 +19,7 @@
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 .\" PERFORMANCE OF THIS SOFTWARE. 
 .\"
-.\" $Id: RkGetLex.jmn,v 2.1 1994/04/21 08:30:55 kuma Exp $ NEC;
+.\" $Id: RkGetLex.jmn,v 1.1.1.1 2002/10/19 08:27:44 aida_s Exp $ NEC;
 .TH RKGETLEX 3 "19 April 1991"
 .SH "名前"
 RkGetLex \- カレント候補を構成する単語毎の形態素情報の取りだし

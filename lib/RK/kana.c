@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[]="@(#) 102.1 $Id: kana.c,v 3.8 1996/07/18 08:30:07 kon Exp $";
+static char rcsid[]="@(#) 102.1 $Id: kana.c,v 1.1.1.1 2002/10/19 08:27:45 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */

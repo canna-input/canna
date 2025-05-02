@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "$Id: permdic.c,v 3.10 1996/07/22 04:56:50 kon Exp $";
+static char rcs_id[] = "$Id: permdic.c,v 1.3 2002/10/20 14:29:58 aida_s Exp $";
 #endif
 
 #include	"RKintern.h"
@@ -30,10 +30,9 @@ static char rcs_id[] = "$Id: permdic.c,v 3.10 1996/07/22 04:56:50 kon Exp $";
 #ifdef SVR4
 #include	<unistd.h>
 #endif
-#if defined(USG) || defined(SYSV) || defined(SVR4) || defined(WIN)
-#include	<string.h>
-#else
-#include	<strings.h>
+
+#ifdef __CYGWIN32__
+#include <fcntl.h> /* for O_BINARY */
 #endif
 
 #ifdef WIN 
@@ -96,6 +95,9 @@ openDF(df, dfnm, w)
 #else
   if ((fd = open(dfnm, 0)) == -1) 
     return errres;
+#ifdef __CYGWIN32__
+  setmode(fd, O_BINARY);
+#endif
 #endif
 
   for (off = 0, err = 0; !err && _RkReadHeader(fd, &hd, off) >= 0;) {
@@ -257,6 +259,9 @@ _Rkpopen(dm, dfnm, mode, gram)
 	dm->dm_gram->P_T00 = RkGetGramNum(gram, "T00");
 	dm->dm_gram->P_T30 = RkGetGramNum(gram, "T30");
 	dm->dm_gram->P_T35 = RkGetGramNum(gram, "T35");
+#ifdef LOGIC_HACK
+	dm->dm_gram->P_KJ  = RkGetGramNum(gram, "KJ");
+#endif
 	dm->dm_gram->refcount = 1;
 	goto next;
       }

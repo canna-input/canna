@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[]="$Id: context.c,v 3.23 1996/11/27 08:20:59 kon Exp $";
+static char rcsid[]="$Id: context.c,v 1.3 2002/10/20 14:29:58 aida_s Exp $";
 #endif
 /*LINTLIBRARY*/
 
@@ -29,16 +29,7 @@ static char rcsid[]="$Id: context.c,v 3.23 1996/11/27 08:20:59 kon Exp $";
 #include "patchlevel.h"
 #include <canna/jrkanji.h>
 
-#if defined(USG) || defined(SYSV) || defined(SVR4) || defined(WIN)
-#include <string.h>
-#else
-#include <strings.h>
-#endif
-#ifdef __EMX__
-#include <io.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#endif
+#include <errno.h>
 
 #ifdef WIN
 #include <direct.h>
@@ -92,12 +83,6 @@ _RkInitialize(ddhome, numCache)
 #ifdef __EMX__
   struct stat		statbuf;
 #endif
-#ifdef USE_MALLOC_FOR_BIG_ARRAY
-  char *buffer = malloc(_MAX_DIR);
-  if (!buffer) {
-    return -1;
-  }
-#endif
 
 #ifdef MMAP
   if((fd_dic == -1) && (fd_dic = open("/dev/zero", O_RDWR)) < 0) {
@@ -131,12 +116,8 @@ _RkInitialize(ddhome, numCache)
 	  free(path);
 	}
 #else
-#ifdef __EMX__
-	if (stat(path, &statbuf) &&
-#else
-	if (close(open(path, 0, 0664)) < 0 &&
-#endif
-	    mkdir(path, MKDIR_MODE) < 0) {
+	if (mkdir(path, MKDIR_MODE) < 0 &&
+	    errno != EEXIST) {
 	  free(path);
 	}
 #endif
@@ -154,12 +135,8 @@ _RkInitialize(ddhome, numCache)
 	      free(path);
 	    }
 #else
-#ifdef __EMX__
-	    if (stat(path, &statbuf) &&
-#else
-	    if (close(open(path, 0, 0664)) < 0 &&
-#endif
-		mkdir(path, MKDIR_MODE) < 0) {
+	    if (mkdir(path, MKDIR_MODE) < 0 &&
+		errno != EEXIST) {
 	      free(path);
 	    }
 #endif
@@ -175,6 +152,9 @@ _RkInitialize(ddhome, numCache)
 		SG.P_T00 = RkGetGramNum(SG.gramdic, "T00");
 		SG.P_T30 = RkGetGramNum(SG.gramdic, "T30");
 		SG.P_T35 = RkGetGramNum(SG.gramdic, "T35");
+#ifdef LOGIC_HACK
+		SG.P_KJ  = RkGetGramNum(SG.gramdic, "KJ");
+#endif
 		CX = (struct RkContext *)
 		  Calloc(INIT_CONTEXT, sizeof(struct RkContext));
 		if (CX) {
@@ -206,9 +186,6 @@ _RkInitialize(ddhome, numCache)
   }
   con = -1;
  return_con:
-#ifdef USE_MALLOC_FOR_BIG_ARRAY
-  (void)free(buffer);
-#endif
   return con;
 }
 

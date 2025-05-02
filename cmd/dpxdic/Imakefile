@@ -1,4 +1,4 @@
-/* $Id: Imakefile,v 1.14 1996/11/27 07:13:16 kon Exp $ */
+/* $Id: Imakefile,v 1.2 2002/10/20 04:10:27 aida_s Exp $ */
 #include "../../Canna.conf"
 
       CANNAROOT = ../..
@@ -15,7 +15,7 @@ LOCAL_LIBRARIES = $(CANNAROOT)/lib/RK/libRK.a
         DEFINES = -DHYOUJUN_GRAM=\"$(DicDir)/canna/fuzokugo.cbd\"
 #endif
 
-#ifdef __EMX__
+#if defined(__EMX__) || defined(__CYGWIN32__)
 AllTarget(dpxdic.exe)
 #else
 AllTarget(dpxdic)

@@ -20,7 +20,7 @@
  * PERFORMANCE OF THIS SOFTWARE. 
  */
 
-/* $Id: RK.h,v 4.17 1996/09/05 10:46:39 kon Exp $ */
+/* $Id: RK.h,v 1.2 2002/10/20 14:29:58 aida_s Exp $ */
 #ifndef		_RK_h
 #define		_RK_h
 
@@ -56,7 +56,7 @@
 #ifdef pro
 #define CANNA_PRO_PREDEFINED
 #else
-#if defined(__STDC__) || defined(WIN)
+#if defined(__STDC__) || defined(__cplusplus) || defined(WIN)
 #define pro(x) x
 #else
 #define pro(x) ()

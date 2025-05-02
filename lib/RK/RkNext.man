@@ -19,7 +19,7 @@
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 .\" PERFORMANCE OF THIS SOFTWARE. 
 .\"
-.\" $Id: RkNext.man,v 2.1 1994/04/21 00:46:59 kuma Exp $ NEC;
+.\" $Id: RkNext.man,v 1.1.1.1 2002/10/19 08:27:44 aida_s Exp $ NEC;
 .TH "RKNEXT" "3"
 .SH "NAME"
 \f4RkNext\f1 \- set the next candidate as the current candidate

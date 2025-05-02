@@ -21,31 +21,15 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[]="@(#) 102.1 $Id: RKroma.c,v 2.19 1996/11/13 00:59:05 kon Exp $";
+static char rcsid[]="@(#) 102.1 $Id: RKroma.c,v 1.2 2002/10/20 14:29:59 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */
 #include "canna.h"
 
-#if defined(__STDC__) || defined(WIN32)
-#include <stdlib.h>
-#define pro(x) x
-#else
-extern char *malloc(), *realloc(), *calloc();
-extern void free();
-#define pro(x) ()
-#endif
-
 #ifdef WIN
 #include <io.h>
 #endif
-
-#if defined(USG) || defined(SYSV) || defined(SVR4) || defined(WIN)
-#include <string.h>
-#else
-#include <strings.h>
-#endif
-
 #include <fcntl.h>
 
 #define S2TOS(s2)	(((unsigned short)(s2)[0]<<8)|(s2)[1])
@@ -61,7 +45,7 @@ struct romaRec {
   unsigned char bang;
 };
 
-#ifndef WIN
+#if !defined(__STDC__) && !defined(WIN)
 extern void qsort();
 #endif
 

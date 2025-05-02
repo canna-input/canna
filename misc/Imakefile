@@ -1,4 +1,4 @@
-/* $Id: Imakefile,v 2.4 1996/10/26 07:37:42 kon Exp $ */
+/* $Id: Imakefile,v 1.2 2002/10/20 18:00:21 aida_s Exp $ */
 #include "../Canna.conf"
 
 CANNAROOT = ..
@@ -6,8 +6,12 @@ CANNAROOT = ..
 #define IHaveSubdirs
 #define PassCDebugFlags
 
+#ifdef engineSwitch
        PROGRAMS = engine.cf default.canna
            SRCS = engine.cpp
+#else
+       PROGRAMS = default.canna
+#endif
 #ifdef nec
         DEFINES = $(SCRIPTS_DEFINES) -DLIBCANNADIR=$(libCannaDir) \
                   -DCPP=$(CPP) -DCANNA_DSOREV=$(cannaDsoRev) -Unec
@@ -20,8 +24,10 @@ SUBDIRS =initfiles
 
 AllTarget($(PROGRAMS))
 
+#ifdef engineSwitch
 CppScriptTarget(engine.cf,engine.cpp,$(DEFINES),/**/)
 InstallNonExec(engine.cf,$(cannaLibDir))
+#endif
 
 MakeSubdirs($(SUBDIRS))
 DependSubdirs($(SUBDIRS))

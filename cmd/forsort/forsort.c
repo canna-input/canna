@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static char rcsid[]="@(#) 112.1 $Id: forsort.c,v 1.13 1996/11/27 07:17:27 kon Exp $";
+static char rcsid[]="@(#) 112.1 $Id: forsort.c,v 1.1.1.1 2002/10/19 08:27:34 aida_s Exp $";
 #endif
 /*
  * forsort.c	ソートを行なう時に8ビットコードを保護する

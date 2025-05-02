@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char onoffmap_id[] = "@(#) 102.1 $Id: onoffmap.h,v 9.2 1996/11/06 01:56:28 kon Exp $";
+static char onoffmap_id[] = "@(#) 102.1 $Id: onoffmap.h,v 1.1.1.1 2002/10/19 08:27:50 aida_s Exp $";
 #endif /* lint */
 
 #ifdef NO_EXTEND_MENU

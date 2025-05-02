@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: romaji.c,v 7.32 1996/11/25 10:06:50 kon Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: romaji.c,v 1.2 2002/10/20 18:00:21 aida_s Exp $";
 #endif /* lint */
 
 #include "canna.h"
@@ -37,7 +37,8 @@ static char rcs_id[] = "@(#) 102.1 $Id: romaji.c,v 7.32 1996/11/25 10:06:50 kon 
 #endif
 #endif
 
-#ifdef WIN
+/* Now canna have only cbp files. */
+#if 1
 #define DEFAULT_ROMKANA_TABLE "/dic/default.cbp"
 #else
 #define DEFAULT_ROMKANA_TABLE "/dic/default.kp"
@@ -410,27 +411,77 @@ char *table;
 	    }
 	  }
 	}
+      }
 
-	if (retval == (struct RkRxDic *)NULL) { /* 全部オープンできない */
-	  sprintf(rdic, 
+      if (retval == (struct RkRxDic *)NULL) { /* added for Debian by ISHIKAWA Mutsumi <ishikawa@linux.or.jp> */
+        extern jrUserInfoStruct *uinfo;
+	
+        rdic[0] = '\0';
+        if (uinfo && uinfo->topdir) {
+	  strcpy(rdic, uinfo->topdir);
+        }
+        else {
+          strcpy(rdic, CANNALIBDIR);
+        }
+	strcat(rdic, "/");
+	strcat(rdic, table);
+	retval = RkwOpenRoma(rdic);
+	
+	if (ckverbose) {
+	  if (retval != (struct RkRxDic *)NULL) {
+	    if (ckverbose == CANNA_FULL_VERBOSE) {
 #ifndef WIN
-		  "ローマ字かな変換テーブル(%s)がオープンできません。",
-#else
-	"\245\355\241\274\245\336\273\372\244\253\244\312"
-	"\312\321\264\271\245\306\241\274\245\326\245\353\50\45\163\51\244\254"
-	"\245\252\241\274\245\327\245\363\244\307\244\255\244\336\244\273"
-	"\244\363\241\243",
+              printf("ローマ字かな変換テーブルは \"%s\" を用います。\n", rdic);
 #endif
-		  table);
-           /* ローマ字かな変換テーブル(%s)がオープンできません。 */
-	  addWarningMesg(rdic);
-	  retval = (struct RkRxDic *)0;
-	  goto return_ret;
+	    }
+	  }
 	}
+      }
+      
+#if 0 /* currently CANNASHAREDDIR is not defined */
+      if (retval == (struct RkRxDic *)NULL) { /* added for Debian by ISHIKAWA Mutsumi <ishikawa@linux.or.jp> */
+        extern jrUserInfoStruct *uinfo;
+	
+        rdic[0] = '\0';
+        if (uinfo && uinfo->topdir) {
+	  strcpy(rdic, uinfo->topdir);
+        }
+        else {
+          strcpy(rdic, CANNASHAREDIR);
+        }
+	strcat(rdic, "/");
+	strcat(rdic, table);
+	retval = RkwOpenRoma(rdic);
+	
+	if (ckverbose) {
+	  if (retval != (struct RkRxDic *)NULL) {
+	    if (ckverbose == CANNA_FULL_VERBOSE) {
+#ifndef WIN
+              printf("ローマ字かな変換テーブルは \"%s\" を用います。\n", rdic);
+#endif
+	    }
+	  }
+	}
+      }
+#endif
+      
+      if (retval == (struct RkRxDic *)NULL) { /* 全部オープンできない */
+	sprintf(rdic, 
+#ifndef WIN
+		"ローマ字かな変換テーブル(%s)がオープンできません。",
+#else
+		"\245\355\241\274\245\336\273\372\244\253\244\312"
+		"\312\321\264\271\245\306\241\274\245\326\245\353\50\45\163\51\244\254"
+		"\245\252\241\274\245\327\245\363\244\307\244\255\244\336\244\273"
+		"\244\363\241\243",
+#endif
+		table);
+	/* ローマ字かな変換テーブル(%s)がオープンできません。 */
+	addWarningMesg(rdic);
+	retval = (struct RkRxDic *)0;
       }
     }
   }
- return_ret:
 #ifdef WIN
   (void)free((char *)rdic);
 #endif

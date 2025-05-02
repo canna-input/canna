@@ -19,7 +19,7 @@
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 .\" PERFORMANCE OF THIS SOFTWARE.
 .\"
-.\" $Id: addwords.jmn,v 1.8 1994/05/17 01:48:21 hamada Exp $
+.\" $Id: addwords.jmn,v 1.1.1.1 2002/10/19 08:27:32 aida_s Exp $
 .nr X 0
 .if \nX=0 .ds X} addwords 1 "日本語機能ユーティリティ" "\&"
 .TH \*(X}

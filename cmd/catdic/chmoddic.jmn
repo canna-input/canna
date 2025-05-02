@@ -19,7 +19,7 @@
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 .\" PERFORMANCE OF THIS SOFTWARE. 
 .\"
-.\" $Id: chmoddic.jmn,v 3.2 1995/10/09 07:49:19 kuma Exp $
+.\" $Id: chmoddic.jmn,v 1.1.1.1 2002/10/19 08:27:33 aida_s Exp $
 .nr X 0
 .if \nX=0 .ds x} chmoddic 1 "日本語機能ユーティリティ" "\&"
 .TH \*(x}

@@ -1,9 +1,9 @@
-/* $Id: Imakefile,v 2.8 1996/11/27 07:01:34 kon Exp $ */
+/* $Id: Imakefile,v 1.4 2002/10/20 14:29:56 aida_s Exp $ */
 #include "./Canna.conf"
 
 #define IHaveSubdirs
-#define PassCDebugFlags
-      WORLDOPTS = -k
+#define PassCDebugFlags 'CDEBUGFLAGS=$(CDEBUGFLAGS)'
+      WORLDOPTS = /* -k */
         SUBDIRS = lib canna server cmd dic misc doc
         INCLUDE = ./include/canna
 AllTarget(cannaconf.h)
@@ -13,7 +13,7 @@ DependSubdirs($(SUBDIRS))
 clean::
 	$(RM) -r include cannaconf.h
 
-includes::
+includes:: cannaconf.h
 	$(RM) -r include
 	MakeDir($(INCLUDE))
 

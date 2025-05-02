@@ -21,18 +21,12 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[] = "$Id: bun.c,v 3.13 1996/11/07 01:25:53 kon Exp $";
+static char rcsid[] = "$Id: bun.c,v 1.2 2002/10/20 14:29:58 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */
 
 #include "RKintern.h"
-
-#if defined(USG) || defined(SYSV) || defined(SVR4) || defined(WIN)
-#include <string.h>
-#else
-#include <strings.h>
-#endif
 
 #define NEED_DEF
 #ifdef RkSetErrno

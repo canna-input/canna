@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static char rcsid[]="@(#) 102.1 $Id: crfreq.c,v 1.24 1996/10/25 04:07:01 kon Exp $";
+static char rcsid[]="@(#) 102.1 $Id: crfreq.c,v 1.2 2002/10/20 04:10:26 aida_s Exp $";
 #endif
 
 #include "RKintern.h"
@@ -153,11 +153,10 @@ main(argc, argv)
     (void)fprintf(stderr, "%s: cannot open %s\n", program, flnm);
     exit(1);
   }
+#ifdef __CYGWIN32__
+  setmode(fd, O_BINARY);
+#endif
 
-  if ((fd = open(flnm, O_RDONLY)) < 0) {
-    (void)fprintf(stderr, "%s: cannot open %s\n.", program, flnm);
-    exit(1);
-  }
   for (off = 0, lk = 1, doff = 0, err = 0;
        !err && lk && _RkReadHeader(fd, &hd, off) >= 0;
        lk = strcmp(dmnm, (char *)hd.data[HD_DMNM].ptr)) {
@@ -201,7 +200,9 @@ main(argc, argv)
     (void)fprintf(stderr, "%s: cannot create freqency file %s\n", program, freqfile);
     exit(1);
   }
-
+#ifdef __CYGWIN32__
+  setmode(fr, O_BINARY);
+#endif
   hd.flag[HD_CODM] = hd.flag[HD_DMNM];
   hd.data[HD_CODM].ptr = hd.data[HD_DMNM].ptr;
   hd.data[HD_DMNM].ptr = (unsigned char *)STrdup(freq);

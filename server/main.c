@@ -48,7 +48,7 @@ SOFTWARE.
 ******************************************************************/
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "$Id: main.c,v 3.9 1996/11/27 07:26:42 kon Exp $";
+static char rcs_id[] = "$Id: main.c,v 1.1.1.1 2002/10/19 08:27:53 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */

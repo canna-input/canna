@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: bushu.c,v 6.10 1996/11/28 10:25:35 kon Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: bushu.c,v 1.1.1.1 2002/10/19 08:27:48 aida_s Exp $";
 #endif /* lint */
 
 #include	<errno.h>

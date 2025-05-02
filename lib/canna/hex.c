@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: hex.c,v 6.6 1996/11/06 01:54:30 kon Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: hex.c,v 1.1.1.1 2002/10/19 08:27:49 aida_s Exp $";
 #endif /* lint */
 
 #ifndef NO_EXTEND_MENU

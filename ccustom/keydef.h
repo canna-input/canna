@@ -20,7 +20,7 @@
  * PERFORMANCE OF THIS SOFTWARE. 
  */
 
-/* @(#) 102.1 $Id: keydef.h,v 1.2 1992/07/28 12:16:06 kon Exp $ */
+/* @(#) 102.1 $Id: keydef.h,v 1.1.1.1 2002/10/19 08:27:31 aida_s Exp $ */
 
 /* normal function keys */
      

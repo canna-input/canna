@@ -21,16 +21,12 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "$Id: wutil.c,v 5.6 1996/05/22 13:03:23 kon Exp $";
+static char rcs_id[] = "$Id: wutil.c,v 1.2 2002/10/20 14:29:59 aida_s Exp $";
 #endif
 
 #include "rkcw.h"
 #ifndef WIN
 #include "sglobal.h"
-#endif
-
-#ifdef WIN 
-#include <stdlib.h>
 #endif
 
 #ifdef HAVE_WCHAR_OPERATION

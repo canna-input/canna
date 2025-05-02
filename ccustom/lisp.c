@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static char rcsid[] = "$Id: lisp.c,v 2.6 1996/11/07 01:22:11 kon Exp $";
+static char rcsid[] = "$Id: lisp.c,v 1.2 2002/10/20 14:29:56 aida_s Exp $";
 #endif
 
 /* 
@@ -35,16 +35,6 @@ static char rcsid[] = "$Id: lisp.c,v 2.6 1996/11/07 01:22:11 kon Exp $";
 #include "mfdef.h"
 #include "canna.h"
 #include "symbolname.h"
-
-#ifndef pro
-#ifdef __STDC__
-#define pro(x) x
-#else
-#define pro(x) ()
-#endif
-#endif /* pro */
-
-extern char *malloc(), *realloc(), *calloc();
 
 static int version = 1 ;
 static FILE *outstream = (FILE *)0;

@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char emptymap_id[] = "@(#) 102.1 $Id: emptymap.h,v 9.5 1996/11/06 01:54:14 kon Exp $";
+static char emptymap_id[] = "@(#) 102.1 $Id: emptymap.h,v 1.1.1.1 2002/10/19 08:27:48 aida_s Exp $";
 #endif /* lint */
 
 extern AlphaMode(), HenkanNyuryokuMode(), ZenHiraKakuteiMode();

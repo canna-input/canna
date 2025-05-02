@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static char rcsid[]="@(#) 112.1 $Id: wtoc.c,v 1.22 1996/11/27 07:17:55 kon Exp $";
+static char rcsid[]="@(#) 112.1 $Id: wtoc.c,v 1.1.1.1 2002/10/19 08:27:34 aida_s Exp $";
 #endif
 /* wtoi.c  テキスト形式の辞書をＷｎｎから「いろは」のものに変換する。
  *	wtoi [-f hinshifile] [wnndic] [irohadic]

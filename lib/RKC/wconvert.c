@@ -48,7 +48,7 @@ SOFTWARE.
 ******************************************************************/
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "$Id: wconvert.c,v 8.16 1996/11/27 07:22:30 kon Exp $";
+static char rcs_id[] = "$Id: wconvert.c,v 1.3 2002/10/20 14:29:59 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */
@@ -67,25 +67,11 @@ static char rcs_id[] = "$Id: wconvert.c,v 8.16 1996/11/27 07:22:30 kon Exp $";
 #include <signal.h>
 
 #if defined(__STDC__) || defined(WIN)
-#include <string.h>
-#else
-#if defined(USG) || defined(SYSV) || defined(SVR4) || defined(WIN)
-#include <string.h>
-#else
-#include <strings.h>
-#endif
 extern char *strtok();
 #endif
 
 #ifndef WIN
 #include "net.h"
-#endif
-
-#ifdef __STDC__
-#include <stdlib.h>
-#elif !defined(WIN32)
-extern char  *malloc() ;
-extern void  free() ;
 #endif
 
 #ifndef WIN
@@ -523,14 +509,19 @@ char *hostname ;
     char *serverlist[ MAX_LIST ], **listp ;
     int num ;
     char *number ;
+#ifdef UNIXCONN
+    char *localhost = "unix";
+#else
+    char *localhost = "localhost";
+#endif
 
     listp = serverlist ;
     if( hostname[ 0 ] == '\0' ) {
 	rkc_build_cannaserver_list( listp ) ;
 	if( !*listp ) {
-	    *listp = (char *)malloc(strlen("unix") + 1);
+	    *listp = (char *)malloc(strlen(localhost) + 1);
 	    if (*listp) {
-	      strcpy(*listp, "unix");
+	      strcpy(*listp, localhost);
 	    }
 	    listp++ ;
 	    *listp = (char *)NULL ;

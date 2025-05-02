@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[]="@(#) 102.1 $Id: dic.c,v 3.15 1996/11/27 08:21:02 kon Exp $";
+static char rcsid[]="@(#) 102.1 $Id: dic.c,v 1.3 2002/10/20 14:29:58 aida_s Exp $";
 #endif
 /*LINTLIBRARY*/
 
@@ -29,10 +29,8 @@ static char rcsid[]="@(#) 102.1 $Id: dic.c,v 3.15 1996/11/27 08:21:02 kon Exp $"
 
 #include <stdio.h> /* for sprintf */
 
-#if defined(USG) || defined(SYSV) || defined(SVR4) || defined(WIN)
-#include <string.h>
-#else
-#include <strings.h>
+#ifdef __CYGWIN32__
+#include <fcntl.h> /* for O_BINARY */
 #endif
 
 #ifdef WIN
@@ -358,6 +356,9 @@ struct DM	*dst;
 		       OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 #else
     srcFd = open(srcN, 0);
+#ifdef __CYGWIN32__
+    setmode(srcFd, O_BINARY);
+#endif
 #endif
     (void)free(srcN);
     if
@@ -375,6 +376,9 @@ struct DM	*dst;
 			   CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 #else
 	dstFd = creat(dstN, 0666);
+#ifdef __CYGWIN32__
+	setmode(dstFd, O_BINARY);
+#endif
 #endif
 	(void)free(dstN);
 

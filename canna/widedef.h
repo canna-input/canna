@@ -21,7 +21,7 @@
  */
 
 /*
- * @(#) 102.1 $Id: widedef.h,v 1.17 1996/11/29 13:00:55 kon Exp $
+ * @(#) 102.1 $Id: widedef.h,v 1.1.1.1 2002/10/19 08:27:28 aida_s Exp $
  */
 
 #ifndef _WIDEDEF_H_

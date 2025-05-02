@@ -19,7 +19,7 @@
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 .\" PERFORMANCE OF THIS SOFTWARE. 
 .\"
-.\" $Id: RkBgnBun.man,v 2.1 1994/04/21 00:29:17 kuma Exp $ NEC;
+.\" $Id: RkBgnBun.man,v 1.1.1.1 2002/10/19 08:27:44 aida_s Exp $ NEC;
 .TH "RKBGNBUN" "3"
 .SH "NAME"
 \f4RkBgnBun\f1 / \f4RkwBgnBun\f1 \- convert the reading of a specified length to kanji

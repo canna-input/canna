@@ -1,8 +1,8 @@
-/* $Id: Imakefile,v 2.3 1996/11/27 07:25:24 kon Exp $ */
+/* $Id: Imakefile,v 1.4 2002/10/20 15:48:11 aida_s Exp $ */
 #include "../Canna.conf"
 
          CANNAROOT = ..
-     INSTUGIDFLAGS = -m 6555 $(cannaOwnerGroup)
+     INSTUGIDFLAGS = /* -m 6555 $(cannaOwnerGroup) */
 #ifdef __EMX__
          INSTFLAGS = $(INSTUGIDFLAGS)
    LOCAL_LIBRARIES = $(CANNAROOT)/lib/RK/RK.a
@@ -10,7 +10,7 @@
          INSTFLAGS = -s $(INSTUGIDFLAGS)
    LOCAL_LIBRARIES = $(CANNAROOT)/lib/RK/libRK.a
 #endif
-           DEFINES = $(CANNASERVER_DEFINES)
+           DEFINES = $(CANNASERVER_DEFINES) ConnectionFlags
           INCLUDES = -I$(CANNAROOT)/include
 
             IRSRCS = $(SRCS) $(HEADER)
@@ -23,14 +23,14 @@
             TARGET = cannaserver
            DEPLIBS = $(LOCAL_LIBRARIES)
 
-#ifdef __EMX__
+#if defined(__EMX__) || defined(__CYGWIN32__)
 AllTarget($(TARGET).exe)
 #else
 AllTarget($(TARGET))
 #endif
 NormalProgramTarget($(TARGET),$(OBJS),$(DEPLIBS),$(DEPLIBS),)
 
-#ifdef __EMX__
+#if defined(__EMX__) || defined(__CYGWIN32__)
 InstallMultipleFlags($(TARGET).exe,$(cannaSrvDir),$(INSTFLAGS))
 #else
 InstallMultipleFlags($(TARGET),$(cannaSrvDir),$(INSTFLAGS))

@@ -1,11 +1,11 @@
-/* $Id: Imakefile,v 1.14 1996/11/27 07:13:55 kon Exp $ */
+/* $Id: Imakefile,v 1.2 2002/10/20 04:10:28 aida_s Exp $ */
 #include "../../Canna.conf"
 
       CANNAROOT = ../..
        INCLUDES = -I$(CANNAROOT)/lib/RK -I$(CANNAROOT)/include
            SRCS = mergewd.c
 
-#ifdef __EMX__
+#if defined(__EMX__) || defined(__CYGWIN32__)
 AllTarget(mergeword.exe)
 #else
 AllTarget(mergeword)

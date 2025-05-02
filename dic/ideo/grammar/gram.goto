@@ -19,7 +19,7 @@
  * OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
  * PERFORMANCE OF THIS SOFTWARE. 
  *
- * $Id: gram.goto,v 1.93 1996/12/02 12:54:43 kon Exp $
+ * $Id: gram.goto,v 1.2 2002/10/20 04:10:29 aida_s Exp $
  */
 /*
  * gram.goto: 接続関係
@@ -37,7 +37,7 @@
 #define KAKUJOSHI	Kkara Kga Kde Kdeno Kto Kni Knite Khe Kmade Kyori Kwo
 
 BB+	BB Kto
-BB+	KJ NN N00 N01 N02 N03 CJ RT KN TKN FKN
+BB+	KJ NN N00 N01 N02 N03 CJ RT KN FKN
 BB+	T00 T01 T02 T03 T04 T05 T06 T07 T08 T09
 BB+	T10 T11 T12 T13 T14 T15 T16 T17 T18 T19
 BB+	T20 T21 T22 T23 T24 T25 T26 T27 T28 T29
@@ -48,7 +48,7 @@ BB+	KY KYT KYna KYmi KYme KYmime KYU
 BB+	K5 G5 S5 T5 N5 B5 M5 R5 L5 W5 U5 KS KX SX ZX NZX
 BB+	K5r C5r G5r S5r T5r B5r M5r R5r W5r U5r KSr	/* sugiru dekiru */
 BB+	kx sx sxu2 aru iru oru kureru morau yaru miru oku naru yoru
-BB+	rasii youda mitaida dd dda1 dde1 ddar ddeha des JS
+BB+	rasii youda mitaida ddat ddemo dda1 dde1 ddar ddeha des desho deshou JS
 BB+	nainee
 BB+	PRE CNPRE JNPRE NNPRE SNPRE		/* 接頭語 */
 BB+	N2T10 N2T15 N2T16 N2T18 N2T30 N2T35 K2T15 K2T16 K2T35
@@ -58,9 +58,13 @@ BB+	SUC CNSUC1 CNSUC2 JSSUC JNSUC JNSSUC JNMSUC
 BB+	CN CNS JN JNS JNM JCN KK
 BB+	OKX
 
+#ifdef BUNMATU
+BM+	BM
+#endif
+
 YOUGEN+	K5 G5 S5 T5 N5 B5 M5 R5 L5 W5 U5 KS KX SX ZX NZX
 YOUGEN+	K5r C5r G5r S5r T5r B5r M5r R5r W5r U5r KSr	/* sugiru dekiru */
-YOUGEN+	kx sx aru iru oru kureru morau yaru miru oku rasii dd dda1 dde1 ddar ddeha des ssu
+YOUGEN+	kx sx aru iru oru kureru morau yaru miru oku rasii ddat ddemo dda1 dde1 ddar ddeha djan des desho deshou ssu
 YOUGEN+ KY KYna KYT KYmi KYme KYmime
 
 TAIGEN+	T00 T01 T02 T03 T04 T05 T06 T07 T08 T09
@@ -86,7 +90,7 @@ KJ+	BB
  *			ddat(だっ)、dda(だ)はよいが
  *			では/じゃ、でも は 助動詞語尾か接続助詞か
  */
-#define	T_NA	Fdatte kdn dd dda2 dde1 ddar ddeha sugiru mitaida ysouda	/* 形容動詞の活用語尾 */
+#define	T_NA	Fdatte kdn ddat ddemo dda2 dde1 ddar ddeha djan sugiru mitaida ysouda	/* 形容動詞の活用語尾 */
 #define	T_SA	K2T15 K2T16 K2T35			/* [さ]が接続 */
 #define	T_SURU	Ssae Skoso sx sxu2 dekiru gatera nasaru	/* [する]が接続 */
 #define	COMMON_GOKAN 	/* T_GOKAN と F_GOKAN の共通部分 */ \
@@ -95,7 +99,7 @@ KJ+	BB
 	Fka Fkoso Fsae Fsika Fsura Fdano Fttara Ftte\
 	Ftoka Ftote Ftomo Fdokoro Fnagara Fnaradeha Fnari Fnomi\
 	Fha Fbakari Fmo Fya Fyara Fyue Fnazo Fdatte Fttatte FKN JTNO Snara\
-	rasii ppoi dd dde1 ddar ddeha des ssu mitaida buru na\
+	rasii ppoi ddat ddemo dde1 ddar ddeha djan des desho deshou ssu mitaida buru na\
 	N2T10 N2T15 N2T16 N2T18 N2T30 N2KS N2K5 N2R5 N2KYT ND2KY SUC
 #define	T_GOKAN COMMON_GOKAN dda1
 
@@ -265,10 +269,13 @@ N01+	BB N00 N02 N03 NN JS
 N02+	BB N00 N03 NN JS
 N03+	BB N00 NN JS
 CN+	@T35 CNSUC1 CNSUC2
-CNS+	@T35 CNSUC2
+CN-	SUC
+CNS+	@CN
+CNS-	CNSUC1
 JN+	@T35 JNSUC
-JNS+	@T35 JNM JNSSUC JNSUC
-JNM+	@T35 JNMSUC JNSUC
+JN-	SUC
+JNS+	@JN JNSSUC /* JNM */
+JNM+	@JN JNMSUC
 JCN+	@JNS @CN
 
 #define	F_TARU		kdt		/* [たる]に接続 */
@@ -335,9 +342,9 @@ KYmime+	@KY kymi K2T15
 KYU+	BB
 
 /******************** その他 (接続詞，感動詞，連語，連体詞など) ********************/
-CJ+	BB /*dd dde1 ddar ddeha des*/
+CJ+	BB /*ddat ddemo dde1 ddar ddeha djan des desho deshou*/
 
-RT+	BB KN TKN FKN KJ SX ZX NZX PRE NNPRE CNPRE JNPRE
+RT+	BB KN FKN KJ SX ZX NZX PRE NNPRE CNPRE JNPRE
 RT+	T00 T01 T02 T03 T04 T05 T06 T07 T08 T09
 RT+	T10 T11 T12 T13 T14 T15 T16 T17 T18 T19
 RT+	T20 T21 T22 T23 T24 T25 T26 T27 T28 T29
@@ -353,7 +360,7 @@ OKX+	Kde Kno Kni
 OKX+	Zkai Zkasira Zkana Zsa Zne Zyo
 OKX+	Fka Fsura Fdano
 OKX+	Ftono Fha Fya JTNO Sto Stoka Stote Snara Ssae Skoso
-OKX+	nasaru rasii dd dda2 dde1 ddar ddeha des
+OKX+	nasaru rasii ddat ddemo dda2 dde1 ddar ddeha djan des desho deshou
 
 /******************** 形式名詞 ********************/
 JTNO+	@T35
@@ -361,10 +368,15 @@ JTNO+	Zka Zkai Zkasira Zkana Zsa Zne Zyo
 JTNO-	BB Kde Kdeno Kno JTNO Fzutu
 JTNO-	N2T10 N2T15 N2T16 N2T18 N2T30 N2KS N2K5 N2R5 N2KYT ND2KY SUC
 JTNN+	@JTNO
-JTNN-	Fttara Ftte Kto
+JTNN-	Fttara Ftte Fdano ddemo Kto
 KN+	@T35
-TKN+	@T35
+KN-	SUC
 FKN+	@T35
+FKN-	SUC
+/* TKN: 〜な(わけ|はず) */
+TKN+	BB Zka Zkai Zkasira Zkana Zsa Zne Znee Zyo 
+TKN+	Ftoka Fdokoro Fnari Fha Fmo Snara Stte
+TKN+	rasii ppoi ddat ddemo dda1 dde1 ddar ddeha djan des desho deshou ssu mitaida na
 
 /******************** 動詞 ********************/
 /*上下一段動詞活用: 連用形が名詞になるものを追加(連用形の接続が異なるだけ) */
@@ -372,26 +384,26 @@ KS+	BB ks ksyo
 KS+	Fsura Fha Fya Fmo
 KS+	Stutu Snagara Ssae Skoso sasu sasiru
 KS+	Zna
-KS+	mas saseru sugiru nasaru rareru chau 
+KS+	mas saseru sugiru yagaru nasaru rareru chau 
 KS+	nai nainya nainee naisa tai yasui ysouda zu znn z you mai
 KS+	tamae D2T35 D2T16
-KS+	kt kte kteha ktya ktemo kto gatera
+KS+	kt kte kte2 kteha ktya ktemo kto gatera
 KS+	ni
 /* KS-	ktemo */
 
 KSr+	@KS @T35
-KSr-	N2T35
+KSr-	N2T35 SUC
 
 /* 上下一段動詞の活用語尾: 未然形，連用形の活用語尾はなく語幹のみ
  *			   語幹が連用形のものの活用語尾を共有する
  */
-ksru+	BB Kni JTNO JTNN KN TKN FKN Kyori
+ksru+	BB Kni JTNO JTNN KN FKN Kyori
 ksru+	Fga Fkoso Fsae Fsika Fsura Fdano Fdeha Fdemo Fto Ftoka Ftono Fnazo
 ksru+	Fnomi Fha Fbakari Fmade	Fya Fyara Fyue Fmo	/* ところは、はずす */
 ksru+	Fttatte
 ksru+	Ska Skara Snode Sga Skuseni Skeredo Ssi Stte /*Stokoro*/ Stomo Stote
 ksru+	Sdokoro Snara Snagara Snari Sniha Smono
-ksru+	rasii youda mitaida dsouda mai be goto des ssu ddar ddeha
+ksru+	rasii youda mitaida dsouda mai be goto des desho deshou ssu ddar ddeha djan
 ksru+	Zkai Zkasira Zkana Zsa Zze Zzo Ztomo Zna Znaa Zne Znee Zno
 ksru+	Zya Zyo Zyona Zwa	/* Zka */
 ksru+	Zmono
@@ -408,11 +420,10 @@ ksyo+	Stte Sto Stoka Stomo Stote Sdokoro
 ksya+	BB Zsa Zna Znaa Zne Znee
 
 /* 5段活用語幹:	連用形が名詞になるものを追加(連用形の接続が異なるだけ) */
-K5+	k5 k5i
-C5r+	c5r
+K5+	k5 k5a k5i
 G5+	g5 g5i
 S5+	s5 s5i
-T5+	t5 t5i
+T5+	t5 t5i t5tO
 N5+	n5
 B5+	b5 b5i
 M5+	m5 m5i
@@ -425,10 +436,11 @@ SX+	sx sxu1
 ZX+	zx
 NZX+	nzx
 
-K5r+    k5 k5ir
+K5r+    k5 k5a k5ir
+C5r+    k5 k5a k5ir t5tO
 G5r+    g5 g5ir
 S5r+    s5 s5ir
-T5r+    t5 t5ir
+T5r+    t5 t5ir t5tO
 B5r+    b5 b5ir
 M5r+    m5 m5ir
 R5r+    r5 r5a r5nO r5ir
@@ -446,7 +458,7 @@ k5i+	K5r C5r G5r S5r T5r B5r M5r R5r W5r U5r KSr
 k5i+	Fkiri Fmo Fha Fya Fsura
 k5i+	Stutu Snagara Ssae Skoso
 k5i+	Zna
-k5i+	nasaru tai yasui you ysouda mas sugiru tamae
+k5i+	nasaru tai yasui you ysouda mas sugiru yagaru tamae
 k5i+	N2T18 ND2KY D2KY D2T35 D2T16
 k5i+	gatera
 k5i+	ni
@@ -455,10 +467,10 @@ k5i+	ni
 k5i+	Kni
 k5i+	Fga Fsika Fdano Ftono Fbakari Fmade Fyara
 k5i+	Ska Skara Stte Sto Stoka Stote Snara Sniha
-k5i+	nasaru rasii des dd dda2 dde1 na
+k5i+	nasaru rasii des desho deshou ddat ddemo dda2 dde1 na
 #endif
 
-k5iO+	kt kte kteha ktya ktemo kto chau
+k5iO+	kt kte kte2 kteha ktya ktemo kto chau
 
 k5u+	@ksru
 
@@ -466,16 +478,9 @@ k5e+	@ksre @ksro @KS				/* 命令形は一段動詞となる */
 k5e-	Kni ni Snagara sasu sasiru saseru rareru tai yasui tamae Zi
 
 k5ir+	@k5i @T35 N2KYT
+k5ir-	SUC
 
 k5ya+	BB
-
-c5ra+	@k5a
-c5ro+	@k5o
-c5ri+	@k5i @T35
-c5rtO+	@k5iO
-c5ru+	@k5u
-c5re+	@k5e
-c5rya+	@k5ya
 
 g5a+	@k5a
 g5o+	@k5o
@@ -485,6 +490,7 @@ g5u+	@ksru
 g5e+	@k5e
 
 g5ir+	@g5i @T35
+g5ir-	SUC
 g5ya+	@k5ya
 
 s5a+	@k5a
@@ -494,6 +500,7 @@ s5u+	@k5u
 s5e+	@k5e
 
 s5ir+	@s5i @T35
+s5ir-	SUC
 s5ya+	@k5ya
 
 t5a+	@k5a
@@ -504,6 +511,7 @@ t5u+	@k5u
 t5e+	@k5e
 
 t5ir+	@t5i @T35
+t5ir-	SUC
 t5ya+	@k5ya
 
 n5a+	@k5a
@@ -522,6 +530,7 @@ b5u+	@k5u
 b5e+	@k5e
 
 b5ir+	@b5i @T35
+b5ir-	SUC
 b5ya+	@k5ya
 
 m5a+	@k5a
@@ -532,6 +541,7 @@ m5u+	@k5u
 m5e+	@k5e
 
 m5ir+	@m5i @T35
+m5ir-	SUC
 m5ya+	@k5ya
 
 r5a+	@k5a
@@ -543,6 +553,7 @@ r5u+	@k5u
 r5e+	@k5e
 
 r5ir+	@r5i @T35
+r5ir-	SUC
 r5ya+	@k5ya
 
 l5a+	@k5a
@@ -563,6 +574,7 @@ w5u+	@k5u
 w5e+	@k5e
 
 w5ir+	@w5i @T35
+w5ir-	SUC
 w5ya+	@k5ya
 
 u5a+	@k5a
@@ -573,6 +585,7 @@ u5u+	@k5u
 u5e+	@k5e
 
 u5ir+	@u5i @T35
+u5ir-	SUC
 u5ya+	@k5ya
 
 /* カ行変格活用 */
@@ -581,7 +594,7 @@ kxo+	saseru rareru nai nainya nainee naisa zu znn z mai you sasu sasiru
 kxi+	Fnagara Fha Fmo Fya
 kxi+	Stutu Snagara Ssae nasaru
 kxi+	Zna
-kxi+	tai yasui ysouda mas kt kte kteha ktya ktemo chau sugiru tamae
+kxi+	tai yasui ysouda mas kt kte kteha ktya ktemo chau sugiru yagaru tamae
 kxi+	ND2KY N2KYT
 
 kxuru+	@k5u
@@ -600,8 +613,8 @@ sxi+	Fkoso Fsika Fsura Fdano Fdeha Fdemo Ftoka
 sxi+	Fnomi Fha Fbakari Fmade Fmo Fya Fyara
 sxi+	Stutu Snagara Ssae
 sxi+	Zna
-sxi+	ysouda tai yasui nai nainee naisa mai mas sugiru nasaru you tamae ND2KY N2KYT
-sxi+	kt kte kteha ktya ktemo kto
+sxi+	ysouda tai yasui nai nainee naisa mai mas sugiru yagaru nasaru chau you tamae ND2KY N2KYT
+sxi+	kt kte kte2 kteha ktya ktemo kto
 sxi+	gatera
 sxi+	ni
 
@@ -639,8 +652,9 @@ nzx+	zx
 /* 動詞型接尾語活用 */
 buru+	@R5
 garu+	@R5r
-sugiru+	BB Fka you des dd dda1 dde1 ddar ddeha nai nainya nainee mas ks zu znn z na
+sugiru+	BB Fka you des desho deshou ddat ddemo dda1 dde1 ddar ddeha djan nai nainya nainee mas ks zu znn z na
 sugiru+ kt kte kteha ktya ktemo 
+yagaru+	BB r5 /* r5i, r5ir はわざと入れてない */
 
 /* 可能の助動詞 */
 rareru+	@KS
@@ -657,7 +671,7 @@ siru+	@k5iO
 sasiru+	@k5iO
 
 k5sa+	reru simeru nai nainya nainee zu z su siru		/* 未然に付く助動詞 */
-k5siru+	kt kte kteha ktya ktemo
+k5siru+	kt kte kte2 kteha ktya ktemo
 k5siru+	Stutu Snagara
 k5siru+	tai yasui ysouda mas sugiru
 k5siru+	N2T18 ND2KY D2KY D2T35 D2T16
@@ -672,7 +686,7 @@ nasaru+	@L5
 /* アスペクト */
 aru+	r5 aru5a aru5i
 aru5a+	seru reru simeru zu znn z 
-aru5i+	@r5i Kno Sto Stomo ddar dd dda2 dde1 ddeha
+aru5i+	@r5i Kno Sto Stomo ddar ddat ddemo dda2 dde1 ddeha djan
 
 iru+	ks ksyo saseru rareru tai ysouda mas nai naisa zu znn z you mai sugiru nasaru tamae
 iru+	kt kte kteha ktya ktemo
@@ -680,7 +694,7 @@ iru+	Zna
 
 oru+	@R5
 
-kureru+	BB ks Fto Stte
+kureru+	BB ks Fto Stte Zi Zya Zyo Zyona
 kureru+ saseru rareru sugiru nasaru
 kureru+	tai yasui ysouda mas nai nainya nainee naisa zu znn z you mai tamae
 kureru+ kt kte kteha ktya ktemo 
@@ -719,7 +733,7 @@ kyku-	kt kto
 
 kykat+	kt
 
-kyi+	@k5u Kde Kdeno ddeha Ztto
+kyi+	@k5u /*Kde Kdeno*/ ddeha djan Ztto
 kyi-	mai
 
 kykere+	Sdomo Sba
@@ -735,11 +749,13 @@ kylyu+	@kyu
 
 /* 形容詞の語幹について名詞化 */
 kymi+	@T35
+kymi-	SUC
 
 nai+	ky kyku
 nai+	ysouda
 nainya+	BB Zna Znaa Znee Znee
-nainee+	@kyi
+nainee+	@kyi dde3
+nainee- Fsura Zne Znee
 naisa+	ysouda sugiru	/* 〜なさる は、動詞として対処することにする */
 
 /* 形容詞型活用助動詞 */
@@ -761,7 +777,7 @@ kdnare+ BB @ksre
 
 kdni+	BB Fto Fkoso Fsika Fsura Fdeha Fdemo Fmade Ftoka Fnazo Fha Fmo
 kdni+	Sdokoro Snari Ssae
-kdni+	/* sx sxu2 */ yoru ddar dd naru
+kdni+	sx sxu2 yoru ddar ddat ddemo naru
 kdni+	Zkai Zkasira Zsa Zna Zne	/* Zka */
 
 kdto+	@kdni
@@ -787,14 +803,14 @@ SNPRE+	T00 T03 T30 T31
   N2T10 N2T15 N2T16 N2T18 N2T30 N2T35 D2T35 D2T16 K2T15 K2T16 K2T35 \
   N2KS N2K5 N2R5 ND2KY N2KYT D2KY
 
-SUC+	@KN @TKN @FKN N2T10 N2T15 N2T16 JNSUC CNSUC2 JNSSUC JNMSUC
-CNSUC1+	@KN @TKN @FKN N2T10 N2T15 N2T16 JNSUC CNSUC2 JNSSUC JNMSUC
-CNSUC2+	@KN @TKN @FKN N2T10 N2T15 N2T16 JNSUC CNSUC2 JNSSUC JNMSUC
-JNSUC+	@KN @TKN @FKN N2T10 N2T15 N2T16 CNSUC2
-JNSSUC+	@KN @TKN @FKN N2T10 N2T15 N2T16 CNSUC2
-JNMSUC+	@KN @TKN @FKN N2T10 N2T15 N2T16 CNSUC2
-JS+	@KN @TKN @FKN JSSUC @T35 JSmono
-JSSUC+	@KN @TKN @FKN JSmono
+SUC+	@KN @FKN N2T10 N2T15 N2T16 JNSUC CNSUC2 JNSSUC JNMSUC
+CNSUC1+	@KN @FKN N2T10 N2T15 N2T16 JNSUC CNSUC2 JNSSUC JNMSUC
+CNSUC2+	@KN @FKN N2T10 N2T15 N2T16 JNSUC CNSUC2 JNSSUC JNMSUC
+JNSUC+	@KN @FKN N2T10 N2T15 N2T16 CNSUC2
+JNSSUC+	@KN @FKN N2T10 N2T15 N2T16 CNSUC2
+JNMSUC+	@KN @FKN N2T10 N2T15 N2T16 CNSUC2
+JS+	@KN @FKN JSSUC @T35 JSmono
+JSSUC+	@KN @FKN JSmono
 JSmono+	BB
 SUC-	SUFFIX
 CNSUC1- SUFFIX
@@ -856,12 +872,12 @@ D2KY-	SUFFIX
 /* ごとし */
 gotoku+	BB Kni Fkoso Fsae Fsika Fsura Fdano Fha Fmo Sto Stomo
 gotosi+	@ksru Kni
-gotoki+	BB Kni Kno Fha KN TKN FKN
+gotoki+	BB Kni Kno Fha KN FKN
 
 /* べし */
 bekara+ zu znn z
 beku+	BB Fha Fmo Stote ktomo
-beki+	BB Kga Sto Stomo dd dda1 dde1 ddar ddeha des na Fka
+beki+	BB Kga Sto Stomo ddat ddemo dda1 dde1 ddar ddeha djan des desho deshou na Fka
 beki+	Zsa Zne Znee Zyo
 
 besi+	BB Fsika Fnomi Fbakari Fyara Fdano Ftono
@@ -869,7 +885,7 @@ besi+	Stomo Sto Stoka Ska Stote
 
 /* ぬ */
 zu+	BB Fdano Fbakari Sto Stoka Stote Skeredo Snagara Ska
-zu+	dd dda2 dde2 ddar N2T18
+zu+	ddat ddemo dda2 dde2 ddar N2T18
 zu+	Kni
 zu+	Zkai Zkasira Zkana Zsa Zya
 zu+	ktomo
@@ -879,7 +895,7 @@ znu+	Fto Ftoka Ftono Fyue
 znu+	Stte Ska Sga Ssi Sniha Skara Skeredo Snari Snagara Skuseni
 znu+	Smono Stote Stomo Sdokoro /*Stokoro*/		/* ところは、はずす */
 znu+	JTNO
-znu+	goto dsouda dd dda1 dde2 ddeha ddar youda mitaida rasii N2T18
+znu+	goto dsouda ddat ddemo dda1 dde2 ddeha ddar youda mitaida rasii N2T18
 znu+	Zkai Zkasira Zkana Zsa Zze Zzo Ztomo Zya Zyo Zyona Zwa
 
 zne+	Sdomo Sba			/* BB */
@@ -914,7 +930,7 @@ ssu+	BM Zka Zne Znee Zyo
 /* ます */
 mase+	BB Sto
 
-masen+	BB des Fga Sto Stte Stoka Ssi Skara Snode Skeredo Stomo Smono JTNO
+masen+	BB des desho deshou Fga Sto Stte Stoka Ssi Skara Snode Skeredo Stomo Smono JTNO
 masen+	Zka Zkai Zkasira Zkana Zze Zzo Ztomo Zna Znaa Zne Znee Zno Zya Zyo Zyona Zwa
 masen+	Zmono
 
@@ -925,11 +941,12 @@ masi+	kt te kteha ktemo
 masu+	BB Fdano Fsika Fnomi Fbakari Fkiri Fyara Fya	/* ところは、はずす */
 masu+	Ska Fga Sto Stte Stoka Ssi Sniha Skara Snode
 masu+	Skeredo Snari Smono Stomo Sdokoro /*Stokoro*/ Stote
-masu+	mai youda JTNO
+masu+	deshou desho mai youda JTNO
 masu+	Zkai Zkasira Zkana Zsa Zze Zzo Ztomo Zna Znaa Zne Znee Zno Zya Zyo Zyona Zwa	/* Zka */
 masu+	Zmono
 
 masuru+	@masu
+masuru-	desho mai
 
 masure+	Sdomo Sba
 
@@ -940,19 +957,20 @@ kta+	BB Kyori Kni Kde	/* でた＋で */
 kta+	Fdano Ftoka Ftono Fnari Fsika Fnomi Fbakari Fkiri Fyara Fyue Fmade Fmo
 kta+	Ska Sga Ssi Skara Snode Skeredo Snari Skuseni Smono Stte
 kta+	Snara Fga Fto Stomo Stote
-kta+	ddeha dsouda youda mitaida rasii des ssu N2T18 JTNO JTNN KN TKN FKN
+kta+	ddeha djan dsouda youda mitaida rasii des desho deshou ssu N2T18 JTNO JTNN KN FKN
 kta+	Zkai Zkasira Zkana Zsa Zze Zzo Zna Znaa Zne Znee Zno Zya Zyo Zyona Zwa
 kta+	/* Zka */ Zmono Ztto
 kta+	kke
 
 ktara+	BB Sba Sto Zsa Zna Znaa Zne Znee kd
 
-ktari+	BB Fsika Fsura Fdano Fto Ftoka Fnazo Fha Fbakari Fmo Ssae Skoso sx
+ktari+	BB Fsika Fsura Fdano Fto Ftoka Fnazo Fha Fbakari Fmo Ssae Skoso 
+ktari+	sx ddar ddat ddemo dda2 dde1 ddeha djan
 
 kte+	BB Kno Kkara Fmade Fsae Fsika Fsura Fnomi Fbakari Fkoso Ska
-kte+	nai nainee naisa dd dda2 dde2 des aru iru oru kureru morau yaru miru oku
-kte+	Zna Znaa Zne Znee Zya Zyo /* kx はずす予定 */
-kte+	ktec5 nn te
+kte+	nai nainee naisa ddat ddemo dda2 dde2 des desho deshou aru iru oru kureru morau yaru miru oku
+kte+	Zsa Zna Znaa Zne Znee Zya Zyo /* kx はずす予定 */
+kte+	nn te
 kte+	@iru /* 食べてる */
 kte-	zu znn z mai saseru sugiru ksyo	/* @iru に含まれていた */
 kte-	kte		/* te が接続するので不要 */
@@ -960,7 +978,7 @@ kte-	kte		/* te が接続するので不要 */
 kteha+ 	BB Sto Zna Znaa Zne Znee
 ktya+ 	@kteha
 ktemo+ 	BB
-ktemo+	dd dda2 dde2 ddar des
+ktemo+	ddat ddemo dda2 dde2 ddar des desho deshou
 ktemo+	Zka Zkai Zkasira Zkana Zsa Zna Znaa Zne Znee Zyo
 
 ktomo+	BB
@@ -988,10 +1006,12 @@ ddarou+	@deshou Zsa
 
 dde1+	BB Fsae Fsika Fsura Fkoso
 dde1+	Sto Stte Snara
-dde1+	nai nainee naisa aru des
+dde1+	nai nainee naisa aru des desho deshou
 dde1+	Zsa Zna Znaa Zne Znee Zno Zyo
 /* dde2+	Fsae Fsika Fsura Fkoso */
-dde2+	nai nainee naisa aru des
+dde2+	nai nainee naisa aru des desho deshou
+dde3+	BB Kno Fsae Fbakari Fkoso Ska iru kureru morau oku
+dde3+	Zna Znaa Zne Znee Zyo
 
 ddat+   kt
 
@@ -1009,17 +1029,18 @@ dda2+	kke
 ddeha+	@kteha nai
 ddeha+	Zne Znee Zsa Znaa Zyo
 ddemo+	@ktemo Kga nai
+djan+	BB Zka
 
 /* 形容動詞型活用助動詞 */
-youda+	kdn dd dda1 dde1 ddar ddeha des BB Zne Zyo na Snara
+youda+	kdn ddat ddemo dda1 dde1 ddar ddeha djan des desho deshou BB Zne Zyo na Snara
 mitaida+ @youda
-ysouda+	kdn dd dda1 dde1 ddar ddeha des BM na Fmo
+ysouda+	kdn ddat ddemo dda1 dde1 ddar ddeha djan des desho deshou BM na Fmo
 ysouda+ Zka Zkai Zkasira Zkana Zsa Zne Znee Zya Zyo Zyona
 
-dsouda+	dd dda1 dde1 ddar ddeha des des na Zna Zne Znee Zyo
+dsouda+	ddat ddemo dda1 dde1 ddar ddeha djan des desho deshou na Zna Zne Znee Zyo
 
 /* う/よう/まい */
-u+	BB KN TKN FKN
+u+	BB KN FKN
 u+	Fto Ftono Fga Fkoso Fsae Fsura Fdano Fbakari Fyara Fyue Fnazo
 u+	Ska Stte Stoka Stote Snimo Smono
 u+	Zni Zsa Zze Zzo Zna Znaa Zne Zya Zyo Zkana Zkasira /* Zka */
@@ -1032,17 +1053,15 @@ mai+	Zni Zsa
 
 tamae+	BB Ftono Sto Stomo Zyo
 
-na+	JTNO JTNN Zno
+na+	TKN JTNO JTNN Zno
 
-ktec5a+		@c5ra
-ktec5a-		saseru simeru znn z
-ktec5o+		@c5ro
-ktec5tO+	@c5rtO
-ktec5u+		@c5ru
-ktec5u-		Fkoso Fsae Fnomi Stote Snagara goto
-ktec5e+		@c5re
-ktec5e-		Sdomo Stote Stutu nainya tamae
-ktec5ya+ 	@c5rya
+/* 食べ_てかない
+ * 「蹴っていてき」を避けるため、k5ir は除く
+ * 「ついてかんが」を避けるため、k5a ではなく ktek5a
+ */
+kte2+	k5 ktek5a t5tO
+ktek5a+	@k5a
+ktek5a-	saseru simeru znn z
 
 ktok5a+		@k5a
 ktok5a-		saseru seru reru simeru zu znn z su sasu sasiru
@@ -1059,11 +1078,11 @@ ktok5e-		nainya nai you sugiru tamae
 ktok5o+		@k5o
 ktok5ya+	@k5ya
 
-nn+	JTNO Zno dd dde2 ddar ddeha des
+nn+	JTNO Zno ddat ddemo dde2 ddar ddeha djan des desho deshou
 te+	BB Zna Znaa Zne Znee Zyo Zyona
 
 /******************** 格助詞類 ********************/
-#define	K_BUN dd dda2 dde2 ddar ddeha des rasii/* 〜からだ、〜からです、〜かららしい */
+#define	K_BUN ddat ddemo dda2 dde2 ddar ddeha djan des desho deshou rasii/* 〜からだ、〜からです、〜かららしい */
 
 Kkara+	BB /*Kde*/ Kdeno Kga Kto Kyori Kwo Kno K_BUN Kni
 Kkara+	Fya Fdano Fnari Fsae Fsika Fsura Fnomi Fbakari Fkiri
@@ -1074,7 +1093,7 @@ Kkara+	dde1 Stte
 Kga+	BB
 Kga+	Zkai Zkasira Zkana Zsa Zna Znaa Zne Znee Zyo	/* Zka */
 
-Kno+	BB KN TKN FKN youda goto
+Kno+	BB KN FKN youda goto
 
 Kde+	BB Kto
 Kde+	Fmade Fya Fdano Fnari Fsae Fsika Fsura Fnomi Fbakari Fyara Fmo Fkoso
@@ -1087,12 +1106,13 @@ Kto+	Fka Fkiri Fkoso Fsae Fsika Fsura Fdano Fdeha Fdemo Fdokoro Fnazo
 Kto+	Fnomi Fbakari Fmade Fha Fmo
 Kto+	Skara Sdokoro Snara Snari Sniha
 Kto+	Zka Zkai Zkasira Zkana Zsa Zna Znaa Zne Znee Zno	/* Zka */
-Kto+	ddar dd dda2 dde1
+Kto+	ddar ddat ddemo dda2 dde1
 
 Kni+	BB /* sx naru */ yoru K_BUN FKN
-Kni+	Fka Fmade Fya Fdano Fnari Fsae Fsika Fsura Fnomi Fbakari Fkiri
+Kni+	Fka Fmade Fya Fdano Fnari Fsae Fsika Fsura Fnomi Fbakari
 Kni+	Fyara Fha Fkoso Fmo Ftote Stomo
 Kni+	Zkai Zkasira Zkana Zsa Zna Znaa Zne Znee Zya Zyo
+Kni+	naru
 
 Knite+	BB
 
@@ -1114,13 +1134,13 @@ Kwo+	Fya Fdano Fnari Fsae Fsika Fsura Fnomi Fbakari Fyara Fsika Fmo Fkoso
 Kwo+	Zkai Zkasira Zkana Zsa Zna Znaa Zne Znee Zya Zyo
 
 /******************** 副助詞 ********************/
-Fka+	BB @KAKUJS dd dda2 dde1 ddar ddeha
+Fka+	BB @KAKUJS ddat ddemo dda2 dde1 ddar ddeha djan
 Fka+	Fmade Fdano Fsae Fsika Fsura Fha Fmo Stte
 Fka+	Znaa Zne Znee Zyo
 Fka+	FKN
 Fka-	Kde
 
-Fkiri+	BB @KAKUJS dd dda2 dde1 ddar ddeha des rasii N2T18
+Fkiri+	BB @KAKUJS ddat ddemo dda2 dde1 ddar ddeha djan des desho deshou rasii na N2T18
 Fkiri+	Fmade Fya Fdano Fnari Fsae Fsika Fsura Fnomi Fbakari
 Fkiri+	Fzutu Fyara Fka Fha Fmo Fkoso Stte
 Fkiri+	Zkai Zkasira Zkana Zsa Zna Zne Znee Zya Zyo	/* Zka */
@@ -1128,7 +1148,7 @@ Fkiri-	Kde
 
 Fga+ 	BB Zna Znaa Zne Znee
 
-Fkoso+	BB /*Kga Kwo Kto Fka Fha*/ dd dda2 dde1 ddar ddeha des
+Fkoso+	BB /*Kga Kwo Kto Fka Fha*/ ddat ddemo dda2 dde1 ddar ddeha des desho deshou
 Fkoso+	Zkai Zkasira Zkana Zsa Zne Znee Zyo
 
 Fsae+	BB nai Fsura Fmo
@@ -1138,7 +1158,7 @@ Fsika+	BB
 Fsura+	BB Kga Kwo Kno nai Fsika Fka Fmo
 Fsura+	Zkai Zkasira Zkana Zsa Zna Znaa Zne Znee	/* Zka */
 
-Fzutu+	BB @KAKUJS dd dda2 dde1 ddar ddeha des nai rasii N2T18
+Fzutu+	BB @KAKUJS ddat ddemo dda2 dde1 ddar ddeha djan des desho deshou nai rasii N2T18
 Fzutu+	Fya Fdano Fnari Fsae Fsika Fsura Fnomi Fbakari Fkiri
 Fzutu+	Fyara Fka Fha Fmo Fkoso Fmade Stte
 Fzutu+	Zkai Zkasira Zkana Zsa Zna Znaa Zne Znee Zya Zyo	/* Zka */
@@ -1150,9 +1170,9 @@ Fdano+	Fsae Fsika Fsura Fbakari Fyara Fka Fha Fmo Fkoso Fya Stte
 Fttara+	BB /*Zkai Zkasira Zkana*/ Zsa Zna Znaa Zne Znee Zya Zyo	/* Zka */
 Ftte+	@Fttara JTNO
 
-Fto+	BB Kde Kdeno Kni Kwo Kmade Kno dd dda2 dde1 ddar ddeha des rasii
-Fto+	Fya Fdano Fnari Fsae Fsika Fsura Fnomi Fbakari Fkiri Fyara Fka Fkoso
-Fto+	Fdeha Fdemo Fdokoro Fnazo Fha Fmade Fmo Snara
+Fto+	BB Kde Kdeno Kni Kwo Kmade Kno ddat ddemo dda2 dde1 ddar ddeha djan des desho deshou rasii
+Fto+	Fnari Fsae Fsika Fsura Fnomi Fbakari Fkiri Fyara Fka Fkoso
+Fto+	Fdeha Fdemo Fha Fmade Fmo Snara
 Fto+	Zka Zkai Zkasira Zkana Zsa Zna Znaa Zne Znee Zya Zyo	/* Zka */
 Fto+	sx sxu1 naru
 
@@ -1174,7 +1194,7 @@ Fdokoro+	dde2 ddeha
 Fnagara+	BB Kno Fmo
 Fnagarani+	BB
 
-Fnazo+	BB @KAKUJS dd dda2 dde1 ddar ddeha des rasii
+Fnazo+	BB @KAKUJS ddat ddemo dda2 dde1 ddar ddeha des desho deshou rasii
 Fnazo+	Fya Fdano Fsae Fsika Fsura Fbakari Fkiri Fyara Fha Fmo Fkoso Ftote Ftomo
 Fnazo+	Zkai Zkasira Zkana Zsa Zne Znee Zya Zyo
 Fnazo-	Kde
@@ -1185,18 +1205,18 @@ Fdemo+	BB nai
 
 Fnaradeha+	BB Kno Sto Stte
 
-Fnari+	BB Kga Kno Kni Khe Kwo Kkara Kmade Kyori Kto dd dda2 dde1 ddar ddeha
+Fnari+	BB Kga Kno Kni Khe Kwo Kkara Kmade Kyori Kto ddat ddemo dda2 dde1 ddar ddeha
 Fnari+	Fya Fdano Fmade Fsae Fsika Fsura Fnomi Fyara Fmo
 Fnari+	Zkai Zkasira Zkana Zsa Zne Znee	Zyo	/* Zka */
 
-Fnomi+	BB @KAKUJS dd dda2 dde1 ddar ddeha des rasii na	/* のみ＋なの */
+Fnomi+	BB @KAKUJS ddat ddemo dda2 dde1 ddar ddeha des desho deshou rasii na	/* のみ＋なの */
 Fnomi+	Fya Fdano Fsika Fbakari Fkiri Fyara Fka Fha Fkoso
 Fnomi+	Zkai Zkasira Zkana Zsa Zne Znee Zyo 	/* Zka */
 Fnomi-	Kde
 
 Fha+	BB Zsa Zne Znee
 
-Fbakari+ BB @KAKUJS dd dda1 dde1 ddar ddeha des rasii N2T18
+Fbakari+ BB @KAKUJS ddat ddemo dda1 dde1 ddar ddeha djan des desho deshou rasii N2T18
 Fbakari+ Fya Fdano Fsae Fsika Fnomi Fzutu Fyara Fka Fha Fmo Fkoso Stte
 Fbakari+ Zkai Zkasira Zkana Zsa Zne Znee Zyo 	/* Zka */
 Fbakari- Kde
@@ -1204,10 +1224,10 @@ Fbakari- Kde
 Fmade+	BB Kga Kno Kni Kwo Kyori Khe Kmade Kkara /* 直すこと */
 Fmade+	Fya Fdano Fnari Fsae Fsika Fsura Fnomi Fbakari Fkiri
 Fmade+	Fyara Fka Fha Fmo Fkoso Sdokoro Sto Stte
-Fmade+	dd dda1 dde1 ddar ddeha des rasii N2T18 /* kx はずす予定 */
+Fmade+	ddat ddemo dda1 dde1 ddar ddeha djan des desho deshou rasii N2T18 /* kx はずす予定 */
 Fmade+	Zkai Zkasira Zkana Zsa Zne Znee Zsa Zyo
 
-Fmo+	BB @KAKUJS Fka Sto nai rasii dd dda2 dde2 ddar ddeha des
+Fmo+	BB @KAKUJS Fka Sto nai rasii ddat ddemo dda2 dde2 ddar ddeha djan des desho deshou
 Fmo+	Zsa Zna Znaa Zne Znee Zyo
 Fmo-	Kno Kwo Kde Kni Kto
 
@@ -1220,7 +1240,7 @@ Fyara+	Sto Stte
 Fyara+	Zsa Zne Znee
 
 Fyue+	BB Kno Kni Fka Fdeha Fdemo Fnomi Fkoso Ftomo Fbakari Sto
-Fyue+	dd dda2 dde1 ddar ddeha des
+Fyue+	ddat ddemo dda2 dde1 ddar ddeha des desho deshou
 
 Fdatte+	BB Zsa Zna Znaa Zne Znee Zyo
 Fttatte+	@Fdatte
@@ -1230,7 +1250,7 @@ Ska+	@Fka
 
 Skara+	BB Fka Stte Sniha
 Skara+	Sto Stomo Stote Fkoso
-Skara+	dd dda2 dde1 ddar ddeha des rasii N2T18
+Skara+	ddat ddemo dda2 dde1 ddar ddeha djan des desho deshou rasii N2T18
 Skara+	Zsa Zna Znaa Zne Znee Zyo
 
 Snode+	BB
@@ -1276,7 +1296,7 @@ Snara+	BB Sto Sba
 Snari+	BB Kni Kwo Kde
 Snari+	Zyo Zne Znee
 
-Snagara+ BB Kga dd dda2 dde1 ddar ddeha
+Snagara+ BB Kga ddat ddemo dda2 dde1 ddar ddeha djan
 Snagara+ Fmade Fya Fdano Fnari Fsae Fsika Fsura Fnomi Fbakari Fkiri
 Snagara+ Fyara Fka Fha Fmo Fkoso Stte
 Snagara+ Zsa Zyo Zna Znaa Zne Znee
@@ -1319,3 +1339,45 @@ Zwa+	BM Zi Zyo Zne Znee Sto
 /* 連用形接続の助詞 */
 ni+	@Kni
 ni-	naru Fkiri
+
+#ifdef LOGIC_HACK
+%
+/* 打ち消す接続:
+ * 指定した3つの品詞が連続したときに
+ *     -: 2番目と3番目の接続を打ち消す
+ *     +: 文節区切りの優先度を下げる
+ * '/'で区切って複数指定したときは、可能なすべての組合せについて
+ * 指定が反映される
+ */
+
+/* 「年(とし)」を含む表現の邪魔 */
+kdto/Kto/Fto	sxi	ni	+
+kdto/Kto/Fto	sxi	Fto/Fkoso/Fsika/Fsura/Fdano/Fdeha/Fdemo/Ftoka	-
+kdto/Kto/Fto	sxi	Fnomi/Fha/Fbakari/Fmade/Fmo/Fya/Fyara	-
+
+/* 「元(もと)」を含む表現の邪魔 */
+JTNO/Kwo	Fmo	Sto	+
+Fmo	Sto	Kde/Kdeno/Kni/Kwo/Kmade/Kno	-
+Fmo	Sto	Fka/Fkoso/Fmade/Fha/Fmo/Fsae/Fsika/Fsura/Fnomi/Fbakari	-
+Fmo	Sto	Fkiri/Fyara	-
+
+/* 「買って」を含む表現の邪魔 */
+JTNO		Fka/Zka		Stte	+
+Kni/kdni/ni	Fka/Zka		Stte	+
+Kwo/Kde/kde	Fka/Zka		Stte	+
+Kto/Fto/Sto	Fka/Zka		Stte	+
+Kkara/Kyori	Fka/Zka		Stte	+
+Fkiri/Fsura/Fzutu/Fdano/Ftoka/Fmade	Fka/Zka		Stte	+
+Fdokoro/Fnomi/Fbakari/Fmo/Fyue	Fka/Zka		Stte	+
+Skara/Skoso/Snagara	Fka/Zka	Stte	+
+kte/kde/dde3	Ska		Stte	+
+
+/* kte2+k5関係の邪魔な表現 */
+kte2	k5o	u	+
+kte2	k5e	znn	+
+
+/* 〜のかしか */
+JTNO	Fka	Fsika	-
+/* 〜なんとか */
+na	JTNN	Ftoka	-
+#endif

@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[] = "$Id: ebind.c,v 8.8 1996/06/05 06:09:02 kon Exp $";
+static char rcsid[] = "$Id: ebind.c,v 1.1.1.1 2002/10/19 08:27:48 aida_s Exp $";
 #endif
 
 #include "canna.h"

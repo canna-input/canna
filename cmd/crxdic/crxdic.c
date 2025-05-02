@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static char rcsid[]="@(#) 102.1 $Id: crxdic.c,v 3.6 1996/11/27 07:16:46 kon Exp $";
+static char rcsid[]="@(#) 102.1 $Id: crxdic.c,v 1.3 2002/10/20 14:29:57 aida_s Exp $";
 #endif
 
 #include "RKintern.h"
@@ -31,9 +31,7 @@ static char rcsid[]="@(#) 102.1 $Id: crxdic.c,v 3.6 1996/11/27 07:16:46 kon Exp 
 #include <time.h>
 #include <ctype.h>
 #include <fcntl.h>
-#if	!defined(nec_ews_svr2) && defined(__STDC__)
-#include <stdlib.h>
-#endif
+#include "ccompat.h"
 
 #if !defined( HYOUJUN_GRAM )
 #ifndef WINDOWS_STYLE_FILENAME
@@ -1085,6 +1083,9 @@ write_file(out, dic)
     fprintf(stderr, "can't create %s\n", out);
     exit(1);
   }
+#ifdef __CYGWIN32__
+  setmode(fd, O_BINARY); 
+#endif
   
   makeHeader(dic);
   

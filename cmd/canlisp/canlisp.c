@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static char rcs_id[] = "$Id: canlisp.c,v 1.4 1993/04/02 02:39:50 kon Exp $";
+static char rcs_id[] = "$Id: canlisp.c,v 1.1.1.1 2002/10/19 08:27:32 aida_s Exp $";
 #endif
 
 #include <canna/jrkanji.h>

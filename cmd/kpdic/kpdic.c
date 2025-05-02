@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static char rcsid[]="@(#) 102.1 $Id: kpdic.c,v 4.31 1996/11/27 07:17:37 kon Exp $";
+static char rcsid[]="@(#) 102.1 $Id: kpdic.c,v 1.3 2002/10/20 14:29:58 aida_s Exp $";
 #endif
 
 #if defined(__STDC__) || defined(SVR4)
@@ -34,14 +34,11 @@ extern char *gettxt();
 #define	gettxt(x,y)  (y)
 #endif
 
-#ifdef __STDC__
-#include <stdlib.h>
-#define pro(x) x
-#else
-char *malloc();
-#define pro(x) ()
-#endif
+#include "ccompat.h"
 
+#ifdef __CYGWIN32__
+#include <fcntl.h> /* for O_BINARY */
+#endif
 
 #include	<stdio.h>
 #include	<ctype.h>
@@ -224,6 +221,9 @@ main(argc, argv)
 #endif
 #ifdef __EMX__
     _fsetmode(stdout, "b");
+#endif
+#ifdef __CYGWIN32__
+    setmode(fileno(stdout), O_BINARY);
 #endif
 
 /* option */

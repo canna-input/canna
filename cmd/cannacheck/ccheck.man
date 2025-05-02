@@ -19,7 +19,7 @@
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 .\" PERFORMANCE OF THIS SOFTWARE.
 
-.\" $Id: ccheck.man,v 1.5 1994/01/27 10:45:08 misao Exp $
+.\" $Id: ccheck.man,v 1.1.1.1 2002/10/19 08:27:32 aida_s Exp $
 .TH CANNACHECK 1
 .SH "NAME"
 cannacheck \- Display information about Japanese input system Canna

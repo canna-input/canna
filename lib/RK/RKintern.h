@@ -21,7 +21,7 @@
  */
 
 /* LINTLIBRARY */
-/* $Id: RKintern.h,v 4.18.1.6 1996/11/30 06:33:23 kon Exp $ */
+/* $Id: RKintern.h,v 1.3 2002/10/20 14:29:58 aida_s Exp $ */
 #ifndef		_RKintern_h
 #define		_RKintern_h
 
@@ -33,6 +33,9 @@
    す。これにより文章末にしか現れない文字が文節の途中に出て来ることが
    なくなり変換効率が向上します。このコードをかいて下さいました藤枝さ
    んに感謝します。 */
+
+#define LOGIC_HACK
+/* 藤枝＠ＪＡＩＳＴのハックを有効にする */
 
 #define EXTENSION_NEW
 
@@ -53,6 +56,10 @@
 #define ENGINE_SWITCH
 #define USE_MALLOC_FOR_BIG_ARRAY
 #define USE_SJIS_TEXT_DIC
+#endif
+
+#ifdef __CYGWIN32__
+#define USE_MALLOC_FOR_BIG_ARRAY
 #endif
 
 #if defined(__STDC__) || !DONT_HAVE_RENAME
@@ -76,35 +83,14 @@ typedef unsigned short Wchar;
 #define exp(x)	x
 #endif
 
-#ifdef __STDC__
-#include <stdlib.h>
-#define pro(x) x
-#else
+#include "ccompat.h"
+
 #ifdef WIN
-#include <stdlib.h>
-#include <fcntl.h>
 #include <sys/stat.h>
-#define pro(x) x
-#else
-#define const
-extern char *malloc(), *realloc(), *calloc();
-extern void free();
-#define pro(x) ()
-#endif /* WIN */
 #endif
 
 #ifndef AIXV3
 #include	<ctype.h>
-#endif
-
-#if defined(SYSV) || defined(SVR4) || defined(__STDC__) || defined(WIN)
-# if defined(SYSV) || defined(SVR4)
-#  include <memory.h>
-# endif
-# ifndef __EMX__
-#  define bzero(buf, size) memset((char *)(buf), 0x00, (size))
-#  define bcopy(src, dst, size) memcpy((char *)(dst), (char *)(src), (size))
-# endif
 #endif
 
 #ifdef NOT_DEF
@@ -550,6 +536,9 @@ struct RUT{
 #define	NW_RC256	0x80	/* set when rowcol >= 256 */
 #define	NW_LEN		0x7f	/* kouho no nagasa ( zenkaku 31 moji) */
 #define	rowcol256(flag)	((flag) & NW_RC256)
+#ifdef LOGIC_HACK
+#define NW_RCBITS	9	/* bits of maximum rowcol number */
+#endif
 
 #define	candlen(flag)	((flag) & NW_LEN)
 #define wordlen(flag)	((candlen(flag) << 1) + NW_PREFIX)
@@ -584,6 +573,10 @@ struct RkKxGram {
     int		ng_rowbyte;	/* row atari no byte suu */
     char	*ng_conj;	/* setuzoku gyouretu/code table */
     char	**ng_strtab;
+#ifdef LOGIC_HACK
+    int		ng_numneg;	/* the number of negative conunctions */
+    unsigned long *ng_neg;	/* negative conjunctions */
+#endif
 };
 
 #define	GetGramRow(g, r) 	((g)->ng_conj + (r)*(g)->ng_rowbyte)
@@ -608,6 +601,9 @@ struct RkGram {
   int			refcount; /* reference counter */
   struct RkKxGram	*gramdic; /* grammar dictionary */
   int	 		P_BB, P_NN, P_T00, P_T30, P_T35; /* hinshi codes */
+#ifdef LOGIC_HACK
+  int			P_KJ; /* tankanji */
+#endif
 };
 
 extern struct RkGram SG;
@@ -669,6 +665,10 @@ struct nword {
     unsigned char	nw_lit;		/* literal conversion */
     unsigned long	nw_prio;	        /* kouzou ni yoru priority */  /* True ? by tamano */
     unsigned long   nw_csn;
+#ifdef LOGIC_HACK
+    unsigned char	nw_count;	/* setsuzoku suu */
+    unsigned long	nw_rcvec;	/* hidari no hinshi retsu */
+#endif
     struct nword	*nw_left;	/* hidari ni tunagaru word */
     struct nword	*nw_next;	/* onaji nw_len wo motu list */
     unsigned char	*nw_kanji;	/* kanji kouho ichi/douteki na kouho */
@@ -682,6 +682,9 @@ struct nword {
 #define NW_SWD		0x40
 #define NW_PRE		0x20
 #define NW_SUC		0x10
+#ifdef LOGIC_HACK
+#define NW_LOWPRI	0x08
+#endif
 #ifdef BUNMATU
 #define NW_BUNMATU	0x04
 #endif

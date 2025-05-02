@@ -1,10 +1,10 @@
-/* $Id: Imakefile,v 1.7 1996/11/27 07:13:25 kon Exp $ */
+/* $Id: Imakefile,v 1.2 2002/10/20 04:10:27 aida_s Exp $ */
 #include "../../Canna.conf"
 
       CANNAROOT = ../..
            SRCS = forcpp.c
 
-#ifdef __EMX__
+#if defined(__EMX__) || defined(__CYGWIN32__)
 AllTarget(forcpp.exe)
 #else
 AllTarget(forcpp)

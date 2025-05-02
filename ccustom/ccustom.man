@@ -19,7 +19,7 @@
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 .\" PERFORMANCE OF THIS SOFTWARE.
 
-.\" $Id: ccustom.man,v 1.5 1994/01/27 10:44:46 misao Exp $
+.\" $Id: ccustom.man,v 1.1.1.1 2002/10/19 08:27:30 aida_s Exp $
 .TH CCUSTOM 1
 .SH "NAME"
 ccustom \- Customizing tool for Canna

@@ -42,47 +42,19 @@ imake on X11R6 to compile Canna.
   5. Compilation and Installation of Canna when you cannot become
      super user
 
-       Canna version 3.5 beta 2 is compiled on the following machines.
-
-     Machine                OS                              Compiler
-    IBM-PC Compatible(486) FreeBSD 2.1.5R                  cc(gcc 2.6.3)
-    IBM-PC Compatible(486) Linux 2.0.0                     cc(gcc 2.7.?)
-    EWS 4800/320EX         UX/4800 R12.2                   /usr/abiccs/bin/cc
-    Sparc Station 5        Solaris 2.5                     cc(gcc 2.6.0)
-    HP 9000/715/80         HP-UX 10.01
-    Indigo2                IRIX64 6.2                      /usr/bin/cc
-    EWS 4800/350           EWS-UX/V(Rel4.2) R9.3           /usr/abiccs/bin/cc
-
-       Canna version 3.5 beta 1 is compiled on the following machines.
-
-     Machine                OS                              Compiler
-    IBM-PC Compatible(486) FreeBSD 2.1.5R                  cc(gcc 2.6.3)
-    IBM-PC Compatible(486) Linux 2.0.0                     cc(gcc 2.7.?)
-    EWS 4800/320EX         UX/4800 R12.2                   /usr/abiccs/bin/cc
-    Sparc Station 5        Solaris 2.4?
-    HP 9000/715/80         HP-UX 10.01
-    IBM-PC Compatible(486) OS/2 Warp J3.0                  emx 0.9c(gcc 2.7.2)
-    ?                      SunOS 4.1.4 (JLE)               cc
-    ?                      Linux 2.0.25 + Slackware 3.1
-    ?                      FreeBSD 2.2-SNAP-961014         gcc 2.7.2.1
-    HP 9000/712/60         HP-UX A.09.05                   gcc 2.7.0
-    ?                      Linux 2.0.15 + Slackware 3.1
-    ?                      Linux 1.2.13 + Slackware 3.0
-    Sparc Station LX       Solaris 2.5
-    IBM-PC Compatible      Linux(Slackware96) 2.0.25
-    Sparc Station 20       Solaris 2.4                     SPARCompiler C 3.0.1
-    IBM-PC Compatible(386) NetBSD-1.2B
-    Sparc Station 2        NetBSD-1.2
-    Sun3/80                NetBSD-1.2
-    IBM-PC Compatible(486) OS/2 Warp J3.0                  emx 0.9c(gcc 2.7.2)
-
-
-       When you compile or run Canna on other machines than the list
-  above, mail them to Canna@nec.co.jp.
-
        If you have any problem to compile Canna, mail to
-  Canna@nec.co.jp, too.  Canna@nec.co.jp is a mailing list.  If you
-  want to join the member, mail to Canna-request@nec.co.jp.
+  canna-dev@lists.sourceforge.jp. Please report detailed errors.
+
+  There are thee mailing lists.
+
+  * Canna@nec.co.jp (users mailing list)
+    For more information, see:
+    http://www.nec.co.jp/canna/c-mail.html
+
+  * canna-dev@lists.sourceforge.jp (developers mailing list)
+  * canna-cvs@lists.sourceforge.jp (cvs commitlog list)
+    Mailman interface is available at:
+    http://sourceforge.jp/mail/?group_id=285
 
        Canna which contributed on X11R5 is Version 1.2.
 
@@ -175,32 +147,34 @@ imake on X11R6 to compile Canna.
 
        For example, the default setting is:
 
-                cannaBinDir = /usr/local/canna/bin
-                cannaSrvDir = /usr/local/canna/bin
-                cannaLibDir = /usr/local/canna/lib
-                cannaManDir = /usr/local/canna/man
-                cannaIncDir = /usr/local/canna/include/canna
+                /* #define InstallAsUser */
+                cannaPrefix = /usr/local/canna
+                cannaExecPrefix = $(cannaPrefix)
+                cannaBinDir = $(cannaExecPrefix)/bin
+                cannaSrvDir = $(cannaExecPrefix)/bin
+                cannaLibDir = $(cannaPrefix)/lib
+                cannaManDir = $(cannaPrefix)/man
+                cannaIncDir = $(cannaPrefix)/include/canna
+                #ifdef InstallAsUser
+                libCannaDir = $(cannaExecPrefix)/lib
+                ErrDir  = $(cannaExecPrefix)/log
+                #else
                 libCannaDir = /usr/lib
-                ErrDir = /usr/spool/canna
+                ErrDir  = /usr/spool/canna
+                #endif
                 wcharDefinition = -DCANNA_WCHAR
                 Wlib =
                 JapaneseLocale = japan
                 cannaOwner = bin
                 cannaGroup = bin
                 pointerIntegerDef =
-                sharedLibExtension = so.1
-                cannaDsoRev = 1
                 DicDir = $(cannaLibDir)/dic
                 #define JAPANESEMAN
                 pubdicDir = $(CANNAROOT)/dic/ideo/pubdic
                 cannaLight = 1
 
-       The definition of wcharDefinition is a blank when you use the
-  system definition of wchar_t and the functions as mbstowcs etc.  In
-  following case, you define -DCANNA_WCHAR to wcharDefinition.  The
-  cases are there is no system definition of them, or there are not
-  Japanese environment (ex. /usr/lib/locale/ja_JP etc) although the
-  function mbstowcs are.
+       At most cases, you should define -DCANNA_WCHAR to
+  wcharDefinition.
 
        Without definition of wcharDefinition, you must configure the
   parameter JapaneseLocale.  Here is the locale name which defined on
@@ -884,4 +858,4 @@ That's all.
  * PERFORMANCE OF THIS SOFTWARE. 
  */
 
-($Id: INSTALL,v 2.27 1996/12/02 12:37:59 misao Exp $)
+($Id: INSTALL,v 1.2 2002/10/23 15:40:55 aida_s Exp $)

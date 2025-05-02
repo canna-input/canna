@@ -19,14 +19,14 @@
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 .\" PERFORMANCE OF THIS SOFTWARE. 
 .\"
-.\" $Id: server.jmn,v 1.8 1994/01/27 11:12:10 kuma Exp $
+.\" $Id: server.jmn,v 1.3 2002/10/24 14:16:42 aida_s Exp $
 .nr X 0
 .if \nX=0 .ds X} cannaserver 1M "日本語機能ユーティリティ" "\&"
 .TH \*(X}
 .SH "名前"
 cannaserver \- かな漢字変換サーバ
 .SH "形式"
-.B "cannaserver [\-d] [\-l \fIn\fP] [\fIddpath\fP]"
+.B "cannaserver [\-d] [\-u \fIuserid\fP] [\-inet] [\-l \fIn\fP] [\fIddpath\fP] "
 .SH "説明"
 .PP
 かな漢字変換サービスを提供します。通常 cannaserver(1M)は/etc/rcファイル
@@ -39,39 +39,39 @@ cannaserver(1M) は起動すると即座にフォークしバックグラウンドプロセス
 となります。したがって``&''により明示的にバックグラウンドプロセスにす
 る必要はありません。
 .PP
-cannaserver(1M) は起動時に cannaserver(1M) の重複した起動を避けるためにロッ
-クファイル @(LockDir)/@(LockFile) を作成します。ロックファ
-イルは cannaserver(1M) 終了時に自動的に消去されますが，cannaserver(1M) が異
-常終了するなどの原因で cannaserver(1M) が動いていないにもかかわらずロッ
-クファイルが存在する場合には手動でロックファイルを削除して下さい。
-.PP
-cannaserver(1M) は起動時に @(cannaLibDir)/dic/premountdics を調べてそ
-こに記述してある辞書をあらかじめマウントしておきます。これによりプリマ
-ウントしてある辞書の使用要求がクライアントからあがってきたときに迅速に
-応じることが可能となります。
+cannaserver(1M) は起動時に cannaserver(1M) とクライアントが通信するために
+UNIXドメインソケット @(UnixSockDir)/@(UnixSockName) を作成します。ソケットは
+ cannaserver(1M) 終了時に自動的に消去されますが，cannaserver(1M) が異
+常終了するなどの原因で cannaserver(1M) が動いていないにもかかわらずソケット
+が存在する場合には手動でソケットを削除して下さい。
 .PP
 使用する辞書の指定はクライアントからの要求にしたがって辞書ディレ
 クトリの dics.dir ファイルを参照することにより決められます。 
 .SH "オプション"
 .IP "\fIddpath\fP" 12
 辞書の存在するディレクトリを指定します。
-.IP "\-l \fIn\fP" 12
-cannaserver(1M) のログを /tmp/canna.log に出力します。n でログ
-のレベルを設定します。ログのレベルとして 1〜5 の数字を指定
-できます。
 .IP "\-d" 12
 cannaserver(1M) をデバッグモードで起動します。cannaserver(1M) はフォ
 アグランドプロセスとして実行され，ログレベル 5 のログが標準
 エラー出力に出力されます。
+.IP "\-inet" 12
+リモートホストから cannaserver(1M) へ、inetドメインソケットを用いて
+接続するときに指定します。これを指定しないと、 cannaserver(1M) は
+UNIXドメインソケットを用いて、同一ホストのクライアントとしか接続できません。
+.IP "\-l \fIn\fP" 12
+cannaserver(1M) のログを /tmp/canna.log に出力します。n でログ
+のレベルを設定します。ログのレベルとして 1〜5 の数字を指定
+できます。
+.IP "\-u \fIuserid\fP" 12
+cannaserver(1M)がどのユーザーの権限で動作するか指定します。指定しなかった場合、
+起動したユーザーの権限で動作します。
 .SH "関連ファイル"
-.IP "@(LockDir)/@(LockFile)" 36
-ロックファイル
+.IP "@(UnixSockDir)/@(UnixSockName)[:num]" 36
+ソケット
 .IP "@(cannaLibDir)/dic/*/dics.dir" 36
 辞書目録
-.IP "/etc/hosts.canna" 36
+.IP "@(AccessFile)" 36
 アクセス制御ファイル
-.IP "@(cannaLibDir)/dic/premountdics" 36
-プリマウント辞書リスト
 .SH "関連コマンド"
 .PP
 cannakill(1M), cannastat(1), cannacheck(1)

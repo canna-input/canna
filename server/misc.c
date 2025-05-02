@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[]="@(#) $Id: misc.c,v 6.15 1996/11/27 07:30:30 kon Exp $";
+static char rcs_id[]="@(#) $Id: misc.c,v 1.4 2002/10/20 18:00:22 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */
@@ -46,11 +46,12 @@ static char rcs_id[]="@(#) $Id: misc.c,v 6.15 1996/11/27 07:30:30 kon Exp $";
 #include <fcntl.h>
 #endif
 #ifdef __EMX__
-#include <sys/types.h>
 #include <unistd.h>
 #endif
 #include <signal.h>
+#include <pwd.h>
 #include <sys/ioctl.h>
+#include <sys/types.h>
 #include "IR.h"
 #include "net.h"
 
@@ -65,7 +66,9 @@ static char rcs_id[]="@(#) $Id: misc.c,v 6.15 1996/11/27 07:30:30 kon Exp $";
 #define ERRFILE     "CANNA"
 #define ERRFILE2    "msgs"
 #define ERRSIZE     64
+#ifndef ACCESS_FILE
 #define ACCESS_FILE "/etc/hosts.canna"
+#endif
 
 extern void CheckConnections();
 
@@ -87,6 +90,19 @@ int PortNumberPlus = 0;
 int MMountFlag = 0; /* メモリに辞書をロードするかしないかのフラグ */
 static char Name[64];
 
+static char *userID=NULL; /* canna server's user id */
+
+#ifdef USE_INET_SOCKET
+/* flag for using INET Domain Socket */
+#ifdef USE_UNIX_SOCKET
+/* Not to use INET domain socket, if can use Unix Domain Socket */
+int UseInet = 0;
+#else
+/* if can use Unix Domain Socket, Use INET domain socket */
+int UseInet = 1;
+#endif
+#endif
+
 #define MAX_PREMOUNTS 20
 
 char *PreMountTabl[MAX_PREMOUNTS];
@@ -99,7 +115,7 @@ ACLPtr ACLHead = (ACLPtr)NULL;
 static void Reset();
 static void parQUIT();
 
-#define USAGE "Usage: cannaserver [-p num] [-l num] [-d] [-syslog] [dichome]"
+#define USAGE "Usage: cannaserver [-p num] [-l num] [-u userid] [-syslog] [-inet] [-d] [dichome]"
 static void
 Usage()
 {
@@ -117,6 +133,7 @@ char *argv[];
     char buf[ MAXDATA ];
     int     parent, parentid, i;
     int     context;
+    struct  passwd *pwent;
 
     strcpy( Name, argv[ 0 ] );
 
@@ -137,6 +154,21 @@ char *argv[];
 	    /* NOTREACHED */
 	  }
 	}
+	else if( !strcmp( argv[i], "-u")) {
+	  if (++i < argc) {
+	    userID = argv[i];
+	  }
+	  else {
+	    fprintf(stderr, "%s\n", USAGE);
+	    exit(2);
+	    /* NOTREACHED */
+	  }
+	}
+#ifdef USE_INET_SOCKET
+	else if( !strcmp( argv[i], "-inet")) {
+	  UseInet = 1;
+	}
+#endif
 #ifdef RK_MMOUNT
 	else if( !strcmp( argv[i], "-m") ) {
 	  MMountFlag = RK_MMOUNT;
@@ -166,6 +198,23 @@ char *argv[];
 	if( !ddname )
 	    FatalError("cannaserver:Initialize failed\n");
 	strcpy( (char *)ddname, DICHOME );
+    }
+
+    if (userID != NULL) {
+        pwent = getpwnam(userID);
+	if (pwent) {
+	    if(setgid(pwent->pw_gid)) {
+	        FatalError("cannaserver:couldn't set groupid to canna user's group\n");	  
+	    }
+	    if (initgroups(userID, pwent->pw_gid)) {
+	        FatalError("cannserver: couldn't init supplementary groups\n");
+	    }
+	    if (setuid(pwent->pw_uid)) {
+	        FatalError("cannaserver: couldn't set userid to %s user\n", userID);
+	    }
+	} else if (userID != NULL) {
+	    FatalError("cannaserver: -u flag specified, but canna not run as root\n");
+	}
     }
 
 #ifdef DEBUG
@@ -461,7 +510,7 @@ CreateAccessControlList()
 {
     char   buf[BUFSIZE];
     char   *wp, *p ;
-    ACLPtr  current = (ACLPtr)NULL ;
+    ACLPtr  current;
     ACLPtr  prev = (ACLPtr)NULL ;
     FILE    *fp ;
     struct hostent *hp;
@@ -560,8 +609,6 @@ CreateAccessControlList()
 	current->next = (ACLPtr)NULL ;
 	prev = current ;
     }
-    if( current )
-	current->next = (ACLPtr)NULL ;
 
     fclose( fp ) ;
     return 0;
@@ -649,12 +696,19 @@ int cxnum ;
 
     if (client->username && client->username[0]) {
       if (client->groupname && client->groupname[0]) {
+	if (strlen(DDUSER) + strlen(client->username) +
+	    strlen(DDGROUP) + strlen(client->groupname) +
+	    strlen(DDPATH) + 4 >= 256)
+	  return ( -1 );
 	sprintf(dichome, "%s/%s:%s/%s:%s",
 		DDUSER, client->username,
 		DDGROUP, client->groupname,
 		DDPATH);
       }
       else {
+	if (strlen(DDUSER) + strlen(client->username) +
+	    strlen(DDPATH) + 2 >= 256)
+	  return ( -1 );
 	sprintf(dichome, "%s/%s:%s",
 		DDUSER, client->username,
 		DDPATH);

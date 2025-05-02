@@ -1,4 +1,4 @@
-/* $Id: Imakefile,v 5.3 1996/11/27 07:23:42 kon Exp $ */
+/* $Id: Imakefile,v 1.2 2002/10/20 08:20:33 aida_s Exp $ */
 #include "../../Canna.conf"
 
          CANNAROOT = ../..
@@ -124,6 +124,7 @@ clean::
 
 DependTarget()
 
+includes:: sglobal.h
 LinkFileList(includes,$(HEADERS), $(CANNAROOT)/include,../lib/canna)
 
 #ifndef __EMX__

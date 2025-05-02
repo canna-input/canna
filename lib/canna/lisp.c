@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[] = "$Id: lisp.c,v 4.23 1996/11/26 06:15:36 kon Exp $";
+static char rcsid[] = "$Id: lisp.c,v 1.1.1.1 2002/10/19 08:27:50 aida_s Exp $";
 #endif
 
 /* 

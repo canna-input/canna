@@ -21,11 +21,12 @@
  */
 
 #ifndef	lint
-static char rcsid[] = "@(#) 112.1 $Id: splitwd.c,v 2.6 1996/11/30 06:32:18 kon Exp $";
+static char rcsid[] = "@(#) 112.1 $Id: splitwd.c,v 1.2 2002/10/20 14:29:58 aida_s Exp $";
 #endif
     
 #include	<stdio.h>
 #include	<signal.h>
+#include	"ccompat.h"
 
 #if defined(__STDC__) || defined(SVR4)
 #include <locale.h>
@@ -79,7 +80,6 @@ uchar   *hinshi;
 {
     struct tango   *tp;
     uchar   *p;
-    extern char *malloc();
 	
     if( !(tp = (struct tango *)malloc(sizeof(struct tango))) )
 	fprintf(stderr, gettxt("cannacmd:41", 

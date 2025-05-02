@@ -21,21 +21,13 @@
  */
 
 #ifndef lint
-static char rcsid[]="@(#) 112.1 $Id: crrdic.c,v 1.16 1996/11/27 07:16:19 kon Exp $";
+static char rcsid[]="@(#) 112.1 $Id: crrdic.c,v 1.2 2002/10/20 14:29:57 aida_s Exp $";
 #endif
 
 #include	<stdio.h>
 #include	<ctype.h>
 #include	<canna/RK.h>
-
-#ifdef __STDC__
-#include        <stdlib.h>
-#define pro(x) x
-#else
-extern char *malloc(), *realloc(), *calloc();
-extern void free();
-#define pro(x) ()
-#endif
+#include	"ccompat.h"
 
 #if  defined(__STDC__) || defined(SVR4)
 #include <locale.h>

@@ -19,7 +19,7 @@
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 .\" PERFORMANCE OF THIS SOFTWARE. 
 .\"
-.\" $Id: RkCvtZen.jmn,v 7.1 1994/04/21 08:41:14 kuma Exp $ NEC;
+.\" $Id: RkCvtZen.jmn,v 1.1.1.1 2002/10/19 08:27:47 aida_s Exp $ NEC;
 .TH RKCVTZEN 3 "4 April 1991"
 .SH "名前"
 RkCvtZen \- ASCII文字および半角カタカナを全角文字に変換する

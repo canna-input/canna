@@ -21,19 +21,11 @@
  */
 
 #ifndef lint
-static char rcs_id[] = "$Id: cannaindex.c,v 1.5 1996/11/07 01:25:20 kon Exp $";
+static char rcs_id[] = "$Id: cannaindex.c,v 1.2 2002/10/20 14:29:58 aida_s Exp $";
 #endif
 
 #include <stdio.h>
-
-#if defined(SYSV) || defined(USG) || defined(SVR4) || defined(__STDC__)
-#include <string.h>
-#define index strchr
-#define allocs strdup
-#else
-#include <strings.h>
-
-extern char *malloc();
+#include "ccompat.h"
 
 static char *
 allocs(s)
@@ -47,7 +39,6 @@ char *s;
   }
   return res;
 }
-#endif
 
 static char *program;
 

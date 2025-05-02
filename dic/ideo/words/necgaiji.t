@@ -19,7 +19,7 @@
 # OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 # PERFORMANCE OF THIS SOFTWARE. 
 #
-# $Id: necgaiji.t,v 1.3 1994/01/27 11:07:27 kuma Exp $
+# $Id: necgaiji.t,v 1.1.1.1 2002/10/19 08:27:40 aida_s Exp $
 #
 ()1 #KJ ­¡
 ()10 #KJ ­ª

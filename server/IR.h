@@ -21,27 +21,13 @@
  */
 
 /* sccs_id[]="%Z% NEC UNIX( PC-UX/EWS-UX ) %M% %R%.%L% %E% %U%"; */
-/* $Id: IR.h,v 6.6 1996/11/27 07:24:56 kon Exp $ */
+/* $Id: IR.h,v 1.3 2002/10/20 14:29:59 aida_s Exp $ */
 
 #include "cannaconf.h"
 #define EXTENSION
 #define DEBUG
-
-#if defined(SYSV) || defined(SVR4) || defined(__STDC__)
-# if defined(SYSV) || defined(SVR4)
-#  include    <memory.h>
-# endif
-# ifndef __EMX__
-#  ifndef bcopy
-#   define bcopy(src, dst, size) memcpy((char *)(dst), (char *)(src), (size))
-#  endif
-#  ifndef bzero
-#   define bzero(buf, size) memset((char *)(buf), 0x00, (size))
-#  endif
-# else
-#  include    <sys/types.h>
-# endif
-#endif
+#include "ccompat.h"
+#include <sys/types.h>
 
 #ifdef pcux
 
@@ -52,15 +38,9 @@
 #include    <sys/param.h>
 
 #ifdef __STDC__
-#include <stdlib.h>
 #include <time.h>
-#include <string.h>
-#define pro(x) x
 #else
-extern char *malloc(), *realloc(), *calloc();
-extern void free();
 extern char *ctime(), *strtok();
-#define pro(x) ()
 #endif
 
 #ifdef WCHAR_T

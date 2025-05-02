@@ -1,13 +1,7 @@
-              CANNA Version 3.5, a Japanese input system
+              CANNA Version 3.6, a Japanese input system
 
-                          December 2, 1996
-
-                             Yuko Misao
-                       misao@uxd.fc.nec.co.jp
-                             Akira Kon
-                        kon@uxd.fc.nec.co.jp
-
-                           NEC Corporation
+                             Canna Project
+		     http://canna.sourceforge.jp/
 
 0. Preface
 
@@ -266,74 +260,33 @@
   (7) When you compile, you will have a warning message "Undefined row
       vectors: BM".  Don't worry it.
 
+  (8) Multiple security vulnerabilities in canuum.
+
 6. Acknowledgements
 
-  Canna version 3.5 has been released as a Beta Release on November
-  1996, and many people have cooperated and worked to make this
-  release in canna mailing list since Beta Release.  They had reported
-  the compilation in respective version, the problems to compile, and
-  the bugs which are not easy to find out and they had suggested their
-  idea to correct as patch.  Our thanks go out to the following
-  people.
+  see README.ja.
 
-    Hiroshi Ueno (IBM japan, Ltd.), Shiro Koike
-    (Hamanako-Area Network Society), Hideya Hane (writer), Tsubai.
-
-  Hajime Oiwa (Keio Univ.) agreed to support TUT code as a function of
-  Canna.  Thank you very much.  The function to input TUT code have
-  supported since Canna Version 2.2 patch level 2.
-
-  Tomotake Furuhata (The Univ. of Tokyo) pointed out bugs in Imakefile
-  on Canna Version 1.2 and sent the patch to correct (Canna have a
-  large number of Imakefile).  Imakefiles after Canna Version 2.2
-  based on his patch.  Thank you very much.
-
-  Yasuhiro Masutani (Osaka Univ.) and Masaki Takayama (NEC Software,
-  Ltd.) maintained the documents.  There is a problem that the
-  installed directories do not agree with the description in
-  documents, since the directories of Canna are changeable according to
-  the environments of installation.  They cleared the problem.  Thank
-  you very much.
-
-  Takashi Matsuzawa made the part of engine switcher on HP-UX.  He
-  gave them the advice.  Thank you very much.
-
-  Isao Seki (PRUG), Yuuji Hirose (Keio Univ.) and Yasuhiro Matsuoka
-  (Nagoya Institute of Technology) pointed out bugs on NEmacs or Mule
-  with Canna, and sent the patch to correct them.  Thank you very
-  much.  NEmacs and Mule aren't included in this release, but we will
-  improve them.
-
-  Yoshinori Sakamoto (Nara Institute of Science and Technology),
-  Makoto Ishisone (SRA), Hisashi Minamino (SRA), Yoshinari Kanaya
-  (Tohoku Univ), Junn Ohta (RICOH), Yoshitaka Tokugawa (DIT) and
-  Takahiro Kanbe (FXIS) gave advice about the separation of
-  cannaserver from TTY and the portable program of variable argument.
-  Thank you very much.
-
-  We debugged the problem on DEC Alpha, 64 bit workstation of Digital
-  Equipment Co., at Alpha resource center in Digital Equipment
-  Corporation Japan.  We thank Hiroaki Obata, Tsutomu Okihara and
-  Satoshi Watanabe for their efforts.
-
-  Masato Minda (ASTEC) set up and managed "Canna" mailing list.
-  Therefore, we get many useful information such as above.  We thank
-  him for his efforts.
-
-  Kazuhiro Fujieda (Japan Advanced Institute of Science and
-  Technology, Hokuriku), Hiroki Kanou (Waseda Univ.), Masaki Takayama
-  (NEC Software, Ltd.)  and Hiroshi Yamada (NEC Corporation) gave the
-  suggestions about certain part of speech and conjunction of words.
-  Especially, Mr. Fujieda put the symbols which show the end of
-  sentence in the kana-to-kanji conversion logic of Canna.  Thank you
-  very much.
-
-  The following ftp sites mirror the source files of Canna.
-
-    ASTEC, SRA, Tokyo Internet, Hamamatsu Business Internet,
-    Hamanako-Area Network Society, and Ryukoku Univ..
-
-  Thank you very much.
+/* Copyright (c) 2002 Canna Project. All rights reserved.
+ *
+ * Permission to use, copy, modify, distribute and sell this software
+ * and its documentation for any purpose is hereby granted without
+ * fee, provided that the above copyright notice appear in all copies
+ * and that both that copyright notice and this permission notice
+ * appear in supporting documentation, and that the name of the
+ * author and contributors not be used in advertising or publicity
+ * pertaining to distribution of the software without specific, written
+ * prior permission.  The author and contributors no representations
+ * about the suitability of this software for any purpose.  It is
+ * provided "as is" without express or implied warranty.
+ *
+ * THE AUTHOR AND CONTRIBUTORS DISCLAIMS ALL WARRANTIES WITH REGARD TO
+ * THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ * FITNESS, IN NO EVENT SHALL THE AUTHOR AND CONTRIBUTORS BE LIABLE FOR
+ * ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER
+ * RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
+ * CONTRACT, NEGLIGENCE OR OTHER TORTUOUS ACTION, ARISING OUT OF OR IN
+ * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. 
+ */
 
 /* Copyright 1994 NEC Corporation, Tokyo, Japan.
  *
@@ -357,4 +310,4 @@
  * PERFORMANCE OF THIS SOFTWARE. 
  */
 
-($Id: README,v 2.21 1996/12/02 08:11:01 misao Exp $)
+($Id: README,v 1.5 2002/10/24 14:16:42 aida_s Exp $)

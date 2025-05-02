@@ -21,20 +21,16 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[]="$Id: tempdic.c,v 3.13 1996/11/27 07:20:40 kon Exp $";
+static char rcsid[]="$Id: tempdic.c,v 1.3 2002/10/20 14:29:58 aida_s Exp $";
 #endif
 /*LINTLIBRARY*/
 
 #include	"RKintern.h"
 
 #include	<stdio.h>
-#if defined(USG) || defined(SYSV) || defined(SVR4) || defined(WIN)
-# include	<string.h>
-# ifndef rindex
-#  define rindex strrchr
-# endif
-#else
-# include	<strings.h>
+
+#ifdef __CYGWIN32__
+#include <fcntl.h> /* for O_BINARY */
 #endif
 
 #ifdef sony_news
@@ -679,6 +675,9 @@ _Rktclose(dm, file, gram)
 		      CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 #else
     fdes = creat(backup, (unsigned)0666);
+#ifdef __CYGWIN32__
+    setmode(fdes, O_BINARY);
+#endif
 #endif
     ecount = 0;
     if 
@@ -986,6 +985,9 @@ _Rktsync(cx, dm, qm)
 			CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 #else
       fdes = creat(backup, (unsigned)0666);
+#ifdef __CYGWIN32__
+      setmode(fdes, O_BINARY);
+#endif
 #endif
       ecount = 0;
       if 

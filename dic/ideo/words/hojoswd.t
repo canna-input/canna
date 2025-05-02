@@ -19,10 +19,10 @@
 # OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 # PERFORMANCE OF THIS SOFTWARE. 
 #
-# $Id: hojoswd.t,v 4.2 1996/11/09 02:14:52 kon Exp $
+# $Id: hojoswd.t,v 1.2 2002/10/20 04:10:29 aida_s Exp $
 い #Zi @ #ktok5iO @
 か #Zka @
-か #ktec5a @ #ktok5a @
+か #ktok5a @
 かい #Zkai @
 かしら #Zkasira @
 かしらん #Zkasira @
@@ -30,20 +30,20 @@
 がた #yasui @
 がち #D2T16 @
 き #ktok5i @
-きゃ #ktec5ya @ #ktok5ya @ #kykya @ #k5ya @ #c5rya @
-きゃあ #ktec5ya @ #ktok5ya @ #kykya @ #k5ya @ #c5rya @
+きゃ #ktok5ya @ #kykya @ #k5ya @
+きゃあ #ktok5ya @ #kykya @ #k5ya @
 ぎゃ #g5ya @
 ぎゃあ #g5ya @
-く #ktec5u @ #ktok5u @
+く #ktok5u @
 くらい #FKN @
 くりゃ #kxya @
 くん #JNSUC 君 くん
 ぐらい #FKN @
-け #ktec5e @ #ktok5e @
+け #ktok5e @
 けど #Skeredo けど
 けども #Skeredo @
 けりゃ #kykya @
-こ #ktec5o @ #ktok5o @
+こ #ktok5o @
 こそ #FKN @
 さ #Zsa @
 さし #sasiru さし
@@ -54,6 +54,7 @@
 しゃあ #s5ya @
 じま #jau @
 じゃ #jau @ #kdya @
+じゃん #djan @
 すりゃ #sxya @
 すりゃあ #sxya @
 ずりゃ #zxya @
@@ -67,7 +68,6 @@
 ちゃ #chau @ #ktya @ #t5ya @
 ちゃあ #ktya @ #t5ya @
 ちゃん #JNSUC ちゃん
-っ #ktec5tO @
 っけ #kke @
 っす #ssu @
 ったって #Fttatte @
@@ -76,6 +76,7 @@
 っと #Ztto @
 っぱなし #D2T35 っぱなし
 づら #yasui @
+て #kte2 @
 と #kto @
 とも #Ztomo @
 ど #kdo @
@@ -93,7 +94,7 @@
 ねえ #Znee @
 ねえ #nainee @
 の #Zno @
-はず #KN @
+はず #KN @ #TKN @
 びゃ #b5ya @
 びゃあ #b5ya @
 まま #KN @
@@ -102,6 +103,7 @@
 もの #Zmono @
 もん #Zmono @
 や #Zya @
+やが #yagaru @
 やす #yasui @
 よ #Zyo @
 よな #Zyona @
@@ -110,6 +112,8 @@
 りゃあ #r5ya @ #ksya @
 れ #rareru れ
 わ #Zwa @
+わけ #TKN @
 ん #nn @
 ん #r5nO @
 ん #JTNN @
+んで #Snode @

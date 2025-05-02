@@ -21,9 +21,9 @@
  */
 
 /*
- * @(#) 102.1 $Id: canna.h,v 1.12 1996/11/07 01:21:45 kon Exp $
- * $Revision: 1.12 $
- * $Author: kon $
+ * @(#) 102.1 $Id: canna.h,v 1.2 2002/10/20 14:29:56 aida_s Exp $
+ * $Revision: 1.2 $
+ * $Author: aida_s $
  */
 
 #ifndef _CANNA_H_
@@ -32,6 +32,7 @@
 #include "widedef.h"
 
 #include <stdio.h>
+#include "ccompat.h"
 
 #define	WCHARSIZE	sizeof(wchar_t)
 
@@ -39,14 +40,6 @@
 #define necKanjiError jrKanjiError
 
 /*#include "jrkanji.h"*/
-
-#if defined(SYSV) || defined(SVR4) || defined(__STDC__)
-# if defined(SYSV) || defined(SVR4)
-#  include <memory.h>
-# endif
-# define bzero(buf, size) memset((char *)(buf), 0x00, (size))
-# define bcopy(src, dst, size) memcpy((char *)(dst), (char *)(src), (size))
-#endif
 
 typedef unsigned char BYTE;
 

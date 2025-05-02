@@ -21,13 +21,14 @@
  */
 
 #ifndef lint
-static char rcs[]="@(#) 112.1 $Id: ctow.c,v 1.20 1996/11/09 02:07:47 kon Exp $";
+static char rcs[]="@(#) 112.1 $Id: ctow.c,v 1.2 2002/10/20 14:29:57 aida_s Exp $";
 #endif
 /* itow.c  テキスト形式の辞書を「いろは」からＷｎｎのものに変換する。
  *	itow [-f hinshifile] [irohadic] [wnndic]
  */
 #include	<stdio.h>
 #include        <ctype.h>
+#include	"ccompat.h"
 
 #if  defined(__STDC__) || defined(SVR4)
 #include <locale.h>
@@ -37,13 +38,6 @@ static char rcs[]="@(#) 112.1 $Id: ctow.c,v 1.20 1996/11/09 02:07:47 kon Exp $";
 extern char *gettxt();
 #else
 #define	gettxt(x,y)  (y)
-#endif
-
-#ifdef __STDC__
-#include        <stdlib.h>
-#else
-extern char *malloc(), *realloc(), *calloc();
-extern void free();
 #endif
 
 #define		MAXTANGO	256

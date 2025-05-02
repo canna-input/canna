@@ -21,7 +21,7 @@
  */
 
 /*
-static char rcsid[]="$Id: ncache.c,v 2.5 1996/06/12 09:03:14 kon Exp $";
+static char rcsid[]="$Id: ncache.c,v 1.1.1.1 2002/10/19 08:27:45 aida_s Exp $";
 */
 
 #include	"RKintern.h"

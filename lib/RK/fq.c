@@ -21,15 +21,13 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[]="$Id: fq.c,v 3.8 1996/10/25 04:13:54 kon Exp $";
+static char rcsid[]="$Id: fq.c,v 1.3 2002/10/20 14:29:58 aida_s Exp $";
 #endif
 
 #include	"RKintern.h"
 
-#if defined(USG) || defined(SYSV) || defined(SVR4) || defined(WIN)
-#include <string.h>
-#else
-#include <strings.h>
+#ifdef __CYGWIN32__
+#include <fcntl.h> /* for O_BINARY */
 #endif
 
 #ifdef WIN 
@@ -680,6 +678,9 @@ FQscan(df, codm, file, w)
     if ((fd = open(file, 0)) < 0)
       return -1;
   }
+#ifdef __CYGWIN32__
+  setmode(fd, O_BINARY);
+#endif
 #endif
   
   for (off = 0; _RkReadHeader(fd, &hd, off) >= 0;) {

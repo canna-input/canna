@@ -19,7 +19,7 @@
 # OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 # PERFORMANCE OF THIS SOFTWARE. 
 
-# $Id: rMakefile,v 1.6 1992/05/11 18:19:32 kon Exp $
+# $Id: rMakefile,v 1.1.1.1 2002/10/19 08:27:52 aida_s Exp $
 
     CFLAGS = $(INCLUDES) $(DEFINES) $(DEBUGFLAGS)
   INCLUDES = -I/usr/include/canna -I/usr/include/X11

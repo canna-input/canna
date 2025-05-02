@@ -22,7 +22,7 @@
 ;; Using this customize file gives you a Japanese Input Interface
 ;; like matsutake does.
 
-;;  $Id: matsu.canna,v 2.8 1996/10/25 05:22:57 kon Exp $ 
+;;  $Id: matsu.canna,v 1.1.1.1 2002/10/19 08:27:52 aida_s Exp $ 
 
 
 ;;;  拡張メニューをあまり使わない場合は、do-not-use-extend-mode を

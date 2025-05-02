@@ -20,7 +20,7 @@
  * PERFORMANCE OF THIS SOFTWARE. 
  */
 
-/* $Id: protodefs.h,v 3.8 1996/10/24 04:20:29 kon Exp $ */
+/* $Id: protodefs.h,v 1.2 2002/10/20 08:20:33 aida_s Exp $ */
 
 #define canna_version(majv, minv) ((majv) * 1024 + (minv))
 
@@ -44,8 +44,7 @@ typedef unsigned char BYTE;
 
 #define IR_SERVICE_NAME	    "canna"
 #define IR_DEFAULT_PORT	    5680
-#define IR_UNIX_DIR	    "/tmp/.iroha_unix"
-#define IR_UNIX_PATH	    "/tmp/.iroha_unix/IROHA"
+#define IR_UNIX_PATH	    IR_UNIX_DIR "/" IR_UNIX_SOCKNAME
 #define NAME_LENGTH	    15
 #define HOST_NAME	    15
 			

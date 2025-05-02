@@ -21,7 +21,7 @@
 #
 #	iroha.d
 #
-# $Id: obsolete.dir,v 4.2 1996/11/13 00:58:45 kon Exp $
+# $Id: obsolete.dir,v 1.2 2002/10/20 04:10:29 aida_s Exp $
 #
 fuzokugo.d(fuzokugo.swd)	-fuzokugo---
 iroha.d(iroha.mwd)	-iroha---
@@ -32,7 +32,7 @@ bushu.fq(bushu.mwd)	-bushu---
 hojomwd.t(.mwd)		-hojomwd---
 number.t(.swd)		-number---
 katakana.t(.mwd)	-katakana---
-keishiki.t(.mwd)	-keishiki---
+keishiki.t(.swd)	-keishiki---
 
 chimei.t(.mwd)		-chimei---
 kanasmpl.t(.mwd)	-kanasample---

@@ -21,19 +21,20 @@
  */
 
 #ifndef LINT
-static char rcsid[]="@(#) 102.1 $Id: crxgram.c,v 1.12 1996/11/27 08:20:14 kon Exp $";
+static char rcsid[]="@(#) 102.1 $Id: crxgram.c,v 1.4 2002/10/20 18:00:21 aida_s Exp $";
 #endif
 
 /* #include	"RKintern.h" */
 
-#include	<string.h>
+#include	"ccompat.h"
 #include	<stdio.h>
+
+#define LOGIC_HACK
 
 #define	MAXLINE		2048		/* maximum length of a line */
 #define	MAXIDENT	1013		/* must be a PRIME number */
 #define	MAXSTR		(MAXIDENT*10)	/* maximum string area */
-
-extern char	*malloc(), *calloc();
+#define ROWBITS		9		/* bits of maximum row number */
 
 struct ident {
     char		*name;
@@ -63,12 +64,17 @@ struct RkKxGram {
     int			ng_rowbyte;	/* row atari no byte suu */
     unsigned char	*ng_conj;	/* setuzoku gyouretu/code table */
     unsigned char	*ng_strtab;
+#ifdef LOGIC_HACK
+    int			ng_numneg;
+    unsigned long	*ng_neg;
+#endif
 } gram;
 
 /* error handling */
 static char	fileName[256];
 static int	lineNum;
 
+#if !defined(__GLIBC__)
 static char *
 basename(name)
   char *name;
@@ -83,6 +89,7 @@ basename(name)
 	    break;
     return ++s;
 }
+#endif
 static void
 usage(prog)
   char	*prog;
@@ -373,8 +380,25 @@ int		op;
 		    break;
 		}
 	      }
+#ifndef LOGIC_HACK
 	    else 
 		alert("unknown column %s", name);
+#else
+	    else if ( r = probeIdent(Row, (char *)name) ) {
+	      int n = r->rownum;
+
+	      switch(op) {
+	      case '+':
+		  bits[n/8] |= (0x80>>(n%8));
+		  break;
+	      case '-':
+		  bits[n/8] &= ~(0x80>>(n%8));
+		  break;
+	      }
+	    }
+	    else
+	      alert("unknown row/column %s", name);
+#endif /* not LOGIC_HACK */
 	};
     };
 }
@@ -392,6 +416,10 @@ enterMatrix(fp)
 	char	row[256];
 	int	op;
 
+#ifdef LOGIC_HACK
+ 	if ( s[0] == '%' )
+ 	    break;
+#endif
 	if ( s[0] <= ' ' )
 	    continue;
 	s = scanToken(S, (unsigned char *)row, sizeof(row));
@@ -433,6 +461,111 @@ enterMatrix(fp)
     (void)fprintf(stderr, "rows %d cols %d\n", gram.ng_row, n);
 }
 
+#ifdef LOGIC_HACK
+int
+ulongcomp(i, j)
+  unsigned long *i, *j;
+{
+    return *i - *j;
+}
+
+#define SEP "/"
+#define ROWMASK ((1 << ROWBITS) - 1)
+#define	TestGram(cnj, col)	((cnj) && ((cnj)[((col)>>3)]&(0x80>>(col&7))))
+
+void
+enterNeg(fp)
+  FILE	*fp;
+{
+    unsigned char S[MAXLINE], *nextS;
+    int i;
+    unsigned long *negvec = NULL;
+    int vecsize = 0, numneg = 0;
+    unsigned long neg;
+
+    while (readLine(nextS = S, sizeof(S), fp)) {
+	short rdata[3][256];
+	char opname[256];
+	unsigned long op = 0;
+	int l0, l1, l2;
+	unsigned char *cj0, *cj1;
+
+	if (nextS[0] <= ' ')
+	    continue;
+
+	for (i = 0; i < 3; i++) {
+	    unsigned char namevec[256];
+	    char *name;
+	    struct ident *r;
+	    int j;
+
+	    nextS = scanToken(nextS, namevec, sizeof(namevec));
+	    name = strtok(namevec, SEP);
+	    for (j = 0; name && j < 255;) {
+		if (r = probeIdent(Row, name))
+		    rdata[i][j++] = r->rownum;
+		else if (r = probeIdent(Column, name)) {
+		    int offset;
+		    if (j + r->numrow >= 255)
+			break;
+		    for (offset = 0 ; offset < r->numrow ; offset++) {
+			short rownum = r->colnum + offset;
+			rdata[i][j++] = rownum;
+		    }
+		} else
+		    alert("unknown row/column ? %s", name);
+		name = strtok(NULL, SEP);
+	    }
+	    rdata[i][j] = -1;
+	}
+	nextS = scanToken(nextS, opname, sizeof(opname));
+	switch (opname[0])
+	{
+	case '-':
+	    op = 0; break;
+	case '+':
+	    op = 1; break;
+	default:
+	    alert("unknown operation %c", opname);
+	    continue;
+	}
+
+	for (l0 = 0; rdata[0][l0] >= 0; l0++) {
+	  cj0 = GetGramRow(&gram, rdata[0][l0]);
+	  neg = (unsigned long)rdata[0][l0] << ROWBITS * 2;
+	  for (l1 = 0; rdata[1][l1] >= 0; l1++) {
+	    if (!TestGram(cj0, rdata[1][l1]))
+		continue;
+	    cj1 = GetGramRow(&gram, rdata[1][l1]);
+	    neg &= ~(ROWMASK << ROWBITS);
+	    neg |= (unsigned long)rdata[1][l1] << ROWBITS;
+	    for (l2 = 0; rdata[2][l2] >= 0; l2++) {
+		if (!TestGram(cj1, rdata[2][l2]))
+		    continue;
+		neg &= ~ROWMASK;
+		neg |= (unsigned long)rdata[2][l2];
+		if (numneg >= vecsize) {
+		    vecsize += 20;
+		    negvec = (unsigned long *)
+			((negvec) /* for non-ISO environments */
+			 ? realloc(negvec, vecsize * sizeof(unsigned long))
+			 : malloc(vecsize * sizeof(unsigned long)));
+		    if (!negvec)
+			fatal("No more memory", 0);
+		}
+		negvec[numneg++] = neg << 1 | op;
+	    }
+	  }
+	}
+    }
+    qsort((char *)negvec, numneg, sizeof(unsigned long), ulongcomp);
+    gram.ng_neg = negvec;
+    gram.ng_numneg = numneg;
+
+    (void)fprintf(stderr, "neg %d\n", gram.ng_numneg);
+}
+#endif /* LOGIC_HACK */
+
 main (argc, argv)
   int argc;
   char *argv [];
@@ -443,6 +576,9 @@ main (argc, argv)
     unsigned char	l4[4];
     int			i;
     unsigned char	*file = (unsigned char *)0;
+#ifdef LOGIC_HACK
+    unsigned long	*neg;
+#endif
 
     if ( argc < 2 ) {
       usage( argv[0] );
@@ -471,9 +607,16 @@ main (argc, argv)
 
     enterIdent(fp);
     enterMatrix(fp);
+#ifdef LOGIC_HACK
+    enterNeg(fp);
+#endif
     (void)fclose(fp);
 /* write out the conjunction file */
+#ifdef __CYGWIN32__
+    cnj = fopen("cnj.bits", "wb");
+#else
     cnj = fopen("cnj.bits", "w");
+#endif
     if ( !cnj )
        fatal("Cannot create file %s", "cnj.bits");
 /* size */
@@ -488,6 +631,16 @@ main (argc, argv)
     (void)fwrite((char *)gram.ng_conj, gram.ng_rowbyte, gram.ng_row, cnj);
 /* string table */
     (void)fwrite((char *)Str, nextStr - Str, 1, cnj);
+#ifdef LOGIC_HACK
+/* negative conjunction */
+    size = gram.ng_numneg;
+    LTOL4(size, l4);
+    (void)fwrite((char *)l4, 1, 4, cnj);
+    for (i = 0, neg = gram.ng_neg; i < gram.ng_numneg; i++, neg++) {
+	LTOL4(*neg, l4);
+	(void)fwrite((char *)l4, 1, 4, cnj);
+    }
+#endif
 /* オプション用領域
  *	とりあえず、1byteに 0 を書いておく
  *

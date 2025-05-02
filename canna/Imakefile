@@ -1,9 +1,9 @@
-/* $Id: Imakefile,v 2.5 1994/08/26 05:15:48 kon Exp $ */
+/* $Id: Imakefile,v 1.2 2002/10/20 14:29:56 aida_s Exp $ */
 #include "../Canna.conf"
 
          CANNAROOT = ..
       CANNA_HEADER = jrkanji.h  keydef.h mfdef.h
-      OSDEP_HEADER = net.h widedef.h
+      OSDEP_HEADER = ccompat.h net.h widedef.h
         INT_HEADER = symbolname.h patchlevel.h protodefs.h
 
 all::

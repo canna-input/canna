@@ -19,7 +19,7 @@
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 .\" PERFORMANCE OF THIS SOFTWARE. 
 .\"
-.\" $Id: RkGetSta.jmn,v 2.1 1994/04/21 08:30:58 kuma Exp $ NEC;
+.\" $Id: RkGetSta.jmn,v 1.1.1.1 2002/10/19 08:27:44 aida_s Exp $ NEC;
 .TH RKGETSTAT 3 "19 April 1991"
 .SH "名前"
 RkGetStat \- カレント候補に関する解析情報の取りだし

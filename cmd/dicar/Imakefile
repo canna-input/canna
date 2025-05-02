@@ -1,4 +1,4 @@
-/* $Id: Imakefile,v 1.10 1996/11/27 07:12:55 kon Exp $ */
+/* $Id: Imakefile,v 1.2 2002/10/20 04:10:27 aida_s Exp $ */
 #include "../../Canna.conf"
 
       CANNAROOT = ../..
@@ -10,7 +10,7 @@ LOCAL_LIBRARIES = $(CANNAROOT)/lib/RK/libRK.a
 #endif
            SRCS = dicar.c
 
-#ifdef __EMX__
+#if defined(__EMX__) || defined(__CYGWIN32__)
 AllTarget(dicar.exe)
 #else
 AllTarget(dicar)

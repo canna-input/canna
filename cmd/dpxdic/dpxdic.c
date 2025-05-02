@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static char rcsid[]="@(#) 102.1 $Id: dpxdic.c,v 3.7 1996/11/07 01:24:04 kon Exp $";
+static char rcsid[]="@(#) 102.1 $Id: dpxdic.c,v 1.3 2002/10/20 14:29:57 aida_s Exp $";
 #endif
 
 #include "RKintern.h"
@@ -33,12 +33,7 @@ static char rcsid[]="@(#) 102.1 $Id: dpxdic.c,v 3.7 1996/11/07 01:24:04 kon Exp 
 #include	<unistd.h>
 #endif
 
-#ifdef __STDC__
-#define pro(x) x
-#else
-#define pro(x) ()
-#endif
-
+#include "ccompat.h"
 
 #ifndef HYOUJUN_GRAM
 #ifdef USE_OBSOLETE_STYLE_FILENAME
@@ -431,6 +426,9 @@ getdic(dic, filenm, dmnm)
     return(-1);
   if ((fd = open(filenm, O_RDONLY)) < 0)
     return(-1);
+#ifdef __CYGWIN32__
+  setmode(fd, O_BINARY);
+#endif
   for (off = 0, lk = 1, doff = 0, err = 0;
        !err && lk && _RkReadHeader(fd, &hd, off) >= 0;
        lk = dmnm ? strcmp(dmnm, (char *)hd.data[HD_DMNM].ptr) : 1) {
@@ -519,6 +517,9 @@ main (argc, argv)
       (void)fprintf(stderr, "%s: cannot open grammar file %s.\n", program, cnj);
       exit(1);
     }
+#ifdef __CYGWIN32__
+    setmode(fd, O_BINARY);
+#endif
     gram = RkReadGram(fd);
     close(fd);
   }

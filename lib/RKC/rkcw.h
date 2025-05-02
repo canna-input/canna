@@ -21,7 +21,7 @@
  */
 
 /* sccs_id[]="@(#) NEC UNIX( PC-UX/EWS-UX ) rkw.h 2.3 91/11/11 12:01:34"; */
-/* $Id: rkcw.h,v 4.7 1996/09/03 06:56:14 kon Exp $ */
+/* $Id: rkcw.h,v 1.4 2002/10/20 14:29:59 aida_s Exp $ */
 
 #if (defined(_WINDOWS) || defined(WIN32)) && !defined(WIN)
 #define WIN
@@ -53,25 +53,18 @@
 #define exp(x)	x
 #endif
 
-#ifndef pro
-#if defined(__STDC__) || defined(WIN)
-#define pro(x) x
-#else
-#define pro(x) ()
-#endif
-#endif
-
 #if !CANNA_LIGHT && !defined(WIN)
 #define USE_EUC_PROTOCOL
 #endif
 
 #define EXTENSION
 #define DEBUG
-#ifndef WIN
+#if !defined(WIN)
 #define UNIXCONN
 #endif
 
 #include "widedef.h"
+#include "ccompat.h"
 
 #ifndef NULL
 #define NULL 0

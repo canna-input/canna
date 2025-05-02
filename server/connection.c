@@ -48,7 +48,7 @@ SOFTWARE.
 ******************************************************************/
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "$Id: connection.c,v 4.9 1996/11/27 07:26:10 kon Exp $";
+static char rcs_id[] = "$Id: connection.c,v 1.2 2002/10/20 15:48:11 aida_s Exp $";
 #endif
 	  
 /* LINTLIBRARY */
@@ -84,6 +84,11 @@ extern ClientPtr *ConnectionTranslation;
 extern ClientPtr *clientReady, *newClients;
 extern UserTblPtr *usertabl;
 extern unsigned long connow_socks;
+
+#ifdef USE_INET_SOCKET
+/* flag for using INET Domain Socket */
+extern int UseInet;
+#endif
 
 #ifdef USE_UNIX_SOCKET  /* £’£Œ£…£ÿ•…•·•§•Û§Œ∫Ó¿Æ */
 struct sockaddr_un unsock;
@@ -220,17 +225,19 @@ CreateWellKnownSockets()
 #endif /*  use_unix_socket */
   
 #ifdef USE_INET_SOCKET  /* £…£Œ£≈£‘•…•·•§•Û */    
-  if ((request = open_inet_socket ()) != -1)
-  {
-    WellKnownConnections |= (1L << request);
-  }
-  else
-  {
-    ir_debug( Dmsg(5,"Warning: INET domain not created.\n");)
-    return 0; /* ∫Ó¿Æ§Àº∫«‘ */
-  }
+  if(UseInet){
+    if ((request = open_inet_socket ()) != -1)
+    {
+      WellKnownConnections |= (1L << request);
+    }
+    else
+    {
+      ir_debug( Dmsg(5,"Warning: INET domain not created.\n");)
+      return 0; /* ∫Ó¿Æ§Àº∫«‘ */
+    }
   
-  ir_debug( Dmsg(3,"£…£Œ£≈£‘•…•·•§•Û§œ§«§≠§ø\n"); )
+    ir_debug( Dmsg(3,"£…£Œ£≈£‘•…•·•§•Û§œ§«§≠§ø\n"); )
+  }
 #endif /* use_inet_socket */
   
   if (WellKnownConnections == 0) {

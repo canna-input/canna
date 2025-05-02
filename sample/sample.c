@@ -22,7 +22,7 @@
 
 char *uiKanjiError; /* 逐次のデバグ用 */
 
-static char rcs_id[] = "@(#)$Id: sample.c,v 2.15 1996/10/22 12:27:12 kon Exp $";
+static char rcs_id[] = "@(#)$Id: sample.c,v 1.1.1.1 2002/10/19 08:27:53 aida_s Exp $";
 
 #include <widedef.h>
 

@@ -20,7 +20,7 @@ XCOMM USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 XCOMM OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 XCOMM PERFORMANCE OF THIS SOFTWARE. 
 
-XCOMM $Id: mkbindic.cpp,v 5.9 1996/10/28 00:22:30 kon Exp $
+XCOMM $Id: mkbindic.cpp,v 1.2 2002/10/22 16:54:27 aida_s Exp $
 #include "cannaconf.h"
 #if defined(SYSV) || defined(SVR4)
 # ifdef nec_ews
@@ -250,8 +250,8 @@ flag=;
 	rm -f $cpp_text $spl_text;
 	exit 1;
     fi;
-    echo "crfreq $dic_name $child";
-    crfreq $dic_name $child;
+    echo "crfreq -div 512 $dic_name $child";
+    crfreq -div 512 $dic_name $child;
     if [ $? != 0 ]; then
         mv $bck_text $text_file;
 	echo "mkbindic: fatal error. exit";

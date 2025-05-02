@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char ichiranmap_id[] = "@(#) 102.1 $Id: ichiranmap.h,v 9.7 1996/08/01 13:23:25 kon Exp $";
+static char ichiranmap_id[] = "@(#) 102.1 $Id: ichiranmap.h,v 1.1.1.1 2002/10/19 08:27:49 aida_s Exp $";
 #endif /* lint */
 
 extern  DoFuncSequence(),UseOtherKeymap();

@@ -19,7 +19,7 @@
  * OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
  * PERFORMANCE OF THIS SOFTWARE. 
  */
-/* $Id: symbolname.h,v 2.3 1994/01/19 02:33:57 hamada Exp $ */
+/* $Id: symbolname.h,v 1.1.1.1 2002/10/19 08:27:32 aida_s Exp $ */
 #define S_HenkanNyuuryokuMode	"henkan-nyuuryoku-mode"
 #define S_ZenHiraHenkanMode	"zen-hira-henkan-mode"
 #define S_HanHiraHenkanMode	"han-hira-henkan-mode"

@@ -19,7 +19,7 @@
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 .\" PERFORMANCE OF THIS SOFTWARE. 
 .\"
-.\" $Id: RkGetDic.man,v 2.1 1994/04/21 00:46:27 kuma Exp $ NEC;
+.\" $Id: RkGetDic.man,v 1.1.1.1 2002/10/19 08:27:44 aida_s Exp $ NEC;
 .TH "RKGETDICLIST" "3"
 .SH "NAME"
 \f4RkGetDicList\f1 \- get the name of a dictionary that can be added to the dictionary list

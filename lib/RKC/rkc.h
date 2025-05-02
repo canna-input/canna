@@ -22,7 +22,7 @@
 
 /* sccs_id[]="@(#) NEC UNIX( PC-UX/EWS-UX ) rkc.h 2.4 91/11/11 12:01:18"; */
 /* #ident	"@(#) NEC/V(386) R3.0B rkc.h 5.9 90/03/26 21:04:36" */
-/* $Id: rkc.h,v 4.13 1996/11/27 07:21:35 kon Exp $ */
+/* $Id: rkc.h,v 1.3 2002/10/20 14:29:59 aida_s Exp $ */
 
 #if (defined(_WINDOWS) || defined(WIN32)) && !defined(WIN)
 #define WIN
@@ -41,19 +41,7 @@
 #include "RKrename.h"
 #endif
 
-#if defined(SYSV) || defined(SVR4) || defined(__STDC__) || defined(WIN)
-# if defined(SYSV) || defined(SVR4) || defined(WIN)
-#  include <memory.h>
-# endif
-# ifndef __EMX__
-#  ifndef bzero
-#   define bzero(buf, size) memset((char *)(buf), 0x00, (size))
-#  endif
-#  ifndef bcopy
-#   define bcopy(src, dst, size) memcpy((char *)(dst), (char *)(src), (size))
-#  endif
-# endif
-#endif
+#include "ccompat.h"
 
 /* 文節情報レコード
  *
@@ -94,23 +82,6 @@ extern int ushort2euc(), euc2ushort(), ushort2wchar(), wchar2ushort(),
 #ifdef WIN 
 typedef char *caddr_t;
 #define SIGINT 2
-#endif
-
-#ifdef __STDC__
-#include <stdlib.h>
-#else
-#ifndef WIN
-extern char *malloc(), *realloc(), *calloc();
-extern void free();
-#endif
-#endif
-
-#ifndef pro
-#if defined(__STDC__) || defined(WIN)
-#define pro(x) x
-#else
-#define pro(x) ()
-#endif
 #endif
 
 typedef long (*initialize_t) pro((char *));

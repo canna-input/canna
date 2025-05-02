@@ -20,17 +20,13 @@
  * PERFORMANCE OF THIS SOFTWARE. 
  */
 
-static char rcs_id[] = "@(#) 102.1 $Id: main.c,v 3.2 1996/09/03 03:38:02 kon Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: main.c,v 1.2 2002/10/20 14:29:56 aida_s Exp $";
 
 #include "widedef.h"
 
 #include <stdio.h>
 #include <canna/jrkanji.h>
-#if defined(USG) || defined(SYSV) || defined(SVR4)
-#include <string.h>
-#else
-#include <strings.h>
-#endif
+#include "ccompat.h"
 
 #ifdef BIGPOINTER
 #define POINTERINT long long

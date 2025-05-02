@@ -21,7 +21,7 @@
  */
 
 /*
- * @(#) 102.1 $Id: canna.h,v 10.39 1996/12/02 02:20:15 kon Exp $
+ * @(#) 102.1 $Id: canna.h,v 1.2 2002/10/20 14:29:59 aida_s Exp $
  */
 
 #ifndef _CANNA_H_
@@ -33,6 +33,7 @@
 
 #include "cannaconf.h"
 #include "widedef.h"
+#include "ccompat.h"
 #include <stdio.h>
 
 #ifdef WIN 
@@ -42,26 +43,6 @@ typedef char *caddr_t;
 #define NO_EXTEND_MENU
 #define NOT_ENGLISH_TABLE
 #define JAPANESE_SORT
-#endif
-
-
-#if defined(__STDC__) || defined(WIN)
-#include <stdlib.h>
-#define pro(x) x
-#else
-#define const
-extern char *malloc(), *realloc(), *calloc();
-extern void free();
-#define pro(x) ()
-#endif
-
-#if defined(USG) || defined(SYSV) || defined(SVR4) || defined(WIN)
-#include <string.h>
-# ifndef index
-# define index strchr
-# endif
-#else
-#include <strings.h>
 #endif
 
 #include <canna/RK.h>
@@ -104,16 +85,6 @@ extern CANNA_wcstombs pro((char *, wchar_t *, int));
 #define FirstTime			 CANNA_G271_FirstTime
 
 #define STROKE_LIMIT 500 /* ストロークで接続を切る */
-
-#if defined(SYSV) || defined(SVR4) || defined(__STDC__) || defined(WIN)
-# if defined(SYSV) || defined(SVR4)
-#  include <memory.h>
-# endif
-# ifndef __EMX__
-#  define bzero(buf, size) memset((char *)(buf), 0x00, (size))
-#  define bcopy(src, dst, size) memcpy((char *)(dst), (char *)(src), (size))
-# endif
-#endif
 
 #ifdef WIN
 #define malloc(x) (char *)GlobalAlloc(GMEM_FIXED, (x))

@@ -45,4 +45,4 @@ cpp(1), dpromdic(1)
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 .\" PERFORMANCE OF THIS SOFTWARE. 
 .\"
-.\" $Id: mkromdic.man,v 1.5 1996/11/06 10:09:28 kon Exp $
+.\" $Id: mkromdic.man,v 1.1.1.1 2002/10/19 08:27:34 aida_s Exp $

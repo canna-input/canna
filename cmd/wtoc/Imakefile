@@ -1,10 +1,10 @@
-/* $Id: Imakefile,v 1.9 1996/11/27 07:14:13 kon Exp $ */
+/* $Id: Imakefile,v 1.2 2002/10/20 04:10:29 aida_s Exp $ */
 #include "../../Canna.conf"
 
       CANNAROOT = ../..
            SRCS = wtoc.c
 
-#ifdef __EMX__
+#if defined(__EMX__) || defined(__CYGWIN32__)
 AllTarget(wtoc.exe)
 #else
 AllTarget(wtoc)

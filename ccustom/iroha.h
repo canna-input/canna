@@ -21,9 +21,9 @@
  */
 
 /*
- * @(#) 102.1 $Id: iroha.h,v 1.7 1992/07/28 12:15:43 kon Exp $
- * $Revision: 1.7 $
- * $Author: kon $
+ * @(#) 102.1 $Id: iroha.h,v 1.1.1.1 2002/10/19 08:27:31 aida_s Exp $
+ * $Revision: 1.1.1.1 $
+ * $Author: aida_s $
  */
 
 #define MAX_DICS 16

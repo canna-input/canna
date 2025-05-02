@@ -21,14 +21,13 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[]="@(#)$Id: util.c,v 2.6.1.2 1996/10/28 13:15:17 kon Exp $ $Author: kon $ $Revision: 2.6.1.2 $ $Data$";
+static char rcsid[]="@(#)$Id: util.c,v 1.2 2002/10/20 14:29:58 aida_s Exp $ $Author: aida_s $ $Revision: 1.2 $ $Data$";
 #endif
 
 #include "RKintern.h"
 #include <stdio.h>
 
 #ifdef WIN 
-#include <string.h>
 #define exit(n) /* This is because Windows has no exit.  This should be
   rewritten to smarter code. */
 #endif

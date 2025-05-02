@@ -19,7 +19,7 @@
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 .\" PERFORMANCE OF THIS SOFTWARE. 
 .\"
-.\" $Id: RkLeft.man,v 2.1 1994/04/21 00:46:52 kuma Exp $ NEC;
+.\" $Id: RkLeft.man,v 1.1.1.1 2002/10/19 08:27:44 aida_s Exp $ NEC;
 .TH "RKLEFT" "3"
 .SH "NAME"
 \f4RkLeft\f1 \- move the current clause to the clause to its left

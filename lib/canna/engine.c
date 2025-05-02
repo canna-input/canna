@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "$Id: engine.c,v 3.12 1996/09/05 11:38:42 kon Exp $";
+static char rcs_id[] = "$Id: engine.c,v 1.2 2002/10/20 14:29:59 aida_s Exp $";
 #endif
 
 #include "canna.h"
@@ -45,10 +45,6 @@ static char rcs_id[] = "$Id: engine.c,v 3.12 1996/09/05 11:38:42 kon Exp $";
 #define DSOHANDLE HINSTANCE
 #else
 #define DSOHANDLE char *
-#endif
-
-#if defined(USG) || defined(SYSV) || defined(SVR4)
-#define index strchr
 #endif
 
 static struct rkfuncs *Rk;

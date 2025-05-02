@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: wconvert.c,v 7.9 1996/11/27 07:27:28 kon Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: wconvert.c,v 1.2 2002/10/20 04:10:30 aida_s Exp $";
 #endif
 
 #define EXTPROTO 1
@@ -644,14 +644,23 @@ irw_killserver(clientp)
   extern struct sockaddr_un unsock;
 #endif
   char *susername = "root";
-  unsigned long ser_hostaddr, cli_hostaddr;
+  unsigned long ser_hostaddr, cli_hostaddr, local_hostaddr;
   static char   buf[ BUFSIZE ]; /* protodefs.h BUFSIZE 4096 */
   struct hostent *ser;
   
   /* サーバ側のユーザ名の取得：取得できなかった場合は"root" */
+#ifdef __CYGWIN32__
+  char *logname = getlogin();
+  if (logname)
+      susername = logname;
+  else {
+#endif
   struct passwd *pass = getpwuid(getuid());
   if( pass )
   susername = pass->pw_name;
+#ifdef __CYGWIN32__
+  }
+#endif
   ir_debug( Dmsg(5, "サーバを起動したユーザ名:[%s]\n", susername);)
   
   /* ユーザ名の比較 */
@@ -676,11 +685,13 @@ irw_killserver(clientp)
     goto not_addr;
   }
   ser_hostaddr = *(unsigned long *)(ser->h_addr);
+  local_hostaddr = inet_addr("127.0.0.1");
   cli_hostaddr = client->hostaddr;  
 
   /* アドレスの比較 */
   if (cli_hostaddr) /*  unixドメインの場合(0)、通過ok  */
-  if (cli_hostaddr != ser_hostaddr){
+  if (cli_hostaddr != local_hostaddr &&
+      cli_hostaddr != ser_hostaddr){
     not_addr:
     stat = NOTUXSRV;
     return SendType2Reply(client, wKillServer, !EXTPROTO, stat);

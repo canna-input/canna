@@ -19,7 +19,7 @@
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 .\" PERFORMANCE OF THIS SOFTWARE. 
 .\"
-.\" $Id: RkCloseR.man,v 7.1 1994/04/21 06:51:19 kuma Exp $ NEC;
+.\" $Id: RkCloseR.man,v 1.1.1.1 2002/10/19 08:27:47 aida_s Exp $ NEC;
 .TH "RkCloseContext" "3"
 .SH "NAME"
 \f4RkCloseRoma\f1 / \f4RkwCloseRoma\f1 \- close the dictionary used for Romaji-kana conversion

@@ -19,7 +19,7 @@
 # OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 # PERFORMANCE OF THIS SOFTWARE. 
 #
-# $Id: number.t,v 4.1 1996/10/25 04:12:52 kon Exp $
+# $Id: number.t,v 1.1.1.1 2002/10/19 08:27:40 aida_s Exp $
 #
 い #JS*68 位
 いく #NN*3 幾

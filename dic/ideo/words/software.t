@@ -19,7 +19,7 @@
 # OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 # PERFORMANCE OF THIS SOFTWARE. 
 #
-# $Id: software.t,v 1.4 1994/01/27 11:07:29 kuma Exp $
+# $Id: software.t,v 1.1.1.1 2002/10/19 08:27:40 aida_s Exp $
 #
 あるふぁ #T35 α
 いしょくせい #T35 移植性

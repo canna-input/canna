@@ -21,7 +21,7 @@
  */
 
 
-/* @(#) 102.1 $Id: irkeydef.h,v 1.5 1992/07/28 12:14:56 kon Exp $ */
+/* @(#) 102.1 $Id: irkeydef.h,v 1.1.1.1 2002/10/19 08:27:31 aida_s Exp $ */
 
 /* normal function keys */
      

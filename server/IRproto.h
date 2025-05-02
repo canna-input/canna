@@ -21,7 +21,7 @@
  */
 
 /* @(#) NEC UNIX( PC-UX/EWS-UX ) IRproto.h 2.1 91/10/17 13:40:04 */
-/* $Id: IRproto.h,v 2.4 1994/02/22 11:12:52 kon Exp $ */
+/* $Id: IRproto.h,v 1.1.1.1 2002/10/19 08:27:53 aida_s Exp $ */
 
 #define RETURN_VERSION_ERROR_STAT   -2
 

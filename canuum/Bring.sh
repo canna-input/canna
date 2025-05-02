@@ -24,4 +24,4 @@ do
   cp $1/$i .
 done
 
-# $Id: Bring.sh,v 1.4 1994/01/27 10:44:20 misao Exp $
+# $Id: Bring.sh,v 1.1.1.1 2002/10/19 08:27:28 aida_s Exp $

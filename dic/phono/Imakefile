@@ -1,4 +1,4 @@
-/* $Id: Imakefile,v 2.5 1996/11/27 07:15:14 kon Exp $ */
+/* $Id: Imakefile,v 1.1.1.1 2002/10/19 08:27:40 aida_s Exp $ */
 #include "../../Canna.conf"
 
 #ifdef __EMX__

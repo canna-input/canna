@@ -19,7 +19,7 @@
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 .\" PERFORMANCE OF THIS SOFTWARE. 
 .\"
-.\" $Id: RkMapRom.man,v 7.1 1994/04/21 06:51:41 kuma Exp $ NEC;
+.\" $Id: RkMapRom.man,v 1.1.1.1 2002/10/19 08:27:48 aida_s Exp $ NEC;
 .TH "RKMAPROMA" "3"
 .SH "NAME"
 \f4RkMapRoma\f1 \- perform Romaji-kana conversion by using a specified Romaji-kana conversion table

@@ -21,18 +21,11 @@
  */
 
 #ifndef lint
-static char rcsid[] = "$Id: pod.c,v 1.41 1994/05/31 11:42:12 kon Exp $";
+static char rcsid[] = "$Id: pod.c,v 1.3 2002/10/20 14:29:58 aida_s Exp $";
 #endif
 
 #include <stdio.h>
-
-#define bzero(a, c) memset(a, 0, c)
-
-#if __STDC__
-#include <stddef.h>
-#else
-extern char *malloc();
-#endif
+#include "ccompat.h"
 
 #define POD_WCHAR
 
@@ -51,7 +44,7 @@ static int merge_kind, wnn_type_output, canna_type_output, sj3_type_output;
 static int list_kinds;
 static int copy_frequency, extract_kana = 0;
 static long specific_kind;
-static FILE *in1 = stdin, *in2 = stdin;
+static FILE *in1, *in2;
 static char *common_out, *old_out, *new_out, *hinshi_table, *bunrui;
 static char *description_table;
 static int selhinshi = 0;
@@ -1376,6 +1369,7 @@ char *argv[];
 #ifndef POD_WCHAR
   setlocale(LC_ALL, "");
 #endif
+  in1 = in2 = stdin;
 
   (void)internkind(kihonh); /* 基本辞書用。1L として登録 */
   parseargs(argc, argv);

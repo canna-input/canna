@@ -19,8 +19,8 @@
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 .\" PERFORMANCE OF THIS SOFTWARE. 
 .\"
-.\" $Id: RkIntro.jmn,v 2.1 1994/04/21 08:31:06 kuma Exp $ NEC;
-.\" $Id: RkIntro.jmn,v 2.1 1994/04/21 08:31:06 kuma Exp $ NEC;
+.\" $Id: RkIntro.jmn,v 1.1.1.1 2002/10/19 08:27:44 aida_s Exp $ NEC;
+.\" $Id: RkIntro.jmn,v 1.1.1.1 2002/10/19 08:27:44 aida_s Exp $ NEC;
 .\".if t .pn 575
 .TH DICLIBINTRO 3 "4 April 1991"
 .SH "Ì¾Á°"

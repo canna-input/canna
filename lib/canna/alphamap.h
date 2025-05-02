@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char alphamap_id[] = "@(#) 102.1 $Id: alphamap.h,v 9.3 1996/11/06 01:47:49 kon Exp $";
+static char alphamap_id[] = "@(#) 102.1 $Id: alphamap.h,v 1.1.1.1 2002/10/19 08:27:48 aida_s Exp $";
 #endif /* lint */
 
 extern int JapaneseMode();

@@ -24,7 +24,7 @@
  * rutil.c
  */
 #ifndef lint
-static char rcs[] = "@(#) 112.1 $Id: rutil.c,v 3.2 1996/11/07 01:22:58 kon Exp $";
+static char rcs[] = "@(#) 112.1 $Id: rutil.c,v 1.2 2002/10/20 14:29:57 aida_s Exp $";
 #endif
 
 #ifdef ENGINE_SWITCH
@@ -42,12 +42,7 @@ static char rcs[] = "@(#) 112.1 $Id: rutil.c,v 3.2 1996/11/07 01:22:58 kon Exp $
 #endif
 #endif
 
-#ifdef __STDC__
-#include <stdlib.h>
-#else
-extern char *malloc(), *realloc(), *calloc();
-extern void free();
-#endif
+#include "ccompat.h"
 
 #if defined(__STDC__) || defined(SVR4)
 #include <locale.h>

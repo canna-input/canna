@@ -19,7 +19,7 @@
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 .\" PERFORMANCE OF THIS SOFTWARE. 
 .\"
-.\" $Id: RkFinali.man,v 2.1 1994/04/21 00:46:24 kuma Exp $ NEC;
+.\" $Id: RkFinali.man,v 1.1.1.1 2002/10/19 08:27:44 aida_s Exp $ NEC;
 .TH "RKFINALIZE" "3"
 .SH "NAME"
 \f4RkFinalize\f1 \- terminate the kana-kanji conversion functions

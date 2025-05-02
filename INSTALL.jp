@@ -46,52 +46,29 @@
      3. インストール
      4. 運用
 
-   『かんな』Version 3.5β2 に関しては以下のマシンでコンパイル確認して
-   おります。
+   『かんな』のコンパイル、インストールに関して何らかの問題があった場合、
+   canna-dev@lists.sourceforge.jpに御報告ください。その際、できれば
+   詳しいエラーの様子などを報告していただけると助かります。
 
-    マシン               ＯＳ                                コンパイラ
-    IBM-PC 互換機(486)  FreeBSD 2.1.5R                     cc(gcc 2.6.3)
-    IBM-PC 互換機(486)  Linux 2.0.0                        cc(gcc 2.7.?)
-    EWS 4800/320EX      UX/4800 R12.2                      /usr/abiccs/bin/cc
-    Sparc Station 5     Solaris 2.5                        cc(gcc 2.6.0)
-    HP 9000/715/80      HP-UX 10.01
-    Indigo2             IRIX64 6.2                         /usr/bin/cc
-    EWS 4800/350        EWS-UX/V(Rel4.2) R9.3              /usr/abiccs/bin/cc
+   『かんな』には現在３つのメーリングリストがあります。
 
-   『かんな』Version 3.5β1 に関しては以下のマシンでコンパイル確認して
-   おります。
+   ・Canna@nec.co.jp
+   NECのメーリングリストです。かつてはここで開発等も行われていましたが、
+   開発がsourceforge.jpに移ったので、当面はユーザー向けメーリングリスト
+   という位置づけとします。詳しい説明が
+   http://www.nec.co.jp/canna/c-mail.html
+   にあります。
 
-    マシン               ＯＳ                                コンパイラ
-    IBM-PC 互換機(486)  FreeBSD 2.1.5R                     cc(gcc 2.6.3)
-    IBM-PC 互換機(486)  Linux 2.0.0                        cc(gcc 2.7.?)
-    EWS 4800/320EX      UX/4800 R12.2                      /usr/abiccs/bin/cc
-    Sparc Station 5     Solaris 2.4?
-    HP 9000/715/80      HP-UX 10.01
-    IBM-PC 互換機(486)  OS/2 Warp J3.0                     emx 0.9c(gcc 2.7.2)
-    ?                   SunOS 4.1.4 (JLE)                  cc
-    ?                   Linux 2.0.25 + Slackware 3.1
-    ?                   FreeBSD 2.2-SNAP-961014            gcc 2.7.2.1
-    HP 9000/712/60      HP-UX A.09.05                      gcc 2.7.0
-    ?                   Linux 2.0.15 + Slackware 3.1
-    ?                   Linux 1.2.13 + Slackware 3.0
-    Sparc Station LX    Solaris 2.5
-    IBM-PC 互換機       Linux(Slackware96) 2.0.25
-    Sparc Station 20    Solaris 2.4                        SPARCompiler C 3.0.1
-    IBM-PC 互換機(386)  NetBSD-1.2B
-    Sparc Station 2     NetBSD-1.2
-    Sun3/80             NetBSD-1.2
-    IBM-PC 互換機(486)  OS/2 Warp J3.0                     emx 0.9c(gcc 2.7.2)
+   ・canna-dev@lists.sourceforge.jp
+   開発用メーリングリストです。開発に参加したい方、バグ報告等をなさる方
+   はこちらをお使いください。
 
-   これらのマシン以外のマシンでコンパイルを行ったり動作させたかたは是
-   非 Canna@nec.co.jp までご連絡ください。
+   ・canna-cvs@lists.sourceforge.jp
+   CVSのcommitlogが送られます。購読専用です。
 
-   『かんな』のコンパイルに関して何らかの問題があった場合にも 
-   Canna@nec.co.jp にお問い合わせください。
-
-   Canna@nec.co.jp は『かんな』に関するメーリングリストです。
-   Canna@nec.co.jp に加入なさりたい場合には Canna-request@nec.co.jp ま
-   でお申込ください。加入に関する説明は http://www.nec.co.jp/canna/ に
-   ありますのでご参照ください。
+   sourceforge.jpの2つのメーリングリストについては、
+   http://sourceforge.jp/mail/?group_id=285
+   にインターフェースがあります。
 
    X11R5 にコントリビューションした『かんな』は、物件自体にはバージョ
    ンが明記されていなかったのですが、Version 1.2 ということにします。
@@ -184,32 +161,38 @@
 
    例としてデフォルトの設定を以下に示します。
 
-
-                cannaBinDir = /usr/local/canna/bin
-                cannaSrvDir = /usr/local/canna/bin
-                cannaLibDir = /usr/local/canna/lib
-                cannaManDir = /usr/local/canna/man
-                cannaIncDir = /usr/local/canna/include/canna
-                libCannaDir = /usr/local/lib
-                ErrDir = /usr/spool/canna
+                /* #define InstallAsUser */
+                cannaPrefix = /usr/local/canna
+                cannaExecPrefix = $(cannaPrefix)
+                cannaBinDir = $(cannaExecPrefix)/bin
+                cannaSrvDir = $(cannaExecPrefix)/bin
+                cannaLibDir = $(cannaPrefix)/lib
+                cannaManDir = $(cannaPrefix)/man
+                cannaIncDir = $(cannaPrefix)/include/canna
+                #ifdef InstallAsUser
+                libCannaDir = $(cannaExecPrefix)/lib
+                ErrDir  = $(cannaExecPrefix)/log
+                #else
+                libCannaDir = /usr/lib
+                ErrDir  = /usr/spool/canna
+                #endif
                 wcharDefinition = -DCANNA_WCHAR
                 Wlib =
                 JapaneseLocale = japan
                 cannaOwner = bin
                 cannaGroup = bin
                 pointerIntegerDef =
-                sharedLibExtension = so.1
-                cannaDsoRev = 1
                 DicDir = $(cannaLibDir)/dic
                 #define JAPANESEMAN
                 pubdicDir = $(CANNAROOT)/dic/ideo/pubdic
                 cannaLight = 1
 
    wcharDefinition は、OS の wchar_t 定義と mbstowcs などの関数定義を
-   用いる時には何も指定しません。OS が wchar_t の定義を行っていなかっ
-   たり、mbstowcs などの関数を持っていなかったり、あるいは mbstowcs を
-   持っていても日本語環境 (/usr/lib/locale/ja_JP など)を用意していない
-   場合には -DCANNA_WCHAR を指定してください。
+   用いる時には何も指定しません。OSがmbstowcsなどのマルチバイト関数を
+   提供しており、かつそれが『かんな』の内部処理と互換性のある場合のみ
+   wcharDefinitionを空にしてください。現在の多くのシステムでは、『か
+   んな』とは違ったマルチバイト処理を行っているので、通常のケースでは、
+   -DCANNA_WCHARを指定してください。
 
    -DCANNA_WCHAR を指定しなかった場合には JapaneseLocale の設定が必要
    となります。OS の定義しているロケール名を設定してください。このとき
@@ -550,8 +533,9 @@
 
 5. root になれない場合のコンパイルおよびインストール
 
-   root になれない場合は例えば以下のようにコンパイル・インストールする
-   と良いでしょう。
+   Canna3.6から、InstallAsUserマクロと、cannaPrefixが導入されたので、
+   rootになれない場合のインストールが多少楽になりました。これを使う
+   場合、例えば以下のようにコンパイル・インストールすると良いでしょう。
 
   5.1 Canna.conf の設定
 
@@ -559,41 +543,11 @@
    レクトリを指定します。また、辞書とかな漢字変換サーバのオーナとグルー
    プを自分のものにします。例えば以下のようになります。
 
-                cannaBinDir = /home/kon/canna/bin
-                cannaSrvDir = /home/kon/canna/bin
-                cannaManDir = /home/kon/canna/man
-                cannaLibDir = /home/kon/canna/lib
-                cannaIncDir = /home/kon/canna/include/canna
-                libCannaDir = /home/kon/canna/lib
-                DicDir = $(cannaLibDir)/dic
-                ErrDir = /home/kon/spool/canna
-                wcharDefinition = -DCANNA_WCHAR
-                Wlib =
-                JapaneseLocale = japanese
-                sharedLibExtension = so.1
+                #define InstallAsUser
+                cannaPrefix = /home/kon/canna
+		...
                 cannaOwner = kon
                 cannaGroup = user
-
-   さらに以下の記述も Canna.conf に追加してください。
-
-                INCROOT = /home/kon/canna/include
-
-   また、Canna.conf 内で chown、chgrp、chmod などを行うコマンドが以下
-   のように定義されていますが、下記のように直してください。
-
- 《現定義》
-
-   /* 以下の３つは root にならないでインストールするのであれば echo に
-      変えてください。 */
-   CHOWN = chown
-   CHGRP = chgrp
-   CHMOD = chmod
-
- 《root になれない場合の定義》
-
-   CHOWN = echo
-   CHGRP = echo
-   CHMOD = echo
 
   5.2 コンパイルおよびインストール
 
@@ -964,4 +918,4 @@ A.10 OS/2 をお使いの場合(この部分の記述は上野＠日本アイ・ビー・エムに
  * PERFORMANCE OF THIS SOFTWARE. 
  */
 
-($Id: INSTALL.jp,v 2.47 1996/12/02 11:37:43 kon Exp $)
+($Id: INSTALL.jp,v 1.2 2002/10/23 15:40:55 aida_s Exp $)

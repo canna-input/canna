@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[]="$Id: ngram.c,v 3.7 1996/11/07 01:26:09 kon Exp $";
+static char rcsid[]="$Id: ngram.c,v 1.3 2002/10/20 14:29:58 aida_s Exp $";
 #endif
 
 #include	"RKintern.h"
@@ -30,24 +30,15 @@ static char rcsid[]="$Id: ngram.c,v 3.7 1996/11/07 01:26:09 kon Exp $";
 #ifdef SVR4
 #include	<unistd.h>
 #endif
-#if defined(USG) || defined(SYSV) || defined(SVR4) || defined(WIN)
-#include	<string.h>
-#else
-#include	<strings.h>
+
+#ifdef __CYGWIN32__
+#include <fcntl.h> /* for O_BINARY */
 #endif
 
 #ifdef WIN 
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#endif
-
-#if defined(SYSV) || defined(SVR4) || defined(__STDC__)
-# if defined(SYSV) || defined(SVR4)
-#  include <memory.h>
-# endif
-# define bzero(buf, size) memset((char *)(buf), 0x00, (size))
-# define bcopy(src, dst, size) memcpy((char *)(dst), (char *)(src), (size))
 #endif
 
 extern unsigned char *ustoeuc();
@@ -60,6 +51,10 @@ RkCloseGram(gram)
     (void)free((char *)gram->ng_conj);
   if (gram->ng_strtab)
     (void)free((char *)gram->ng_strtab);
+#ifdef LOGIC_HACK
+  if (gram->ng_neg)
+    (void)free((char *)gram->ng_neg);
+#endif
   (void)free((char *)gram);
 }
 
@@ -140,12 +135,46 @@ HANDLE fd;
 	  size = 0;
 	}
 #endif
-        if (size <= (sz - 4)) {
+        if (size == (sz - 4)) {
           gram->ng_rowcol = rc;
           gram->ng_rowbyte = (gram->ng_rowcol + 7) / 8;
           gram->ng_strtab = gram_to_tab(gram);
 	  if (gram->ng_strtab) {
+#ifndef LOGIC_HACK
 	    return gram;
+#else
+	    int negsz, i;
+	    unsigned long *dst;
+	    unsigned char *src;
+#ifndef WIN
+	    size = read(fd, (char *)l4, 4);
+#else
+	    ReadFile(fd, (char *)l4, 4, &size, NULL) || size = 0;
+#endif
+	    if (size != 4)
+	      goto error_case;
+	    gram->ng_numneg = L4TOL(l4);
+	    negsz = 4 * gram->ng_numneg;
+	    gram->ng_neg =
+	      (unsigned long *)malloc(sizeof(unsigned long) * gram->ng_numneg);
+	    if (!gram->ng_neg)
+	      goto error_case;
+#ifndef WIN
+	    size = read(fd, gram->ng_neg, negsz);
+#else
+	    ReadFile(fd, gram->ng_neg, negsz, &size, NULL) || size = 0;
+#endif
+	    if (size != negsz) {
+	      free(gram->ng_neg);
+	      goto error_case;
+	    }
+	    src = (unsigned char *)gram->ng_neg + 4 * (gram->ng_numneg - 1);
+	    dst = gram->ng_neg + (gram->ng_numneg - 1);
+	    for (i = 0; i < gram->ng_numneg; i++, dst--, src -= 4)
+	      *dst = L4TOL(src);
+	    return gram;
+	  error_case:;
+#endif /* LOGIC_HACK */
 	  }
 	}
 	else {
@@ -183,6 +212,9 @@ RkOpenGram(mydic)
  
   if ((fd = open(mydic, 0)) < 0)
     return (struct RkKxGram *)0;
+#ifdef __CYGWIN32__
+  setmode(fd, O_BINARY);
+#endif
 #endif
 
   for (off = 0, lk = 1; lk && _RkReadHeader(fd, &hd, off) >= 0;) {
@@ -242,7 +274,21 @@ struct RkKxGram *ogram;
       bcopy(ogram->ng_conj, gram->ng_conj, siz);
       gram->ng_strtab = gram_to_tab(gram);
       if (gram->ng_strtab) {
+#ifndef LOGIC_HACK
 	return gram;
+#else
+	int negsz;
+
+	gram->ng_numneg = ogram->ng_numneg;
+	negsz = gram->ng_numneg * sizeof(unsigned long);
+	gram->ng_neg = (unsigned long *)malloc(negsz);
+	if (!gram->ng_neg)
+	  goto error_case;
+	bcopy(ogram->ng_neg, gram->ng_neg, negsz);
+	return gram;
+
+      error_case:;
+#endif /* LOGIC_HACK */
       }
       free(gram->ng_conj);
     }

@@ -19,7 +19,7 @@
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 .\" PERFORMANCE OF THIS SOFTWARE. 
 .\"
-.\" $Id: RkRight.jmn,v 2.1 1994/04/21 08:31:31 kuma Exp $ NEC;
+.\" $Id: RkRight.jmn,v 1.1.1.1 2002/10/19 08:27:45 aida_s Exp $ NEC;
 .TH RKRIGHT 3 "4 April 1991"
 .SH "名前"
 RkRight \- カレント文節を右の文節に移動する

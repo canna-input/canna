@@ -19,7 +19,7 @@
 # OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 # PERFORMANCE OF THIS SOFTWARE. 
 #
-# $Id: chimei.t,v 1.7 1996/12/02 08:40:59 kon Exp $
+# $Id: chimei.t,v 1.1.1.1 2002/10/19 08:27:39 aida_s Exp $
 あーかんそー #CN アーカンソー
 あいおい #CN 相生
 あいおいし #CNS 相生市
