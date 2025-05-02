@@ -1,6 +1,6 @@
 /*
  *  termio.c,v 1.4 2002/06/13 21:27:47 hiroo Exp
- *  Canna: $Id: termio.c,v 1.4.2.1 2003/01/11 17:53:57 aida_s Exp $
+ *  Canna: $Id: termio.c,v 1.4.2.2 2003/01/25 08:46:30 aida_s Exp $
  */
 
 /*
@@ -97,7 +97,8 @@ openTermData ()
     }
 #endif /* CANNA */
   setupterm (0, 1, &status);
-  reset_shell_mode ();
+  /* This seems needless and causes hangs on Solaris8 + ncurses */
+  /* reset_shell_mode (); */
   if (status != 1)
     {
       return (-1);

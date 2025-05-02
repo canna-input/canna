@@ -1,6 +1,6 @@
 /*
  *  jhlp.c,v 1.13 2002/08/26 09:27:21 aono Exp
- *  Canna: $Id: jhlp.c,v 1.7.2.2 2003/01/23 17:20:30 aida_s Exp $
+ *  Canna: $Id: jhlp.c,v 1.7.2.3 2003/01/25 08:46:30 aida_s Exp $
  */
 
 /*
@@ -1100,10 +1100,10 @@ chld_handler ()
 /* *INDENT-ON* */
 {
 #ifdef HAVE_WAIT3
-#if defined(linux) || defined(__alpha)
-  int status;
-#else
+#ifdef HAVE_UNION_WAIT /* older way */
   union wait status;
+#else /* POSIX */
+  int status;
 #endif
   int pid;
 

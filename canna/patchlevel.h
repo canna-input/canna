@@ -20,7 +20,7 @@
  * PERFORMANCE OF THIS SOFTWARE. 
  */
 
-/* $Id: patchlevel.h,v 1.2.2.2 2003/01/24 09:58:04 aida_s Exp $ */
+/* $Id: patchlevel.h,v 1.2.2.3 2003/01/25 08:46:29 aida_s Exp $ */
 
 #define CANNA_MAJOR_MINOR 3006
-#define CANNA_PATCH_LEVEL "p2"
+#define CANNA_PATCH_LEVEL "p3"

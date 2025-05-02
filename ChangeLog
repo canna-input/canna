@@ -1,3 +1,13 @@
+2003-01-25 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* canuum/configure.in: check union wait
+	* canuum/acconfig.h: HAVE_UNION_WAIT
+	* canuum/jhlp.c(chld_handler): HAVE_UNION_WAIT
+	* canuum/termio.c(openTermData): don't invoke reset_shell_mode()
+	* Canna.conf.dist: MANSUFF(X (thanks to nanashi san)
+	* mkrelease.sh: remove autom4te.cache
+	* canna/patchlevel.h: 3.6p3 release
+
 2003-01-24 AIDA Shinra <aida-s@jcom.home.ne.jp>
 
 	* canna/patchlevel.h: 3.6p2 release
@@ -379,4 +389,4 @@
 
 	* Virgin import of Canna3.5b2.
 
-$Id: ChangeLog,v 1.10.2.24 2003/01/24 09:58:04 aida_s Exp $
+$Id: ChangeLog,v 1.10.2.25 2003/01/25 08:46:29 aida_s Exp $
