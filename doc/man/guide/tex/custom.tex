@@ -19,7 +19,7 @@
 % OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 % PERFORMANCE OF THIS SOFTWARE. 
 %
-% $Id: custom.tex,v 1.1.1.1 2002/10/19 08:27:42 aida_s Exp $
+% $Id: custom.tex,v 1.1.1.1.2.2 2003/09/17 01:47:03 aida_s Exp $
 %
 \chapter{¥«¥¹¥¿¥Þ¥¤¥º}
 \label{3.3¥«¥¹¥¿¥Þ¥¤¥º}
@@ -35,9 +35,9 @@
 \begin{tabular}{ll}
 ÆüËÜ¸ìÆþÎÏ¤Îµ¡Ç½¤ä¥­¡¼Áàºî¤òÀßÄê¤¹¤ë&\hpref{count=10,label=H0.4.1.0.0}¥«¥¹¥¿¥Þ¥¤¥º¥Õ¥¡¥¤¥ë \\
 ¥í¡¼¥Þ»ú¤«¤ÊÊÑ´¹¤Îµ¬Â§¤òÀßÄê¤¹¤ë&\hpref{count=11,label=H0.4.4.2.0}¥í¡¼¥Þ»ú¤«¤ÊÊÑ´¹¥½¡¼¥¹ \\
-                                     &  ¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡(¡ß¡ß¡ß.kpdef) \\
+                                     &  ¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡(¡ß¡ß¡ß.ctd) \\
                                      & \hpref{count=12,label=H0.4.4.0.0}¥í¡¼¥Þ»ú¤«¤ÊÊÑ´¹¥Æ¡¼¥Ö¥ë \\
-                                     &  ¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡(¡ß¡ß¡ß.kp) \\
+                                     &  ¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡(¡ß¡ß¡ß.cbp) \\
 \end{tabular}
 %\end{center}
 \vspace{5mm}
@@ -63,10 +63,10 @@
 \vspace{2mm}
 
 \begin{nquote}{3em}
-\begin{verbatim}
-¡¡¡¡%  cp  /usr/lib/canna/sample/default.canna  .canna 
-¡¡¡¡%  chmod  u+w  .canna 
-\end{verbatim}
+{\ttfamily
+¡¡¡¡\%  cp  \CANNALIBDIR/sample/default.canna  .canna \\
+¡¡¡¡\%  chmod  u+w  .canna 
+}
 \end{nquote}
 
 \vspace{2mm}
@@ -177,7 +177,7 @@ $\times\times\times$.canna ¤È¤¤¤¦Ì¾Á°¤Î¥Õ¥¡¥¤¥ë¤¬Â¸ºß¤¹¤ë¾ì¹ç¡¢
 ¥µ¥ó¥×¥ë¤È¤·¤ÆÄó¶¡¤µ¤ì¤Æ¤¤¤ë¥«¥¹¥¿¥Þ¥¤¥º¥Õ¥¡¥¤¥ë¤È¤·¤Æ¤ÏÉ½\ref{Äó¶¡¤¹¤ë¥«
 ¥¹¥¿¥Þ¥¤¥º¥Õ¥¡¥¤¥ë} ¤¬¤¢¤ê¤Þ¤¹¡£
 ¤³¤ì¤é¤Î¥µ¥ó¥×¥ë¥Õ¥¡¥¤¥ë¤Ï \refCANNALIBDIR /sample ¤Î²¼¤Ë¥Õ¥¡¥¤¥ë¤Î·Á
-¤ÇÂ¸ºß¤·¤Þ¤¹¡£\raisebox{0.6ex}{\footnotesize \dg Ãí 2} 
+¤ÇÂ¸ºß¤·¤Þ¤¹¡£%\raisebox{0.6ex}{\footnotesize \dg Ãí 2} 
 
 default.canna ¤¬¥Ç¥Õ¥©¥ë¥È¤ÎÀßÄê¤ò¥«¥¹¥¿¥Þ¥¤¥º¥Õ¥¡¥¤¥ë¤ÇÉ½¤·¤¿¤â¤Î¤Ë¤Ê¤Ã
 ¤Æ¤¤¤Þ¤¹¡£
@@ -202,11 +202,14 @@ just.canna    & °ìÂÀÏº \footnotemark ¤È¤Û¤ÜÆ±¤¸¥­¡¼Áàºî¤òÄó¶¡¤¹¤ë¥«¥¹
 matsu.canna     & ¾¾Âû\footnotemark ¤È¤Û¤ÜÆ±¤¸¥­¡¼Áàºî¤òÄó¶¡¤¹¤ë¥«¥¹¥¿
 ¥Þ¥¤¥º¥Õ¥¡¥¤¥ë \\ 
 \hline
-vje.kp     & vje$-\beta$\footnotemark ¤È¤Û¤ÜÆ±¤¸¥­¡¼Áàºî¤òÄó¶¡¤¹¤ë¥«¥¹
+vje.canna     & vje$-\beta$\footnotemark ¤È¤Û¤ÜÆ±¤¸¥­¡¼Áàºî¤òÄó¶¡¤¹¤ë¥«¥¹
 ¥¿¥Þ¥¤¥º¥Õ¥¡¥¤¥ë \\ 
 \hline 
-wx2+.kp     & WXII+\footnotemark ¤È¤Û¤ÜÆ±¤¸¥­¡¼Áàºî¤òÄó¶¡¤¹¤ë¥«¥¹¥¿¥Þ
+wx2+.canna     & WXII+\footnotemark ¤È¤Û¤ÜÆ±¤¸¥­¡¼Áàºî¤òÄó¶¡¤¹¤ë¥«¥¹¥¿¥Þ
 ¥¤¥º¥Õ¥¡¥¤¥ë \\ 
+\hline 
+verbose.canna  & ¥«¥¹¥¿¥Þ¥¤¥º²ÄÇ½¤ÊÁ´¥­¡¼¥ï¡¼¥É¤òÎóµó¤·¤¿¥«¥¹¥¿¥Þ¥¤¥º
+¥Õ¥¡¥¤¥ë \\ 
 \hline 
 \end{tabular}
 \end{center}
@@ -229,8 +232,8 @@ just.canna ¤ò»ÈÍÑ¤·¤¿¤¤¾ì¹ç¤Ï¼¡¤Î¤¤¤º¤ì¤«¤ò¼Â¹Ô¤·¤Þ¤¹¡£
 
 \begin{nquote}{3em}
 \begin{enumerate}
-\item \verb+% setenv  CANNAFILE  /usr/lib/canna/sample/just.canna +
-\item \verb+% cp  /usr/lib/canna/sample/just.canna  ~/.canna +
+\item \texttt{\% setenv  CANNAFILE  \CANNALIBDIR/sample/just.canna}
+\item \texttt{\% cp  \CANNALIBDIR/sample/just.canna  \textasciitilde/.canna}
 \end{enumerate}
 \end{nquote}
 
@@ -243,9 +246,9 @@ just.canna ¤ò»ÈÍÑ¤·¤¿¤¤¾ì¹ç¤Ï¼¡¤Î¤¤¤º¤ì¤«¤ò¼Â¹Ô¤·¤Þ¤¹¡£
 ¤Ë¤ª¤¤¤Æ¤Î¤ßµ¡Ç½¤¹¤ë¥­¡¼ (É½ \ref{X¥¦¥£¥ó¥É¥¦¤Î¤ß¤Î¥­¡¼°ìÍ÷} »²¾È) ¤Ê¤É¤â
 Â¸ºß¤¹¤ë¤¿¤á¡¢É¬¤º¤·¤â¡¢Á´¤¯Æ±¤¸ÁàºîÊýË¡¤¬¼Â¸½¤Ç¤­¤ë¤ï¤±¤Ç¤Ï¤¢¤ê¤Þ¤»¤ó¡£ 
 
-\item [Ãí 2] ¥µ¥ó¥×¥ë¥Õ¥¡¥¤¥ë¤Ï¡¢cannasmp ¥Ñ¥Ã¥±¡¼¥¸¤Ë´Þ¤Þ¤ì¤Æ¤¤¤Þ¤¹¡£
-\refCANNALIBDIR /sample ¤¬Â¸ºß¤·¤Ê¤¤¾ì¹ç¤Ï¡¢ cannasmp ¥Ñ¥Ã¥±¡¼¥¸¤ò¥¤¥ó
-¥¹¥È¡¼¥ë¤·¤Æ¤¯¤À¤µ¤¤¡£
+%% \item [Ãí 2] ¥µ¥ó¥×¥ë¥Õ¥¡¥¤¥ë¤Ï¡¢cannasmp ¥Ñ¥Ã¥±¡¼¥¸¤Ë´Þ¤Þ¤ì¤Æ¤¤¤Þ¤¹¡£
+%% \refCANNALIBDIR /sample ¤¬Â¸ºß¤·¤Ê¤¤¾ì¹ç¤Ï¡¢ cannasmp ¥Ñ¥Ã¥±¡¼¥¸¤ò¥¤¥ó
+%% ¥¹¥È¡¼¥ë¤·¤Æ¤¯¤À¤µ¤¤¡£
 \end{namelist}
 \end{nquote}
 
@@ -260,49 +263,42 @@ just.canna ¤ò»ÈÍÑ¤·¤¿¤¤¾ì¹ç¤Ï¼¡¤Î¤¤¤º¤ì¤«¤ò¼Â¹Ô¤·¤Þ¤¹¡£
 
 \vspace{5mm}
 
-{\tt 
-\begin{center}
-\begin{tabular}{|l|}
-\hline
-\verb+ ;;  +\\
-\verb+ ;;¥«¥¹¥¿¥Þ¥¤¥º¥Õ¥¡¥¤¥ë¤ÎÎã  + \\
-\verb+ ;; + \\
-\verb+ (setq cursor-wrap                t)    ;¥«¡¼¥½¥ë¤¬½Û´Ä¤¹¤ë¤è¤¦¤Ë¤¹¤ë¡£ + \\
-\verb+ (setq gakushu                    t)    ;³Ø½¬¤¹¤ë¤è¤¦¤Ë¤¹¤ë¡£ + \\
-\verb+ (setq kakutei-if-end-of-bunsetsu t)    ;Ê¸Àá¤ÎºÇ¸å¤Ç±¦¤Ë¹Ô¤¯¤È³ÎÄê¤¹¤ë¡£ + \\
-\verb+ (setq break-into-roman           t)    ;BS¤Ç¤¤¤Ã¤¿¤ó¥í¡¼¥Þ»ú¤ËÌá¤¹¡£ + \\
-\verb+ (setq grammatical-question       nil)  ;Ã±¸ìÅÐÏ¿¤Î¤È¤­ÉÊ»ì¤Î¼ÁÌä¤ò¤·¤Ê¤¤¡£ + \\
-\verb+ (setq kouho-count                t)    ;¸õÊä°ìÍ÷¤Î¤È¤­ 1/25 ¤Ê¤É¤ÎÉ½¼¨¤ò¤¹¤ë¡£ + \\
-\verb+ (setq n-henkan-for-ichiran       3)    ;ÊÑ´¹¥­¡¼3²ó¤Ç°ìÍ÷¤ò½Ð¤¹¤è¤¦¤Ë¤¹¤ë¡£ + \\
-\verb+   + \\
-\verb+ ; »ÈÍÑ¤¹¤ë¥í¡¼¥Þ»ú¤«¤ÊÊÑ´¹¥Æ¡¼¥Ö¥ë¤ÎÀßÄê + \\
-\verb+ (setq romkana-table   "default.kp") + \\
-\verb+  + \\
-\verb+ ; »ÈÍÑ¤¹¤ë¤«¤Ê´Á»úÊÑ´¹¼­½ñ¤ÎÀßÄê + \\
-\verb+ (use-dictionary + \\
-\verb+    "iroha" + \\
-\verb+    "fuzokugo" + \\
-\verb+    "hojoswd" + \\
-\verb+    :bushu  "bushu"     ; Éô¼óÊÑ´¹ÍÑ¼­½ñ + \\
-\verb+    )+ \\
-\verb+ ; ¥í¡¼¥Þ»ú¤«¤ÊÊÑ´¹¤ÎÂ¿¸õÊäÀßÄê + \\
-\verb+ (defsymbol + \\
-\verb+   ?["¡Ö" "¡Ø " "[" "¡Ì " "¡Î " + \\
-\verb+   ?]"¡×" "¡Ù" "]" " ¡Í" "¡Ï") + \\
-\verb+  + \\
-\verb+ (defsymbol + \\
-\verb+   ?¡¥"¡£" "¡¥" "." + \\
-\verb+   ?¡¤"¡¢" "¡¤" ",") + \\
-\verb+  + \\
-\verb+ ;;¥­¡¼¤ÎÄêµÁ + \\
-\verb+ (global-set-key "\F1" 'kigou-mode) + \\
-\verb+ (global-set-key "\F2" 'hex-mode) + \\
-\verb+ (global-set-key "\F3" 'bushu-mode) + \\
-\hline
-\end{tabular}
-\end{center}
-}
+\begin{Verbatim}[frame=single]
+ ;;
+ ;;¥«¥¹¥¿¥Þ¥¤¥º¥Õ¥¡¥¤¥ë¤ÎÎã
+ ;;
+ (setq cursor-wrap                t)    ;¥«¡¼¥½¥ë¤¬½Û´Ä¤¹¤ë¤è¤¦¤Ë¤¹¤ë¡£
+ (setq gakushu                    t)    ;³Ø½¬¤¹¤ë¤è¤¦¤Ë¤¹¤ë¡£
+ (setq kakutei-if-end-of-bunsetsu t)    ;Ê¸Àá¤ÎºÇ¸å¤Ç±¦¤Ë¹Ô¤¯¤È³ÎÄê¤¹¤ë¡£
+ (setq break-into-roman           t)    ;BS¤Ç¤¤¤Ã¤¿¤ó¥í¡¼¥Þ»ú¤ËÌá¤¹¡£
+ (setq grammatical-question       nil)  ;Ã±¸ìÅÐÏ¿¤Î¤È¤­ÉÊ»ì¤Î¼ÁÌä¤ò¤·¤Ê¤¤¡£
+ (setq kouho-count                t)    ;¸õÊä°ìÍ÷¤Î¤È¤­ 1/25 ¤Ê¤É¤ÎÉ½¼¨¤ò¤¹¤ë¡£
+ (setq n-henkan-for-ichiran       3)    ;ÊÑ´¹¥­¡¼3²ó¤Ç°ìÍ÷¤ò½Ð¤¹¤è¤¦¤Ë¤¹¤ë¡£
 
+ ; »ÈÍÑ¤¹¤ë¥í¡¼¥Þ»ú¤«¤ÊÊÑ´¹¥Æ¡¼¥Ö¥ë¤ÎÀßÄê
+ (setq romkana-table   "default.cbp")
+
+ ; »ÈÍÑ¤¹¤ë¤«¤Ê´Á»úÊÑ´¹¼­½ñ¤ÎÀßÄê
+ (use-dictionary
+    "iroha"
+    "fuzokugo"
+    "hojoswd"
+    :bushu  "bushu"     ; Éô¼óÊÑ´¹ÍÑ¼­½ñ
+    )
+ ; ¥í¡¼¥Þ»ú¤«¤ÊÊÑ´¹¤ÎÂ¿¸õÊäÀßÄê
+ (defsymbol
+   ?["¡Ö" "¡Ø " "[" "¡Ì " "¡Î "
+   ?]"¡×" "¡Ù" "]" " ¡Í" "¡Ï") 
+
+ (defsymbol
+   ?¡¥"¡£" "¡¥" "."
+   ?¡¤"¡¢" "¡¤" ",")
+
+ ;;¥­¡¼¤ÎÄêµÁ
+ (global-set-key "\F1" 'kigou-mode)
+ (global-set-key "\F2" 'hex-mode)
+ (global-set-key "\F3" 'bushu-mode)
+\end{Verbatim}
 
 % ------------------------------ 3.3.2
 \section{»ÈÍÑ¤¹¤ë\HIDX{¼­½ñ¤Î»ØÄê}{¤·¤·¤è¤Î¤·¤Æ¤¤}{H0.4.2.0.0}}
@@ -310,7 +306,7 @@ just.canna ¤ò»ÈÍÑ¤·¤¿¤¤¾ì¹ç¤Ï¼¡¤Î¤¤¤º¤ì¤«¤ò¼Â¹Ô¤·¤Þ¤¹¡£
 
 ËÜÆüËÜ¸ìÆþÎÏ¥·¥¹¥Æ¥à¤Ç¤ÏÊ£¿ô¤Î¼­½ñ¤òÆ±»þ¤ËÍøÍÑ¤¹¤ë¤³¤È¤¬¤Ç¤­¤Þ¤¹¡£
 ÍøÍÑ¤¹¤ë¼­½ñ¤Î»ØÄêÊýË¡¤Ï¡¢¤½¤Î¼­½ñ¤ò¤É¤Î¤è¤¦¤ËÍøÍÑ¤¹¤ë¤«¤Ë¤è¤ê¡¢
-É½\ref{¼­½ñ»ØÄê¥­¡¼¥ï¡¼¥É}¤Ë¼¨¤¹ 4 ¼ïÎà¤¬¤¢¤ê¤Þ¤¹¡£
+É½\ref{¼­½ñ»ØÄê¥­¡¼¥ï¡¼¥É}¤Ë¼¨¤¹ 5 ¼ïÎà¤¬¤¢¤ê¤Þ¤¹¡£
 
 %\vspace{5mm}
 
@@ -324,6 +320,7 @@ just.canna ¤ò»ÈÍÑ¤·¤¿¤¤¾ì¹ç¤Ï¼¡¤Î¤¤¤º¤ì¤«¤ò¼Â¹Ô¤·¤Þ¤¹¡£
 :bushu                   & Éô¼óÊÑ´¹ÍÑ¼­½ñ & Éô¼óÊÑ´¹¤ËÍÑ¤¤¤ë¼­½ñ¤ò»ØÄê¤·¤Þ¤¹¡£ \\ \hline
 :grammar                 & Ê¸Ë¡¾ðÊóÍÑ¼­½ñ & ÉÊ»ì¤ÎÄêµÁ¡¢ÉÊ»ì´Ö¤ÎÀÜÂ³¾ðÊó¤ò»ý¤Ä¼­½ñ¤ò»ØÄê¤·¤Þ¤¹¡£ \\ \hline
 :user                    & Ã±¸ìÅÐÏ¿ÍÑ¼­½ñ & Ã±¸ìÅÐÏ¿ÍÑ¤Î¼­½ñ¤ò»ØÄê¤·¤Þ¤¹¡£¤³¤Î¼­½ñ¤Ë¤ÏÃ±¸ì¤òÅÐÏ¿¤¹¤ë¤³¤È¤¬¤Ç¤­¤Þ¤¹¡£¤³¤Î¼­½ñ¤Î·Á¼°¤Ï¥Æ¥­¥¹¥È·Á¼°¤Ç¤Ê¤±¤ì¤Ð¤Ê¤ê¤Þ¤»¤ó¡£\raisebox{0.6ex}{\footnotesize \dg Ãí} \\ \hline
+:katakana                & ¼«Æ°ÅÐÏ¿ÍÑ¼­½ñ & ¥«¥¿¥«¥Ê¸ì¤ò¼«Æ°ÅÐÏ¿¤¹¤ë¼­½ñ¤ò»ØÄê¤·¤Þ¤¹¡£ \\ \hline
 \end{tabular}
 \end{center}
 \end{table}
@@ -350,6 +347,7 @@ just.canna ¤ò»ÈÍÑ¤·¤¿¤¤¾ì¹ç¤Ï¼¡¤Î¤¤¤º¤ì¤«¤ò¼Â¹Ô¤·¤Þ¤¹¡£
                   "hojomwd"
                   "hojoswd"
                   "yuubin"
+ :katakana        "katakana"
  :bushu           "bushu"
  :grammar         "grammar"
  :user            "mine" )
@@ -449,7 +447,7 @@ bushu ¤ÏÉô¼óÊÑ´¹¤ò¹Ô¤¦¤È¤­¤Ë»È¤ï¤ì¤ë¼­½ñ¤Ç¤¹¡£
 ¥­¡¼¥ï¡¼¥É \HIDX{:grammar}{¡§£Ç£Ò£Á£Í£Í£Á£Ò}{H0.4.2.0.0} ¤òÍÑ¤¤¤Þ¤¹¡£
 :grammar ¤Ç»ØÄê¤µ¤ì¤¿¼­½ñ¤¬¤Ê¤¤¾ì¹ç¡¢
 ¤ª¤è¤Ó :grammar ¤Ç»ØÄê¤µ¤ì¤¿¼­½ñ¤ËÉÕÂ°¸ì¾ðÊó¤¬µ­½Ò¤µ¤ì¤Æ¤¤¤Ê¤¤¾ì¹ç¤Ï¡¢
-fuzokugo.d ¤Ëµ­½Ò¤µ¤ì¤Æ¤¤¤ëÊ¸Ë¡¾ðÊó¤ò»ÈÍÑ¤·¤Þ¤¹¡£
+fuzokugo.cbd ¤Ëµ­½Ò¤µ¤ì¤Æ¤¤¤ëÊ¸Ë¡¾ðÊó¤ò»ÈÍÑ¤·¤Þ¤¹¡£
 ¤Þ¤¿¡¢:grammar ¤¬ 2 ¤Ä°Ê¾å»ØÄê¤µ¤ì¤¿¾ì¹ç¤Ï¡¢¸å¤Ë»ØÄê¤µ¤ì¤¿¼­½ñ¤ò»ÈÍÑ¤·¤Þ¤¹¡£
 :grammar ¤Î»ØÄê¤Ï°Ê²¼¤Î¤è¤¦¤Ë¹Ô¤¤¤Þ¤¹¡£
 
@@ -487,8 +485,8 @@ fuzokugo.d ¤Ëµ­½Ò¤µ¤ì¤Æ¤¤¤ëÊ¸Ë¡¾ðÊó¤ò»ÈÍÑ¤·¤Þ¤¹¡£
 ºÇ½é¤Ï¶õ¤Î¥Õ¥¡¥¤¥ë¤ò»ØÄê¤·¤Æ¤ª¤­¡¢
 ½ç¼¡¼­½ñÅÐÏ¿¤Ë¤è¤êÃ±¸ì¤òÄÉ²Ã¤·¤Æ¤¤¤¯¤Î¤¬¤è¤¤¤Ç¤·¤ç¤¦¡£
 
-»²¹ÍÍÑ¤È¤·¤Æ¥·¥¹¥Æ¥à¥Õ¥¡¥¤¥ë(\refCANNALIBDIR /dic/user/user)¤Ë
-´Þ¤Þ¤ì¤Æ¤¤¤ë¼­½ñ¤òÉ½\ref{user¥Ç¥£¥ì¥¯¥È¥ê¤Ë¤¢¤ë¥Õ¥¡¥¤¥ë}¤Ë¼¨¤·¤Þ¤¹¡£
+»²¹ÍÍÑ¤È¤·¤Æ¥·¥¹¥Æ¥à¥Õ¥¡¥¤¥ë(\refCANNALIBDIR /dic/canna)¤Ë
+´Þ¤Þ¤ì¤Æ¤¤¤ë¼­½ñ¤òÉ½\ref{¥Æ¥­¥¹¥È·Á¼°¥·¥¹¥Æ¥à¼­½ñ}¤Ë¼¨¤·¤Þ¤¹¡£
 Ã±¸ìÅÐÏ¿ÍÑ¼­½ñ¤òºîÀ®¤¹¤ë¤È¤­¤Î»²¹Í¤Ë¤·¤Æ¤¯¤À¤µ¤¤¡£
 
 %\vspace{5mm}
@@ -496,12 +494,12 @@ fuzokugo.d ¤Ëµ­½Ò¤µ¤ì¤Æ¤¤¤ëÊ¸Ë¡¾ðÊó¤ò»ÈÍÑ¤·¤Þ¤¹¡£
 %{\tt
 \begin{table}[hbtp]
 \begin{center}
-\caption{\refCANNALIBDIR /dic/user/user ¥Ç¥£¥ì¥¯¥È¥ê¤Ë¤¢¤ë¥Õ¥¡¥¤¥ë}\label{user¥Ç¥£¥ì¥¯¥È¥ê¤Ë¤¢¤ë¥Õ¥¡¥¤¥ë}
+\caption{\refCANNALIBDIR /dic/canna ¥Ç¥£¥ì¥¯¥È¥ê¤Ë¤¢¤ë¥Æ¥­¥¹¥È·Á¼°¥·¥¹¥Æ¥à¼­½ñ}\label{¥Æ¥­¥¹¥È·Á¼°¥·¥¹¥Æ¥à¼­½ñ}
 \begin{tabular}{|l|l|}
 \hline
 \multicolumn{1}{|c|}{¼­ ½ñ Ì¾} & \multicolumn{1}{|c|}{Àâ¡¡¡¡¡¡ÌÀ} \\
 \hline
-katakana  & ¥«¥¿¥«¥Ê¸ì \\
+kanasample  & ¥«¥¿¥«¥Ê¸ì \\
 \hline
 software  & ¥½¥Õ¥È¥¦¥§¥¢¸ì¡¡¡¡¡¡¡¡ \\
 \hline
@@ -518,6 +516,23 @@ chimei    & ÃÏÌ¾ \\
 \end{namelist}
 \end{nquote}
 
+¥­¡¼¥ï¡¼¥É \HIDX{:katakana}{¡§£Ë£Á£Ô£Á£Ë£Á£Î£Á}{H0.4.2.0.0} ¤Ç»ØÄê¤µ¤ì¤ë¥«¥¿¥«
+¥Ê¸ì¼«Æ°ÅÐÏ¿¼­½ñ¤ÏÆÃ¼ì¤Ê¼­½ñ¤Ç¤¹¡£»ú¼ïÊÑ´¹¡Ê\textbf{\ref{»ú¼ïÊÑ´¹¤Ë¤è¤ëÆþÎÏ}
+»ú¼ïÊÑ´¹¤Ë¤è¤ëÆþÎÏ}»²¾È¡Ë¤ÇÁ´³Ñ¥«¥¿¥«¥Ê¤Ë³ÎÄê¤·¤¿¤È¤­¤Ë¡¢¤½¤Î¥«¥¿¥«¥Ê
+¤ò¼«Æ°ÅÐÏ¿¤¹¤ë¤³¤È¤¬¤Ç¤­¤Þ¤¹¡£¼«Æ°ÅÐÏ¿¤Î»ØÄê¤Ï¡¢¥«¥¹¥¿¥Þ¥¤¥º¥Õ¥¡¥¤¥ëÃæ
+¤Ç°Ê²¼¤Î¤è¤¦¤Ëµ­½Ò¤·¤Þ¤¹¡£
+
+\begin{nquote}{3em}
+\begin{verbatim}
+(use-dictionary :katakana "katakana")
+\end{verbatim}
+\end{nquote}
+
+¼«Æ°ÅÐÏ¿ÍÑ¤Î¼­½ñ¤Ï¥Æ¥­¥¹¥È·Á¼°¤Ç¡¢½ñ¤­¹þ¤ß²ÄÇ½¤Ë¤Ê¤Ã¤Æ¤¤¤Ê¤±¤ì¤Ð¤Ê¤ê¤Þ
+¤»¤ó¡Ê\textbf{\ref{¼­½ñ¤ÎREAD¡¦WRITE¸¢}¼­½ñ¤ÎREAD¡¦WRITE¸¢}»²¾È¡Ë¡£¼«
+Æ°ÅÐÏ¿µ¡Ç½¤ò»È¤¦¤È¤­¤Ï¡¢¤¢¤é¤«¤¸¤áÃ±¸ìÅÐÏ¿ÍÑ¼­½ñ¤ÈÆ±ÍÍ¤Ë
+\texttt{mkdic} ¥³¥Þ¥ó¥É¤Ç¼­½ñ¤òºî¤Ã¤Æ¤ª¤¯¤³¤È¤ò¤ª¤¹¤¹¤á¤·¤Þ¤¹¡£
+
 % ------------------------------ 3.3.3
 \section{\HIDX{¥í¡¼¥Þ»ú¤«¤ÊÊÑ´¹¥Æ¡¼¥Ö¥ë¤ÎÀßÄê}{¤í¡¼¤Þ¤·¤«¤Ê¤Ø¤ó¤«¤ó¤Æ¡¼
 ¤Õ¤ë¤Î¤»¤Ä¤Æ¤¤}{H0.4.3.0.0}}
@@ -528,7 +543,7 @@ chimei    & ÃÏÌ¾ \\
 \HIDXAS{romkana-table}{£Ò£Ï£Í£Ë£Á£Î£Á¡Ý£Ô£Á£Â£Ì£Å}{H0.4.3.0.0}
 \begin{nquote}{3em}
 \begin{verbatim}
-(setq romkana-table  "romaji.kp")
+(setq romkana-table  "romaji.cbp")
 \end{verbatim}
 \end{nquote}
 
@@ -572,33 +587,33 @@ romkana-table ¤Ë»ØÄê¤¹¤ë¤â¤Î¤Ï¥Õ¥¡¥¤¥ëÌ¾¤Ç¤¹¡£
 \hline
 \multicolumn{1}{|c|}{¼­½ñÌ¾} &  \multicolumn{1}{|c|}{È÷¡¡¡¡¡¡¡¡¡¡¡¡¡¡¹Í} \\
 \hline
-default.kp  & ¥Ç¥Õ¥©¥ë¥È¤Î¥í¡¼¥Þ»ú¤«¤ÊÊÑ´¹¥Æ¡¼¥Ö¥ë \\
+default.cbp  & ¥Ç¥Õ¥©¥ë¥È¤Î¥í¡¼¥Þ»ú¤«¤ÊÊÑ´¹¥Æ¡¼¥Ö¥ë \\
 \hline
  %%%%% %%%%% %%%%% %%%%% %%%%% %%%%%
- %jdaemon.kp  & EWS-UX/V R6.¡ß°ÊÁ°¤ÎÆüËÜ¸ìÆþÎÏ¥·¥¹¥Æ¥à¤È¸ß´¹¤Î¥í¡¼¥Þ»ú
+ %jdaemon.cbp  & EWS-UX/V R6.¡ß°ÊÁ°¤ÎÆüËÜ¸ìÆþÎÏ¥·¥¹¥Æ¥à¤È¸ß´¹¤Î¥í¡¼¥Þ»ú
  %¤«¤ÊÊÑ´¹¥Æ¡¼¥Ö¥ë \\ 
  %\hline
  %%%%% %%%%% %%%%% %%%%% %%%%% %%%%%
-just.kp     & °ìÂÀÏº\footnotemark ¤ÈÆ±°ì¤Î¥í¡¼¥Þ»ú¤«¤ÊÊÑ´¹µ¬Â§¤ò»ý¤Ä¥í¡¼
+just.cbp     & °ìÂÀÏº\footnotemark ¤ÈÆ±°ì¤Î¥í¡¼¥Þ»ú¤«¤ÊÊÑ´¹µ¬Â§¤ò»ý¤Ä¥í¡¼
 ¥Þ»ú¤«¤ÊÊÑ´¹¥Æ¡¼ ¥Ö¥ë \\
 \hline
-matsu.kp     & ¾¾Âû\footnotemark ¤ÈÆ±°ì¤Î¥í¡¼¥Þ»ú¤«¤ÊÊÑ´¹µ¬Â§¤ò»ý¤Ä¥í¡¼
+matsu.cbp     & ¾¾Âû\footnotemark ¤ÈÆ±°ì¤Î¥í¡¼¥Þ»ú¤«¤ÊÊÑ´¹µ¬Â§¤ò»ý¤Ä¥í¡¼
 ¥Þ»ú¤«¤ÊÊÑ´¹¥Æ¡¼¥Ö¥ë \\ 
 \hline
-vje.kp     & vje$-\beta$\footnotemark ¤ÈÆ±°ì¤Î¥í¡¼¥Þ»ú¤«¤ÊÊÑ´¹µ¬Â§¤ò»ý
+vje.cbp     & vje$-\beta$\footnotemark ¤ÈÆ±°ì¤Î¥í¡¼¥Þ»ú¤«¤ÊÊÑ´¹µ¬Â§¤ò»ý
 ¤Ä¥í¡¼¥Þ»ú¤«¤ÊÊÑ´¹ ¥Æ¡¼¥Ö¥ë \\ 
 \hline
-wx2+.kp     & WXII+\footnotemark ¤ÈÆ±°ì¤Î¥í¡¼¥Þ»ú¤«¤ÊÊÑ´¹µ¬Â§¤ò»ý¤Ä¥í¡¼
+wx2+.cbp     & WXII+\footnotemark ¤ÈÆ±°ì¤Î¥í¡¼¥Þ»ú¤«¤ÊÊÑ´¹µ¬Â§¤ò»ý¤Ä¥í¡¼
 ¥Þ»ú¤«¤ÊÊÑ´¹¥Æ¡¼¥Ö¥ë \\
 \hline
-kana.kp     & ¥¢¥ë¥Õ¥¡¥Ù¥Ã¥È¥­¡¼¥Ü¡¼¥É¤Çµ¿»÷Åª¤Ë
+kana.cbp     & ¥¢¥ë¥Õ¥¡¥Ù¥Ã¥È¥­¡¼¥Ü¡¼¥É¤Çµ¿»÷Åª¤Ë
 ¤«¤ÊÆþÎÏ¤ò¹Ô¤¦¤¿¤á¤Î¥Æ¡¼¥Ö¥ë¡£¤³¤Î¥Æ¡¼¥Ö¥ë¤òÍÑ¤¤¤ë¤³¤È¤Ë¤è¤ê¡¢
 ÆüËÜ¸ì¥â¡¼¥É¤È¥¢¥ë¥Õ¥¡¥Ù¥Ã¥È¥â¡¼¥É¤ÎÀÚ¤êÂØ¤¨¤À¤±¤Ç¡¢
 ¤«¤ÊÆþÎÏ¤È¥¢¥ë¥Õ¥¡¥Ù¥Ã¥ÈÆþÎÏ¤ÎÀÚ¤êÂØ¤¨¤â¹Ô¤¨¤Þ¤¹¡£ \\
 \hline
-newjis.kp   & ¥¢¥ë¥Õ¥¡¥Ù¥Ã¥È¥­¡¼¥Ü¡¼¥É¤Çµ¿»÷Åª¤Ë¿·JIS¥­¡¼¥Ü¡¼¥É¤Î¥«¥ÊÇÛÎó¤ò¥·¥ß¥å¥ì¡¼¥È¤¹¤ë¤¿¤á¤Î¥Æ¡¼¥Ö¥ë \\
+newjis.cbp   & ¥¢¥ë¥Õ¥¡¥Ù¥Ã¥È¥­¡¼¥Ü¡¼¥É¤Çµ¿»÷Åª¤Ë¿·JIS¥­¡¼¥Ü¡¼¥É¤Î¥«¥ÊÇÛÎó¤ò¥·¥ß¥å¥ì¡¼¥È¤¹¤ë¤¿¤á¤Î¥Æ¡¼¥Ö¥ë \\
 \hline
-kaisoku.kp  & ²÷Â®¥í¡¼¥Þ»úÇÛÎó¤ò¥·¥ß¥å¥ì¡¼¥È¤¹¤ë¤¿¤á¤Î¥Æ¡¼¥Ö¥ë \\
+kaisoku.cbp  & ²÷Â®¥í¡¼¥Þ»úÇÛÎó¤ò¥·¥ß¥å¥ì¡¼¥È¤¹¤ë¤¿¤á¤Î¥Æ¡¼¥Ö¥ë \\
 \hline
 \end{tabular}
 \end{center}
@@ -615,13 +630,13 @@ kaisoku.kp  & ²÷Â®¥í¡¼¥Þ»úÇÛÎó¤ò¥·¥ß¥å¥ì¡¼¥È¤¹¤ë¤¿¤á¤Î¥Æ¡¼¥Ö¥ë \\
 
 %\vspace{5mm}
 
-¥Ç¥Õ¥©¥ë¥È¤Ç¤Ïdefault.kp¤¬Áª¤Ð¤ì¤Þ¤¹¤¬¡¢¤½¤Î¤Û¤«¤Î¥í¡¼¥Þ»ú¤«¤ÊÊÑ´¹¥Æ¡¼¥Ö¥ë¤ò
+¥Ç¥Õ¥©¥ë¥È¤Ç¤Ïdefault.cbp¤¬Áª¤Ð¤ì¤Þ¤¹¤¬¡¢¤½¤Î¤Û¤«¤Î¥í¡¼¥Þ»ú¤«¤ÊÊÑ´¹¥Æ¡¼¥Ö¥ë¤ò
 ÍøÍÑ¤¹¤ë¾ì¹ç¤Ï¥«¥¹¥¿¥Þ¥¤¥º¥Õ¥¡¥¤¥ë¤Ë¼¡¤Î¤è¤¦¤Ê¹Ô¤ò²Ã¤¨¤Þ¤¹¡£
 
 \begin{nquote}{3em}
 \begin{verbatim}
-;kana.kp¤òÍøÍÑ¤¹¤ë¾ì¹ç
-(setq romkana-table "kana.kp")
+;kana.cbp¤òÍøÍÑ¤¹¤ë¾ì¹ç
+(setq romkana-table "kana.cbp")
 \end{verbatim}
 \end{nquote}
 
@@ -651,7 +666,7 @@ kaisoku.kp  & ²÷Â®¥í¡¼¥Þ»úÇÛÎó¤ò¥·¥ß¥å¥ì¡¼¥È¤¹¤ë¤¿¤á¤Î¥Æ¡¼¥Ö¥ë \\
 
 ¥«¥¹¥¿¥Þ¥¤¥º¤¹¤ë¾ì¹ç¤Ï¡¢¥Ç¥Õ¥©¥ë¥È¤Î¥í¡¼¥Þ»ú¤«¤ÊÊÑ´¹¥Æ¡¼¥Ö¥ë¤Î¥½¡¼¥¹¥Õ¥¡
 ¥¤¥ë¤Ç¤¢¤ë \\ 
-\refCANNALIBDIR /sample/src/default.kpdef ¤ò¥³¥Ô¡¼¤·¤Æ½ñ¤­´¹¤¨¤ë¤Î¤¬´Ê
+\refCANNALIBDIR /sample/src/default.ctd ¤ò¥³¥Ô¡¼¤·¤Æ½ñ¤­´¹¤¨¤ë¤Î¤¬´Ê
 Ã±¤Ç¤¹¡£ 
 ¥í¡¼¥Þ»ú¤«¤ÊÊÑ´¹¥Æ¡¼¥Ö¥ë¤Ï1¹Ô¤Ë¥í¡¼¥Þ»ú¤È¤½¤ì¤ËÂÐ±þ¤¹¤ë¡Ø¤«¤Ê¡Ù¤È¤¬µ­
 ½Ò¤µ¤ì¤Æ¤¤¤ë¥Æ¡¼¥Ö¥ë¤Ç¤¹¡£É½ \ref{¥í¡¼¥Þ»ú¤«¤ÊÊÑ´¹¥Æ¡¼¥Ö¥ë¤ÎÆâÍÆ} ¤Î¤è
@@ -788,11 +803,11 @@ a     &  ¤Ù¤ó¤ê¤Ê  & ¡Öna¡×¤Ç»Ï¤Þ¤ëµ¬Â§¤¬¡Öna¡×¢ª¡Ö¤Ê¡×¤À¤±¤Ç¤¢¤ë¤Î¤Ç¤³¤Îµ¬Â§¤¬Å
   \%¡¡mkromdic¡¡¥Õ¥¡¥¤¥ëÌ¾ \RETURN
 \end{nquote}
 
-mkromdic ¤ò¹Ô¤¦¤È¡¢$\ast$.kp ¥Õ¥¡¥¤¥ë¤¬¤Ç¤­¤Þ¤¹¡£
+mkromdic ¤ò¹Ô¤¦¤È¡¢$\ast$.cbp ¥Õ¥¡¥¤¥ë¤¬¤Ç¤­¤Þ¤¹¡£
 
 ¥·¥¹¥Æ¥à¤ÇÄó¶¡¤µ¤ì¤ë¥í¡¼¥Þ»ú¤«¤ÊÊÑ´¹¥Æ¡¼¥Ö¥ë¤Î¥½¡¼¥¹¥Õ¥¡¥¤¥ë¤¬
 \refCANNALIBDIR /sample/src ¤Î²¼¤Ë
-$\ast$.kpdef ¤È¤·¤ÆÂ¸ºß¤·¤Þ¤¹¤Î¤Ç»²¾È¤·¤Æ¤¯¤À¤µ¤¤¡£
+$\ast$.ctd ¤È¤·¤ÆÂ¸ºß¤·¤Þ¤¹¤Î¤Ç»²¾È¤·¤Æ¤¯¤À¤µ¤¤¡£
 
 \begin{nquote}{1em}
 \begin{namelist}{¡¡}
@@ -884,6 +899,9 @@ $\ast$.kpdef ¤È¤·¤ÆÂ¸ºß¤·¤Þ¤¹¤Î¤Ç»²¾È¤·¤Æ¤¯¤À¤µ¤¤¡£
 \HIDX{kill-to-end-of-line}{£Ë£É£Ì£Ì¡Ý£Ô£Ï¡Ý£Å£Î£Ä¡Ý£Ï£Æ¡Ý£Ì£É£Î£Å}{H0.4.5.2.0.a} 
 		& ¹ÔËö¤Þ¤Ç¾Ãµî                  & C-k & ¡¡\\
 \hline
+\HIDX{bubun-kakutei}{£Â£Õ£Â£Õ£Î¡Ý£Ë£Á£Ë£Õ£Ô£Å£É}{H0.4.5.2.0.a} 
+		& ¥«¡¼¥½¥ëÁ°¤Þ¤Ç³ÎÄê            & C-j & ¡¡\\
+\hline
 \HIDX{henkan}{£È£Å£Î£Ë£Á£Î}{H0.4.5.2.0.a} 
 		& ÊÑ´¹                          & Space, Xfer & ¡¡\\
 \hline
@@ -962,8 +980,8 @@ XFER              & \tt "$\backslash$Xfer" \\
 BS                & \tt "$\backslash$Backspace" \\
 INS               & \tt "$\backslash$Insert" \\
 DEL               & \tt "$\backslash$Delete" \\
-ROLLUP            & \tt "$\backslash$Rollup" \\
-ROLLDOWN          & \tt "$\backslash$Rolldown" \\
+ROLLUP(PAGEDOWN)  & \tt "$\backslash$Rollup" \\
+ROLLDOWN(PAGEUP)  & \tt "$\backslash$Rolldown" \\
 ¢¬                & \tt "$\backslash$Up" \\
 ¢«                & \tt "$\backslash$Left" \\
 ¢ª                & \tt "$\backslash$Right" \\
@@ -972,6 +990,7 @@ HOME              & \tt "$\backslash$Home" \\
 CLR               & \tt "$\backslash$Clear" \\
 HELP              & \tt "$\backslash$Help" \\
 ENTER             & \tt "$\backslash$Enter" \\
+END               & \tt "$\backslash$End" \\
 (SPACE)           & \tt "$\backslash$Space" \\
 (RETURN)          & \tt "$\backslash$Return" \\
 \hline
@@ -1010,6 +1029,10 @@ SHIFT+¢¬  & \tt "$\backslash$S-Up" \\
 SHIFT+¢«  & \tt "$\backslash$S-Left" \\
 SHIFT+¢ª  & \tt "$\backslash$S-Right" \\
 SHIFT+¢­  & \tt "$\backslash$S-Down" \\
+¤Ò¤é¤¬¤Ê  & \tt "$\backslash$Hiragana" \\
+¥«¥¿¥«¥Ê  & \tt "$\backslash$Katakana" \\
+È¾³Ñ/Á´³Ñ & \tt "$\backslash$Hankakuzenkaku" \\
+±Ñ¿ô      & \tt "$\backslash$Eisu" \\
 \hline
 \end{tabular}
 \end{center}
@@ -1238,7 +1261,7 @@ use-default¤È¤¤¤¦ÊÑ¿ô¤ÎÃÍ¤Î¿¿ÍýÃÍ¤Ë¤è¤Ã¤Æalpha-mode¤Î¥â¡¼¥É¤Î¥â¡¼¥ÉÉ½¼¨Ê¸»úÎó¤òÀ
 ¿¿ÍýÃÍ        & t, nil \\
 À°¡¡¿ô          & 1, 2, 3, ¡Ä¡Ä \\
 Ê¸¡¡»ú          & ?a, ?$\backslash$C-a, ?$\backslash$Xfer, ¡Ä¡Ä \\
-Ê¸»úÎó        & "romaji.kp", "fuzokugo", "[ ¤¢ ]", ¡Ä¡Ä \\
+Ê¸»úÎó        & "romaji.cbp", "fuzokugo", "[ ¤¢ ]", ¡Ä¡Ä \\
 ¥·¥ó¥Ü¥ë(µ­¹æ) & forward, next, alpha-mode, ¡Ä¡Ä \\
 ¥ê¥¹¥È        & (henkan end-of-line), (katakana kakutei), ¡Ä \\
 \hline
@@ -1362,22 +1385,24 @@ self-insert¤ËÂÐ¤·¤Æ¡Ö'¡×¤òÉÕ¤±¤Æ¤¤¤Þ¤¹¡£ \\
 »ÈÍÑ¤¹¤ë¼­½ñ¤ò»ØÄê¤·¤Þ¤¹¡£
 
 % misao ¡Ä Ê¸Ë¡¼­½ñÄÉ²Ã %
-Éô¼ó¼­½ñ¡¢Ê¸Ë¡¼­½ñ¡¢Ã±¸ìÅÐÏ¿ÍÑ¼­½ñ¤Ê¤É¤ò»ØÄê¤¹¤ë¤Ë¤Ï¼­½ñ¤Î
+Éô¼ó¼­½ñ¡¢Ê¸Ë¡¼­½ñ¡¢Ã±¸ìÅÐÏ¿ÍÑ¼­½ñ¡¢¥«¥¿¥«¥Ê¸ì¼«Æ°ÅÐÏ¿ÍÑ¼­½ñ¤ò»ØÄê¤¹¤ë
+¤Ë¤Ï¼­½ñ¤Î 
 Ì¾Á°¤ÎÄ¾Á°¤Ë \HIDX{:bushu}{¡§£Â£Õ£Ó£È£Õ}{H0.4.6.4.0.1} ¤ä 
 \HIDX{:grammar}{¡§£Ç£Ò£Á£Í£Í£Á£Ò}{H0.4.6.4.0.1}, 
-\HIDX{:user}{¡§£Õ£Ó£Å£Ò}{H0.4.6.4.0.1} ¤òÀè¹Ô¤µ¤»¤Þ¤¹¡£
+\HIDX{:user}{¡§£Õ£Ó£Å£Ò}{H0.4.6.4.0.1}, \HIDX{:katakana}{¡§£Ë£Á£Ô£Á£Ë£Á£Î£Á}{H0.4.6.4.0.1} ¤ò
+Àè¹Ô¤µ¤»¤Þ¤¹¡£
 
 \vspace{5mm}
 
 \begin{CODEBOX}
 (use-dictionary "iroha" "fuzokugo" :bushu "bushu" \\
-¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡:grammar "mygram" ) \\
+¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡:katakana "mykatakana"¡¡:grammar "mygram" ) \\
 ¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡:user "mydic" ) \\
 \end{CODEBOX}
 
 \begin{nquote}{1em}
 \begin{namelist}{¡¡}
-\item[Ãí°Õ] :bushu, :grammar, :user ¤Ï¥·¥ó¥Ü¥ë¤Ê¤Î¤Ç
+\item[Ãí°Õ] :bushu, :grammar, :user, :katakana ¤Ï¥·¥ó¥Ü¥ë¤Ê¤Î¤Ç
 ËÜÍè¤Ï ':bushu, ':user ¤Î¤è¤¦¤Ë¡Ö'¡×(¥·¥ó¥°¥ë¥¯¥©¡¼¥È)¤ò¤Ä¤±¤Ê¤±¤ì¤Ð
 ¤Ê¤é¤Ê¤¤¤Î¤Ç¤¹¤¬¡¢
 ¡Ö:¡×(¥³¥í¥ó)¤«¤é»Ï¤Þ¤ë¥·¥ó¥Ü¥ë(¥­¡¼¥ï¡¼¥É¥·¥ó¥Ü¥ë¤È¤¤¤¤¤Þ¤¹)¤Ë¸Â¤Ã¤Æ¤Ï
@@ -1391,7 +1416,7 @@ self-insert¤ËÂÐ¤·¤Æ¡Ö'¡×¤òÉÕ¤±¤Æ¤¤¤Þ¤¹¡£ \\
 \begin{center}\tt
 \begin{tabular}{|p{20em}|} \hline
 (use-dictionary \\
-"iroha" "fuzokugo" :bushu"bushu" :grammar "mygram" :user "mydic") \\ \hline
+"iroha" "fuzokugo" :bushu "bushu" :katakana "mykatakana" :grammar "mygram" :user "mydic") \\ \hline
 \end{tabular}
 \end{center}
 \vspace{5mm}
@@ -1593,6 +1618,8 @@ global-set-key ¤Ï¤¹¤Ù¤Æ¤Î¥â¡¼¥É¤ËÂÐ¤·¤ÆÆ±ÍÍ¤Ë¥­¡¼¤ò¥Ð¥¤¥ó¥É¤·¤Þ¤¹¡£
 $\backslash$C-} ¤òÀè¹Ô¤µ¤»¤Æµ­½Ò¤¹¤ë¤³¤È¤¬¤Ç¤­¤Þ¤¹¡£C-x ¤ò²¡¤·¤Æ¤«¤é C-a ¤ò
 ²¡¤·¤¿¾ì¹ç¤ËÂÐ¤·¤Æ¥­¡¼¤ò³ä¤êÅö¤Æ¤ë¤È¤¤¤¦¤è¤¦¤Ë C-x, C-a ¤È¤¤¤¦¥·¡¼¥±¥ó
 ¥¹¤òÉ½¸½¤¹¤ë¤È¤­¤Ï {\tt "$\backslash$C-x$\backslash$C-a"} ¤Èµ­½Ò¤·¤Þ¤¹¡£
+C-\textbackslash ¤òÉ½¸½¤¹¤ë¤È¤­¤Ï \texttt{"\textbackslash
+  C-\textbackslash"} ¤Èµ­½Ò¤·¤Þ¤¹¡£
 
 Xfer ¤Ê¤ÉÆÃ¼ì¤Ê¥­¡¼¤Ë´Ø¤·¤Æ¤Ï°Ê²¼¤Î¤è¤¦¤Ëµ­½Ò¤·¤Þ¤¹¡£
 \HIDXAS{ÆÃ¼ì¥­¡¼}{¤È¤¯¤·¤æ¤­¡¼}{H0.4.6.4.0.3}
@@ -1603,15 +1630,16 @@ Xfer ¤Ê¤ÉÆÃ¼ì¤Ê¥­¡¼¤Ë´Ø¤·¤Æ¤Ï°Ê²¼¤Î¤è¤¦¤Ëµ­½Ò¤·¤Þ¤¹¡£
 \begin{center}
 \begin{tabular}{|l|}
 \hline
-\verb+ "\Space     "\Escape"   "\Tab"      "\Nfer"     "\Xfer"     "\Backspace" + \\
+\verb+ "\Space"    "\Escape"   "\Tab"      "\Nfer"     "\Xfer"     "\Backspace" + \\
 \verb+ "\Delete"   "\Insert"   "\Rollup"   "\Rolldown" "\Up"       "\Left" + \\
 \verb+ "\Right"    "\Down"     "\Home"     "\Clear"    "\Help"     "\Enter" + \\
-\verb+ "\Return"   "\F1"       "\F2"       "\F3"       "\F4"       "\F5" + \\
-\verb+ "\F6"       "\F7"       "\F8"       "\F9"       "\F10"      "\Pf1" + \\
-\verb+ "\Pf2"      "\Pf3"      "\Pf4"      "\Pf5"      "\Pf6"      "\Pf7" + \\
-\verb+ "\Pf8"      "\Pf9"      "\Pf10"     "\S-Nfer"   "\S-Xfer"   "\S-Up" + \\
-\verb+ "\S-Down"   "\S-Left"   "\S-Right"  "\C-Nfer"   "\C-Xfer"   "\C-Up" + \\
-\verb+ "\C-Down"   "\C-Left"   "\C-Right" + \\
+\verb+ "\Return"   "\End"      "\F1"       "\F2"       "\F3"       "\F4" + \\
+\verb+ "\F5"       "\F6"       "\F7"       "\F8"       "\F9"       "\F10" + \\
+\verb+ "\Pf1"      "\Pf2"      "\Pf3"      "\Pf4"      "\Pf5"      "\Pf6" + \\
+\verb+ "\Pf7"      "\Pf8"      "\Pf9"      "\Pf10"     "\S-Nfer"   "\S-Xfer" + \\
+\verb+ "\S-Up"     "\S-Down"   "\S-Left"   "\S-Right"  "\C-Nfer"   "\C-Xfer" + \\
+\verb+ "\C-Up"     "\C-Down"   "\C-Left"   "\C-Right"  "\Hiragana" "\Katakana" + \\
+\verb+ "\Eisu"     "\Hankakuzenkaku" + \\
 \hline
 \end{tabular}
 \end{center}
@@ -1719,7 +1747,7 @@ defsymbol¤Ë¤è¤ëÀßÄê¤ò defmode ¤ÇºîÀ®¤·¤¿¥â¡¼¥É¤Ç»ÈÍÑ¤¹¤ë¤«¤É¤¦¤«¤ò»ØÄê¤·¤Þ¤¹
 ¡¡¡¡(set-key 'katakana-mode "\verb!\!C-k" \\
 ¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡'henkan-nyuuryoku-mode) \\
 ¡¡¡¡;¥«¥ÊÆþÎÏ¥â¡¼¥É(µ¿»÷Åª¤Ê)¤òÄêµÁ¤·¤Þ¤¹¡£ \\
-¡¡¡¡(defmode kana-input-mode "[¥«¥Ê]" "kana.kp") \\
+¡¡¡¡(defmode kana-input-mode "[¥«¥Ê]" "kana.cbp") \\
 ¡¡¡¡;C-r¤Ç¥È¥°¥ë¤¹¤ë¤è¤¦¤Ë¤·¤Þ¤¹¡£ \\
 ¡¡¡¡(set-key 'henkan-nyuuryoku-mode "\verb!\!C-r" \\
 ¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡'kana-input-mode) \\
@@ -1763,6 +1791,15 @@ defsymbol ¤ÏÊ£¿ôÎóµ­½Ò¤ò¤¹¤ë¤³¤È¤Ë¤è¤ê¡¢ÀÚ¤êÂØ¤¨¤ò¥ê¥ó¥¯¤¹¤ë¤³¤È¤¬¤Ç¤­¤Þ¤¹¡£
 
 ¤³¤Î¤è¤¦¤ËÄêµÁ¤¹¤ë¤³¤È¤Ë¤è¤ê {\tt"¡Î"} ¤¬ {\tt"¡Ø"} ¤ËÀÚ¤êÂØ¤ï¤ë¤È¡¢¼«Æ°Åª¤Ë 
 {\tt"¡Ï"} ¤â {\tt" ¡Ù"} ¤ËÀÚ¤êÂØ¤ï¤ê¤Þ¤¹¡£
+
+defsymbol ¤Ç¤Ï¡¢ÆþÎÏ¥­¡¼¤ËÂÐ¤·¤ÆÂ¾¤Î¥­¡¼¤¬ÆþÎÏ¤µ¤ì¤¿¤è¤¦¤Ë¿¶Éñ¤ï¤»¤ë¤³
+¤È¤â¤Ç¤­¤Þ¤¹¡£
+
+\begin{CODEBOX}
+(Îã) F1 ¤ò²¡¤·¤¿¤éÁ´³Ñ¥¹¥Ú¡¼¥¹¤òÆþÎÏ¤¹¤ë¡£¤½¤Î»þÆþÎÏ¥­¡¼¤Ï¤¢¤¿¤«¤â
+         ¥¹¥Ú¡¼¥¹¥­¡¼¤Ç¤¢¤Ã¤¿¤«¤Î¤è¤¦¤Ë¤¹¤ë¡£\\
+\verb!         (defsymbol ?\F1 ?\Space "¡¡")! \\
+\end{CODEBOX}
 
 % ------------------------------ (7)
 \hptar{label=H0.4.6.4.0.7}
@@ -1871,30 +1908,26 @@ defmenu ¤ÇÄêµÁ¤·¤¿¥á¥Ë¥å¡¼Ì¾¤òµ¡Ç½Ì¾¤È¤·¤Æ»ÈÍÑ¤·¡¢set-key ¤Ê¤É¤Ç¥­¡¼¤ò
 \hpref{count=7,label=H0.4.6.4.0.3}¥­¡¼¤Î¥Ð¥¤¥ó¥É} ¤ò»²¾È¤·¤Æ¤¯¤À¤µ¤¤¡£
 
 \vspace{5mm}
-%{\tt 
-\begin{center}
-\begin{tabular}{|ll|}
-\hline
-\verb+ (Îã) + & \\
-\verb+ ¡¡¡¡; ¥á¥Ë¥å¡¼¥Ä¥ê¡¼¤ò¹½À®¤¹¤ë +   & \\
-\verb+ ¡¡¡¡; topmenu ¤ÎÄêµÁ +             & \\
-\verb+ ¡¡¡¡(defmenu  topmenu +            & \\
-\verb+ ¡¡¡¡  ("µ­¹æ°ìÍ÷" kigou-mode) +    & \verb+ ; µ¡Ç½ kigou-mode ¤ò¼Â¹Ô¤¹¤ë + \\ 
-\verb+ ¡¡¡¡  ("ÅÐÏ¿" menu1) +             & \verb+ ; menu1 ¤Ø + \\
-\verb+ ¡¡¡¡) +                            & \\
-\verb+  +                                 & \\
-\verb+ ¡¡¡¡; menu1 ¤ÎÄêµÁ +               & \\
-\verb+ ¡¡¡¡(defmenu menu1 +               & \\
-\verb+ ¡¡¡¡  ("ÅÐÏ¿" touroku-mode) +      & \verb+ ; µ¡Ç½ touroku-mode ¤ò¼Â¹Ô¤¹¤ë + \\
-\verb+ ¡¡¡¡  ("ºï½ü" delete-dic-mode) +   & \verb+ ; µ¡Ç½ delete-dic-mode ¤ò¼Â¹Ô¤¹¤ë + \\
-\verb+ ¡¡¡¡  ("¼­½ñ°ìÍ÷" jisho-ichiran) + & \verb+ ; µ¡Ç½ jisho-ichiran ¤ò¼Â¹Ô¤¹¤ë + \\
-\verb+ ¡¡¡¡) +                            & \\
-\verb+   +                                & \\
-\multicolumn{2}{|l|}{\verb+ ¡¡¡¡(set-key 'empty-mode "+$\backslash$\verb+Help" 'topmenu) +}\\
-\hline
-\end{tabular}
-\end{center}
-%}
+\newpage
+\begin{Verbatim}[frame=single]
+ (Îã) 
+     ; ¥á¥Ë¥å¡¼¥Ä¥ê¡¼¤ò¹½À®¤¹¤ë
+     ; topmenu ¤ÎÄêµÁ
+     (defmenu  topmenu
+       ("µ­¹æ°ìÍ÷" kigou-mode)       ; µ¡Ç½ kigou-mode ¤ò¼Â¹Ô¤¹¤ë
+       ("ÅÐÏ¿" menu1)                ; menu1 ¤Ø
+     )
+
+     ; menu1 ¤ÎÄêµÁ
+     (defmenu menu1
+       ("ÅÐÏ¿" touroku-mode)         ; µ¡Ç½ touroku-mode ¤ò¼Â¹Ô¤¹¤ë
+       ("ºï½ü" delete-dic-mode)      ; µ¡Ç½ delete-dic-mode ¤ò¼Â¹Ô¤¹¤ë
+       ("¼­½ñ°ìÍ÷" jisho-ichiran)    ; µ¡Ç½ jisho-ichiran ¤ò¼Â¹Ô¤¹¤ë
+     )
+
+    (set-key 'empty-mode "\Help" 'topmenu)
+\end{Verbatim}
+
 \vspace{5mm}
 
 ¥á¥Ë¥å¡¼¥Ä¥ê¡¼¤ò¹½À®¤¹¤ëºÝ¡¢¥«¥¹¥¿¥Þ¥¤¥º¤Î½çÈÖ¤ÏÇ¤°Õ¤Ç¤¹¡£
@@ -2210,6 +2243,24 @@ t ¤Ç¶èÀÚ¤ê¤Þ¤¹¡£¥Ç¥Õ¥©¥ë¥È¤Ï nil ¤Ç¤¹¡£
 \end{nquote}
 
 % ------- ¡¦
+\hptar{label=H0.4.6.4.0.107.5}
+\item \HIDX{code-input}{£Ã£Ï£Ä£Å¡Ý£É£Î£Ð£Õ£Ô}{H0.4.6.4.0.107.5}
+
+¥³¡¼¥ÉÊÑ´¹¤Îµ¡Ç½¤òÍøÍÑ¤·¤Æ¥³¡¼¥ÉÆþÎÏ¤ò¹Ô¤¦¾ì¹ç¡¢JIS ¥³¡¼¥É(``jis'')¡¢¥·
+¥Õ¥È JIS ¥³¡¼¥É(``sjis'')¡¢¶èÅÀ¥³¡¼¥É(``kuten'')¤Î 3 ¤Ä¤Î¥³¡¼¥É¼ïÊÌ¤Î¤¤¤º¤ì
+¤«¤ò»ØÄê¤¹¤ë¤³¤È¤¬¤Ç¤­¤Þ¤¹¡£¥Ç¥Õ¥©¥ë¥È¤Ï ``jis'' ¤Ç¤¹¡£
+
+¤¿¤À¤·¡¢¥á¥Ë¥å¡¼¤òÍøÍÑ¤·¤¿¥³¡¼¥ÉÆþÎÏ¤Ï¡¢JIS ¥³¡¼¥É¤Î¤ß¥µ¥Ý¡¼¥È¤·¤Þ¤¹¡£
+
+\begin{nquote}{2em}
+\begin{verbatim}
+(Îã) 
+    ;JIS ¥³¡¼¥É¤Ç¥³¡¼¥ÉÆþÎÏ¤·¤Þ¤¹¡£
+    (setq code-input "jis")
+\end{verbatim}
+\end{nquote}
+
+% ------- ¡¦
 \hptar{label=H0.4.6.4.0.108}
 \item \HIDX{cursor-wrap}{£Ã£Õ£Ò£Ó£Ï£Ò¡Ý£×£Ò£Á£Ð}{H0.4.6.4.0.108}
 
@@ -2232,7 +2283,8 @@ t ¤Ç¶èÀÚ¤ê¤Þ¤¹¡£¥Ç¥Õ¥©¥ë¥È¤Ï nil ¤Ç¤¹¡£
 {H0.4.6.4.0.109}
 
 Ã¼Ëö¤Î¥¿¥¤¥×¤´¤È¤Ë¥¨¥¹¥±¡¼¥×¥·¡¼¥±¥ó¥¹¤Èµ¡Ç½¥­¡¼¤ÎÂÐ±þ¤òÀßÄê¤·¤Þ¤¹¡£
-vi(1) ¤ä cannad(1) ¤Ê¤É¤¬
+%vi(1) ¤ä cannad(1) ¤Ê¤É¤¬
+canuum(1) ¤¬
 ¥Õ¥¡¥ó¥¯¥·¥ç¥ó¥­¡¼¤Ê¤É¤ò²ò¼á¤¹¤ëºÝ¤Ë»²¾È¤µ¤ì¤Þ¤¹¡£
 
 ¤Ê¤ª¡¢¥¢¥×¥ê¥±¡¼¥·¥ç¥ó¤Ë¤è¤Ã¤Æ¤Ï¤³¤Îµ¡Ç½¤ËÂÐ±þ¤·¤Æ¤¤¤Ê¤¤¤³¤È¤¬¤¢¤ê¤Þ¤¹¡£
@@ -2240,13 +2292,27 @@ vi(1) ¤ä cannad(1) ¤Ê¤É¤¬
 \begin{nquote}{2em}
 \begin{verbatim}
 (Îã)
-    (define-esc-sequence "kterm" "\ESC[28~" ?\Help)
-    (define-esc-sequence "kterm" "\ESC[210z" ?\Xfer)
+    (define-esc-sequence "kterm" "\Escape[28~" ?\Help)
+    (define-esc-sequence "kterm" "\Escape[210z" ?\Xfer)
 \end{verbatim}
 \end{nquote}
 
 ¥¿¡¼¥ß¥Ê¥ëÌ¾¤È¥¨¥¹¥±¡¼¥×¥·¡¼¥±¥ó¥¹¤ÏÊ¸»úÎó¤òµö¤·¤Þ¤¹¤¬¡¢ºÇ¸å¤Î¥­¡¼¤ÏÃ±
 ¥­¡¼¤È¤¹¤ë¤¿¤á¡¢Ê¸»ú¤ò»ØÄê¤¹¤ë¤è¤¦¤Ë¹½Ê¸¾å¤ÎÀ©Ìó¤ò²Ã¤¨¤Æ¤¤¤Þ¤¹¡£ 
+
+% ------- ¡¦
+\hptar{label=H0.4.6.4.0.109.5}
+\item \HIDX{delay-connect}{£Ä£Å£Ì£Á£Ù¡Ý£Ã£Ï£Î£Î£Å£Ã£Ô}{H0.4.6.4.0.109.5}
+
+ºÇ½é¤ÎÊÑ´¹¤Î»þ¤Þ¤Ç¥µ¡¼¥Ð¤Ø¤ÎÀÜÂ³¤òÃÙ±ä¤¹¤ë¤«¤É¤¦¤«¤ò»ØÄê¤·¤Þ¤¹¡£
+ nil ¤Î¤È¤­¤Ï½é´ü²½»þ¤Ë¤¹¤°¤ËÀÜÂ³¤·¤Þ¤¹¡£¥Ç¥Õ¥©¥ë¥È¤Ï nil ¤Ç¤¹¡£
+
+\begin{nquote}{2em}
+\begin{verbatim}
+(Îã)
+    (setq delay-connect nil)
+\end{verbatim}
+\end{nquote}
 
 % ------- ¡¦
 \hptar{label=H0.4.6.4.0.110}
@@ -2384,6 +2450,20 @@ ignore-case ¤ò t ¤Ë¤·¤¿¾ì¹ç¡¢ÂçÊ¸»ú¤ÇÆþÎÏ¤·¤Æ¤â¥í¡¼¥Þ»ú¤«¤ÊÊÑ´¹¤Ç¤Ï¾®
 \end{nquote}
 
 % ------- ¡¦
+\hptar{label=H0.4.6.4.0.117.5}
+\item \HIDX{inhibit-hankaku-kana}{£É£Î£È£É£Â£É£Ô¡Ý£È£Á£Î£Ë£Á£Ë£Õ¡Ý£Ë£Á£Î£Á}{H0.4.6.4.0.117.5}
+
+Ê¸»ú¼ïÊÑ´¹¤ÇÈ¾³Ñ¥«¥¿¥«¥Ê¤ò¶Ø»ß¤¹¤ë¤É¤¦¤«¤ò»ØÄê¤·¤Þ¤¹¡£t ¤Î¤È¤­¤Ï¶Ø»ß¤·¤Þ¤¹¡£
+¥Ç¥Õ¥©¥ë¥È¤Ï nil ¤Ç¤¹¡£
+\begin{nquote}{2em}
+\begin{verbatim}
+(Îã)
+    ;È¾³Ñ¥«¥¿¥Ê¥Ê¤ò¶Ø»ß¤·¤Þ¤¹¡£
+    (setq inhibit-hankaku-kana t)
+\end{verbatim}
+\end{nquote}
+
+% ------- ¡¦
 \hptar{label=H0.4.6.4.0.118}
 \item \HIDX{kakutei-if-end-of-bunsetsu}{£Ë£Á£Ë£Õ£Ô£Å£É¡Ý£É£Æ¡Ý£Å£Î£Ä¡Ý
 £Ï£Æ¡Ý£Â£Õ£Î£Ó£Å£Ô£Ó£Õ}{H0.4.6.4.0.118}
@@ -2414,6 +2494,21 @@ t ¤ÇÉ½¼¨¤·¡¢nil ¤ÇÉ½¼¨¤·¤Þ¤»¤ó¡£
 \begin{verbatim}
 (Îã)
     (setq kouho-count t)
+\end{verbatim}
+\end{nquote}
+
+% ------- ¡¦
+\hptar{label=H0.4.6.4.0.119.5}
+\item \HIDX{mojishu-continue}{£Í£Ï£Ê£É£Ó£È£Õ¡Ý£Ã£Ï£Î£Ô£É£Î£Õ£Å}{H0.4.6.4.0.119.5}
+
+Ê¸»ú¼ïÊÑ´¹¸å¡¢Ê¸»ú¼ïÊÑ´¹ÉôÊ¬¤ò³ÎÄê¤·¤Ê¤¤¤Ç¼¡¤ÎÆþÎÏ¤ò¹Ô¤¦¤«¤É¤¦¤«¤ò»Ø
+Äê¤·¤Þ¤¹¡£t ¤Î¤È¤­¤Ï³ÎÄê¤·¤Ê¤¤¤Ç¼¡¤ÎÆþÎÏ¤ò¹Ô¤¤¤Þ¤¹¡£
+¥Ç¥Õ¥©¥ë¥ÈÃÍ¤Ï t ¤Ç¤¹¡£
+
+\begin{nquote}{2em}
+\begin{verbatim}
+(Îã)
+    (setq mojishu-continue t)
 \end{verbatim}
 \end{nquote}
 
@@ -3020,42 +3115,37 @@ self-insert ¤Î self ¤È¤Ï¥­¡¼¼«¿È¤ò»Ø¤·¤Þ¤¹¡£
 ¤È¤¤¤¦¾ì¹ç¤Ë¤Ï¡¢°Ê²¼¤Î¤è¤¦¤Ë¥«¥¹¥¿¥Þ¥¤¥º¤·¤Þ¤¹¡£
 
 \vspace{5mm}
-%{\tt 
-\begin{center}
-\begin{tabular}{|ll|}
-\hline
-\multicolumn{2}{|l|}{\verb+; Ê¸»ú°ìÍ÷ kakko ¤ÎÄêµÁ+} \\
-\multicolumn{2}{|l|}{\verb+(defselection kakko "[³ç¸Ì]" '(?¡Ê ?¡Ë ?¡Ì ?¡Í ?¡Î ?¡Ï ?¡Ð ?¡Ñ ?¡Ò ?¡Ó))+} \\
-\multicolumn{2}{|l|}{\verb+; Ê¸»ú°ìÍ÷ keisan ¤ÎÄêµÁ+} \\
-\multicolumn{2}{|l|}{\verb+(defselection keisan "[·×»»]"+} \\
-\multicolumn{2}{|l|}{\verb+¡¡'(?¡Ü ?¡Ý ?¡Þ ?¡ß ?¡à ?¡á ?¡â ?¡ã ?¡ä ?¡å ?¡æ ?¡ç ?¡è))+} \\
-                                    & \\
-\multicolumn{2}{|l|}{\verb+; ¥á¥Ë¥å¡¼¤Ë°ìÍ÷¤ÈÅÐÏ¿¤òÄêµÁ¤¹¤ë+} \\
-\verb+(defmenu  toplevel-menu+      & \verb+; ½é´ü menu ¤ÎÄêµÁ+ \\
-\verb+  ("°ìÍ÷" menu1)+             & \verb+; menu1 ¤Ø+ \\
-\verb+  ("ÅÐÏ¿" menu2)+             & \verb+; menu2 ¤Ø+ \\
-\verb+)+                            & \\
-                                    & \\
-\multicolumn{2}{|l|}{\verb+; °ìÍ÷¤òÁªÂò¤¹¤ë¤È¡¢³ç¸Ì¡¢¿ô³Øµ­¹æ¡¢¥®¥ê¥·¥ã¸ì¤Î°ìÍ÷É½¼¨¤¬¤Ç¤­¤ë+} \\
-\verb+(defmenu menu1+               & \verb+; menu1 ¤ÎÄêµÁ+ \\
-\verb+  ("¥«¥Ã¥³" kakko)+           & \verb+; kakko ¤ò°ìÍ÷É½¼¨¤¹¤ë+ \\
-\verb+  ("·×»»" keisan)+            & \verb+; keisan ¤ò°ìÍ÷É½¼¨¤¹¤ë+ \\
-\verb+  ("¥®¥ê¥·¥ã" greek-mode)+    & \verb+; µ¡Ç½ greek-mode ¤ò¹Ô¤¦+ \\
-\verb+)+                            & \\
-                                    & \\
-\multicolumn{2}{|l|}{\verb+; ÅÐÏ¿¤òÁªÂò¤¹¤ë¤È¡¢Ã±¸ìÅÐÏ¿/ºï½ü¡¢¼­½ñ°ìÍ÷¤ÎÉ½¼¨¤¬¤Ç¤­¤ë+} \\
-\verb+(defmenu menu2+               & \verb+; menu2 ¤ÎÄêµÁ+ \\
-\verb+  ("ÅÐÏ¿" touroku-mode)+      & \verb+; µ¡Ç½ touroku-mode ¤ò¹Ô¤¦+ \\
-\verb+  ("ºï½ü" delete-dic-mode)+   & \verb+; µ¡Ç½ delete-dic-mode ¤ò¹Ô¤¦+ \\
-\verb+  ("¼­½ñ°ìÍ÷" jisho-ichiran)+ & \verb+; µ¡Ç½ jisho-ichiran ¤ò¹Ô¤¦+ \\
-\verb+)+                            & \\
-                                    & \\
-\multicolumn{2}{|l|}{\verb+; C-t ¤ò²¡¤¹¤È¡¢ÄêµÁ¤·¤¿¥á¥Ë¥å¡¼¤òÉ½¼¨¤¹¤ë+} \\
-\multicolumn{2}{|l|}{\verb+(set-key 'empty-mode "+$\backslash$\verb+C-t" 'toplevel-menu)+} \\
-\hline
-\end{tabular}
-\end{center}
-%}
+\newpage
+\begin{Verbatim}[frame=single]
+ ; Ê¸»ú°ìÍ÷ kakko ¤ÎÄêµÁ
+ (defselection kakko "[³ç¸Ì]" '(?¡Ê ?¡Ë ?¡Ì ?¡Í ?¡Î ?¡Ï ?¡Ð ?¡Ñ ?¡Ò ?¡Ó))
+ ; Ê¸»ú°ìÍ÷ keisan ¤ÎÄêµÁ
+ (defselection keisan "[·×»»]"
+ ¡¡'(?¡Ü ?¡Ý ?¡Þ ?¡ß ?¡à ?¡á ?¡â ?¡ã ?¡ä ?¡å ?¡æ ?¡ç ?¡è))
+
+ ; ¥á¥Ë¥å¡¼¤Ë°ìÍ÷¤ÈÅÐÏ¿¤òÄêµÁ¤¹¤ë
+ (defmenu  toplevel-menu       ; ½é´ü menu ¤ÎÄêµÁ
+   ("°ìÍ÷" menu1)              ; menu1 ¤Ø
+   ("ÅÐÏ¿" menu2)              ; menu2 ¤Ø
+ )
+
+ ; °ìÍ÷¤òÁªÂò¤¹¤ë¤È¡¢³ç¸Ì¡¢¿ô³Øµ­¹æ¡¢¥®¥ê¥·¥ã¸ì¤Î°ìÍ÷É½¼¨¤¬¤Ç¤­¤ë
+ (defmenu menu1                ; menu1 ¤ÎÄêµÁ
+   ("¥«¥Ã¥³" kakko)            ; kakko ¤ò°ìÍ÷É½¼¨¤¹¤ë
+   ("·×»»" keisan)             ; keisan ¤ò°ìÍ÷É½¼¨¤¹¤ë
+   ("¥®¥ê¥·¥ã" greek-mode)     ; µ¡Ç½ greek-mode ¤ò¹Ô¤¦
+ )
+
+ ; ÅÐÏ¿¤òÁªÂò¤¹¤ë¤È¡¢Ã±¸ìÅÐÏ¿/ºï½ü¡¢¼­½ñ°ìÍ÷¤ÎÉ½¼¨¤¬¤Ç¤­¤ë
+ (defmenu menu2                ; menu2 ¤ÎÄêµÁ
+   ("ÅÐÏ¿" touroku-mode)       ; µ¡Ç½ touroku-mode ¤ò¹Ô¤¦
+   ("ºï½ü" delete-dic-mode)    ; µ¡Ç½ delete-dic-mode ¤ò¹Ô¤¦
+   ("¼­½ñ°ìÍ÷" jisho-ichiran)  ; µ¡Ç½ jisho-ichiran ¤ò¹Ô¤¦
+ )
+
+ ; C-t ¤ò²¡¤¹¤È¡¢ÄêµÁ¤·¤¿¥á¥Ë¥å¡¼¤òÉ½¼¨¤¹¤ë
+ (set-key 'empty-mode "\C-t" 'toplevel-menu)
+\end{Verbatim}
 \vspace{5mm}
 
 ¤³¤Î¤è¤¦¤Ë¥«¥¹¥¿¥Þ¥¤¥º¤¹¤ë¤È¡¢°Ê²¼¤Î¤è¤¦¤Ë¥á¥Ë¥å¡¼¤òÍøÍÑ¤Ç¤­¤Þ¤¹¡£

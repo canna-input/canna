@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: wconvert.c,v 1.2.2.3 2003/01/06 04:42:08 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: wconvert.c,v 1.2.2.4 2003/09/12 14:11:09 aida_s Exp $";
 #endif
 
 #define EXTPROTO 1
@@ -1174,17 +1174,30 @@ ClientPtr *clientp ;
     wReq17 *req = &Request.type17 ;
     ClientPtr client = *clientp ;
     char *reqname;
-    int i, stat = 0 ;
+    int i, stat = -1 ;
 
-    reqname = req->dicname;
-    for( i = 0; *reqname; i++ ){
-	if (strcmp(ExtensionRequest[i], reqname)) {
+    reqname = req->extensions;
+    /* まずは頭出し */
+    for( i = 0; *ExtensionRequest[i]; i++) {
+	if (!strcmp(ExtensionRequest[i], reqname))
+	    goto matchfirst;
+    }
+    goto last;	/* not found */
+matchfirst:
+    /* 全部合うかな */
+    stat = i;
+    for (;;) {
+	reqname += strlen(reqname) + 1;
+	i++;
+	if (!*reqname)
+	    break;	/* 全部OK */
+	if (!*ExtensionRequest[i]
+		|| strcmp(ExtensionRequest[i], reqname)) {
 	    stat = -1;
 	    break;
 	}
-	reqname += strlen(reqname) + 1;
     }
-
+last:
     return SendType2Reply(client, wQueryExtensions, !EXTPROTO, stat);
 }
 
@@ -2201,6 +2214,7 @@ int *status;	      /* read at least n from client */
     int (* ReqCallFunc)() ;
 #ifdef DEBUG
     extern char *DebugProcWide[][2] ;
+    extern const char *CallFuncName;
 #endif
     BYTE *bufptr = ReadRequestBuffer, *p;
     register wReq1 *req = &Request.type1 ;
@@ -2314,6 +2328,12 @@ int *status;	      /* read at least n from client */
     ClientStat(who, SETTIME, (int)req->type, 0);
 
     *status = 1 ;
+#ifdef DEBUG
+    if (req->none)
+	CallFuncName = ExtensionRequest[req->type - 1];
+    else
+	CallFuncName = DebugProcWide[req->type][0];
+#endif
     return (int)req->type;
 }
 
@@ -2699,17 +2719,29 @@ static
 ProcWideReq17(buf)
 BYTE *buf ;
 {
+    char *p;
+    size_t len;
     ir_debug( Dmsg(10, "ProcWideReq17 start!!\n") );
 
     buf += HEADER_SIZE;
-    if (Request.type17.datalen < SIZEOFCHAR * 2
-	    || buf[Request.type17.datalen - SIZEOFCHAR * 2] != 0)
+    p = Request.type17.extensions = (char *)buf;
+    if (Request.type17.datalen < SIZEOFCHAR * 3
+	    || Request.type17.extensions[Request.type17.datalen - 2] != 0
+	    || Request.type17.extensions[Request.type17.datalen - 3] != 0)
 	return( -1 );
-    Request.type17.dicname = (char *)buf;
-    Request.type17.mode = (char)*(buf + Request.type17.datalen - SIZEOFCHAR) ;
-    ir_debug( Dmsg(10, "req->dicname =%s\n",
-		   (Request.type17.dicname)?Request.type17.dicname:null) );
-    ir_debug( Dmsg(10, "req->mode =%d\n", Request.type17.mode) );
+    while ((len = strlen(p)) != 0)
+	p += len + 1;
+    if (p != Request.type17.extensions + Request.type17.datalen - 2)
+	return( -1 );
+    /*
+     * 最後の1バイトは使われていない。以前のクライアントが送る値は
+     * 不定である(不正な静的領域を読んでいる)。現在は0になっている。
+     */
+    Request.type17.ch = Request.type17.extensions[Request.type17.datalen - 1];
+    ir_debug( Dmsg(10, "req->extensions =%s...\n",
+		   (Request.type17.datalen)?Request.type17.extensions:null) );
+    ir_debug( Dmsg(10, "req->ch =%c\n",
+		   Request.type17.ch) );
 
     return( 0 ) ;
 }
@@ -2955,6 +2987,10 @@ reqproc WideVector[] =
 char *ExtensionRequest[] = {
     /* Request Name */
 #ifdef EXTENSION
+    /*
+     * GetServerInfoからCopyDictioinaryまでは、従来のクライアントや
+     * コマンド類がこの順番を仮定しているので、変えてはいけない。
+     */
     "GetServerInfo",		/* 0x01 */
     "GetAccessControlList",	/* 0x02 */
     "CreateDictioinary",	/* 0x03 */

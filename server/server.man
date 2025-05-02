@@ -19,7 +19,7 @@
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 .\" PERFORMANCE OF THIS SOFTWARE. 
 .\"
-.\" $Id: server.man,v 1.6 2002/11/01 08:32:06 zu2 Exp $
+.\" $Id: server.man,v 1.6.2.1 2003/09/12 05:00:49 aida_s Exp $
 .TH CANNASERVER 1M
 .SH "NAME"
 cannaserver \- Kana-Kanji conversion server
@@ -27,33 +27,39 @@ cannaserver \- Kana-Kanji conversion server
 .B "cannaserver [\-d] [\-u \fIuserid\fP] [\-inet] [\-l \fIn\fP] [\-syslog] [\-p \fInum\fP] [\fIddpath\fP] "
 .SH "DESCRIPTION"
 .PP
-cannaserver provides the Kana-Kanji conversion service.  Usually all
-users on the network can access cannaserver(1M).  The scope of
-accessing sources (hosts, users) can be restricted using the
-/etc/hosts.canna file.
+cannaserver(1M) provides the Kana\-Kanji conversion service.
+Most commonly this daemon starts at daemon bootup framework
+like /etc/rc depending on your system, so you do not usually
+start it up manually.
 .PP
-After starting, cannaserver(1M) immediately forks and enters the
-background process.  Thus, you do not need to use '&' to set the
-background process explicitly.
+By default, cannaserver(1M) only accepts connections from clients
+at the same host where the server is running (via UNIX domain socket).
+You can make it accessible from other hosts via TCP by using option \-inet.
+Whether you use this option or not, you can get access
+control based on user and host using @(AccessFile).
 .PP
-When starting, cannaserver(1M) creates the UNIX domain socket
-@(UnixSockDir)/@(UnixSockName) to communicate clients.  The
-socket is deleted automatically at the end of cannaserver(1M) if no
-trouble occurs.  The socket may exist although cannaserver(1M) is
-not in operation (because cannaserver(1M) terminates abnormally, for
-example).  In this case, delete the file manually.
+cannaserver(1M) immediately forks and gets into the background after
+it starts.  You do not need to use '&' explicitly to make it run in the
+background.
 .PP
-Specification of the dictionary to use is determined by referencing
-the dics.dir file of the dictionary directory according to the
-request from the client.
+When it starts, cannaserver(1M) creates the UNIX domain socket
+@(UnixSockDir)/@(UnixSockName)[:num] to communicate clients.  The
+socket is deleted automatically if cannaserver(1M) terminates normally.
+The socket may exist while cannaserver(1M) is not running (because,
+for example, cannaserver(1M) terminated abnormally).  In this case, delete
+the file manually or you cannot start it.
+.PP
+@(DicDir)/*/dics.dir includes the list of dictionaries which are available
+to clients. Users (i.e. clients) can choose which to use and specify them
+in ~/.canna.
 .SH "OPTIONS"
 .IP "\fIddpath\fP" 12
-Specifies the directory that contains the dictionary.
+Specifies the directory that contains dictionaries.
 .IP "\-inet" 12
-The remote host can connect with the cannaserver(1M) using
-the inet domain socket.
-By the default, the cannaserver(1M) uses only UNIX domain socket.
-i.e. Only clients in your local machine can connect to the server.
+This option lets cannaserver(1M) accept connections from remote hosts
+using inet domain socket (IPv4).
+By default, the cannaserver(1M) uses only UNIX domain socket,
+i.e. only clients in your local machine can connect to the server.
 .IP "\-l \fIn\fP" 12
 Outputs the cannaserver(1M) log to /tmp/canna.log.  n (1 to 5)
 specifies the log level.
@@ -65,17 +71,24 @@ output.
 Specifies which user cannaserver(1M) runs as.  By default, cannaserver(1M)
 runs as the user who started cannaserver(1M).
 .IP "\-syslog" 12
-Outputs the cannaserver(1M) log to syslogd(8).
+Outputs the cannaserver(1M) log to syslogd(8). If you specify
+this option, logs are not output to @(ErrDir)/CANNA?msgs.
 .IP "\-p \fInum\fP" 12
-If specified, cannaserver(1M) will use the port number 5680 + num.  By
-default, cannaserver(1M) uses the port number 5680.
+By this option cannaserver(1M) uses the port number 5680 + num. The
+default port number is 5680. This option also has an effect on the
+filename of the socket and the log file. See below.
 .SH "FILES"
-.IP "@(UnixSockDir)/@(UnixSockName)[:num]" 36
-Socket
-.IP "@(cannaLibDir)/dic/*/dics.dir" 36
+.IP "@(UnixSockDir)/@(UnixSockName)[:num]" 8
+Socket. [:num] part is added only when you specify \-p.
+.IP "@(DicDir)/*/dics.dir" 8
 Dictionary directory
-.IP "@(AccessFile)" 36
+.IP "@(AccessFile)" 8
 Access control file
+.IP "@(ErrDir)/CANNA?msgs" 8
+Log file. "?" is replaced with \fInum\fP specified
+with \-p, and defaults to 0 without \-p \fInum\fP.
+Log messages are not output to this file when \-syslog
+is specified.
 .SH "SEE ALSO"
 .PP
-cannakill(1M), cannastat(1), cannacheck(1)
+cannakill(1M), cannastat(1), cannacheck(1), cshost(1)

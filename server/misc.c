@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[]="@(#) $Id: misc.c,v 1.4.2.1 2002/12/18 08:29:09 aida_s Exp $";
+static char rcs_id[]="@(#) $Id: misc.c,v 1.4.2.2 2003/09/12 14:11:09 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */
@@ -125,14 +125,14 @@ Usage()
 
 extern void getserver_version pro((void));
 
-int
-BecomeDaemon ( argc, argv )
+void
+EarlyInit ( argc, argv )
 int argc;
 char *argv[];	
 {
     char *ddname = (char *)NULL;
     char buf[ MAXDATA ];
-    int     parent, parentid, i;
+    int     i;
     int     context;
     struct  passwd *pwent;
 
@@ -230,20 +230,24 @@ char *argv[];
 	
 	if( !strcmp( argv[ i ], "-l" ) ) {
 	  if (++i < argc) {
-	    /* ログファイル作成 */
-	    if( (Fp = fopen( LOGFILE, "w" ) ) != NULL ){
-		LogLevel = atoi(argv[i]);
-		if( LogLevel <= 0 )
-		    LogLevel = 1 ;
-		ServerLogFp = Fp ;
-	    } else {
-		perror("Can't Create Log File!!\n");
-	    }
+	    LogLevel = atoi(argv[ i ]);
+	    if( LogLevel <= 0 )
+		LogLevel = 1 ;
 	  }
 	  else {
 	    Usage();
 	    /* NOTREACHED */
 	  }
+	}
+    }
+    
+    if (LogLevel && !DebugMode) {
+	/* ログファイル作成 */
+	if( (Fp = fopen( LOGFILE, "w" ) ) != NULL ){
+	    ServerLogFp = Fp ;
+	} else {
+	    LogLevel = 0;
+	    perror("Can't Create Log File!!\n");
 	}
     }
 
@@ -267,24 +271,22 @@ char *argv[];
 
    ir_debug( Dmsg(5, "My name is %s\n", MyName ); )
 
-#ifdef DEBUG
-    if( DebugMode ) {
-	signal(SIGPIPE,  SIG_IGN) ;
-	bzero(PreMountTabl, MAX_PREMOUNTS * sizeof(unsigned char *));
-	CreateAccessControlList() ;
-
-	return 0; /* デーモンにならない */
-    }
-#endif
-    /*
-     * FORK a CHILD
-     */
-
-    parentid = getpid() ;
-
     bzero(PreMountTabl, MAX_PREMOUNTS * sizeof(unsigned char *));
 
     CreateAccessControlList() ;
+}
+
+int
+BecomeDaemon ()
+{
+    int     parent, parentid;
+
+    if (DebugMode) {
+	signal(SIGPIPE,  SIG_IGN) ;
+	return 0; /* デーモンにならない */
+    }
+
+    parentid = getpid() ;
 
     signal(SIGTERM, parQUIT);
 #ifndef __EMX__
@@ -294,7 +296,7 @@ char *argv[];
     }
     if ( parent ) {
 	pause() ;
-	exit( 0 ) ;
+	_exit( 0 ) ;
 	/* wait( (int *)0 ) ;	*/
     } else
 	signal(SIGTERM, SIG_DFL);

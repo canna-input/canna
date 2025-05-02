@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[]="$Id: ngram.c,v 1.3 2002/10/20 14:29:58 aida_s Exp $";
+static char rcsid[]="$Id: ngram.c,v 1.3.2.1 2003/09/12 14:32:52 aida_s Exp $";
 #endif
 
 #include	"RKintern.h"
@@ -392,7 +392,7 @@ wstowrec(gram, src, dst, maxdst, yomilen, wlen, lucks)
   *yomilen = *wlen = 0;
   yomi = skip_space(src);
   ylen = skip_until_space(yomi, &src);
-  if (!ylen || ylen > RK_LEFT_KEY_WMAX)
+  if (!ylen || ylen > RK_KEY_WMAX)
     return(0);
   while (*src) {
     if (*src == (Wchar)'\n')
@@ -400,7 +400,7 @@ wstowrec(gram, src, dst, maxdst, yomilen, wlen, lucks)
     if (*(src = skip_space(src)) == (Wchar)'#') {
       src = RkParseGramNum(gram, src, &row);
       if (!is_row_num(gram, row))
-	break;
+	return(0);
       if (*src == (Wchar)'#')
 	continue;
       if (*src == (Wchar)'*') {
@@ -422,7 +422,7 @@ wstowrec(gram, src, dst, maxdst, yomilen, wlen, lucks)
     }
     if (!klen || klen > RK_LEN_WMAX)
       return(0);
-    if (dst + klen * sizeof(Wchar) > odst + maxdst)
+    if (dst + 2 + klen * sizeof(Wchar) > odst + maxdst)
       return(0);
     step++;
     *dst++ = (Wrec)(((klen << 1) & 0xfe) | ((row >> 8) & 0x01));
@@ -430,7 +430,7 @@ wstowrec(gram, src, dst, maxdst, yomilen, wlen, lucks)
     for (; klen > 0 ; klen--, kanji++) {
       if (*kanji == RK_ESC_CHAR) {
 	if (!*++kanji) {
-	  break;
+	  return(0);
 	}
       }
       *dst++ = (Wrec)((*kanji >> 8) & 0xff);
@@ -470,8 +470,7 @@ fil_wc2wrec_flag(wrec, wreclen, ncand, yomi, ylen, left)
   }
   if (left) {
     int offset = ylen - left; /* ディレクトリ部に入っている読みの長さ */
-    if (offset < 0)
-      return((Wrec *)0);
+    RK_ASSERT(offset >= 0);
     for (i = 0 ; i < offset ; i++) {
       if (*yomi == RK_ESC_CHAR) {
 	yomi++;
@@ -515,8 +514,7 @@ fil_wrec_flag(wrec, wreclen, ncand, yomi, ylen, left)
     *wrec++ = (Wrec)((ncand >> 3) & 0xff);
   }
   if (left) {
-    if (ylen < left)
-      return((Wrec *)0);
+    RK_ASSERT(ylen >= left);
     yomi += (ylen - left) * sizeof(Wchar);
     for (i = 0; i < (int)left; i++) {
       tmp = uniqAlnum((Wchar)((yomi[2*i] << 8) | yomi[2*i + 1]));
@@ -548,27 +546,23 @@ RkParseWrec(gram, src, left, dst, maxdst)
   }
 #endif
 
-  if (!(nc = wstowrec(gram, src, localbuffer, RK_WREC_BMAX/sizeof(Wchar),
+  if (left > RK_LEFT_KEY_WMAX) {
+    ; /* return NULL */
+  }
+  else if (!(nc = wstowrec(gram, src, localbuffer, RK_WREC_BMAX,
 		      &ylen, &wlen, lucks))) {
-    /* I don't know why the RK_WREC_BMAX should be divided by sizeof(Wchar).
-       the divider should be removed.  1996.6.5 kon */
     ; /* return 0 */
   }
-  else if ((wreclen = 2 + (left * sizeof(Wchar)) + wlen) > maxdst) {
+  else if (2 + (wreclen = 2 + (left * sizeof(Wchar)) + wlen) > maxdst) {
     ; /* return (unsigned char *)0; */
   }
-  else if (left > ylen) {
-    ; /* return (unsigned char *)0; */
+  else if (left > ylen) { /* wrong argument */
+    RK_ASSERT(0);
   }
   else {
     dst = fil_wc2wrec_flag(dst, &wreclen, nc, src, ylen, left);
-    if (dst) {
-      (void)memcpy((char *)dst, (char *)localbuffer, wlen);
-      ret = dst + wlen;
-    }
-    else {
-      ret = dst;
-    }
+    (void)memcpy((char *)dst, (char *)localbuffer, wlen);
+    ret = dst + wlen;
   }
 #ifdef USE_MALLOC_FOR_BIG_ARRAY
   (void)free((char *)localbuffer);
@@ -595,22 +589,15 @@ RkParseOWrec(gram, src, dst, maxdst, lucks)
   }
 #endif
 
-  nc = wstowrec(gram, src, localbuffer, RK_WREC_BMAX/sizeof(Wchar),
+  nc = wstowrec(gram, src, localbuffer, RK_WREC_BMAX,
 		&ylen, &wlen, lucks);
-    /* I don't know why the RK_WREC_BMAX should be divided by sizeof(Wchar).
-       the divider should be removed.  1996.6.5 kon */
 
-  if (nc) {
+  if (nc && ylen <= RK_LEFT_KEY_WMAX) {
     wreclen = 2 + (ylen * sizeof(Wchar)) + wlen;
-    if (wreclen <= maxdst) {
+    if (2 + wreclen <= maxdst) {
       dst = fil_wc2wrec_flag(dst, &wreclen, nc, src, ylen, ylen);
-      if (dst) {
-	(void)memcpy((char *)dst, (char *)localbuffer, wlen);
-	ret = dst + wlen;
-      }
-      else {
-	ret = dst;
-      }
+      (void)memcpy((char *)dst, (char *)localbuffer, wlen);
+      ret = dst + wlen;
     }
   }
 #ifdef USE_MALLOC_FOR_BIG_ARRAY

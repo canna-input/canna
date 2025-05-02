@@ -19,7 +19,7 @@
 % OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 % PERFORMANCE OF THIS SOFTWARE. 
 %
-% $Id: customfn.tex,v 1.1.1.1 2002/10/19 08:27:42 aida_s Exp $
+% $Id: customfn.tex,v 1.1.1.1.2.1 2003/09/12 05:00:48 aida_s Exp $
 %
 \chapter{\HIDX{カスタマイズに用いる機能名一覧表}{かすたまいすにもちい
 るきのうめいいちらん}{H0.C.0.0.0}}
@@ -67,6 +67,7 @@ henkan                 &  Space, Xfer        &  変換                            
 kakutei                &  Nfer, Return, C$-$m, C$-$j  &  確定                   \\  \hline
 extend                 &  S$-$→, C$-$o      &  領域伸ばし                      \\  \hline
 shrink                 &  S$-$←, C$-$i      &  領域縮め                        \\  \hline
+bubun-kakutei          &  C$-$j              &  カーソル前までを確定する        \\  \hline
 shinshuku-mode         &  $-$                &  文節伸縮モードに移行する        \\  \hline
 quit                   &  C$-$g              &  とりやめ                        \\  \hline
 extend-mode            &  Help               &  メニュー          \\  \hline
@@ -126,6 +127,12 @@ base-kakutei-henkan-toggle    & $-$ & 入力モードを確定と変換でトグルする
 base-rotate-forward           & $-$ & 入力ベースを順番に切替える
 \\  \hline 
 base-rotate-backward          & $-$ & 入力ベースを逆順に切替える
+\\  \hline 
+kana-rotate-forward           & $-$ & かな文字だけで字種変換する
+\\  \hline 
+romaji-rotate-forward         & $-$ & 英数文字だけで字種変換する
+\\  \hline 
+case-rotate-forward           & $-$ & 大文字小文字キャピタライズだけで字種変換する
 \\  \hline
 henshu                 & C-c  & カレント文節を読みに戻す 
 \\  \hline

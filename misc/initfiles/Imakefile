@@ -1,4 +1,4 @@
-/* $Id: Imakefile,v 1.1.1.1.2.1 2003/01/21 10:57:03 aida_s Exp $ */
+/* $Id: Imakefile,v 1.1.1.1.2.2 2003/09/12 05:48:44 aida_s Exp $ */
 #include "../../Canna.conf"
 
 #ifdef unix /* for unix.canna.  Some system define unix as 1. */
@@ -21,8 +21,8 @@ all::
 #ifdef USE_OBSOLETE_STYLE_FILENAME
 Install: 1.1.cob 1.2.cob fixer.cob jdemon.cob just.cob lan5.cob modes.cob \
          matsu.cob sample.cob skk.cob tut.cob unix.cob vje.cob wx2+.cob \
-         default.cob
-InstallNamedNonExec(default.cob,default.canna,$(cannaLibDir))
+         verbose.cob
+InstallNamedNonExec(verbose.cob,verbose.canna,$(SAMPLEDIR))
 InstallNamedNonExec(1.1.cob,1.1.canna,$(SAMPLEDIR))
 InstallNamedNonExec(1.2.cob,1.2.canna,$(SAMPLEDIR))
 InstallNamedNonExec(fixer.cob,fixer.canna,$(SAMPLEDIR))
@@ -38,7 +38,7 @@ InstallNamedNonExec(unix.cob,unix.canna,$(SAMPLEDIR))
 InstallNamedNonExec(vje.cob,vje.canna,$(SAMPLEDIR))
 InstallNamedNonExec(wx2+.cob,wx2+.canna,$(SAMPLEDIR))
 #else
-InstallNamedNonExec(default.ca,default.canna,$(cannaLibDir))
+InstallNonExec(verbose.canna,$(SAMPLEDIR))
 InstallNonExec(1.1.canna,$(SAMPLEDIR))
 InstallNonExec(1.2.canna,$(SAMPLEDIR))
 InstallNonExec(fixer.canna,$(SAMPLEDIR))

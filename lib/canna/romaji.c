@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: romaji.c,v 1.2.2.3 2003/01/17 08:48:19 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: romaji.c,v 1.2.2.4 2003/09/12 13:18:05 aida_s Exp $";
 #endif /* lint */
 
 #include "canna.h"
@@ -2305,6 +2305,13 @@ yomiContext yc;
 }
 
 
+typedef struct _autoDefRec {
+    struct _autoDefRec *next;
+    int ishira;
+    wchar_t yomibuf[ROMEBUFSIZE];
+    wchar_t kanabuf[ROMEBUFSIZE];
+} autoDefRec, *autoDef;
+
 /*
   doKakutei -- 確定処理をする。
 
@@ -2332,16 +2339,9 @@ yomiContext *yc_return;
   yomiContext yc;
   int len, res;
   wchar_t *ss = s;
-  int katakanadef = 0, hiraganadef = 0;
   extern int auto_define;
-#ifndef WIN
-  wchar_t ytmpbuf[256];
-#else
-  wchar_t *ytmpbuf = (wchar_t *)malloc(sizeof(wchar_t) * 256);
-  if (!ytmpbuf) {
-    return 0;
-  }
-#endif
+  autoDef autotop = NULL, autocur;
+  KanjiMode kmsv = d->current_mode;
 
   /* まず確定準備処理をする */
   for (tan = st ; tan != et ; tan = tan->right) {
@@ -2349,16 +2349,24 @@ yomiContext *yc_return;
       yc = (yomiContext)tan;
       d->modec = (mode_context)yc;
       if (yc->jishu_kEndp) {
-        if (auto_define) {
-          if (yc->jishu_kc == JISHU_ZEN_KATA)
-            katakanadef = 1;
+	autocur = NULL;
+        if (auto_define &&
+	    (yc->jishu_kc == JISHU_ZEN_KATA
 #ifdef HIRAGANAAUTO
-          if (yc->jishu_kc == JISHU_HIRA)
-            hiraganadef = 1;
+	     || yc->jishu_kc == JISHU_HIRA
 #endif
-          WStrcpy(ytmpbuf, yc->kana_buffer);
-        }
+	    ))
+	  autocur = (autoDef)malloc(sizeof(autoDefRec));
+	if (autocur) {
+	  WStrcpy(autocur->yomibuf, yc->kana_buffer);
+	  autocur->ishira = (yc->jishu_kc == JISHU_HIRA);
+	}
 	doJishuKakutei(d, yc);
+	if (autocur) {
+	  WStrcpy(autocur->kanabuf, yc->kana_buffer);
+	  autocur->next = autotop;
+	  autotop = autocur;
+	}
       }
       else if (!yc->bunlen && /* 文節伸ばし縮め中 */
 	       (!yc->nbunsetsu || /* 漢字がないか... */
@@ -2374,6 +2382,8 @@ yomiContext *yc_return;
       }
     }
   }
+  /* doJishuKakutei,doYomiKakuteiでempty_modeに入ることがある */
+  d->current_mode = kmsv;
 
   /* 次に確定文字を取り出す */
   for (tan = st ; tan != et ; tan = tan->right) {
@@ -2472,7 +2482,7 @@ yomiContext *yc_return;
   /* 壊れているかも知れないので使い間違わないように壊し尽くしておく */
 
   /* 字種変換で全角カタカナを確定したら、自動登録する */
-  if (katakanadef || hiraganadef) {
+  for (autocur = autotop; autocur; autocur = autocur->next) {
     wchar_t line[ROMEBUFSIZE];
     int cnt;
     extern int defaultContext;
@@ -2481,12 +2491,12 @@ yomiContext *yc_return;
     extern char *hiraautodic;
 #endif
 
-    WStraddbcpy(line, ytmpbuf, ROMEBUFSIZE);
+    WStraddbcpy(line, autocur->yomibuf, ROMEBUFSIZE);
     EWStrcat(line, " ");
     EWStrcat(line, "#T30");
     EWStrcat(line, " ");
     cnt = WStrlen(line);
-    WStraddbcpy(line + cnt, ss, ROMEBUFSIZE - cnt);
+    WStraddbcpy(line + cnt, autocur->kanabuf, ROMEBUFSIZE - cnt);
 
     if (defaultContext == -1) {
       if ((KanjiInit() < 0) || (defaultContext == -1)) {
@@ -2496,26 +2506,27 @@ yomiContext *yc_return;
       }
     }
 
-    if (katakanadef) {
+    if (!autocur->ishira) {
       if (RkwDefineDic(defaultContext, kataautodic, line) != 0) {
         jrKanjiError = "\274\253\306\260\305\320\317\277\244\307\244\255"
                        "\244\336\244\273\244\363\244\307\244\267\244\277";
                          /* 自動登録できませんでした */
         makeGLineMessageFromString(d, jrKanjiError);
+	goto return_res;
       }
       else {
         if (cannaconf.auto_sync) {
           (void)RkwSync(defaultContext, kataautodic);
         }
       }
-    }
-    if (hiraganadef) {
+    } else {
 #ifdef HIRAGANAAUTO
       if (RkwDefineDic(defaultContext, hiraautodic, line) != 0) {
         jrKanjiError = "\274\253\306\260\305\320\317\277\244\307\244\255"
                        "\244\336\244\273\244\363\244\307\244\267\244\277";
                          /* 自動登録できませんでした */
         makeGLineMessageFromString(d, jrKanjiError);
+	goto return_res;
       }
       else {
         if (cannaconf.auto_sync) {
@@ -2526,9 +2537,11 @@ yomiContext *yc_return;
     }
   }
  return_res:
-#ifdef WIN
-  (void)free((char *)ytmpbuf);
-#endif
+  while (autotop) {
+    autocur = autotop->next;
+    free(autotop);
+    autotop = autocur;
+  }
   return res;
 }
 
@@ -5007,3 +5020,4 @@ uiContext d;
  */
 
 #include "yomimap.h"
+/* vim: set sw=2: */

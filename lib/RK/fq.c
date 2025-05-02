@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[]="$Id: fq.c,v 1.3 2002/10/20 14:29:58 aida_s Exp $";
+static char rcsid[]="$Id: fq.c,v 1.3.2.1 2003/09/12 14:32:52 aida_s Exp $";
 #endif
 
 #include	"RKintern.h"
@@ -377,7 +377,7 @@ readNV(fd)
      HANDLE fd;
 #endif
 {
-  struct NV	nv, *vn;
+  struct NV	*vn;
   unsigned char	ll[4], *buf, *p;
   long		i, cnt;
 #ifdef WIN
@@ -388,11 +388,11 @@ readNV(fd)
   if (vn) {
 #ifndef WIN
     if (read(fd, (char *)ll, 4) == 4) {
-      nv.sz = bst4_to_l(ll);
+      vn->sz = bst4_to_l(ll);
       if (read(fd, (char *)ll, 4) == 4) {
 	cnt = bst4_to_l(ll);
 	if (read(fd, (char *)ll, 4) == 4) {
-	  nv.tsz = bst4_to_l(ll);
+	  vn->tsz = bst4_to_l(ll);
 	  if (read(fd, (char *)ll, 4) == 4) {
 	    goto read_ok;
 	  }
@@ -401,11 +401,11 @@ readNV(fd)
     }
 #else
     if (ReadFile(fd, (char *)ll, 4, &dummy, NULL) && dummy == 4) {
-      nv.sz = bst4_to_l(ll);
+      vn->sz = bst4_to_l(ll);
       if (ReadFile(fd, (char *)ll, 4, &dummy, NULL) && dummy == 4) {
 	cnt = bst4_to_l(ll);
 	if (ReadFile(fd, (char *)ll, 4, &dummy, NULL) && dummy == 4) {
-	  nv.tsz = bst4_to_l(ll);
+	  vn->tsz = bst4_to_l(ll);
 	  if (ReadFile(fd, (char *)ll, 4, &dummy, NULL) && dummy == 4) {
 	    goto read_ok;
 	  }
@@ -419,38 +419,37 @@ readNV(fd)
 
  read_ok:
 
-  nv.cnt = nv.csz = 0L;
-  nv.head.left = nv.head.right = &nv.head;
-  if (nv.sz) {
-    if (!(nv.buf = (struct NVE **)calloc((size_t)nv.tsz, sizeof(struct NVE *)))) {
+  vn->cnt = vn->csz = 0L;
+  vn->head.left = vn->head.right = &vn->head;
+  if (vn->sz) {
+    if (!(vn->buf = (struct NVE **)calloc((size_t)vn->tsz, sizeof(struct NVE *)))) {
       (void)free((char *)vn);
       return((struct NV *)0);
     }
     if
 #ifndef WIN
-      (!(buf = (unsigned char *)malloc((size_t)nv.sz)) ||
-       read(fd, buf, (unsigned int)nv.sz) != (int)nv.sz)
+      (!(buf = (unsigned char *)malloc((size_t)vn->sz)) ||
+       read(fd, buf, (unsigned int)vn->sz) != (int)vn->sz)
 #else
-      (!(buf = (unsigned char *)malloc((size_t)nv.sz)) ||
-       !ReadFile(fd, buf, (unsigned int)nv.sz, &dummy, NULL) ||
-       dummy != (int)nv.sz)
+      (!(buf = (unsigned char *)malloc((size_t)vn->sz)) ||
+       !ReadFile(fd, buf, (unsigned int)vn->sz, &dummy, NULL) ||
+       dummy != (int)vn->sz)
 #endif
     {
-      (void)free((char *)nv.buf);
+      (void)free((char *)vn->buf);
       if (buf)
 	(void)free((char *)buf);
       (void)free((char *)vn);
       return((struct NV *)0);
     }
     for (p = buf, i = 0L; i < cnt; i++, p += *p*2 + 2)
-      if ((unsigned long) (p - buf) + *p * 2 + 2 < nv.sz)
-	_RkRegisterNV(&nv, p + 2, (int)*p, (int)*(p + 1));
+      if ((unsigned long) (p - buf) + *p * 2 + 2 < vn->sz)
+	_RkRegisterNV(vn, p + 2, (int)*p, (int)*(p + 1));
     (void)free((char *)buf);
   } else {
     (void)free(vn);
     return((struct NV *)0);
   }
-  *vn = nv;
   vn->head.right->left = &vn->head;
   vn->head.left->right = &vn->head;
   return(vn);

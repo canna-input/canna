@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "$Id: rkc.c,v 1.2 2002/10/20 14:29:59 aida_s Exp $";
+static char rcs_id[] = "$Id: rkc.c,v 1.2.2.1 2003/09/12 14:11:09 aida_s Exp $";
 #endif
 
 /*
@@ -241,7 +241,7 @@ int	clientcx, type ;
 
 int RkwSetUserInfo pro((char *, char *, char *));
 
-RkUserInfo *uinfo;
+static RkUserInfo *uinfo;
 
 int
 RkwSetUserInfo(user, group, topdir)
@@ -262,8 +262,6 @@ char *user, *group, *topdir;
 static char *
 FindLogname()
 {
-  extern RkUserInfo *uinfo;
-
   if (uinfo)
     return uinfo->uname;
 #ifndef WIN
@@ -289,8 +287,6 @@ FindLogname()
 static char *
 FindGroupname()
 {
-  extern RkUserInfo *uinfo;
-
   if (uinfo)
     return uinfo->gname;
 #ifndef WIN
@@ -452,7 +448,6 @@ void
 RkwFinalize()
 {
     register int i ;
-    extern RkUserInfo *uinfo;
 
     if( rkc_call_flag != BUSY )
 		return;

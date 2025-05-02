@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char alphamap_id[] = "@(#) 102.1 $Id: alphamap.h,v 1.1.1.1 2002/10/19 08:27:48 aida_s Exp $";
+static char alphamap_id[] = "@(#) 102.1 $Id: alphamap.h,v 1.1.1.1.2.1 2003/09/12 13:18:05 aida_s Exp $";
 #endif /* lint */
 
 extern int JapaneseMode();
@@ -108,7 +108,7 @@ BYTE alpha_kmap[256] =
 /* 7 */         CANNA_FN_SelfInsert,
 /* 8 */         CANNA_FN_SelfInsert,
 /* 9 */         CANNA_FN_SelfInsert,
-/*   : */       CANNA_FN_SelfInsert,
+/* : */         CANNA_FN_SelfInsert,
 /* ; */         CANNA_FN_SelfInsert,
 /* < */         CANNA_FN_SelfInsert,
 /* = */         CANNA_FN_SelfInsert,

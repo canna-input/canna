@@ -21,7 +21,7 @@
 #  OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 #  PERFORMANCE OF THIS SOFTWARE. 
 #
-# $Id: kana.kpdef,v 1.1.1.1 2002/10/19 08:27:40 aida_s Exp $ 
+# $Id: kana.kpdef,v 1.1.1.1.2.1 2003/09/12 05:48:44 aida_s Exp $ 
 # */
 
 \#	¤¡
@@ -30,7 +30,7 @@ $	¤¥
 %	¤§
 #ifndef ASCII
 &	¤©
-\'	¤ã
+\x27	¤ã
 (	¤å
 )	¤ç
 |	¤ò
@@ -54,7 +54,7 @@ h	\0	¤¯
 #ifndef ASCII
 :	\0	¤±
 #else
-\'	\0	¤±
+\x27	\0	¤±
 #endif
 b	\0	¤³
 x	\0	¤µ
@@ -258,8 +258,8 @@ l	¤ê
 *}	¡Ñ
 *:	¡§
 *;	¡¨
-*\"	¡É
-*\'	¡Ç
+*\x22	¡É
+*\x27	¡Ç
 *<	¡ã
 *>	¡ä
 *?	¡©
@@ -353,8 +353,8 @@ l	¤ê
 ~}	}
 ~:	:
 ~;	;
-~\"	\"
-~\'	\'
+~\x22	\x22
+~\x27	\x27
 ~<	<
 ~>	>
 ~?	?

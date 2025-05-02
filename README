@@ -260,7 +260,6 @@
   (7) When you compile, you will have a warning message "Undefined row
       vectors: BM".  Don't worry it.
 
-  (8) Multiple security vulnerabilities in canuum.
 
 6. Acknowledgements
 
@@ -310,4 +309,4 @@
  * PERFORMANCE OF THIS SOFTWARE. 
  */
 
-($Id: README,v 1.5 2002/10/24 14:16:42 aida_s Exp $)
+($Id: README,v 1.5.2.1 2003/09/21 06:46:15 aida_s Exp $)

@@ -21,7 +21,7 @@
  */
 
 /* sccs_id[]="%Z% NEC UNIX( PC-UX/EWS-UX ) %M% %R%.%L% %E% %U%"; */
-/* $Id: IRwproto.h,v 1.1.1.1 2002/10/19 08:27:53 aida_s Exp $ */
+/* $Id: IRwproto.h,v 1.1.1.1.2.1 2003/09/12 14:11:09 aida_s Exp $ */
 
 typedef struct _wReq0{		
     int Type ;
@@ -170,8 +170,8 @@ typedef struct _wReq17{
     BYTE type;
     BYTE none;
     unsigned short datalen ;
-    char *dicname ;
-    char mode ;
+    char *extensions ;
+    char ch;
 } wReq17 ;
 
 typedef struct _wReq18{

@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static char rcsid[]="@(#) 102.1 $Id: kpdic.c,v 1.3 2002/10/20 14:29:58 aida_s Exp $";
+static char rcsid[]="@(#) 102.1 $Id: kpdic.c,v 1.3.2.1 2003/09/12 13:36:48 aida_s Exp $";
 #endif
 
 #if defined(__STDC__) || defined(SVR4)
@@ -138,6 +138,19 @@ int		maxword;
 		    while ( isdigit(*s) ) 
 			c = 8*c + (*s++ - '0');
 		};
+		break;
+	    case 'x':
+		{
+		    unsigned char   xx[3];
+		    unsigned char   *xxp = xx;
+		    s++;
+		    if ( isxdigit(*s) )
+			*xxp++ = *s++;
+		    if ( isxdigit(*s) )
+			*xxp++ = *s++;
+		    *xxp = '\0';
+		    sscanf((char *)xx, "%x", &c);
+		}
 		break;
 	    default:
 		c = *s++;
@@ -383,10 +396,10 @@ main(argc, argv)
   }
   else {
     l4[0] = LOMASK(size >> 24); l4[1] = LOMASK(size >> 16);
-    l4[2] = LOMASK(size >> 8); l4[1] = LOMASK(size);
+    l4[2] = LOMASK(size >> 8); l4[3] = LOMASK(size);
     putchar(l4[0]); putchar(l4[1]); putchar(l4[2]); putchar(l4[3]);
     l4[0] = LOMASK(nKey >> 24); l4[1] = LOMASK(nKey >> 16);
-    l4[2] = LOMASK(nKey >> 8); l4[1] = LOMASK(nKey);
+    l4[2] = LOMASK(nKey >> 8); l4[3] = LOMASK(nKey);
     putchar(l4[0]); putchar(l4[1]); putchar(l4[2]); putchar(l4[3]);
   }
 

@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: uldefine.c,v 1.1.1.1.2.1 2003/01/17 07:27:44 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: uldefine.c,v 1.1.1.1.2.2 2003/09/12 13:18:05 aida_s Exp $";
 #endif
 
 #include	<errno.h>
@@ -349,7 +349,7 @@ mode_context env;
 		   retval, HENKANSUMI | SENTOU);
     generalReplace(nyc->romaji_buffer, nyc->rAttr, &nyc->rStartp,
 		   &nyc->rCurs, &nyc->rEndp, 0, d->buffer_return,
-		   retval, 0);
+		   retval, SENTOU);
     nyc->rStartp = nyc->rCurs;
     nyc->kRStartp = nyc->kCurs;
   }
@@ -1103,6 +1103,7 @@ canna_callback_t quitfunc;
       return(0);
   }
 
+  tblflag = TABLE1;
   if(tango == 0 || tango[0] == 0) {
     return(dicTourokuTango(d, quitfunc));
   }

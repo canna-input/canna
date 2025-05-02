@@ -21,7 +21,7 @@
  */
 
 /*
- * @(#) 102.1 $Id: widedef.h,v 1.1.1.1.2.1 2003/01/06 04:36:58 aida_s Exp $
+ * @(#) 102.1 $Id: widedef.h,v 1.1.1.1.2.2 2003/09/12 14:32:52 aida_s Exp $
  */
 
 #ifndef _WIDEDEF_H_
@@ -40,7 +40,7 @@
 #endif
 
 #if (defined(__FreeBSD__) && __FreeBSD_version < 500000) \
-    || defined(__NetBSD__) || defined(__OpenBSD__)
+    || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__APPLE__)
 # include <machine/ansi.h>
 #endif
 
@@ -67,7 +67,7 @@
 #endif /* HAVE_WCHAR_OPERATION */
 
 #if (defined(__FreeBSD__) && __FreeBSD_version < 500000) \
-    || defined(__NetBSD__) || defined(__OpenBSD__)
+    || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__APPLE__)
 # ifdef _BSD_WCHAR_T_
 #  undef _BSD_WCHAR_T_
 #  ifdef WCHAR16

@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static char rcsid[]="@(#) 112.1 $Id: dpromdic.c,v 1.1.1.1 2002/10/19 08:27:34 aida_s Exp $";
+static char rcsid[]="@(#) 112.1 $Id: dpromdic.c,v 1.1.1.1.2.1 2003/09/12 13:36:48 aida_s Exp $";
 #endif
 
 /* # include       "RKintern.h"       */
@@ -123,9 +123,13 @@ printch(s)
       char s ;
 {
 	switch(s) {
+	  case '\''   :
+	  case '\"'   : printf("\\x%02x", s);
+			break;
 	  case ' '    :
 	  case '#'    :
 	  case '\\'   : printf("\\");
+			/* FALLTHROUGH */
 	  default     : printf("%c", s);
                         break;
 	}

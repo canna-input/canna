@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char emptymap_id[] = "@(#) 102.1 $Id: emptymap.h,v 1.1.1.1 2002/10/19 08:27:48 aida_s Exp $";
+static char emptymap_id[] = "@(#) 102.1 $Id: emptymap.h,v 1.1.1.1.2.1 2003/09/12 13:18:05 aida_s Exp $";
 #endif /* lint */
 
 extern AlphaMode(), HenkanNyuryokuMode(), ZenHiraKakuteiMode();
@@ -171,7 +171,7 @@ BYTE empty_kmap[256] =
 /* 7 */         CANNA_FN_FunctionalInsert,
 /* 8 */         CANNA_FN_FunctionalInsert,
 /* 9 */         CANNA_FN_FunctionalInsert,
-/*   : */       CANNA_FN_FunctionalInsert,
+/* : */         CANNA_FN_FunctionalInsert,
 /* ; */         CANNA_FN_FunctionalInsert,
 /* < */         CANNA_FN_FunctionalInsert,
 /* = */         CANNA_FN_FunctionalInsert,

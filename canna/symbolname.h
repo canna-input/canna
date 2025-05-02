@@ -20,7 +20,7 @@
  * PERFORMANCE OF THIS SOFTWARE. 
  */
 
-/* $Id: symbolname.h,v 1.1.1.1 2002/10/19 08:27:28 aida_s Exp $
+/* $Id: symbolname.h,v 1.1.1.1.2.1 2003/09/12 13:18:05 aida_s Exp $
  */
 
 #define S_HenkanNyuuryokuMode	"henkan-nyuuryoku-mode"
@@ -75,7 +75,6 @@
 #define S_SetInitFunc		"initialize-function"
 #define S_FN_UseDictionary	"use-dictionary"
 #define S_defEscSequence	"define-esc-sequence"
-#define S_defXKeysym		"define-x-keysym"
 
 #define S_FN_Undefined		"undefined"
 #define S_FN_SelfInsert		"self-insert"

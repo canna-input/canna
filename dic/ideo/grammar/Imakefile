@@ -1,4 +1,4 @@
-/* $Id: Imakefile,v 1.1.1.1.2.1 2002/12/18 09:08:08 aida_s Exp $ */
+/* $Id: Imakefile,v 1.1.1.1.2.2 2003/09/12 05:48:43 aida_s Exp $ */
 #include "../../../Canna.conf"
 
 #ifdef __EMX__
@@ -37,9 +37,9 @@
 
          ALLDIC = $(DICOBJS)
 #ifdef USE_OBSOLETE_STYLE_FILENAME
-        DICOBJS = fuzokugo.d fuzokugo.fq
+        DICOBJS = fuzokugo.d
 #else
-        DICOBJS = fuzokugo.cbd fuzokugo.cld
+        DICOBJS = fuzokugo.cbd
 #endif
            OBJS = cpp.gram cnj.swd cnj.bits cnj.h cnj.mac fuzokugo.swd
 
@@ -68,12 +68,6 @@ fuzokugo.d: fuzokugo.swd cnj.bits
 fuzokugo.cbd: fuzokugo.swd cnj.bits
 	$(CRXDIC) -s -o fuzokugo.cbd -D cnj.bits -n fuzokugo fuzokugo.swd
 	cat cnj.bits >> fuzokugo.cbd
-
-fuzokugo.cld: fuzokugo.cbd
-	$(CRFREQ) -o fuzokugo.cld fuzokugo.cbd fuzokugo.swd
-
-fuzokugo.fq: fuzokugo.d
-	$(CRFREQ) -o fuzokugo.fq fuzokugo.d fuzokugo.swd
 
 clean::
 	$(RM) $(DICOBJS) $(OBJS)

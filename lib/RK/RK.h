@@ -20,7 +20,7 @@
  * PERFORMANCE OF THIS SOFTWARE. 
  */
 
-/* $Id: RK.h,v 1.2 2002/10/20 14:29:58 aida_s Exp $ */
+/* $Id: RK.h,v 1.2.2.1 2003/09/12 13:36:48 aida_s Exp $ */
 #ifndef		_RK_h
 #define		_RK_h
 
@@ -123,6 +123,7 @@ struct RkRxDic	{
 
 #define RX_KPDIC 0 /* new format dictionary */
 #define RX_RXDIC 1 /* old format dictionary */
+#define RX_PTDIC 2 /* large format dictionary (almost equal to KPDIC) */
 
 /* kanakanji henkan */
 

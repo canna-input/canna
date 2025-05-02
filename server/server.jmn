@@ -19,7 +19,7 @@
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 .\" PERFORMANCE OF THIS SOFTWARE. 
 .\"
-.\" $Id: server.jmn,v 1.6 2002/11/01 08:32:06 zu2 Exp $
+.\" $Id: server.jmn,v 1.6.2.1 2003/09/12 05:00:49 aida_s Exp $
 .nr X 0
 .if \nX=0 .ds X} cannaserver 1M "日本語機能ユーティリティ" "\&"
 .TH \*(X}
@@ -29,35 +29,42 @@ cannaserver \- かな漢字変換サーバ
 .B "cannaserver [\-d] [\-u \fIuserid\fP] [\-inet] [\-l \fIn\fP] [\-syslog] [\-p \fInum\fP] [\fIddpath\fP] "
 .SH "説明"
 .PP
-かな漢字変換サービスを提供します。通常 cannaserver(1M)は/etc/rcファイル
-より起動されユーザにより起動されることはありません。
-また、cannaserver(1M)は通常、ネットワーク上
-のすべてのユーザがアクセスすることが可能ですが，/etc/hosts.canna ファイ
-ルにより，アクセスできるホスト，ユーザを制御することもできます。
+かな漢字変換サービスを提供します。通常 cannaserver(1M)は /etc/rc
+などのシステム依存のデーモン起動プロセスにおいて起動され、
+ユーザにより直接起動されることはありません。
+.PP
+cannaserver(1M)は、デフォルトではUNIXドメインソケットを通した同一
+ホストのクライアントからの接続しか受け付けません。ただし、オプション
+-inetにより、TCP 接続も受け入れるようになります。
+上記のいずれの設定であっても、ホスト、ユーザ単位でアクセスを制御する
+ために @(AccessFile) ファイルを用いることができます。
 .PP
 cannaserver(1M) は起動すると即座にフォークしバックグラウンドプロセス
 となります。したがって``&''により明示的にバックグラウンドプロセスにす
 る必要はありません。
 .PP
 cannaserver(1M) は起動時に cannaserver(1M) とクライアントが通信するために
-UNIXドメインソケット @(UnixSockDir)/@(UnixSockName) を作成します。ソケットは
- cannaserver(1M) 終了時に自動的に消去されますが，cannaserver(1M) が異
+UNIXドメインソケット @(UnixSockDir)/@(UnixSockName)[:num] を作成します。
+ソケットは
+cannaserver(1M) 終了時に自動的に消去されますが、cannaserver(1M) が異
 常終了するなどの原因で cannaserver(1M) が動いていないにもかかわらずソケット
-が存在する場合には手動でソケットを削除して下さい。
+が存在する場合には手動でソケットを削除して下さい。そうしないと
+cannaserver(1M) が起動できません。
 .PP
-使用する辞書の指定はクライアントからの要求にしたがって辞書ディレ
-クトリの dics.dir ファイルを参照することにより決められます。 
+クライアントが使用できる辞書は @(DicDir)/*/dics.dir によって指定します。
+クライアント側のユーザは、~/.canna においてどの辞書を使用するか指定できます。
 .SH "オプション"
 .IP "\fIddpath\fP" 12
 辞書の存在するディレクトリを指定します。
 .IP "\-d" 12
 cannaserver(1M) をデバッグモードで起動します。cannaserver(1M) はフォ
-アグランドプロセスとして実行され，ログレベル 5 のログが標準
+アグランドプロセスとして実行され、ログレベル 5 のログが標準
 エラー出力に出力されます。
 .IP "\-inet" 12
-リモートホストから cannaserver(1M) へ、inetドメインソケットを用いて
-接続するときに指定します。これを指定しないと、 cannaserver(1M) は
-UNIXドメインソケットを用いて、同一ホストのクライアントとしか接続できません。
+cannaserver(1M) がリモートホストからの inetドメインソケットを用いた
+接続を受け付けるようになります。これを指定しないと、 cannaserver(1M) は
+UNIXドメインソケットを用いて、同一ホストのクライアントと接続すること
+しかできません。
 .IP "\-l \fIn\fP" 12
 cannaserver(1M) のログを /tmp/canna.log に出力します。n でログ
 のレベルを設定します。ログのレベルとして 1〜5 の数字を指定
@@ -66,17 +73,22 @@ cannaserver(1M) のログを /tmp/canna.log に出力します。n でログ
 cannaserver(1M)がどのユーザーの権限で動作するか指定します。指定しなかった場合、
 起動したユーザーの権限で動作します。
 .IP "\-syslog" 12
-syslogd(8)へログを出力します。
+syslogd(8)へログを出力します。このオプションを指定した際は
+@(ErrDir)/CANNA?msgs にはログは出力されません。
 .IP "\-p \fInum\fP" 12
 cannaserver(1M)が使用するポート番号を通常のものに +num した値とします。
-通常使われるポート番号は5680です。
+通常使われるポート番号は5680です。このオプションはソケットのファイル名
+およびログファイル名に影響します。下記参照。
 .SH "関連ファイル"
-.IP "@(UnixSockDir)/@(UnixSockName)[:num]" 36
-ソケット
-.IP "@(cannaLibDir)/dic/*/dics.dir" 36
+.IP "@(UnixSockDir)/@(UnixSockName)[:num]" 8
+ソケット。[:num]の部分は、-p を指定したときのみ追加されます。
+.IP "@(DicDir)/*/dics.dir" 8
 辞書目録
-.IP "@(AccessFile)" 36
+.IP "@(AccessFile)" 8
 アクセス制御ファイル
+.IP "@(ErrDir)/CANNA?msgs" 8
+ログファイル。"?" は -p で指定した \fInum\fP で、デフォルトは 0 です。
+-syslog を指定した際はこのファイルにログは出力されません。
 .SH "関連コマンド"
 .PP
-cannakill(1M), cannastat(1), cannacheck(1)
+cannakill(1M), cannastat(1), cannacheck(1), cshost(1)

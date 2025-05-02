@@ -19,7 +19,7 @@
 % OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 % PERFORMANCE OF THIS SOFTWARE. 
 %
-% $Id: library.tex,v 1.1.1.1 2002/10/19 08:27:43 aida_s Exp $
+% $Id: library.tex,v 1.1.1.1.2.1 2003/09/12 05:00:48 aida_s Exp $
 %
 
 \chapter{かな漢字変換ライブラリ}
@@ -75,8 +75,8 @@
 \item {\dg\bf ヘッダファイル}
 
 \begin{tabular}{lp{1.7cm}p{12.8cm}}
-(1) & \HIDX{jrkanji.h}{ＪＲＫＡＮＪＩ．Ｈ}{H0.9.1.2.0.a}\hptar{label=H0.9.1.2.0.a}  & (/usr/include/canna) TTYレベルの日本語の入出力を行うときに必要なヘッダファイルです。\\
-(2) & \HIDX{RK.h}{ＲＫ．Ｈ}{H0.9.1.2.0.b}\hptar{label=H0.9.1.2.0.b}  & (/usr/include/canna) RKライブラリを使用するとき必要なヘッダファイルです。\\
+(1) & \HIDX{jrkanji.h}{ＪＲＫＡＮＪＩ．Ｈ}{H0.9.1.2.0.a}\hptar{label=H0.9.1.2.0.a}  & (\CANNAINCLUDEDIR) TTYレベルの日本語の入出力を行うときに必要なヘッダファイルです。\\
+(2) & \HIDX{RK.h}{ＲＫ．Ｈ}{H0.9.1.2.0.b}\hptar{label=H0.9.1.2.0.b}  & (\CANNAINCLUDEDIR) RKライブラリを使用するとき必要なヘッダファイルです。\\
 \end{tabular}
 
 \end{itemize}
@@ -442,7 +442,8 @@ jrKanjiStatus 型については、
 \begin{figure}[htbp]
 \caption{コンテクスト説明図}\label{コンテクスト説明図}
 \begin{center}
-\epsfile{file=../zukei/context.eps,scale=0.7}
+%\epsfile{file=../zukei/context.eps,scale=0.7}
+\includegraphics[scale=0.7]{../zukei/context.eps}
 \end{center}
 \end{figure}
 % --------------------
@@ -591,7 +592,8 @@ jrKanjiStatus について説明する前に、中間表示にはどのようなものがあるかについて
 \begin{figure}[htbp]
 \caption{中間表示図}\label{中間表示図}
 \begin{center}
-\epsfile{file=../zukei/interdpy.eps,scale=0.7}
+%\epsfile{file=../zukei/interdpy.eps,scale=0.7}
+\includegraphics[scale=0.7]{../zukei/interdpy.eps}
 \end{center}
 \end{figure}
 % -------------------

@@ -1,12 +1,13 @@
-\documentstyle[canna]{jarticle}
+\documentclass{jarticle}
+\usepackage{canna}
 
-% $Id: canlisp.tex,v 1.1.1.1 2002/10/19 08:27:41 aida_s Exp $
+% $Id: canlisp.tex,v 1.1.1.1.2.1 2003/09/17 01:47:02 aida_s Exp $
 
 \hyphenation{Uti-lisp}
 
 \title{canlisp マニュアル}
-\author{今~~~~~~~~~~~昭\\kon@d1.bs2.mt.nec.co.jp}
-\date{--- 第 2 版 ---\\『かんな』Version 3.2\\1994年4月14日}
+\author{今~~~~~~~~~~~昭\\Canna Project}
+\date{--- 第 2 版 ---\\『かんな』Version 3.7\\2003年}
 
 \begin{document}
 
@@ -101,17 +102,17 @@ global-set-key などのキーワードが
 GNU Emacs Lisp の影響を受けている。ただし、細部に違いがあるので注意された
 い。例えば、GNU Emacs Lisp ではコントロールバックスラッシュ
 (\verb+^+$\backslash$)を表すのに、
-
+%
 \begin{verbatim}
   ?\C-\\
 \end{verbatim}
-
+%
 と記述するが、canlisp では、
-
+%
 \begin{verbatim}
   ?\C-\
 \end{verbatim}
-
+%
 と記述する。また、ローカルキーマップにおいてキーに機能を割り付けるのに
 GNU Emacs Lisp では define-key を用いるが canlisp では set-key を用いる。
 
@@ -138,7 +139,7 @@ canlisp が使用するデータの型は以下に分類される。
 \begin{verbatim}
   整数型          -1, 0, 1, 2, ... 100, 101, ...
   文字型          ?A, ?B, ... ?\C-a, ?\C-b, ...
-  文字列型        "defalut.kp", "\Up", ...
+  文字列型        "defalut.cbp", "\Up", ...
   NIL 型          nil
   シンボル型      auto, foo, bar, ...
   CONS 型         (a . b), ("a" "b"), ...
@@ -291,6 +292,7 @@ C言語では漢字等の日本語文字は1文字としては扱えないが、canlisp では漢字
  \Home    canlisp の中で、ホームキーを表す文字(CANNA_KEY_Home)
  \Clear   クリアキーを表す文字('\013')
  \Help    canlisp の中で、ヘルプキーを表す文字(CANNA_KEY_Help)
+ \End     canlisp の中で、エンドキーを表す文字(CANNA_KEY_End)
  \Enter   改行文字('\n')
  \Return  復帰文字('\r')
  \F1      canlisp の中で、F1 キーを表す文字(CANNA_KEY_F1)
@@ -315,6 +317,10 @@ C言語では漢字等の日本語文字は1文字としては扱えないが、canlisp では漢字
  \C-Down  canlisp の中で、コントロール下矢印キーを表す文字(CANNA_KEY_Cntrl_Down)
  \C-Left  canlisp の中で、コントロール左矢印キーを表す文字(CANNA_KEY_Cntrl_Left)
  \C-Right canlisp の中で、コントロール右矢印キーを表す文字(CANNA_KEY_Cntrl_Right)
+ \Hiragana canlisp の中で、ひらがなキーを表す文字(CANNA_KEY_HIRAGANA)
+ \Katakana canlisp の中で、カタカナキーを表す文字(CANNA_KEY_KATAKANA)
+ \Hankakuzenkaku canlisp の中で、半角/全角キーを表す文字(CANNA_KEY_HANKAKUZENKAKU)
+ \Eisu     canlisp の中で、英数キーを表す文字(CANNA_KEY_EISU)
 \end{verbatim}
 
 \subsubsection{エスケープ文字を伴ったコントロール文字の表現}
@@ -341,17 +347,17 @@ C言語では漢字等の日本語文字は1文字としては扱えないが、canlisp では漢字
 で注意されたい。
 
 また、\verb/^/$\backslash$ を表す表現は、GNU Emacs Lisp では、
-
+%
 \begin{verbatim}
   ?\C-\\
 \end{verbatim}
-
+%
 であるのに対して、canlisp では、
-
+%
 \begin{verbatim}
   ?\C-\
 \end{verbatim}
-
+%
 であることに注意されたい。
 
 ところで、? で始まる文字型の読み込みにおいては、文字として読み込めると
@@ -555,11 +561,11 @@ cannaserver のバージョンを取り出す処理を行う関数が呼び出され、
 
 これは、\ref{specialsymbol}や\ref{canlispsymbol}で説明されているシンボ
 ルにおいても同様である。例えば、以下に示す関数定義、
-
+%
 \begin{verbatim}
  (defun square (x) (* x x))
 \end{verbatim}
-
+%
 の x を t に変えても関数 square の意味は変わらない。
 
 \begin{verbatim}
@@ -925,7 +931,7 @@ g{\it 1}、g{\it 2}、\ldots g{\it n} はいずれかの式の評価結果として
 \end{verbatim}
 
 if の条件が真だったときの処理をたくさん書きたいときに、
-
+%
 \begin{verbatim}
    (if predicate
      proc1
@@ -933,7 +939,7 @@ if の条件が真だったときの処理をたくさん書きたいときに、
      ...
      procn)
 \end{verbatim}
-
+%
 のように書きたくなるが、これは正しくない。以下のように progn を使わな
 ければならない。
 
@@ -978,11 +984,11 @@ let 式はローカル変数 v{\it 1}、v{\it 2}、\ldots v{\it n} を準備し、それ
 評価する。gg{\it n} の評価結果が let 式の値となる。
 
 let 式はマクロであり、
-
+%
 \begin{verbatim}
    (let ((var1 val1) (var2 val2) ... (varn valn)) e1 e2 ... en)
 \end{verbatim}
-
+%
 は以下のようにマクロ展開され評価される。
 
 \begin{verbatim}
@@ -1044,11 +1050,11 @@ defmacro で定義された関数では、その関数への全ての引数はリストとしてま
 
 マクロ関数 spread-value への引数はリストにまとめられ x に束縛される。
 例えば、
-
+%
 \begin{verbatim}
 (spread-value 5680 iroha canna)
 \end{verbatim}
-
+%
 と言う呼び出しの場合は (5680 iroha canna) が x に束縛される。
 
 さて上記の定義で、make-setq-form は引数に与えられた物に対して 
@@ -1073,19 +1079,19 @@ spread-tmp-val を setq する式を作成する。
 
 マクロ式では、 defmacro で与えられた本体により得られる式をもう一度評価
 する。上の例で spread-value を以下のように呼び出した場合、
-
+%
 \begin{verbatim}
 -> (spread-value 5680 iroha canna)
 \end{verbatim}
-
+%
 は、あたかも、
-
+%
 \begin{verbatim}
 -> (let ((spread-tmp-val 5680))
      (setq iroha spread-tmp-val)
      (setq canna spread-tmp-val) )
 \end{verbatim}
-
+%
 を実行したかのように評価が行われ、変数 iroha および canna には 5680 が
 束縛される。
 
@@ -1153,12 +1159,12 @@ load 中に load を行うことも可能であり、入れこの深さは最大 20 までであ
 例えば copy-symbol を行って適当な名前を付けるファイルを別に用意して、
 それを load することにより、種々のモード名や、機能名に日本語の名称を付
 けることができる。例えば copy-symbol をしているファイルを
-/usr/local/canna/lib/jpn.canna とすると、以下のような記述が可能である。
+/usr/local/canna/share/canna/jpn.canna とすると、以下のような記述が可能である。
 
 \begin{verbatim}
-  (load "/usr/local/canna/lib/jpn.canna")
+  (load "/usr/local/canna/share/canna/jpn.canna")
 
-  (設定 ローマ字かな変換テーブル "default.kp")
+  (設定 ローマ字かな変換テーブル "default.cbp")
   (辞書利用 "iroha" "fuzokugo" :部首 "bushu" :ユーザ "user")
 
   (設定 逐次自動変換 する)
@@ -1199,11 +1205,11 @@ sdpy の指定がなければ nil が指定された場合と同じ振る舞いをする。
 srt はこのモードで用いられるローマ字かな変換テーブルである。通常の
 のローマ字かな変換テーブルと同じローマ字かな変換テーブルを用いたい場合
 は、
-
+%
 \begin{verbatim}
   (setq romkana-table 'srt)
 \end{verbatim}
-
+%
 が defmode よりも前に存在することを確認して、defmode の srt の部分
 に romkana-table を指
 定すれば良い。
@@ -1230,8 +1236,8 @@ gus は defsymbol でのシンボル定義をそのモードでは使うかどうかを表す。
 gus が nil であれば、defsymbol での定義はそのモードでは用いられない。
 非 nil であれば、用いられる。指定がなければ nil とみなされる。
 
-\subsubsection{({\bf defsymbol} nkey{\it 1} s{\it 11} \ldots s{\it 1n}
-\ldots nkey{\it m} s{\it m1} \ldots s{\it mn}) SPECIAL}
+\subsubsection{({\bf defsymbol} nkey{\it 11} [nkey{\it 12}] s{\it 11} \ldots s{\it 1n}
+\ldots nkey{\it m1} [nkey{\it m2}] s{\it m1} \ldots s{\it mn}) SPECIAL}
 
 各引数は評価されない。nkey{\it i} は文字を記述する。
 
@@ -1293,15 +1299,14 @@ unbind-key-function と同じ。
 
 \subsubsection{({\bf define-esc-sequence} 'sterm 'sseq 'nkey) SUBR}
 
-\subsubsection{({\bf define-x-keysym} 'skey 'nkey) SUBR}
-
-これら２つの関数は将来の拡張用に予約してある。
+端末のタイプごとにエスケープシーケンスと機能キーの対応を設定する。
+『かんな』マニュアルを参照のこと。
 
 \subsubsection{({\bf use-dictionary} 's{\it 1} \ldots [':bushu 's{\it i}\/]
-\ldots [':user 's{\it j}\/] \ldots 's{\it n}\/) SUBR}
+\ldots [':user 's{\it j}\/] \ldots [':katakana 's{\it k}\/] 's{\it n}\/) SUBR}
 
 辞書の利用を指示する。すべての引数は評価される。キーワード引数がいくつ
-か指定できる。利用できるキーワードは :bushu および :user である。
+か指定できる。利用できるキーワードは :bushu および :user, :katakana である。
 
 use-dictionary の詳細は『かんな』マニュアルを参照のこと。
 
@@ -1319,9 +1324,12 @@ gfn は機能を表す単一のシンボルか、機能を表すシンボルからなる線形リスト
 \subsection{『かんな』関連の変数}
 
 以下のうち canna-directory は『かんな』Version 2.2 で追加された変数で
-ある。また、auto-sync, force-kana, hiragana-touroku, ignore-case,
+ある。また、auto-sync, force-kana, hiragana-touroku, ignore-case, inhibit-hankaku-kana,
 katakana-touroku, quickly-escape-from-kigo-input, renbun-continue,
 romaji-yuusenは Version 3.2 で追加された変数である。
+
+code-input は Version 3.4 で、mojishu-continue は Version 3.5 で追加さ
+れており、delay-connect は Version 3.7 で追加されている。
 
 \begin{verbatim}
 abandon-illegal-phonogram   ローマ字かな変換に使われない文字を捨てるか
@@ -1336,7 +1344,9 @@ canna-version               『かんな』のバージョン
 character-based-move        カーソル移動が文字単位か
 chikuji-continue            逐次自動変換候補表示中の入力で確定するかどうか
 chikuji-force-backspace     逐次自動文節時バックスペースで必ず1文字消すかどうか
+code-input                  コード入力時のコード種別
 cursor-wrap                 右端から右へ行くと左へ行ったりするのをするか
+delay-connect               最初の変換の時までサーバへの接続を遅延するか
 english-table               外来語変換用辞書を入れておく変数
 force-kana                  《使っていない》
 gakushu                     学習するか
@@ -1346,6 +1356,7 @@ hiragana-touroku            《使っていない》
 ignore-case                 ローマ字かな変換で大文字小文字を区別しない
 index-hankaku               候補一覧のインデックス数値を半角にするか
 index-separator             候補一覧のインデックス数値と候補の間の文字を入れておく
+inhibit-hankaku-kana        字種変換で半角かなを禁止するか
 inhibit-list-callback       リストコールバックを禁止するか
 kakutei-if-end-of-bunsetsu  文節の最後から右へ行こうとした時に確定するか
 katakana-touroku            《使っていない》
@@ -1354,6 +1365,7 @@ keep-cursor-position        変換から読みに戻した時のカーソル位置をどこにするか
 kojin                       個人別学習をするか
 kouho-count                 候補が何番目かを候補一覧時に表示するか
 learn-numerical-type        《使っていない》
+mojishu-continue            文字種変換後、確定しないで次の入力を行うか
 n-henkan-for-ichiran        何番目の変換キーで候補一覧を出すか
 n-keys-to-disconnect        どのくらいかな漢字変換しないと接続を切るか
 n-kouho-bunsetsu            逐次自動変換で確定しないでおく文節数
@@ -1451,6 +1463,12 @@ sync-dictionary,
 touroku-mode
 は Version 3.2 での追加機能である。
 
+bubun-kakutei,
+kana-rotate-forward,
+romaji-rotate-forward,
+case-rotate-forward
+は Version 3.5 での追加機能である。
+
 \begin{verbatim}
 alpha-mode                    アルファベットモードになる
 backward                      後方(左)へ行く
@@ -1469,8 +1487,10 @@ base-rotate-forward           ベースを逆方向に切替える
 base-zenkaku                  ベースを全角にする
 base-zenkaku-hankaku-toggle   ベースを全角と半角との間で切替える
 beginning-of-line             行頭に行く
+bubun-kakutei                 カーソルの前までの領域を確定させる
 bushu-mode                    部首モードになる
 capitalize                    先頭文字を大文字にする
+case-rotate-forward           大文字小文字キャピタライズのみの字種変換
 chikuji-mode                  逐次自動変換入力モードにする
 convert-as-bushu              読みを部首名とみなして部首変換する
 convert-as-hex                読みを１６進コードとみなして１６進コード変換する
@@ -1497,6 +1517,7 @@ hiragana                      ひらがなに変換する
 japanese-mode                 日本語入力モードになる
 jisho-ichiran                 辞書マウント/アンマウントモードに入る
 kakutei                       確定する
+kana-rotate-forward           かな文字字種だけの字種変換
 katakana                      カタカナに変換する
 kigou-mode                    記号入力モードになる
 kill-to-end-of-line           行末まで削除する
@@ -1509,6 +1530,7 @@ quit                          とりやめる
 quoted-insert                 引用入力をする
 renbun-mode                   連文節変換モードにする
 romaji                        ローマ字に変換する
+romaji-rotate-forward         英数文字だけの字種変換
 russian-mode                  ロシア文字(キリル文字)一覧表示をする
 self-insert                   自分自身を入力する
 shinshuku-mode                文節伸縮モードになる

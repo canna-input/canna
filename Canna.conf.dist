@@ -45,7 +45,7 @@
  * cannaIncDir;
  *		ヘッダファイルをインストールするディレクトリです。
  * ErrDir;
- *		ログファイルをインストールするディレクトリです。
+ *		ログファイルが置かれるディレクトリです。
  *		ログファイルは、かな漢字変換サーバがエラーメッセージを
  *		出力するファイルです。
  *
@@ -127,7 +127,7 @@
  *              そろっていないので #define しておいてください。
  */
 /*
- * $Id: Canna.conf.dist,v 1.4.2.4 2003/01/25 08:46:29 aida_s Exp $
+ * $Id: Canna.conf.dist,v 1.4.2.7 2003/09/12 14:32:51 aida_s Exp $
  */
 
 /* rootにならずにインストールする時はこれを定義して下さい */
@@ -193,6 +193,9 @@ cannaDsoRev = 1.1
 sharedLibExtension = a
 #elif defined(hpux)
 sharedLibExtension = sl.$(cannaDsoRev)
+#elif defined(__APPLE__) || defined(DarwinArchitecture)
+/* 今のところ__APPLE__はImake.cfでundefされる */
+sharedLibExtension = $(cannaDsoRev).dylib
 #else
 sharedLibExtension = so.$(cannaDsoRev)
 #endif
@@ -365,6 +368,7 @@ $(MANUALSED):: $(CANNAROOT)/Canna.conf					@@\
 	 echo "s%@(UnixSockDir)%$(UnixSockDir)%g"; \			@@\
 	 echo "s%@(UnixSockName)%$(UnixSockName)%g"; \			@@\
 	 echo "s%@(AccessFile)%$(AccessFile)%g"; \			@@\
+	 echo "s%@(DicDir)%$(DicDir)%g"; \				@@\
 	 echo "s%@(ErrDir)%$(ErrDir)%g") > $(MANUALSED)			@@\
 clean::									@@\
 	$(RM) $(MANUALSED)
@@ -381,6 +385,7 @@ $(MANUALSED):: $(CANNAROOT)/Canna.conf					@@\
 	echo "s%@(UnixSockDir)%$(UnixSockDir)%g" >> $(MANUALSED)	@@\
 	echo "s%@(UnixSockName)%$(UnixSockName)%g" >> $(MANUALSED)	@@\
 	echo "s%@(AccessFile)%$(AccessFile)%g" >> $(MANUALSED)		@@\
+	echo "s%@(DicDir)%$(DicDir)%g" >> $(MANUALSED)			@@\
 	echo "s%@(ErrDir)%$(ErrDir)%g" >> $(MANUALSED)			@@\
 clean::									@@\
 	$(RM) $(MANUALSED)
@@ -494,7 +499,7 @@ step::									@@\
 	DirFailPrefix@for i in dirs; do if [ -d $(DESTDIR)$$i ]; then \	@@\
 		set +x; else (set -x; $(MKDIRHIER) $(DESTDIR)$$i;$(CHOWN) owner $(DESTDIR)$$i;$(CHGRP) group $(DESTDIR)$$i); fi; \	@@\
 	done
-#endif /* MakeDirectories */
+#endif /* MakeDirectoriesLong */
 
 /* libname-def.cppを作るのが面倒なのでXのSharedLibraryTargetを上書き */
 #ifdef CYGWIN_DLL
@@ -547,7 +552,7 @@ clean::									@@\
 #endif
 #define LinkBuildLibrary(lib) $(_NULLCMD_)
 
-/* 以下は config.h を作るルール */
+/* 以下は cannaconf.h を作るルール */
 #if defined(__EMX__)
 #define MakeCannaConfigH(dst)						@@\
 dst:: Canna.conf							@@\

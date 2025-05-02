@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[] = "$Id: lisp.c,v 1.1.1.1 2002/10/19 08:27:50 aida_s Exp $";
+static char rcsid[] = "$Id: lisp.c,v 1.1.1.1.2.1 2003/09/12 13:18:05 aida_s Exp $";
 #endif
 
 /* 
@@ -640,6 +640,7 @@ static SeqToID keywordtable[] = {
   {"Home"       ,CANNA_KEY_Home},
   {"Clear"      ,'\013'},
   {"Help"       ,CANNA_KEY_Help},
+  {"End"        ,CANNA_KEY_End},
   {"Enter"      ,'\n'},
   {"Return"     ,'\r'},
 /* "F1" is processed by program */
@@ -662,6 +663,10 @@ static SeqToID keywordtable[] = {
   {"Pf8"        ,CANNA_KEY_PF8},
   {"Pf9"        ,CANNA_KEY_PF9},
   {"Pf10"       ,CANNA_KEY_PF10},
+  {"Hiragana"   ,CANNA_KEY_HIRAGANA},
+  {"Katakana"   ,CANNA_KEY_KATAKANA},
+  {"Hankakuzenkaku" ,CANNA_KEY_HANKAKUZENKAKU},
+  {"Eisu"       ,CANNA_KEY_EISU},
   {"S-Nfer"     ,CANNA_KEY_Shift_Nfer},
   {"S-Xfer"     ,CANNA_KEY_Shift_Xfer},
   {"S-Up"       ,CANNA_KEY_Shift_Up},
@@ -2709,6 +2714,10 @@ int n;
   extern struct dicname *kanjidicnames;
   struct dicname *kanjidicname;
   extern int auto_define;
+  extern char *kataautodic;
+#ifdef HIRAGANAAUTO
+  extern char *hiraautodic;
+#endif
 #endif
 
   for (i = n ; i ; i--) {
@@ -2752,6 +2761,18 @@ int n;
 	  kanjidicname->dicflag = DIC_NOT_MOUNTED;
 	  kanjidicname->next = kanjidicnames;
 	  kanjidicnames = kanjidicname;
+	  if (kanjidicname->dictype == DIC_KATAKANA) {
+	    if (!kataautodic) { /* only the first one is valid */
+	      kataautodic = kanjidicname->name;
+	    }
+	  }
+#ifdef HIRAGANAAUTO
+	  else if (kanjidicname->dictype == DIC_HIRAGANA) {
+	    if (!hiraautodic) { /* only the first one is valid */
+	      hiraautodic = kanjidicname->name;
+	    }
+	  }
+#endif
 	  retval = T;
 	  continue;
 	}
@@ -4261,30 +4282,6 @@ int n;
 }
 
 static list
-LdefXKeysym(n)
-int n;
-{
-  extern void (*keyconvCallback)();
-
-  argnchk("define-x-keysym",2);
-
-  if (!stringp(sp[1])) {
-    error("define-esc-sequence: bad arg ", sp[1]);
-    /* NOTREACHED */
-  }
-  if (!numberp(sp[0])) {
-    error("define-esc-sequence: bad arg ", sp[0]);
-    /* NOTREACHED */
-  }
-  if (keyconvCallback) {
-    (*keyconvCallback)(CANNA_XTERMINAL, 
-		       xstring(sp[2]), xstring(sp[1]), xnum(sp[0]));
-  }
-  pop(2);
-  return NIL;
-}
-
-static list
 Lconcat(n)
 int n;
 {
@@ -4670,7 +4667,6 @@ static struct atomdefs initatom[] = {
 #endif
   {S_SetInitFunc	,SUBR	,Lsetinifunc	},
   {S_defEscSequence	,SUBR	,LdefEscSeq	},
-  {S_defXKeysym		,SUBR	,LdefXKeysym	},
   {0			,UNDEF	,0		}, /* DUMMY */
 };
 

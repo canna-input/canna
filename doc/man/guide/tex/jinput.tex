@@ -19,7 +19,7 @@
 % OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 % PERFORMANCE OF THIS SOFTWARE. 
 %
-% $Id: jinput.tex,v 1.1.1.1 2002/10/19 08:27:43 aida_s Exp $
+% $Id: jinput.tex,v 1.1.1.1.2.1 2003/09/12 05:00:48 aida_s Exp $
 %
 
 \chapter{日本語入力}
@@ -183,7 +183,8 @@ ASCII文字の入力と、かなロックキーを使って
 \caption{ガイドラインのデータ入力モード表示}
 \label{3-1ガイドラインのデータ入力モード表示}
 \begin{center}
-\epsfile{file=../zukei/modedisp.eps,scale=0.65}
+%\epsfile{file=../zukei/modedisp.eps,scale=0.65}
+\includegraphics[scale=0.65]{../zukei/modedisp.eps}
 \end{center}
 \end{figure}
 
@@ -203,7 +204,8 @@ ASCII文字の入力と、かなロックキーを使って
 \caption{入力モードの切り替えの操作とモードの移行}
 \label{3-2入力モードの切り替えの操作とモードの移行}
 \begin{center}
-\epsfile{file=../zukei/modes.eps,scale=0.58}
+%\epsfile{file=../zukei/modes.eps,scale=0.58}
+\includegraphics[scale=0.58]{../zukei/modes.eps}
 \end{center}
 \end{figure}
 
@@ -216,7 +218,8 @@ ASCII文字の入力と、かなロックキーを使って
 \caption{基本操作のキー}
 \label{基本操作に用いるキー}
 \begin{center}
-\epsfile{file=../zukei/key.eps}
+%\epsfile{file=../zukei/key.eps}
+\includegraphics{../zukei/key.eps}
 \end{center}
 \end{figure}
 
@@ -1072,9 +1075,9 @@ i              & \fbox{あんない} \\
 
 \subsection{\HIDX{部分確定}{ふふんかくてい}{H0.3.10.6.0}}
 
- \CTRL + \fbox{k} を押すことにより、
+ \CTRL + \fbox{j} を押すことにより、
 カーソルのあった文節より左側の部分を確定させることができます。
-カーソルより右側の部分は読みに戻されます。
+カーソルより右側の部分はそのまま残ります。
 
 \begin{enumerate}
 
@@ -1094,18 +1097,18 @@ i              & \fbox{あんない} \\
 {[漢字]} \\
 \end{SCREEN}
 
-\item \CTRL + \fbox{k} を押してカーソルより左側を確定し、
-カーソルより右側を読みに戻します。
+\item \CTRL + \fbox{j} を押してカーソルより左側を確定します。
 
 \begin{SCREEN}
 \setlength{\fboxsep}{\reversefboxsep}
-\verb!% !頼りになるのは\underline{ちょっかんだけですよ}\CURSOR \\
-{[ あ ]} \\
+\verb!% !頼りになるのは\fbox{直観だけですよ}\CURSOR \\
+{[漢字]} \\
 \end{SCREEN}
 
-\item 読みに戻った部分は削除したりして直すことができます。
+\item 残った部分は削除したりして直すことができます。
 
-\CTRL + \fbox{f} または \fbox{←} を押してカーソルを移動し、
+\CTRL + \fbox{g} で読みに戻してから、
+\CTRL + \fbox{b} または \fbox{←} を押してカーソルを移動し、
 \CTRL + \fbox{d} を3回押して3文字削除します。
 
 \begin{SCREEN}
@@ -1116,6 +1119,61 @@ i              & \fbox{あんない} \\
 
 \end{enumerate}
 
+\subsection{\HIDX{一文字選択機能}{いちもしせんたくきのう}{H0.3.10.6.1}}
+
+文節内の先頭あるいは末尾の一文字だけを選択できます。
+
+\begin{tabular}{cc}
+  先頭の一文字選択 & \CTRL + \fbox{k} \\
+  末尾の一文字選択 & \CTRL + \fbox{d} \\
+\end{tabular}
+
+例えば、辞書にない「直出(ちょくしゅつ)」という単語を出したいとします。
+
+\begin{enumerate}
+\item 欲しい漢字を含む語を変換します。
+
+\begin{SCREEN}
+\setlength{\fboxsep}{\reversefboxsep}
+\verb!% !\fbox{直接}\underline{外出} \\
+{[漢字]} \\
+\end{SCREEN}
+
+\item \CTRL + \fbox{k} を押すと、カレント文節が先頭の一文字だけになり
+  ます。
+
+\begin{SCREEN}
+\setlength{\fboxsep}{\reversefboxsep}
+\verb!% !\fbox{直}\underline{外出} \\
+{[漢字]} \\
+\end{SCREEN}
+
+\item \fbox{→}を押して、次文節に移動します。
+
+\begin{SCREEN}
+\setlength{\fboxsep}{\reversefboxsep}
+\verb!% !\underline{直}\fbox{外出} \\
+{[漢字]} \\
+\end{SCREEN}
+
+\item \CTRL + \fbox{d} を押すと、カレント文節が末尾の一文字だけになり
+  ます。
+
+\begin{SCREEN}
+\setlength{\fboxsep}{\reversefboxsep}
+\verb!% !\underline{直}\fbox{出} \\
+{[漢字]} \\
+\end{SCREEN}
+
+\item \RETURN を押すと、確定します。
+
+\begin{SCREEN}
+\setlength{\fboxsep}{\reversefboxsep}
+\verb!% !直出\CURSOR \\
+{[ あ ]} \\
+\end{SCREEN}
+
+\end{enumerate}
 
 \newpage
 \section{\HIDX{カタカナの入力}{かたかなのにゅうりょく}{H0.3.11.0.0}}
@@ -1229,6 +1287,7 @@ i              & \fbox{あんない} \\
 
 
 \subsection{字種変換による入力}
+\label{字種変換による入力}
 
 読みを入力している状態では、読みの文字列の字種を変換することができます。
 この機能を利用してカタカナを得ることができます。
@@ -1634,9 +1693,9 @@ i              & \fbox{あんない} \\
 \label{3.2.6.6記号の入力の仕方}
 
 変換入力モードでは、いろいろな記号を入力することができます。
-\IDX{記号入力}{きこうにゆうりよく}は、
-記号入力モードで入力する方法と「きごう」を
-かな漢字変換する方法があります。
+%% \IDX{記号入力}{きこうにゆうりよく}は、
+%% 記号入力モードで入力する方法と「きごう」を
+%% かな漢字変換する方法があります。
 
 \subsection{記号入力モードでの入力}
 \label{記号入力モードでの入力}
@@ -1675,10 +1734,10 @@ i              & \fbox{あんない} \\
 そのほかに拡張機能でも、記号入力を行うことができます。
 詳細は、{\dg\bf \ref{3.2.7その他の機能} \hpref{count=7,label=H0.3.17.0.0} 拡張機能の一覧} を参照してください。
 
-\subsection{かな漢字変換での入力}
+%% \subsection{かな漢字変換での入力}
 
-読みで「きごう」と入力して漢字変換すると一般的な記号が候補として出てきます。
-記号の選択の方法は、かな漢字変換の候補選択時と同じです。
+%% 読みで「きごう」と入力して漢字変換すると一般的な記号が候補として出てきます。
+%% 記号の選択の方法は、かな漢字変換の候補選択時と同じです。
 
 
 \newpage
@@ -1715,6 +1774,16 @@ i              & \fbox{あんない} \\
 
 \end{enumerate}
 
+\begin{nquote}{1em}
+\begin{namelist}{　}
+\item[注1] カスタマイズによって、コード種別は JIS コード、シフト JIS 
+  コード、区点コードの 3 つの中から選べます。詳しくは第2章の
+  \textbf{\ref{カスタマイズ・その他のキーワード}そのほかのキーワード}
+  を参照してください。
+\item[注2] 補助漢字をコード入力するには、x を先行させて例えば、
+  「x2276」と読みモードで打って \CTRL + \fbox{y} を打つと入力できます。
+\end{namelist}
+\end{nquote}
 
 \subsection{16進コード入力モードでの入力}
 \label{16進コード入力モードでの入力}
@@ -1760,6 +1829,12 @@ i              & \fbox{あんない} \\
 
 \end{enumerate}
 
+\begin{nquote}{1em}
+\begin{namelist}{　}
+\item[注意] メニューからコード入力するときは、コード種別は JIS コード
+  のみサポートします。
+\end{namelist}
+\end{nquote}
 
 \newpage
 \section{\HIDX{部首変換}{ふしゆへんかん}{H0.3.16.0.0}による入力}
@@ -2751,11 +2826,11 @@ ws2 のかな漢字変換サーバと接続するとします。
 %
 %
 %\item バージョンが以下のように出力されます(『かんな』Version 3.2 の場合)。
-バージョンが以下のように出力されます(『かんな』Version 3.3 の場合)。
+バージョンが以下のように出力されます(『かんな』Version 3.6 の場合)。
 
 \begin{SCREEN}
 \verb!% ! \\
-{[ あ ]  日本語入力システム『かんな』Version 3.3 product version} \\
+{[ あ ]  日本語入力システム『かんな』Version 3.6} \\
 \end{SCREEN}
 
 \end{enumerate}
@@ -2787,7 +2862,7 @@ ws2 のかな漢字変換サーバと接続するとします。
 
 \begin{SCREEN}
 \verb!% ! \\
-{[ あ ] ローマ字かな変換テーブルはdefault.kpを使用しています} \\
+{[ あ ] ローマ字かな変換テーブルはdefault.cbpを使用しています} \\
 \end{SCREEN}
 
 \end{enumerate}

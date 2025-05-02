@@ -48,7 +48,7 @@ SOFTWARE.
 ******************************************************************/
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "$Id: main.c,v 1.1.1.1 2002/10/19 08:27:53 aida_s Exp $";
+static char rcs_id[] = "$Id: main.c,v 1.1.1.1.2.1 2003/09/12 14:11:09 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */
@@ -72,6 +72,12 @@ unsigned long connow_socks = 0, mskcnt = 0;
 
 long start_real_time, start_user_time, start_sys_time ; 
 extern void ClientStat();
+#ifdef DEBUG
+const char *CallFuncName;
+#endif
+
+void EarlyInit pro((int, char **));
+int BecomeDaemon pro((void));
 
 main(argc, argv)
 int argc ;			
@@ -83,13 +89,11 @@ char *argv[] ;
     extern struct sockaddr_un unsock;
 #endif
 
-    /* サーバを子プロセス(デーモン)として起動する */
-    parentid = BecomeDaemon(argc, argv);
-    
+    EarlyInit(argc, argv);
+
     /* コンテクスト数の malloc 処理 */
     if(!WidenTables(INITSOCKS)){
       PrintMsg("十分なメモリがありません。mallocに失敗しました。\n"); 
-      if (parentid) kill(parentid, SIGTERM);
       exit(1); /* まだ UNIXドメインを作っていない */
     }
     
@@ -110,10 +114,12 @@ char *argv[] ;
 #endif
       fprintf(stderr, "\n");
       CloseServer();
-      if (parentid) kill(parentid, SIGTERM);
       exit(2);
     }
 
+    /* サーバを子プロセス(デーモン)として起動する */
+    parentid = BecomeDaemon();
+    
     /* エラー出力の切り替え、TTYの切り離し */
     if (parentid) kill(parentid, SIGTERM);
     DetachTTY();
@@ -167,6 +173,9 @@ Dispatch()
 		continue;
 	    }
 
+#ifdef DEBUG
+	    CallFuncName = NULL;
+#endif
 	    if( client->version_hi > 1 )
 		request = ReadWideRequestFromClient( client, &result ) ;
 	    else
@@ -186,11 +195,8 @@ Dispatch()
 	     /* 実際のプロトコルに応じた処理（関数を呼ぶ） */
 
 #ifdef DEBUG
-	    if( client->version_hi > 1 )
-		Dmsg( 3,"Now Call %s\n", DebugProcWide[ request ][ 0 ] );
-	    else
-		if( request < EXTBASEPROTONO )
-		    Dmsg( 3,"Now Call %s\n", DebugProc[ request ][ 0 ] );
+	    if (CallFuncName)
+		Dmsg( 3,"Now Call %s\n", CallFuncName );
 #endif
 	    if( (* CallFunc)( &client ) < 0 ){
 	       ir_debug( Dmsg(3,"クライアントとの通信に失敗した\n"); )

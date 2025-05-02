@@ -1,4 +1,4 @@
-/* $Id: Imakefile,v 1.2.2.1 2003/01/13 05:34:30 aida_s Exp $ */
+/* $Id: Imakefile,v 1.2.2.2 2003/09/12 05:48:44 aida_s Exp $ */
 #include "../Canna.conf"
 
 CANNAROOT = ..
@@ -7,10 +7,10 @@ CANNAROOT = ..
 #define PassCDebugFlags
 
 #ifdef engineSwitch
-       PROGRAMS = engine.cf
+       PROGRAMS = engine.cf default.canna rc.canna
            SRCS = engine.cpp
 #else
-       PROGRAMS = 
+       PROGRAMS = default.canna rc.canna
 #endif
 #ifdef nec
         DEFINES = $(SCRIPTS_DEFINES) -DLIBCANNADIR=$(libCannaDir) \
@@ -29,18 +29,36 @@ CppScriptTarget(engine.cf,engine.cpp,$(DEFINES),/**/)
 InstallNonExec(engine.cf,$(cannaLibDir))
 #endif
 
+#ifdef ObsoleteInstallDir
+cannaKillDir=$(cannaBinDir)
+#else
+cannaKillDir=$(cannaSrvDir)
+#endif
+
+rc.canna: rc.canna-dist $(CANNAROOT)/Canna.conf
+	sed -e 's%@(cannaSrvDir)%$(cannaSrvDir)%g'	\@@\
+	-e 's%@(cannaKillDir)%$(cannaKillDir)%g'	\@@\
+	-e 's%@(UnixSockDir)%$(UnixSockDir)%g'		\@@\
+	-e 's%@(UnixSockName)%$(UnixSockName)%g'	\@@\
+	-e 's%@(cannaOwner)%$(cannaOwner)%g'		\@@\
+	-e 's%@(ErrDir)%$(ErrDir)%g' rc.canna-dist > $@
+
 MakeSubdirs($(SUBDIRS))
 DependSubdirs($(SUBDIRS))
 MakeLintLibSubdirs($(SUBDIRS))
 MakeLintSubdirs($(SUBDIRS),install.ln,install.ln)
 
 MakeDirectories(install,$(cannaLibDir)/sample/src)
-#if defined(nec_ews_svr4) || defined(pcux_r32)
-InstallNamedNonExec(rMakefile,Makefile,$(cannaLibDir)/sample/src)
-#else
-InstallNamedNonExec(cMakefile,Makefile,$(cannaLibDir)/sample/src)
-#endif /* nec_ews_svr4 */
 
+#ifdef USE_OBSOLETE_STYLE_FILENAME
+default.canna: default.ca
+	sed 's/\.cbp/\.kp/' < default.ca > default.canna
+#else
+default.canna: default.ca
+	$(CP) default.ca default.canna
+#endif
+
+InstallNonExec(default.canna,$(cannaLibDir))
 InstallNonExec(is.c,$(cannaLibDir)/sample/src)
 
 clean::

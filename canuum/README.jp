@@ -23,11 +23,6 @@ ASTEC により開発された Wnn のオリジナル版をベースに作られていました。
 
 1. canuum の作り方
 
- まず、補助ライブラリとして、 libspt:
- http://members.jcom.home.ne.jp/aida-s/libspt/
- をインストールします。そして、 libspt-config のあるディレクトリにPATHを
- 通しておきます。
-
  canuum 本体は、次の手順で作成します。
 
  (1) xmkmf する。
@@ -164,4 +159,4 @@ ASTEC により開発された Wnn のオリジナル版をベースに作られていました。
  * PERFORMANCE OF THIS SOFTWARE. 
  */
 
-/* $Id: README.jp,v 1.1.1.1.2.2 2003/01/11 18:17:09 aida_s Exp $ */
+/* $Id: README.jp,v 1.1.1.1.2.3 2003/09/15 14:53:29 aida_s Exp $ */

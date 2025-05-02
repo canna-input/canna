@@ -1,3 +1,191 @@
+2003-09-21 AIDA Shinra <shinra@j10n.org>
+
+	* CHANGES.jp: updated for 3.6p4
+	* README: canuum is now secure
+	* README.jp: ditto
+	* misc/initfiles/verbose.canna: autodef dic
+	* canna/patchleve.h: bump to 3.6p4
+
+2003-09-17 AIDA Shinra <shinra@j10n.org>
+
+	* cmd/cannastat/cannastat.c(main): getdatasize = htons(ResevShort)
+
+2003-09-17 AIDA Shinra <shinra@j10n.org>
+
+	* doc/misc/wchar.tex: Old Kon san's mail address was removed.
+	* [Canna-dev 127]: canlisp manual
+	* doc/lisp/canlisp.tex: Updated. Old Kon san's mail address was
+	  removed.
+	* [Canna-dev 245]: new key symbols and others (by Ikumi san)
+	* doc/man/guide/tex/custom.tex: remove server-timeout
+	* dic/phono/tut.kpdef(tgu): tai->kuma (Reported by KIHARA Hideto san)
+	* canuum/canna.c(convert_getterm): use new key symbols
+	* cmd/catdic/Imakefie: install chmoddic.1 (first reported in
+	  [Canna-dev 164])
+
+2003-09-15 AIDA Shinra <shinra@j10n.org>
+
+	* canuum/README.jp: remove libspt desc
+
+2003-09-15 AIDA Shinra <shinra@j10n.org>
+
+	* server/connection.c(open_inet_socket): Dmsg was wrong, htons() was
+	  not needed
+
+2003-09-12 AIDA Shinra <shinra@j10n.org>
+
+	* Merge remainder.
+	* Canna.conf.dist(cannaDsoRev): add Darwin dylib
+	* canna/widedef.h: add Darwin wchar
+	* cmd/crxdic/crxdic.c: Improve boundary and internal sanity checks.
+	  Some of error exit() are replaced to assert().
+	  (fil_dic): remove pg arg
+	* lib/RK/RKintern.h(RK_ASSERT): added
+	* lib/RK/ngram.c: Fix wrong boundary check. Some of error return are
+	  replaced to RK_ASSERT().
+	  (RkParseWrec): Remove workaround for above wrong boundary check.
+	  And improvements of sanity checks.
+	  (RkParseOWrec): ditto
+	* lib/RK/util.c(_Rkpanic): use vfprintf
+	  (RkAssertFail): added
+	* [Canna-dev 241]: bug report from Chinen san
+	* lib/RK/fq.c(readNV): bad pointer
+
+2003-09-12 AIDA Shinra <shinra@j10n.org>
+
+	* Merge changes in server (excluding RK) and RKC.
+	* server/main.c(main): initialize first and fork last
+	* server/misc.c(BecomeDaemon): Move init code to EarlyInit. _exit()
+	  instead of exit(). If both -d and -l is given output messages over
+	  the given priority to stdout.
+	* server/misc.c(EarlyInit): added
+	* lib/RKC/wconvert.c: make "extension" protocol sensical
+	* server/IRwproto.h: ditto
+	* server/wconvert.c: ditto
+	* server/main.c(Dispatch): output extension name to debug log
+	* server/wconvert.c(ReadWideRequestFromClient): ditto
+	* server/convert.c(ReadRequestFromClient): ditto
+	* lib/RKC/wconvert.c(SendType21Request): fix request size ([Canna-dev
+	  231] cpdic was broken)
+	* lib/RKC/rkc.c(uinfo): change to static to prevent a conflict with
+	  uilib's uinfo
+
+2003-09-12 AIDA Shinra <shinra@j10n.org>
+
+	* Merge changes in tools and others.
+	* misc/canna: really removed
+	* Several fixes related to romaji-kana conversion.
+	* cmd/dpromdic/dpromdic.c(printch): escape cpp-unsafe characters
+	* cmd/kpdic/kpdic.c(getWORD): Interpret "\xXX" format. "n\x27" was
+	  "nx27" for 9 years!
+	  (main): correct size header of PTDIC
+	* cmd/mkromdic/mkromdic.cpp: expand CPP macro
+	* lib/RK/RK.h: add RX_PTDIC
+	* lib/canna/RKroma.c: make PTDIC format work
+	  (readHeader): added
+	  (RkwOpenRoma): move header operations to readHeader
+	* Binary dictionary was not created properly. It caused wrong
+	  learning sometimes.
+	* cmd/crxdic/crxdic.c(getp): returned number was not prime
+	  (fil_ltab): "csn" record in link table was wrong
+
+2003-09-12 AIDA Shinra <shinra@j10n.org>
+
+	* Merge changes in UIlib.
+	* lib/canna/uldefine.c(uuT2TangoEveryTimeCatch): also set SENTOU flag 
+	  to submitted string in romajiBuffer.
+	* [Canna:05811] [Canna:05812] autodef was broken
+	* lib/canna/lisp.c(Lusedic): handle ":katakana",":hiragana"
+	* lib/canna/romaji.c(doKakutei): define proper word.
+	* [Canna-dev 212]: KC_DO behaviour
+	* lib/canna/kctrl.c(KC_do): return number of commited characters for
+	  consistency with EUC API
+	* [Canna-dev 213]: Ikumi-san: key mappings and misc/canna removal
+	* lib/canna/lisp.c(keywordtable): add some key symbols
+	  (LdefXKeysym): removed because nobody use and don't work and
+	  considered harmful
+	* canna/symbolname.h(S_defXKeysym): removed
+	* lib/canna/alphamap.h: delete extra space
+	* lib/canna/emptymap.h: delete extra space
+	* [Canna-dev 220]: tango touroku problem
+	* lib/canna/uldefine.c(dicTourokuControl): set tblflag
+
+2003-09-12 AIDA Shinra <shinra@j10n.org>
+
+	* misc/default.ca: forgot 'cvs add'
+	* misc/rc.canna-dist: ditto
+	* misc/.cvsignore: add manual.sed
+
+2003-09-12 AIDA Shinra <shinra@j10n.org>
+
+	* Merge changes in configuration and build files.
+	* Canna.conf.dist(ConvertPathName): add @(DicDir) ([Canna-dev 182],
+	  Takamizu san)
+	* cmd/cannacheck/ccheck.man: remove a blank line
+	* dic/ideo/words/dics.dir: remove fuzokugo.cld
+	* dic/ideo/grammer/Imakefile: don't create fuzokugo.cld.
+	* separate default.canna and verbose.canna. (proposed by
+	  TAMUKI san, Plamo maintainer)
+	* misc/default.ca: place it again
+	* misc/initfiles/default.ca: rename to verbose.canna
+	* misc/initfiles/verbose.canna: renamed from default.ca and slightly
+	  modified.
+	* misc/initfiles/Imakefile: install verbose.canna instead of
+	  default.ca
+	* misc/canna: removed because we have rc.canna
+	* [Canna-dev 185]: misc patch by Ikumi san
+	* cmd/mkbindic/Imakefile: quote CPP
+	* cmd/mkromdic/Imakefile: dittto
+	* dic/phono/kana.kpdef: use \xnn escape seq
+	* dic/phono/newjis.kpdef: ditto
+	* lib/canna/RkPhono.jmn: remove dup file
+	* misc/Imakefile: create rc.canna, don't install [rc]Makefile
+	* misc/cMakefile: removed
+	* misc/rMakefile: reomved
+	* misc/rc.canna-dist: new script source
+
+2003-09-12 AIDA Shinra <shinra@j10n.org>
+
+	* Merge changes in documents.
+	* lib/canna/RkPhono.jmn: remove dup file (Ikumi san)
+	* server/server.man: updated (Takamizu san)
+	* server/server.jmn: ditto
+	* misc/initfiles/unix.canna: fix a typo ([Canna-dev 216]).
+	* misc/initfiles/default.ca: (setq inhibit-hankaku-kana nil)
+	  ([Canna-dev 216])
+	* [Canna-dev 190]: Ikumi-san: documentations improved.
+	  - Canna.conf.dist: correct some wording
+	  - INSTALL: explanation about automatic startup now makes the
+	    reader refer to the sample script rather than shows an
+	    example that assumes a certain directory layout etc.
+	  - INSTALL.jp: ditto
+	* document patch from Ikumi-san ([Canna-dev 216]). The document
+	  is now compliant with LaTeX2e, while the old one depends on
+	  LaTeX. Note that LaTeX 2.09 cannot typeset the document after
+	  this change. The patch also includes a lot of misc fixes. The
+	  following files are modified.
+	  - doc/man/guide/tex/custom.tex
+	  - doc/man/guide/tex/kanacode.tex
+	  - doc/man/guide/tex/Imakefile
+	  - doc/man/guide/tex/library.tex
+	  - doc/man/guide/tex/server.tex
+	  - doc/man/guide/tex/customex.tex
+	  - doc/man/guide/tex/canna-dist.tex
+	  - doc/man/guide/tex/commands.tex
+	  - doc/man/guide/tex/konna.tex
+	  - doc/man/guide/tex/jinput.tex
+	  - doc/man/guide/tex/keymap.tex
+	  - doc/man/guide/tex/func.tex
+	  - doc/man/guide/tex/customfn.tex
+	  - doc/README.jp
+	  - doc/canna.sty
+	* doc/intern/dic.txt: added. it also describes 3.7devel2-formatted
+	  dictionaries.
+
+2003-02-02 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* (repository): rename RELBR_3 to RELBR_3_6 (cvs admin -n)
+
 2003-01-25 AIDA Shinra <aida-s@jcom.home.ne.jp>
 
 	* canuum/configure.in: check union wait
@@ -389,4 +577,4 @@
 
 	* Virgin import of Canna3.5b2.
 
-$Id: ChangeLog,v 1.10.2.25 2003/01/25 08:46:29 aida_s Exp $
+$Id: ChangeLog,v 1.10.2.38 2003/09/21 06:46:15 aida_s Exp $

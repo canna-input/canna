@@ -21,15 +21,13 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[]="@(#)$Id: util.c,v 1.2 2002/10/20 14:29:58 aida_s Exp $ $Author: aida_s $ $Revision: 1.2 $ $Data$";
+static char rcsid[]="@(#)$Id: util.c,v 1.2.2.1 2003/09/12 14:32:52 aida_s Exp $ $Author: aida_s $ $Revision: 1.2.2.1 $ $Data$";
 #endif
 
 #include "RKintern.h"
 #include <stdio.h>
-
-#ifdef WIN 
-#define exit(n) /* This is because Windows has no exit.  This should be
-  rewritten to smarter code. */
+#ifdef __STDC__
+#include <stdarg.h>
 #endif
 
 static char	*Hdrtag[] = {
@@ -157,20 +155,45 @@ static FILE	*log = (FILE *)0;
 #endif
 
 void
-_Rkpanic(fmt, p, q, r)
-     char	*fmt;
+_Rkpanic(
+#ifdef __STDC__
+    const char *fmt, ...
+#else
+    fmt, p, q, r
+#endif
+    )
+#ifndef __STDC__
+     const char	*fmt;
 /* VARARGS2 */
+#endif
 {
 #ifndef WIN
-  char	msg[RK_LINE_BMAX];
-  extern void exit();
-  
-  (void)sprintf(msg, fmt, p, q, r);
-  (void)fprintf(log ? log : stderr, "%s\n", msg);
-  (void)fflush(log);
+  FILE *target = log ? log : stderr;
+#ifdef __STDC__
+  va_list va;
+
+  va_start(va, fmt);
+  vfprintf(target, fmt, va);
+  va_end(va);
+#else
+  fprintf(target, fmt, p, q, r);
 #endif
-  /* The following exit() must be removed.  1996.6.5 kon */
-  exit(1);
+  fputc('\n', target);
+  fflush(target);
+  if (log)
+    fclose(log);
+#endif
+  abort();
+}
+
+void
+RkAssertFail(file, line, expr)
+     const char *file;
+     int line;
+     const char *expr;
+{
+  _Rkpanic("RK assertion failed: %s:%d %s", file, line, expr);
+  /* NOTREACHED */
 }
 
 int

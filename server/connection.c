@@ -48,7 +48,7 @@ SOFTWARE.
 ******************************************************************/
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "$Id: connection.c,v 1.2 2002/10/20 15:48:11 aida_s Exp $";
+static char rcs_id[] = "$Id: connection.c,v 1.2.2.1 2003/09/15 14:39:07 aida_s Exp $";
 #endif
 	  
 /* LINTLIBRARY */
@@ -169,7 +169,7 @@ static int open_inet_socket ()
     insock.sin_port =
     (sp ? ntohs(sp->s_port) : IR_DEFAULT_PORT) + PortNumberPlus;
     
-    ir_debug( Dmsg(5, "ポート番号:[%d]\n",htons(insock.sin_port));)
+    ir_debug( Dmsg(5, "ポート番号:[%d]\n",insock.sin_port);)
     
     insock.sin_port = htons(insock.sin_port);
     insock.sin_addr.s_addr = htonl(INADDR_ANY);

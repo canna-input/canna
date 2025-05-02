@@ -48,7 +48,7 @@
  */
 
 #ifndef lint
-static char rcsid[] = "$Id: canna.c,v 1.2.2.1 2003/01/11 17:53:57 aida_s Exp $";
+static char rcsid[] = "$Id: canna.c,v 1.2.2.2 2003/09/17 01:47:02 aida_s Exp $";
 #endif
 
 #include "commonhd.h"
@@ -1215,11 +1215,23 @@ int flag;
     p = xx; if (q = tgetstr("k7", &p)) cannakeyentry(q, CANNA_KEY_F7);
     p = xx; if (q = tgetstr("k8", &p)) cannakeyentry(q, CANNA_KEY_F8);
     p = xx; if (q = tgetstr("k9", &p)) cannakeyentry(q, CANNA_KEY_F9);
+    p = xx; if (q = tgetstr("k;", &p)) cannakeyentry(q, CANNA_KEY_F10);
     p = xx; if (q = tgetstr("ku", &p)) cannakeyentry(q, CANNA_KEY_Up);
     p = xx; if (q = tgetstr("kr", &p)) cannakeyentry(q, CANNA_KEY_Right);
     p = xx; if (q = tgetstr("kl", &p)) cannakeyentry(q, CANNA_KEY_Left);
     p = xx; if (q = tgetstr("kd", &p)) cannakeyentry(q, CANNA_KEY_Down);
+    p = xx; if (q = tgetstr("kF", &p)) cannakeyentry(q, CANNA_KEY_Rollup);
+    p = xx; if (q = tgetstr("kR", &p)) cannakeyentry(q, CANNA_KEY_Rolldown);
+#ifdef CANNA_KEY_PageDown
+    p = xx; if (q = tgetstr("kN", &p)) cannakeyentry(q, CANNA_KEY_PageDown);
+    p = xx; if (q = tgetstr("kP", &p)) cannakeyentry(q, CANNA_KEY_PageUp);
+#endif
     p = xx; if (q = tgetstr("kh", &p)) cannakeyentry(q, CANNA_KEY_Home);
+    p = xx; if (q = tgetstr("%1", &p)) cannakeyentry(q, CANNA_KEY_Help);
+    p = xx; if (q = tgetstr("kI", &p)) cannakeyentry(q, CANNA_KEY_Insert);
+#ifdef CANNA_KEY_End
+    p = xx; if (q = tgetstr("@7", &p)) cannakeyentry(q, CANNA_KEY_End);
+#endif
   }
 #endif
 
@@ -1244,9 +1256,17 @@ int flag;
   cannakeyentry(key_left,  CANNA_KEY_Left);
   cannakeyentry(key_down,  CANNA_KEY_Down);
   cannakeyentry(key_home,  CANNA_KEY_Home);
+  cannakeyentry(key_help,  CANNA_KEY_Help);
   cannakeyentry(key_sf,    CANNA_KEY_Rollup);
   cannakeyentry(key_sr,    CANNA_KEY_Rolldown);
+#ifdef CANNA_KEY_PageDown
+  cannakeyentry(key_npage, CANNA_KEY_PageDown);
+  cannakeyentry(key_ppage, CANNA_KEY_PageUp);
+#endif
   cannakeyentry(key_ic,    CANNA_KEY_Insert);
+#ifdef CANNA_KEY_End
+  cannakeyentry(key_end,   CANNA_KEY_End);
+#endif
 
   resetterm();
 #endif

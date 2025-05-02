@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: kctrl.c,v 1.1.1.1 2002/10/19 08:27:50 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: kctrl.c,v 1.1.1.1.2.1 2003/09/12 13:18:05 aida_s Exp $";
 #endif /* lint */
 
 #include "canna.h"
@@ -1382,7 +1382,7 @@ wcKanjiStatusWithValue *arg;
   bzero(d->kanji_status_return, sizeof(wcKanjiStatus));
 
   arg->val = doFunc(d, arg->val);
-  return 0;
+  return arg->val;
 }
 
 #ifndef NO_EXTEND_MENU

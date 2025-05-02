@@ -19,7 +19,7 @@
 % OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 % PERFORMANCE OF THIS SOFTWARE. 
 %
-% $Id: server.tex,v 1.1.1.1 2002/10/19 08:27:43 aida_s Exp $
+% $Id: server.tex,v 1.1.1.1.2.1 2003/09/12 05:00:48 aida_s Exp $
 %
 \chapter{かな漢字変換サーバ}
 \label{3.4かな漢字変換サーバと辞書}
@@ -55,6 +55,11 @@
 字変換サーバとして利用するサーバを、ネットワーク上の任意のマシンから自
 由に選択して使用することができます。
 
+注意 かんな 3.6 以降では、セキュリティー向上のためデフォルトでは他のマ
+シンのサーバーを利用することはできません。詳しくは、
+\textbf{\ref{sec:access-control}cannaserverのアクセス制御}を参照して
+ください。
+
 たとえば、ディスク容量がたくさんあり、CPUもある程度の性能を持つマシンに
 辞書を置き、かな漢字変換サーバを走らせておけば、ネットワーク上のどのマ
 シン上からでも高性能のかな漢字変換エンジンを利用することが可能となりま
@@ -82,35 +87,52 @@
 われます。環境変数CANNAHOSTを設定することにより他のマシン上で動作して
 いるかな漢字変換サーバを用いるようになります。
 
-\item \HIDX{\refCANNALIBDIR /cannahost}{／ＵＳＲ／ＬＩＢ／ＣＡＮＮＡ／
-ＣＡＮＮＡＨＯＳＴ}{H0.5.1.2.0.2}
-\hptar{label=H0.5.1.2.0.2}
-
-環境変数CANNAHOSTが設定されていないときには通常は同一マシン上のかな漢字変換サーバが使われますが、/usr/lib/canna/cannahostというファイルに他のマシンのホスト名が記述されている場合は/usr/lib/canna/cannahostにて示されるマシン上のかな漢字変換サーバが用いられるようになります。
-すなわち、/usr/lib/canna/cannahostに他のマシンのホスト名を記述しておくと、そのマシンを利用しているユーザは環境変数CANNAHOSTを用いて明示的にかな漢字変換サーバを指定している場合以外は、/usr/lib/canna/cannahostにて指定されるサーバを用いるようにすることができます。
-
-たとえばディスクレスマシンのように、システム資源が足りない場合などは、\\ /usr/lib/canna/cannahostファイルにディスクレスサーバマシンなどのホスト名を記述しておくことにより、他のマシンのかな漢字変換サーバを利用するように記述しておいたほうが良いでしょう。
+また、ホスト名はコンマで区切って複数指定することもできます。
 
 (例)
 
 \begin{nquote}{1em}
-\verb+ % cat /usr/lib/canna/cannahost +
-\verb+ machine1 +
+\texttt{\% setenv CANNAHOST machine1,machine2,machine3}
 \end{nquote}
 
-/usr/lib/canna/cannahostにて他のマシンを指定することにより、同一マシン上のかな漢字変換サーバは使われないようになります。
-その場合は、かな漢字変換サーバの起動は不要となりますので、
-/etc/rc0.d/Kaacanna、/etc/rc1.d/Kaacanna、\\
-/etc/rc2.d/Saacanna を削除して cannaserver が起動しないようにしておくと良いでしょう。
+そうすると、まず machine1 というホストの cannaserver に接続に行
+き、そこで cannaserver が稼働していないと machine2 に接続に
+行きます。
+
+machine2 がいなければ次に machine3 につなぎます。どれもいなければ「か
+な漢字変換サーバに接続できませんでした」とエラーになります。
+
+\item \HIDX{\refCANNALIBDIR /cannahost}{／ＵＳＲ／ＬＩＢ／ＣＡＮＮＡ／
+ＣＡＮＮＡＨＯＳＴ}{H0.5.1.2.0.2}
+\hptar{label=H0.5.1.2.0.2}
+
+環境変数CANNAHOSTが設定されていないときには通常は同一マシン上のかな漢字変換サーバが使われますが、\refCANNALIBDIR /cannahostというファイルに他のマシンのホスト名が記述されている場合は\refCANNALIBDIR /cannahostにて示されるマシン上のかな漢字変換サーバが用いられるようになります。
+すなわち、\refCANNALIBDIR /cannahostに他のマシンのホスト名を記述しておくと、そのマシンを利用しているユーザは環境変数CANNAHOSTを用いて明示的にかな漢字変換サーバを指定している場合以外は、\refCANNALIBDIR /cannahostにて指定されるサーバを用いるようにすることができます。
+
+たとえばディスクレスマシンのように、システム資源が足りない場合などは、\\ \refCANNALIBDIR /cannahostファイルにディスクレスサーバマシンなどのホスト名を記述しておくことにより、他のマシンのかな漢字変換サーバを利用するように記述しておいたほうが良いでしょう。
+
+(例)
+
+\begin{nquote}{1em}
+\texttt{\% cat \CANNALIBDIR/cannahost}\\
+\texttt{machine1}
+\end{nquote}
+
+\refCANNALIBDIR /cannahostにて他のマシンを指定することにより、同一マシン上のかな漢字変換サーバは使われないようになります。
+%% その場合は、かな漢字変換サーバの起動は不要となりますので、
+%% /etc/rc0.d/Kaacanna、/etc/rc1.d/Kaacanna、\\
+%% /etc/rc2.d/Saacanna を削除して cannaserver が起動しないようにしておくと良いでしょう。
+\etcrc
+
 また、この場合、さらにかな漢字変換辞書等が不要となります。
 以下のファイルまたはディレクトリをそのマシンのハードディスクから削除することが可能となります。
 
 {\tt
 \begin{nquote}{1em}
 \begin{tabular}{l}
+cannaserver \\
+cannakill \\
 \refCANNALIBDIR /dic \\
-\refCANNALIBDIR /cannaserver \\
-\refCANNALIBDIR /cannakill \\
 \refCANNABINDIR /crxdic    \\
 \refCANNABINDIR /dicar     \\
 \refCANNABINDIR /dpbindic  \\
@@ -126,26 +148,35 @@
 \subsection{\IDX{cannaserverの起動}{ＣＡＮＮＡＳＥＲＶＥＲのきどう}}
 
 日本語機能のかな漢字変換は、かな漢字変換サーバcannaserverが行っていま
-す。cannaserver はシステム起動時に/etc/rc0.d/Kaacanna、
-/etc/rc1.d/Kaacanna により起動されます。
+す。\rcetc
+%% cannaserver はシステム起動時に/etc/rc0.d/Kaacanna、
+%% /etc/rc1.d/Kaacanna により起動されます。
 
 かな漢字変換の際、辞書はcannaserverを介してアクセスします。
 
-/usr/lib/canna/cannahost でそのマシン上のユーザが使用するかな漢字変
-換サーバとして、他のホスト上のサーバを指定している場合は、cannaserver 
-の起動は不要となりますので、/etc/rc0.d/Kaacanna、/etc/rc1.d/Kaacanna、
-/etc/rc2.d/Saacanna を削除して cannaserver が起動しないようにしておく
-と良いでしょう。
-
-
+\refCANNALIBDIR /cannahost でそのマシン上のユーザが使用するかな漢字変
+換サーバとして、他のホスト上のサーバを指定することもできます。
+\etcrc
 
 \subsection{\HIDX{cannaserverのアクセス制御}{ＣＡＮＮＡＳＥＲＶＥＲの
 あくせすせいきよ}{H0.5.1.4.0}}
+\label{sec:access-control}
 
 cannaserverにアクセスできるホストとユーザを指定することができます。
 
 
 \begin{itemize}
+\item \HIDX{起動時オプション}{きとうしおふしよん}{H0.5.1.4.0.0}
+\hptar{label=H0.5.1.4.0.0}
+
+デフォルトでは、cannaserver はリモートホストからの接続を受け付けません。
+リモートホストから利用するには、起動時に \texttt{-inet} オプションをつ
+ける必要があります。
+
+\begin{CODEBOX}
+  (例) cannaserver へのリモートホストからの接続を許可する。\\
+  \% cannaserver -u bin -inet \\
+\end{CODEBOX}
 
 \item \HIDX{/etc/hosts.canna}{／ＥＴＣ／ＨＯＳＴＳ．ＣＡＮＮＡ}
 {H0.5.1.4.0.1}
@@ -250,10 +281,15 @@ user 配下のディレクトリは、かな漢字変換の利用者ごとに使用する辞書を分
 
 \begin{nquote}{1em}
 \begin{verbatim}
-iroha.d
-fuzokugo.d
-hojomwd.t
-hojoswd.t
+iroha.cbd
+fuzokugo.cbd
+hojomwd.ctd
+hojoswd.ctd
+chimei.ctd
+kanasmpl.ctd
+software.ctd
+user.ctd
+necgaiji.ctd
 \end{verbatim}
 \end{nquote}
 
@@ -269,20 +305,6 @@ hojoswd.t
 はオーナ/グループがbin/binで動作していますので、辞書ファイルを作成
 する時はそのファイルのグループをbinにしてグループに対する書き込み権
 を開放しておいてください。
-
-例として辞書ホームディレクトリの下にあるuser配下に、userというディレクト
-リを準備しました。各自でディレクトリを作成する時の参考にしてください。
-userの下には以下の辞書ファイルがあります。
-
-\begin{nquote}{1em}
-\begin{verbatim}
-chimei.t
-katakana.t
-software.t
-user.t
-necgaiji.t
-\end{verbatim}
-\end{nquote}
 
 
 \item \HIDX{グループ辞書ファイル}{くるーふししよふあいる}
@@ -322,7 +344,7 @@ necgaiji.t
 グループ辞書を探す際には、 group 配下にあるグループ名と同名のディ
 レクトリの下の辞書を探して用いようとします。
 最後に、システム辞書ファイルの中から指定された辞書を探して用います。 \\
-ユーザ辞書とグループ辞書に同じ名前のファイル名がある場合は、
+ユーザ辞書とグループ辞書に同じ辞書名の辞書ファイルがある場合は、
 ユーザ辞書が優先されて用いられます。
 この場合は、単語を登録・削除する際にユーザ辞書に対して行いますので
 注意してください。
@@ -345,14 +367,14 @@ necgaiji.t
 タでメンテナンスすることもできます。(ただし、サーバが使用中の辞書ファ
 イルをエディトしても、その変更は無効となります)
 
-辞書ファイル名の拡張子は ".t" でなければなりません。
+辞書ファイル名の拡張子は ".ctd" でなければなりません。
 
 
 \item  \HIDX{バイナリ形式辞書}{はいなりけいしきししよ}{H0.5.2.3.0.2}
 \hptar{label=H0.5.2.3.0.2}
 
 辞書の読み込みが高速になるような形式に変換された辞書ファイルです。辞書
-ファイル名の拡張子は ".d" でなければなりません。辞書中にある不要な単語
+ファイル名の拡張子は ".cbd" でなければなりません。辞書中にある不要な単語
 を削除することや、一度削除した単語を復活させることができます。
 辞書ユーティリティツールを使ってテキスト形式とバイナリ形式を相
 互変換することが可能です。また、複数のバイナリ形式の辞書ファイルを
@@ -376,7 +398,7 @@ cat(1)で辞書を結合した場合、そのバイナリ辞書ファイルに含まれている辞書
 辞書は、だれでも単語を登録したり、辞書の中身を見たりできる訳
 ではありません。辞書それぞれに制限があります。
 辞書に対しての制限は、所有者と非所有者によって変わります。
-辞書ディレクトリ {\tt /usr/lib/canna/dic} 配下の辞書の所有者についての
+辞書ディレクトリ {\tt \refCANNALIBDIR /dic} 配下の辞書の所有者についての
 考え方を以下に示します。
 
 \begin{center}
@@ -396,13 +418,14 @@ cat(1)で辞書を結合した場合、そのバイナリ辞書ファイルに含まれている辞書
 \end{center}
 
 \vspace{1em}
-ユーザ辞書は、{\tt /usr/lib/canna/dic/user} 配下のディレクトリと同じログイン
+ユーザ辞書は、{\tt \refCANNALIBDIR /dic/user} 配下のディレクトリと同じログイン
 名の利用者に所有されます。またグループ辞書は、
-{\tt /usr/lib/canna/dic/group} 配下のディレクトリと同じグループ名 
+{\tt \refCANNALIBDIR /dic/group} 配下のディレクトリと同じグループ名 
 の利用者に所有されます。システム辞書は、利用者全員が所有者となっていま
 すが、システム辞書への単語の登録・削除は行えません。
 
 \subsection{辞書の {\tt READ・WRITE}権}
+\label{辞書のREAD・WRITE権}
 
 辞書の {\tt READ} 権は、非所有者が辞書の中身を見たり({\tt catdic(1)})、
 辞書のコピー ({\tt cpdic(1)})をしたりできるかどうかの制限を与えます。
@@ -445,16 +468,16 @@ dics.dirの記述は以下のようになります。
 #
 # システム辞書                        
 #
-fuzokugo.d(fuzokugo.swd)        -fuzokugo---
-fuzokugo.fq(fuzokugo.swd)       -fuzokugo---
-iroha.d(iroha.mwd)      -iroha---
-iroha.fq(iroha.mwd)     -iroha---
-iroha.d(yuubin.mwd)     -yuubin---
-yuubin.fq(yuubin.mwd)   -yuubin---
-iroha.d(bushu.mwd)      -bushu---
-bushu.fq(bushu.mwd)     -bushu---
-hojomwd.t(.mwd)         -hojomwd---
-hojoswd.t(.swd)         -hojoswd---
+fuzokugo.cbd(fuzokugo.swd)        -fuzokugo---
+fuzokugo.cld(fuzokugo.swd)       -fuzokugo---
+iroha.cbd(iroha.mwd)      -iroha---
+iroha.cld(iroha.mwd)     -iroha---
+iroha.cbd(yuubin.mwd)     -yuubin---
+yuubin.cld(yuubin.mwd)   -yuubin---
+iroha.cbd(bushu.mwd)      -bushu---
+bushu.cld(bushu.mwd)     -bushu---
+hojomwd.ctd(.mwd)         -hojomwd---
+hojoswd.ctd(.swd)         -hojoswd---
 \end{verbatim}
 \end{nquote}
 %
@@ -464,10 +487,10 @@ hojoswd.t(.swd)         -hojoswd---
 #                                     
 # ユーザ辞書                        
 #                                     
-user1.t(.mwd) -user1--r-
-user2.t(.mwd) -user2--rw-
-user3.t(.mwd) -user3--w-
-user4.t(.mwd) -user4---
+user1.ctd(.mwd) -user1--r-
+user2.ctd(.mwd) -user2--rw-
+user3.ctd(.mwd) -user3--w-
+user4.ctd(.mwd) -user4---
 \end{verbatim}
 \end{nquote}
 %
@@ -477,10 +500,10 @@ user4.t(.mwd) -user4---
 #                                     
 # グループ辞書                        
 #                                     
-user1.t(.mwd) -group1--r-
-user2.t(.mwd) -group2--rw-
-user3.t(.mwd) -group3--w-
-user4.t(.mwd) -group4---
+user1.ctd(.mwd) -group1--r-
+user2.ctd(.mwd) -group2--rw-
+user3.ctd(.mwd) -group3--w-
+user4.ctd(.mwd) -group4---
 \end{verbatim}
 \end{nquote}
 %
@@ -513,7 +536,7 @@ dics.dirで\#から改行まではコメントとして扱われます。
 １行に読み、品詞、単語を空白またはタブで区切って記述します。単語は空白
 またはタブで区切れば複数記述することができます。
 
-辞書ファイル名は、バイナリ辞書と区別するためにxxx.tという名前にしてください。
+辞書ファイル名は、バイナリ辞書と区別するためにxxx.ctdという名前にしてください。
 
 読み　品詞　単語　［単語］　…
 
@@ -539,26 +562,26 @@ dics.dirで\#から改行まではコメントとして扱われます。
 テキスト形式辞書ファイルをバイナリ形式辞書ファイルに変換するには、
 mkbindic(1)を使って行います。
 
-xxx.tというテキスト辞書をバイナリ形式に変換すると、xxx.mwdという名前が
+xxx.ctdというテキスト辞書をバイナリ形式に変換すると、xxx.mwdという名前が
 子辞書名になります。
 
 (例)
 \begin{nquote}{2em}
-\verb+ % mkbindic foo.t + 
+\verb+ % mkbindic foo.ctd + 
 \end{nquote}
 
-mkbindic(1)を実行しますと、読みをキーとしてテキスト形式辞書ファイルを辞書順にソートし、それをバイナリ化し、xxx.d(例では、foo.d)というバイナリ形式辞書を作成します。
+mkbindic(1)を実行しますと、読みをキーとしてテキスト形式辞書ファイルを辞書順にソートし、それをバイナリ化し、xxx.cbd(例では、foo.cbd)というバイナリ形式辞書を作成します。
 
 複数の辞書ファイルをまとめて１つのバイナリ形式辞書にすることができます。
 
 (例1)
 \begin{nquote}{2em}
-\verb+ % cat foo.d >> bar.d +
+\verb+ % cat foo.cbd >> bar.cbd +
 \end{nquote}
 
 (例2)
 \begin{nquote}{2em}
-\verb+ % dicar -r bar.d foo.d +
+\verb+ % dicar -r bar.cbd foo.cbd +
 \end{nquote}
 
 
@@ -635,7 +658,7 @@ mkdic(1)によりユーザ辞書(テキスト形式)の作成が可能です。
 
 \item 辞書ファイルの作成
 
-そのディレクトリにfilename.tというファイルを作ります。filenameは任意の名前で、これをdics.dirに書き込みます。登録はテキストファイルに行いますので、必ず .t という拡張子を付けてください。ファイルには何も書き込む必要はありません。
+そのディレクトリにfilename.ctdというファイルを作ります。filenameは任意の名前で、これをdics.dirに書き込みます。登録はテキストファイルに行いますので、必ず .ctd という拡張子を付けてください。ファイルには何も書き込む必要はありません。
 
 このファイルのグループはbinとし、グループに対する書き込み権を許可しておいてください。これを行わないと単語登録が反映されない場合があります。
 
@@ -651,7 +674,7 @@ dics.dirはそのディレクトリ下にある辞書の一覧を保持しているファイルです。
 
 \begin{nquote}{2em}
 \begin{tabular}{lc}
-{　　　}\underline{filename.t} (\underline{.mwd})  &
+{　　　}\underline{filename.ctd} (\underline{.mwd})  &
 \underline{-dicname-rw-} \\
 辞書ファイル名　　↓                               &
      辞書名とアクセス権  \\
@@ -724,9 +747,9 @@ mkdic(1)によりグループ辞書(テキスト形式)の作成が可能です。
 
 \item 辞書ファイルの作成
 
-そのディレクトリにfilename.tというファイルを作ります。filenameは任意の
+そのディレクトリにfilename.ctdというファイルを作ります。filenameは任意の
 名前で、これをdics.dirに書き込みます。登録はテキストファイルに行います
-ので、必ず .t という拡張子を付けてください。ファイルには何も書き込む必
+ので、必ず .ctd という拡張子を付けてください。ファイルには何も書き込む必
 要はありません。
 
 このファイルのグループはbinとし、グループに対する書き込み権を許可して
@@ -745,7 +768,7 @@ dics.dirはそのディレクトリ下にある辞書の一覧を保持しているファイルです。
 
 \begin{nquote}{2em}
 \begin{tabular}{lc}
-{　　　}\underline{filename.t} (\underline{.mwd})  &
+{　　　}\underline{filename.ctd} (\underline{.mwd})  &
 \underline{-dicname-rw-} \\
 辞書ファイル名　　↓                               &
      辞書名とアクセス権  \\

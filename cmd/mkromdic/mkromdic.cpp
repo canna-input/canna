@@ -20,7 +20,7 @@ XCOMM USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 XCOMM OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 XCOMM PERFORMANCE OF THIS SOFTWARE. 
 XCOMM
-XCOMM $Id: mkromdic.cpp,v 1.1.1.1 2002/10/19 08:27:34 aida_s Exp $
+XCOMM $Id: mkromdic.cpp,v 1.1.1.1.2.1 2003/09/12 13:36:48 aida_s Exp $
 
 #include "cannaconf.h"
 
@@ -65,7 +65,8 @@ OUTFILE=`echo $OUTFILE |  awk -F. '{printf "%s",$1; for(i=2; i<NF; i++) printf "
 KPDIC="kpdic $flag_m"
 OUTFILE=$OUTFILE.cbp
 
-if [ -x CPP ]; then
+set x CPP
+if [ -x $2 ]; then
 	echo "forcpp -7 < $INFILE |" CPP "$args |forcpp -8 | $KPDIC > $OUTFILE"
 	forcpp -7 < $INFILE | CPP $args |forcpp -8 | $KPDIC > $OUTFILE
 else

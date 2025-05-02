@@ -19,7 +19,7 @@
 ;; OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 ;; PERFORMANCE OF THIS SOFTWARE. 
 
-;;  $Id: default.ca,v 1.1.1.1.2.2 2003/01/21 10:57:03 aida_s Exp $
+;;  verbose.canna,v 1.1 2003/02/03 20:13:02 aida_s Exp
 
 ;;; ローマ字かな変換の設定
 ;
@@ -50,6 +50,7 @@
  "hojoswd"
  :bushu "bushu"
  :user  "user"
+; :katakana "katakana"
  )
 
 ;;; さまざまなパラメタの設定
@@ -161,6 +162,10 @@
 ; nilの時は一覧選択を行うとひとつ先の文節に移動します。
 (setq stay-after-validate t)            ; default t
 
+; 文字種変換で、半角カタカナを禁止するか(t)
+; t のときは禁止します。
+(setq inhibit-hankaku-kana nil)		; default nil
+
 ; 文字種変換で、次の入力を行ったら文字種部分を確定しないか(t)
 ; nil のときは確定します。
 (setq mojishu-continue t)		; default t
@@ -173,13 +178,14 @@
 
 
 ;; シンボルの定義
-;(defsymbol 
-;  ?[ "「" "『" "[" "［" "〔"
-;  ?] "」" "』" "]" "］" "〕" )
+(defsymbol 
+  ?[ "「" "『" "[" "［" "〔"
+  ?] "」" "』" "]" "］" "〕" )
 
+(defsymbol 
+  ?. "。" "." "．"
+  ?, "、" "," "，" )
 
 ;(defsymbol 
-;  ?. "。" "." "．"
-;  ?, "、" "," "，" )
-;(defsymbol ?~ "~" "￣" "〜")
-;(defsymbol ?/  "/"  "／"  "・")
+;  ?~ "~" "￣" "〜"
+;  ?/ "/" "／" "・" )

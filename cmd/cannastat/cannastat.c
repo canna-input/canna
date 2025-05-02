@@ -22,7 +22,7 @@
 
 #ifndef lint
 static char sccs_id[]="@(#) NEC UNIX( PC-UX/EWS-UX ) cannastat.c 2.1 91/11/11 11:06:30";
-static char rcs_id[] = "$Id: cannastat.c,v 1.1.1.1 2002/10/19 08:27:32 aida_s Exp $";
+static char rcs_id[] = "$Id: cannastat.c,v 1.1.1.1.2.1 2003/09/17 04:09:05 aida_s Exp $";
 #endif
 
 /*
@@ -179,7 +179,7 @@ char **argv ;
 	ReadServer( (char *)&ResevChar, sizeof( char ) );
 	ReadServer( (char *)&ResevChar, sizeof( char ) );
 	ReadServer( (char *)&ResevShort, sizeof( short ) );
-	getdatasize = (unsigned short)ResevShort;		/* S002 */
+	getdatasize = htons(ResevShort);		/* S002 */
 
 	ReadServer( (char *)&ResevChar, sizeof( char ) );
 	/* サーババージョンを取得する */

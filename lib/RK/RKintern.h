@@ -21,7 +21,7 @@
  */
 
 /* LINTLIBRARY */
-/* $Id: RKintern.h,v 1.3 2002/10/20 14:29:58 aida_s Exp $ */
+/* $Id: RKintern.h,v 1.3.2.1 2003/09/12 14:32:52 aida_s Exp $ */
 #ifndef		_RKintern_h
 #define		_RKintern_h
 
@@ -109,6 +109,17 @@ int	Rk_errno;
 #ifndef RK_DEBUG
 #define	RkDebug(fmt, p, q, r)
 #endif
+#ifdef __STDC__
+#define QUOTE(s) #s
+#else
+#define QUOTE(s) "s"
+#endif
+#ifdef NDEBUG
+#define RK_ASSERT(expr) ((void)0)
+#else
+#define RK_ASSERT(expr) ((expr) ? (void)0 : RkAssertFail(\
+	    __FILE__, __LINE__, QUOTE(expr)))
+#endif /* NDEBUG */
 
 #define	MKDIR_MODE	0775
 #ifdef WIN
@@ -1231,7 +1242,12 @@ void			_RkRehashCache();
 #define	_RK_INTERN_FUNCTIONS_DEF_
 
 struct DM *_RkSearchDicWithFreq pro((struct DD **, char *, struct DM **));
+#ifdef __STDC__
+void _Rkpanic pro((const char *, ...));
+#else
 void _Rkpanic();
+#endif
+void RkAssertFail pro((const char *, int, const char *));
 unsigned long _RkGetTick pro((int));
 struct TW *RkCopyWrec pro((struct TW *));
 struct TW *RkUnionWrec pro((struct TW *, struct TW *));

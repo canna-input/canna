@@ -1,7 +1,10 @@
 %%% 『かんな』マニュアル
 %%%
-%%% $Id: canna-dist.tex,v 1.1.1.1 2002/10/19 08:27:41 aida_s Exp $
-\documentstyle[epsf,canna]{jbook}
+%%% $Id: canna-dist.tex,v 1.1.1.1.2.1 2003/09/12 05:00:48 aida_s Exp $
+\documentclass{jbook}
+\usepackage{graphicx}
+\usepackage{fancyvrb}
+\usepackage{canna}
 \setlength{\oddsidemargin}{0mm}
 \setlength{\evensidemargin}{0mm}
 
@@ -37,16 +40,14 @@
 
 \newcommand{\CANNALIBDIR}{@(cannaLibDir)}
 \newcommand{\CANNABINDIR}{@(cannaBinDir)}
-\newcommand{\CANNALOCKDIR}{@(LockDir)}
-\newcommand{\CANNASPOOLDIR}{@(ErrDir)}
+\newcommand{\CANNALOGDIR}{@(ErrDir)}
 \newcommand{\CANNAINCLUDEDIR}{@(cannaIncDir)}
 \newcommand{\IROHASPOOLDIR}{/usr/spool/iroha}
 \newcommand{\IROHAINCLUDEDIR}{/usr/include/iroha}
 
 \newcommand{\refCANNALIBDIR}{\$(CANNALIBDIR)}
 \newcommand{\refCANNABINDIR}{\$(CANNABINDIR)}
-\newcommand{\refCANNALOCKDIR}{\$(CANNALOCKDIR)}
-\newcommand{\refCANNASPOOLDIR}{\$(CANNASPOOLDIR)}
+\newcommand{\refCANNALOGDIR}{\$(CANNALOGDIR)}
 \newcommand{\refCANNAINCLUDEDIR}{\$(CANNAINCLUDEDIR)}
 \newcommand{\refIROHASPOOLDIR}{\$(IROHASPOOLDIR)}
 \newcommand{\refIROHAINCLUDEDIR}{\$(IROHAINCLUDEDIR)}
@@ -56,8 +57,8 @@
 %\includeonly{}
 
 \title{か~~~~~ん~~~~~な\\マニュアル}
-\author{Version 3.2}
-\date{1994年4月25日}
+\author{Canna Project}
+\date{Version 3.7\\2003年}
 
 \begin{document}
 
@@ -89,9 +90,7 @@
 	& データなどを置くディレクトリ \\ \hline
 {\footnotesize \refCANNABINDIR} & \CANNABINDIR
 	& 実行形式コマンドを置くディレクトリ \\ \hline
-{\footnotesize \refCANNALOCKDIR} & \CANNALOCKDIR
-	& cannaserver のロックファイルを置くディレクトリ \\ \hline
-{\footnotesize \refCANNASPOOLDIR} & \CANNASPOOLDIR
+{\footnotesize \refCANNALOGDIR} & \CANNALOGDIR
 	& cannaserver のログファイルを置くディレクトリ \\ \hline
 {\footnotesize \refCANNAINCLUDEDIR} & \CANNAINCLUDEDIR
 	& 『かんな』関連のヘッダファイルを置くディレクトリ \\ \hline \hline

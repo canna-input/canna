@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static char rcsid[]="@(#) 102.1 $Id: crxdic.c,v 1.3 2002/10/20 14:29:57 aida_s Exp $";
+static char rcsid[]="@(#) 102.1 $Id: crxdic.c,v 1.3.2.2 2003/09/12 14:32:52 aida_s Exp $";
 #endif
 
 #include "RKintern.h"
@@ -31,6 +31,7 @@ static char rcsid[]="@(#) 102.1 $Id: crxdic.c,v 1.3 2002/10/20 14:29:57 aida_s E
 #include <time.h>
 #include <ctype.h>
 #include <fcntl.h>
+#include <assert.h>
 #include "ccompat.h"
 
 #if !defined( HYOUJUN_GRAM )
@@ -56,8 +57,6 @@ struct node {
 	unsigned char	*w;
     } ptr;
     int			page_num;
-    long		page_on;
-    long		page_off;
     int			wrec_bytes;
     unsigned 		size;
 };
@@ -143,6 +142,7 @@ int	search = 0;
 int	type = JMWD;
 
 extern	Wchar	*euctous();
+int getp pro((struct node *));
 
 #define MAXLINE		1024
 #define MAXKOUHO       	64
@@ -370,32 +370,27 @@ fil_dnd(dst, nd, val, size, unit)
 }
 
 unsigned long
-fil_dic(nd, dic, pg)
+fil_dic(nd, dic)
      struct node	*nd;
      struct dictionary	*dic;
-     int		*pg;
 {
-  unsigned	page_num;
   struct page	*P;
   struct direc	*D;
   unsigned char	*dst, *tmp;
   unsigned	nid;
   unsigned long	val, cval;
-  int		cpg;
   int		i, j;
     
-  page_num = nd->page_num;
-  P = &dic->Page[page_num];
+  P = &dic->Page[nd->page_num];
   D = dic->Dir;
   if (is_word_node(nd)) {
+    assert(nd->page_num != -1);
     dst = P->buf + P->wrdoff;
     val = P->wrdoff;
     P->wrdoff += nd->wrec_bytes;
     memcpy((char *)dst, (char *)nd->ptr.w, (unsigned)nd->wrec_bytes);
     P->lnkoff += dic->LinkSize;
-    *pg = nd->page_num;
-    if (nd->page_num != -1)
-      val += dic->PageSize * nd->page_num + D->dirsiz;
+    val += dic->PageSize * nd->page_num + D->dirsiz;
     return(val);
   } else {
     nid = getp(nd);
@@ -403,10 +398,6 @@ fil_dic(nd, dic, pg)
       val = D->diroff;
       dst = D->buf + D->diroff;
       D->diroff += dic->DirNodeSize * (nid + 1);
-      if (D->dirsiz < nd->page_off) {
-	fprintf(stderr, "page offset overflow.\n");
-	exit(1);
-      }
       s_to_bst2(nid, dst); dst += 2;
       l_to_bst3(0, dst); dst += 3;
       tmp = dst;
@@ -417,10 +408,9 @@ fil_dic(nd, dic, pg)
       for (i = 0; i < nd->count; i++) {
 	struct node	*child = &nd->ptr.n[i];
 	
-	cval = fil_dic(child, dic, &cpg);
+	cval = fil_dic(child, dic);
 	fil_dnd(tmp, child, cval, nid, dic->DirNodeSize);
       }
-      *pg = -1;
       return val;
     } else {
       val = P->diroff;
@@ -431,17 +421,13 @@ fil_dic(nd, dic, pg)
 	struct node	*child = &nd->ptr.n[i];
 	int		lflag = 0;
 	
-	cval = fil_dic(child, dic, &cpg);
-	if (cpg != nd->page_num) {
-	  fprintf(stderr, "illegal page number %d, %d\n", cpg, nd->page_num);
-	  exit(1);
-	}
+	cval = fil_dic(child, dic);
 	cval -= dic->PageSize * nd->page_num + D->dirsiz;
+	assert(cval < dic->PageSize);
 	if (i == nd->count - 1)
 	  lflag = 1;
 	fil_pnd(tmp, i, child, cval, lflag, nd->count, dic->PagNodeSize);
       }
-      *pg = nd->page_num;
       val += dic->PageSize * nd->page_num + D->dirsiz;
       return(val);
     }
@@ -463,7 +449,7 @@ alloc_page(dic, pn)
 	unsigned char	*ptr;
 	
 	if (!(ptr = (unsigned char *)calloc(1, psize))) {
-	    fprintf(stderr, "no space\n", i);
+	    fprintf(stderr, "no space\n");
 	    exit(1);
 	}
 	P[i].buf = ptr;
@@ -562,7 +548,6 @@ assign_to_page(dic, nd, page_num, is_pn_indir)
 	    pn = page_num;
 	}
 	nd->page_num = pn;
-	nd->page_off = P[pn].dirsiz + P[pn].lnksiz + P[pn].wrdsiz;
 	P[pn].lnksiz += dic->LinkSize;
 	P[pn].wrdsiz += nd->wrec_bytes;
 	P[pn].nlinks++;
@@ -574,7 +559,6 @@ assign_to_page(dic, nd, page_num, is_pn_indir)
 	if (nd->size >= dic->PageSize || atop) {
 	    atop = 0;
 	    nd->page_num = -1;
-	    nd->page_off = D->dirsiz;
 	    D->dirsiz += dic->DirNodeSize * (nid + 1);
 	    D->nnode += nid + 1;
 	    dic->empty += (nid - nd->count) * dic->DirNodeSize;
@@ -590,10 +574,7 @@ assign_to_page(dic, nd, page_num, is_pn_indir)
 	} else {
 	    if (!is_pn_indir) {
 		pn = page_num;
-		if (is_overflow_page(dic, P, page_num, nd->size)) {
-		  fprintf(stderr, "error:can't allocate in page %d\n", pn);
-		  exit(1);
-		}
+		assert(!is_overflow_page(dic, P, page_num, nd->size));
 	    } else {
 	      for (pn = 0; pn < dic->TotalPage; pn++) {
 		if (!is_overflow_page(dic, P, pn, nd->size))
@@ -601,7 +582,6 @@ assign_to_page(dic, nd, page_num, is_pn_indir)
 	      }
 	      if (pn == dic->TotalPage) {
 		nd->page_num = -1;
-		nd->page_off = D->dirsiz;
 		D->dirsiz += dic->DirNodeSize * (nid + 1);
 		D->nnode += nid + 1;
 		dic->empty += (nid - nd->count) * dic->DirNodeSize;
@@ -618,7 +598,6 @@ assign_to_page(dic, nd, page_num, is_pn_indir)
 	    }
 	    P[pn].ndir++;
 	    nd->page_num = pn;
-	    nd->page_off = P[pn].dirsiz;
 	    P[pn].dirsiz += dic->PagNodeSize * nd->count;
 	    dic->empty += (nd->count - nd->count) * dic->PagNodeSize;
 	    P[pn].nnode += nd->count;
@@ -646,6 +625,10 @@ calculate_dic_status(dic)
 	totalcand += dic->Page[i].candnum;
 	snd +=  dic->Page[i].nnode;
     }
+    if (dic->Dir->dirsiz + i * dic->PageSize >= 0x800000) {
+	fprintf(stderr, "Over 8MB dictionary");
+	exit(1);
+    }
     dic->TotalPage = i;
     dic->TotalCand = totalcand;
     dic->Snd = snd;
@@ -671,7 +654,7 @@ fil_ltab(gram, dic)
     ptr = dst =  P->buf + P->dirsiz;
     wrec = dst + P->lnksiz;
     pwo = wrec - P->buf;
-    csn = P->first_csn;
+    csn = 0;
     P->first_lvo = first_lvo;
     lvo = 0;
     for (i = 0; i < P->nwrecs; i++) {
@@ -775,11 +758,8 @@ build_tree(parent, dic, gram, wrec_ptr, d, top, bot, dir_nodes)
 	    {
 		int	j;
 		
-		for (j = d, left = 0 ; wrec_ptr[top].yomi[j]; j++, left++) {
-		    if (!wrec_ptr[top].yomi[j]) {
-		      break;
-		    }
-		}
+		for (j = d, left = 0 ; wrec_ptr[top].yomi[j]; j++, left++)
+		    ;
 		if (left > 0)
 		    left--;
 	    }
@@ -802,6 +782,10 @@ build_tree(parent, dic, gram, wrec_ptr, d, top, bot, dir_nodes)
 	    memcpy((char *)wrec, (char *)localbuf, sz);
 	    size = dir[k].wrec_bytes + dic->LinkSize;
 	} else {
+	    if (wrec_ptr[top].yomi[d] == 0) {
+	        fprintf(stderr, "Duplicate entry\n");
+		exit(1);
+	    }
 	    dir[k].ptr.n = build_tree(&dir[k],
 				      dic,
 				      gram,
@@ -1183,7 +1167,7 @@ getp(nd)
   
   if ((n = nd->count * 1.2) == 1)
     return(2);
-  n += (n % 2) ? 1 : 2;
+  n += (n % 2) ? 2 : 1;
  loop:
   for (k = 3; k * k <= n; k += 2)
     if (!(n % k)) {
@@ -1235,7 +1219,7 @@ main (argc, argv)
   topnd = creat_tree(dic, gram);
   alloc_dir(dic);
   alloc_page(dic, dic->TotalPage);
-  (void)fil_dic(topnd, dic, &pg);
+  (void)fil_dic(topnd, dic);
   fil_ltab(gram, dic);
   fil_page_header(dic);
   if (!outfile[0]) {

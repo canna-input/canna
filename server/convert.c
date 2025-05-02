@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: convert.c,v 1.1.1.1.2.3 2002/12/18 09:13:05 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: convert.c,v 1.1.1.1.2.4 2003/09/12 14:11:09 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */
@@ -1611,6 +1611,7 @@ int *status;	      /* read at least n from client */
     int (* ReqCallFunc)() ;
 #ifdef DEBUG
     extern char *DebugProc[][2] ;
+    extern const char *CallFuncName;
 #endif
     char *bufptr = ReadRequestBuffer ;
     register Req0 *req0 = &Request.Request0 ;
@@ -1746,6 +1747,10 @@ int *status;	      /* read at least n from client */
     (void)ClientStat(who, SETTIME, req0->Type , 0);
 
     *status = 1 ;
+#ifdef DEBUG
+    if (req0->Type < EXTBASEPROTONO)
+	CallFuncName = DebugProc[req0->Type][0];
+#endif
     return( req0->Type ) ;
 }
 

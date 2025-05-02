@@ -48,7 +48,7 @@ SOFTWARE.
 ******************************************************************/
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "$Id: wconvert.c,v 1.3.2.1 2003/01/06 04:42:08 aida_s Exp $";
+static char rcs_id[] = "$Id: wconvert.c,v 1.3.2.2 2003/09/12 14:11:09 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */
@@ -1436,7 +1436,7 @@ char *dirstr, *ostr, *nstr;
   BYTE lbuf[SENDBUFSIZE], *bufp = lbuf, *p;
   int dirlen = strlen(dirstr) + 1; 
   int oslen = strlen(ostr) + 1, nslen = strlen(nstr) + 1;
-  int sz = HEADER_SIZE + SIZEOFLONG + SIZEOFLONG + SIZEOFSHORT 
+  int sz = HEADER_SIZE + SIZEOFLONG + SIZEOFSHORT 
                                                 +dirlen + oslen + nslen;
   int len, res;
   long mode = mod;
@@ -2153,22 +2153,22 @@ int maxyomi;
 }
 
 static
-char *ExtensionRequest = {
+char *BasicExtension = {
 #ifdef EXTENSION
     /* Request Name */
     "GetServerInfo\0GetAccessControlList\0CreateDictioinary\0\
 DeleteDictioinary\0RenameDictioinary\0GetWordTextDictioinary\0\
-ListDictioinary\0"
+ListDictioinary\0\0"
 #else
-    ""
+    "\0"
 #endif /* EXTENSION */
 } ;
 
-static
-Query_Extension()
+static int
+Query_Extension_Ex(reqnames)
+char *reqnames;
 {
     int datalen = 0, reply;
-    char *reqnames = ExtensionRequest;
 
     while( *(reqnames + datalen) ){
       datalen += strlen(reqnames + datalen) + 1;
@@ -2177,11 +2177,18 @@ Query_Extension()
 
     /* Request Names は '\0' を含む文字列であるためパケットに載せるべき
        大きさが判りにくいので全体の大きさを datalen に指定する． */
+    /* 最後に余計な1バイトが付く。とりあえずこのバイトは0にしておく。 */
     if (SendType17Request(wQueryExtensions, 0, reqnames, datalen + 1) == 0 &&
 	RecvType2Reply(&reply) == 0) {
       return reply;
     }
     return -1;
+}
+
+static int
+Query_Extension()
+{
+    return Query_Extension_Ex(BasicExtension);
 }
 
 #ifdef EXTENSION
@@ -2201,7 +2208,8 @@ int size ;
     if( extension_base < 0 )
 	return( -1 ) ;
 
-    if (SendType18Request(wListDictionary, 1, (int)cx->server, 
+    if (SendType18Request(extension_base + wListDictionary,
+			  1, (int)cx->server, 
 			  (char *)dirname, slen, (char *)0, 0, size)
 	== 0 &&
         RecvType6Reply((BYTE *)dicnames_return, size, &n) == 0) {
@@ -2222,7 +2230,7 @@ int mode ;
 
     if( extension_base < 0 )
 	return( -1 ) ;
-    return mount_dictionary(wCreateDictionary, 1,
+    return mount_dictionary(extension_base + wCreateDictionary, 1,
 			    (int)cx->server, dicname, mode);
 }
 
@@ -2238,7 +2246,8 @@ int mode;
 
     if( extension_base < 0 )
 	return( -1 ) ;
-    return mount_dictionary(wDeleteDictionary, 1, (int)cx->server,
+    return mount_dictionary(extension_base + wDeleteDictionary,
+			    1, (int)cx->server,
 			    dicname, mode);
 }
 
@@ -2251,8 +2260,13 @@ char *dic, *newdic;
 int mode;
 {
   int reply;
+  int extension_base = Query_Extension() ;
 
-  if (SendType16Request(wRenameDictionary, 1, mode, (int)cx->server, dic,
+  if( extension_base < 0 )
+      return( -1 ) ;
+
+  if (SendType16Request(extension_base + wRenameDictionary,
+			1, mode, (int)cx->server, dic,
 			newdic) == 0 &&
       RecvType2Reply(&reply) == 0){
     return reply;
@@ -2276,8 +2290,12 @@ char *dir, *dic, *newdic;
 int mode;
 {
   int reply;
+  int extension_base = Query_Extension() ;
 
-  if (SendType21Request(wCopyDictionary, 1, mode, 
+  if( extension_base < 0 )
+      return( -1 ) ;
+
+  if (SendType21Request(extension_base + wCopyDictionary, 1, mode, 
                 (int)cx->server, dir, dic, newdic) == 0 &&
                                 RecvType2Reply(&reply) == 0){
     return reply;
@@ -2305,7 +2323,8 @@ int infolen ;
     if( extension_base < 0 )
 	return( -1 ) ;
 
-    if (SendType18Request(wGetWordTextDictionary, 1, (int)cx->server,
+    if (SendType18Request(extension_base + wGetWordTextDictionary,
+			  1, (int)cx->server,
 			  dirname, dirlen, dicname, diclen,
 			  infolen) == 0&&
 	RecvType7Reply(&n, yomiStore, (BYTE *)info) == 0) {
@@ -2319,8 +2338,12 @@ rkcw_get_server_info( majorp, minorp )
 int *majorp, *minorp;
 {
   int reply, vmajp, vminp;
+  int extension_base = Query_Extension() ;
 
-  if (SendType1Request(wGetServerInfo, 1) == 0 &&
+  if( extension_base < 0 )
+      return( -1 ) ;
+
+  if (SendType1Request(extension_base + wGetServerInfo, 1) == 0 &&
       RecvType1Reply(&reply, &vmajp, &vminp) == 0) {
     *majorp = vmajp;
     *minorp = vminp;

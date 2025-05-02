@@ -19,7 +19,7 @@
 ;; OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 ;; PERFORMANCE OF THIS SOFTWARE. 
 
-;;  $Id: unix.canna,v 1.1.1.1.2.2 2003/01/21 10:57:03 aida_s Exp $
+;;  $Id: unix.canna,v 1.1.1.1.2.3 2003/09/12 05:00:49 aida_s Exp $
 
 ;; 記号置き換え変換を利用するか。
 
@@ -110,7 +110,7 @@
 
 ; 単語登録時に文法関連の質問をするか(t)。nilの時は適当な品詞を付けてし
 ; まいます。
-(setq gramatical-question  t)	; default t
+(setq grammatical-question  t)	; default t
 
 ; 候補が全体の何番目かを表示するか
 (setq kouho-count t)            ; default t
