@@ -19,7 +19,7 @@
 ;; OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 ;; PERFORMANCE OF THIS SOFTWARE. 
 
-;;  verbose.canna,v 1.1 2003/02/03 20:13:02 aida_s Exp
+;;  $Id: verbose.canna,v 1.6 2003/09/25 15:24:33 aida_s Exp $
 
 ;;; ローマ字かな変換の設定
 ;
@@ -42,6 +42,10 @@
 ; 録をする辞書はテキスト形式辞書でなければなりません。単語登録させたい
 ; 辞書は mkdic user の様なコマンドを打つことで簡単に作成することがで
 ; きます。
+;
+; :katanana を先行させて記述した辞書は、カタカナ語の自動登録辞書に
+; なります。字種変換でカタカナに変換して確定すると、自動的にサ変
+; 名詞として登録されます。
 ;
 (use-dictionary
  "iroha"
@@ -172,9 +176,12 @@
 
 ; 候補表示状態で次の入力をしたときに、確定しないか(t)
 ; nil のときは確定します。
-; （Canna 3.5b2 では、この２つが or される）
-(setq renbun-continue nil)		; default nil
+(setq renbun-continue t)		; default t
 (setq chikuji-continue t)		; default t
+
+; 最初の変換の時までサーバへの接続を遅延するか(t)
+; nil のときは初期化時にすぐに接続します。
+(setq delay-connect nil)		; default nil
 
 
 ;; シンボルの定義

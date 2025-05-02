@@ -7,4 +7,4 @@ GPL'd files are:
 * Files derived from other GPL'd files.
   This includes object files and configure, but not restricted to them.
 
-$Id: README.copyright,v 1.2.2.1 2003/01/11 17:53:57 aida_s Exp $
+$Id: README.copyright,v 1.2 2002/12/21 22:44:56 aida_s Exp $

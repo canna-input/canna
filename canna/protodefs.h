@@ -20,14 +20,13 @@
  * PERFORMANCE OF THIS SOFTWARE. 
  */
 
-/* $Id: protodefs.h,v 1.2 2002/10/20 08:20:33 aida_s Exp $ */
+/* $Id: protodefs.h,v 1.6 2003/09/21 12:56:28 aida_s Exp $ */
 
 #define canna_version(majv, minv) ((majv) * 1024 + (minv))
 
-/* 以下は rkcw.h 内のと同じ定義 */
-#ifndef CBUFSIZE
-typedef unsigned short Ushort;
+typedef canna_uint16_t Ushort;
 typedef unsigned char BYTE;
+#ifndef CBUFSIZE
 #define CBUFSIZE     512
 #define CBIGBUFSIZE 4096
 #endif
@@ -80,10 +79,6 @@ typedef unsigned char BYTE;
 
 #if defined(__bsdi__) || defined(__FreeBSD__)
 #include <machine/endian.h>
-#endif
-
-#ifndef MIN
-#define MIN( n, m )	( ((unsigned)(n) > (unsigned)(m)) ? (m) : (n) )
 #endif
 
 #define BUFSIZE 	4096
@@ -190,7 +185,4 @@ typedef unsigned char BYTE;
 #define IR_DEST_DIC	   0x02
 #define IR_RENAME_DIC	   0x03
 #define IR_GET_WORD_DIC    0x04
-#else /* !EXTENSION */
-#define EXTBASEPROTONO	   0x00000000
-#define MAXEXTREQUESTNO    0xff
 #endif /* !EXTENSION */

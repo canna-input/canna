@@ -1,4 +1,4 @@
-/* $Id: Imakefile,v 1.2.2.1 2002/11/07 14:46:02 aida_s Exp $ */
+/* $Id: Imakefile,v 1.6 2003/09/27 06:18:39 aida_s Exp $ */
 #include "../../../Canna.conf"
 
 #ifdef __EMX__
@@ -34,16 +34,19 @@
               TARGETS = iroha.cbd iroha.cld bushu.cld 
 #endif
           FUZOKUGODIC = ../grammar/cnj.bits
+#ifdef DIC_3_6_COMPAT
+           COMPATFLAG = -c 3.0
+#endif
 
 AllTarget($(TARGETS))
 
 iroha.cbd iroha.cld: $(pubdicDir)/iroha.t bushu.cbd $(FUZOKUGODIC)
-	$(CRXDIC) -D $(FUZOKUGODIC) -m -o iroha.cbd -n iroha $(pubdicDir)/iroha.t
+	$(CRXDIC) $(COMPATFLAG) -D $(FUZOKUGODIC) -m -o iroha.cbd -n iroha $(pubdicDir)/iroha.t
 	$(CRFREQ) -div 512 -o iroha.cld iroha.cbd iroha.mwd
 	cat bushu.cbd >> iroha.cbd
 
 iroha.d iroha.fq: $(pubdicDir)/iroha.t bushu.d $(FUZOKUGODIC)
-	$(CRXDIC) -D $(FUZOKUGODIC) -m -o iroha.d -n iroha $(pubdicDir)/iroha.t
+	$(CRXDIC) $(COMPATFLAG) -D $(FUZOKUGODIC) -m -o iroha.d -n iroha $(pubdicDir)/iroha.t
 	$(CRFREQ) -div 512 -o iroha.fq iroha.d iroha.mwd
 	cat bushu.d >> iroha.d
 
@@ -51,11 +54,11 @@ clean::
 	$(RM) $(TARGETS) bushu.cbd bushu.d
 
 bushu.cbd bushu.cld: bushu.t $(FUZOKUGODIC)
-	$(CRXDIC) -D $(FUZOKUGODIC) -m -o bushu.cbd -n bushu bushu.t
+	$(CRXDIC) $(COMPATFLAG) -D $(FUZOKUGODIC) -m -o bushu.cbd -n bushu bushu.t
 	$(CRFREQ) -o bushu.cld bushu.cbd bushu.mwd
 
 bushu.d bushu.fq: bushu.t $(FUZOKUGODIC)
-	$(CRXDIC) -D $(FUZOKUGODIC) -m -o bushu.d -n bushu bushu.t
+	$(CRXDIC) $(COMPATFLAG) -D $(FUZOKUGODIC) -m -o bushu.d -n bushu bushu.t
 	$(CRFREQ) -o bushu.fq bushu.d bushu.mwd
 
 MakeDirectories(install,$(CANNADICDIR))

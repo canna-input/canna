@@ -21,13 +21,10 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "$Id: engine.c,v 1.2 2002/10/20 14:29:59 aida_s Exp $";
+static char rcs_id[] = "$Id: engine.c,v 1.6 2003/09/21 10:16:49 aida_s Exp $";
 #endif
 
 #include "canna.h"
-#ifdef WIN
-#include <windows.h>
-#endif
 
 #ifdef ENGINE_SWITCH
 
@@ -37,28 +34,22 @@ static char rcs_id[] = "$Id: engine.c,v 1.2 2002/10/20 14:29:59 aida_s Exp $";
 #include <dlfcn.h>
 #endif
 
-#ifdef WIN
-#define dlclose(x) FreeLibrary((x))
-#define dlopen(x, y) LoadLibrary((x))
-#define dlsym(x, y) GetProcAddress((x), (y))
-#define DL
-#define DSOHANDLE HINSTANCE
-#else
-#define DSOHANDLE char *
+/*********************************************************************
+ *                      wchar_t replace begin                        *
+ *********************************************************************/
+#ifdef wchar_t
+# error "wchar_t is already defined"
 #endif
+#define wchar_t cannawc
 
 static struct rkfuncs *Rk;
 
 #ifdef DL
 
-#ifdef WIN
-# define ENGINE_CONFIG_FILE "engine.txt"
-#else
-# ifdef WCHAR16
-#  define ENGINE_CONFIG_FILE "engine16.cnf"
-# else /* !defined(WCHAR16) */
-#  define ENGINE_CONFIG_FILE "engine.cnf"
-# endif
+#ifdef CANNA_WCHAR16
+# define ENGINE_CONFIG_FILE "engine16.cnf"
+#else /* !defined(CANNA_WCHAR16) */
+# define ENGINE_CONFIG_FILE "engine.cnf"
 #endif
 
 #define LINEBUFSIZE 256
@@ -123,10 +114,6 @@ char *s, **next_return;
   }
 }
 
-#ifdef WIN
-#define DLLDIR "/bin/"
-#endif
-
 struct engines *
 getengines(nengines)
 int *nengines;
@@ -135,7 +122,7 @@ int *nengines;
   char *ename, *lib, *p;
   struct engines *res = (struct engines *)0;
   int n = 0;
-#ifdef WIN
+#ifdef USE_MALLOC_FOR_BIG_ARRAY
   extern jrUserInfoStruct *uinfo;
   char *buf, *winbuf;
   struct engines *ebuf;
@@ -161,11 +148,7 @@ int *nengines;
 #endif
 
   *nengines = 0;
-#ifdef WIN
-  strcpy(buf, (uinfo && uinfo->topdir) ? uinfo->topdir : "");
-#else
   strcpy(buf, CANNALIBDIR);
-#endif
   strcat(buf, "/");
   strcat(buf, ENGINE_CONFIG_FILE);
   if ((f = fopen(buf, "r")) != NULL) {
@@ -173,24 +156,11 @@ int *nengines;
       ename = extoken(buf, &p);
       lib = extoken(p, &p);
       if (ename && lib) {
-#ifdef WIN
-	if (uinfo->topdir) {
-	  strcpy(winbuf, uinfo->topdir);
-	  strcat(winbuf, DLLDIR);
-	}
-	else {
-	  winbuf[0] = '\0';
-	}
-	strcat(winbuf, lib);
-	lib = winbuf;
-	strcat(lib, ".DLL");
-#else /* !WIN */
-#ifdef WCHAR16
+#ifdef CANNA_WCHAR16
 	strcat(lib, "16");
 #endif
 	strcat(lib, ".so.");
 	strcat(lib, CANNA_DSOREV);
-#endif /* !WIN */
 	if (ebuf[n].name = malloc(strlen(ename) + 1)) {
 	  if (ebuf[n].libname = malloc(strlen(lib) + 1)) {
 	    strcpy(ebuf[n].name, ename);
@@ -210,7 +180,7 @@ int *nengines;
     }
     fclose(f);
   }
-#ifdef WIN
+#ifdef USE_MALLOC_FOR_BIG_ARRAY
   (void)free(winbuf);
   (void)free((char *)ebuf);
   (void)free(buf);
@@ -738,13 +708,21 @@ int
 RkwGetSimpleKanji(cxnum, dicname, yomi, maxyomi,
 		  kanjis, maxkanjis, hinshis, maxhinshis)
 int cxnum, maxyomi, maxkanjis, maxhinshis;
-char *dicname, *hinshis;
-wchar_t *yomi, *kanjis;
+char *dicname;
+wchar_t *yomi, *kanjis, *hinshis;
 {
   return
     Rk ? (*Rk->GetSimpleKanji)(cxnum, dicname, yomi, maxyomi, kanjis,
 			       maxkanjis, hinshis, maxhinshis) : -1;
 }
+
+#ifndef wchar_t
+# error "wchar_t is already undefined"
+#endif
+#undef wchar_t
+/*********************************************************************
+ *                       wchar_t replace end                         *
+ *********************************************************************/
 
 #else /* !ENGINE_SWITCH */
 #define CANNA_SERVER_NAME_LEN 128

@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static	char	rcs_id[] = "@(#) 102.1 $Id: yesno.c,v 1.1.1.1 2002/10/19 08:27:52 aida_s Exp $";
+static	char	rcs_id[] = "@(#) 102.1 $Id: yesno.c,v 1.2 2003/09/17 08:50:53 aida_s Exp $";
 #endif  /* lint */
 
 #include	<errno.h>
@@ -43,7 +43,7 @@ newYesNoContext()
 
   if ((ccxt = (coreContext)malloc(sizeof(coreContextRec)))
                                        == (coreContext)NULL) {
-#ifndef WIN
+#ifndef CODED_MESSAGE
     jrKanjiError = "malloc (newcoreContext) できませんでした";
 #else
     jrKanjiError = "malloc (newcoreContext) \244\307\244\255\244\336\244\273\244\363\244\307\244\267\244\277";

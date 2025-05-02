@@ -1,4 +1,4 @@
-/* $Id: Imakefile,v 1.1.1.1.2.1 2003/01/11 17:53:57 aida_s Exp $ */
+/* $Id: Imakefile,v 1.8 2003/03/24 04:15:22 aida_s Exp $ */
 #include "../Canna.conf"
 /* #include "canuum.tmpl" */
 #ifdef TermcapLibrary
@@ -10,20 +10,20 @@ TERMCAP_LIB = -lcurses
 TERMCAP_LIB = -ltermcap
 # endif
 #endif
-#ifndef ConfigureEnv
-# define ConfigureEnv CPPFLAGS="$(ALLDEFINES)" CC='$(CC)'
+#ifndef CanuumConfigureEnv
+# define CanuumConfigureEnv CPPFLAGS="$(ALLDEFINES)" CC='$(CC)'
 #endif
-#ifndef ConfigureArgs
-# define ConfigureArgs --with-term-libs="$(TERMCAP_LIB)"
+#ifndef CanuumConfigureArgs
+# define CanuumConfigureArgs --with-term-libs="$(TERMCAP_LIB)"
 #endif
 
     CANNAROOT = ..
-INSTUGIDFLAGS = -m 4755 -o root
+INSTUGIDFLAGS = 
      CANNASRC = $(CANNAROOT)/lib/canna16
       DEFINES = -DCANNA -DJAPANESE $(SIGNAL_DEFINES) -DHAVE_CONFIG_H \
-		-DCONFIG_TERMINFO
-     INCLUDES = -I$(CANNAROOT)/include -I.
-SYS_LIBRARIES = $(TERMCAP_LIB)
+		-DCONFIG_TERMINFO -DUSE_LIBSPT
+     INCLUDES = -I$(CANNAROOT)/include -I. `libspt-config --cflags`
+SYS_LIBRARIES = $(TERMCAP_LIB) `libspt-config --libs`
 
          SRCS = header.c printf.c termio.c termcap.c \
 		screen.c cursor.c jhlp.c xutoj.c canna.c
@@ -32,7 +32,7 @@ SYS_LIBRARIES = $(TERMCAP_LIB)
 
             TARGET = canuum
 XCOMM --prefix is not used but add just in case
-CONFIGURE_CMD = ConfigureEnv ./configure --prefix=$(cannaPrefix) ConfigureArgs
+CONFIGURE_CMD = CanuumConfigureEnv IN_MAKE=yes ./configure --prefix=$(cannaPrefix) CanuumConfigureArgs
 
 AllTarget($(TARGET))
 NormalProgramTarget($(TARGET),$(OBJS),$(DEPCANNALIB16),$(CANNALIB16),)

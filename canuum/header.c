@@ -1,6 +1,6 @@
 /*
  *  header.c,v 1.5 2001/09/16 11:42:58 hiroo Exp
- *  Canna: $Id: header.c,v 1.3.2.1 2003/01/11 17:53:57 aida_s Exp $
+ *  Canna: $Id: header.c,v 1.3 2003/01/04 07:31:02 aida_s Exp $
  */
 
 /*

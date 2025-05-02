@@ -20,52 +20,13 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. 
  */
 
-/* $Id: ccompat.h,v 1.1 2002/10/20 14:29:56 aida_s Exp $ */
+/* $Id: ccompat.h,v 1.10 2003/09/25 07:38:11 aida_s Exp $ */
 
 #ifndef CCOMPAT_H
 #define CCOMPAT_H
+#include "cannaconf.h"
 
-#if defined(__STDC__) || defined(WIN)
-# define HAVE_STRING_H
-# define HAVE_STRCHR
-# define HAVE_STRRCHR
-# define HAVE_MEMSET
-# define HAVE_MEMCPY
-# define HAVE_STDLIB_H
-#elif defined(SYSV) || defined(SVR4)
-# define HAVE_STRING_H
-# define HAVE_STRCHR
-# define HAVE_STRRCHR
-# define HAVE_MEMSET
-# define HAVE_MEMCPY
-# define NEED_MEMORY_H
-#else /* others */
-# if defined(USG)
-#  define HAVE_STRING_H
-#  define HAVE_STRCHR
-#  define HAVE_STRRCHR
-# endif
-#endif /* others */
-
-#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)
-# define HAVE_INDEX
-# define HAVE_RINDEX
-# define HAVE_BZERO
-# define HAVE_BCOPY
-#elif defined(__EMX__)
-# define HAVE_BZERO
-# define HAVE_BCOPY
-#endif
-
-#if !defined(__STDC__) && !defined(WIN)
-# if defined(__GNUC__)
-#  define const __const__
-# else
-#  define const
-# endif
-#endif
-
-#if defined(__STDC__) || defined(__cplusplus) || defined(WIN)
+#if defined(__STDC__) || defined(__cplusplus)
 # define pro(x) x
 #else
 # define pro(x) ()
@@ -80,31 +41,69 @@ extern void free();
 
 #ifdef HAVE_STRING_H
 # include <string.h>
-#else
+#endif
+#ifdef HAVE_STRINGS_H
 # include <strings.h>
 #endif
-#ifdef NEED_MEMORY_H
+#if !defined(STDC_HEADERS) && defined(HAVE_MEMORY_H)
 # include <memory.h>
 #endif
+#include <errno.h>
+#ifdef luna68k
+extern int  errno;
+#endif
+
+#include "canna/sysdep.h"
 
 #if defined(HAVE_STRCHR) && !defined(HAVE_INDEX) && !defined(index)
-# define index strchr
+# define index(s, c) strchr(s, c)
+# define rindex(s, c) strrchr(s, c)
 #elif !defined(HAVE_STRCHR) && defined(HAVE_INDEX) && !defined(strchr)
-# define strchr index
-#endif
-#if defined(HAVE_STRRCHR) && !defined(HAVE_RINDEX) && !defined(rindex)
-# define rindex strrchr
-#elif !defined(HAVE_STRRCHR) && defined(HAVE_INDEX) && !defined(strrchr)
-# define strrchr rindex
+# define strchr(s, c) index(s, c)
+# define strrchr(s, c) rindex(s, c)
 #endif
 
 #if defined(HAVE_MEMSET) && !defined(HAVE_BZERO) && !defined(bzero)
-# define bzero(buf, size) memset((char *)(buf), 0x00, (size))
+# define bzero(buf, size) ((void)memset((char *)(buf), 0x00, (size)))
 #endif
 #if defined(HAVE_MEMCPY) && !defined(HAVE_BCOPY) && !defined(bcopy)
-# define bcopy(src, dst, size) memcpy((char *)(dst), (char *)(src), (size))
+# define bcopy(src, dst, size) ((void)memmove((char *)(dst), (char *)(src), (size)))
 #elif !defined(HAVE_MEMCPY) && defined(HAVE_BCOPY) && !defined(memcpy)
+/* Don't use return value; bcopy() returns void */
 # define memcpy(dst, src, size) bcopy((char *)(src), (char *)(dst), (size))
+# define memmove(dst, src, size) bcopy((char *)(src), (char *)(dst), (size))
+#endif
+
+#include "RKindep/cfuncs.h"
+
+#ifdef __GNUC__
+# define UNUSED_SYMBOL __attribute__((__unused__))
+# ifdef __ELF__
+#  ifdef __STDC__
+#   define	WARN_REFERENCES(sym,msg)	\
+	__asm__(".section .gnu.warning." #sym);	\
+	__asm__(".asciz \"" msg "\"");	\
+	__asm__(".previous")
+#  else
+#   define	WARN_REFERENCES(sym,msg)	\
+	__asm__(".section .gnu.warning.sym"); \
+	__asm__(".asciz \"msg\"");	\
+	__asm__(".previous")
+#  endif	/* __STDC__ */
+# endif	/* __ELF__ */
+#endif	/* __GNUC__ */
+
+#ifndef WARN_REFERENCES
+# define WARN_REFERENCES(sym, msg) struct cannahack
+#endif
+#ifndef UNUSED_SYMBOL
+# define UNUSED_SYMBOL
+#endif
+
+#if !defined(lint) && !defined(__CODECENTER__)
+# define RCSID(id) static const char rcsid[] UNUSED_SYMBOL = id
+#else
+# define RCSID(id) struct cannahack
 #endif
 
 #endif /* CCOMPAT_H */

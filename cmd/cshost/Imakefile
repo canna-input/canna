@@ -1,47 +1,7 @@
-/* $Id: Imakefile,v 1.2 2002/10/20 04:10:27 aida_s Exp $ */
+/* $Id: Imakefile,v 1.3 2003/01/26 04:36:32 aida_s Exp $ */
 #include "../../Canna.conf"
-
-       CANNAROOT = ../..
-            SSRC = $(CANNAROOT)/server
-           RKSRC = $(CANNAROOT)/lib/RK
-          RKCSRC = $(CANNAROOT)/lib/RKC
-        CANNASRC = $(CANNAROOT)/lib/canna
-
-#ifdef engineSwitch
-     ENGINE_DEFS = -DENGINE_SWITCH
-#endif
-
-#if defined(engineSwitch)
-       DEPRKCLIB = $(RKCSRC)/libRKC.so.$(cannaDsoRev)
-          RKCLIB = -L$(RKCSRC) -lRKC
-#else /* !defined(engineSwitch) */
-#if DoSharedLib
-       DEPRKCLIB = $(DEPCANNALIB)
-          RKCLIB = $(CANNALIB)
-#else /* !HasSharedLibraries */
-#ifdef __EMX__
-       DEPRKCLIB = $(RKCSRC)/RKC.a
-#else
-       DEPRKCLIB = $(RKCSRC)/libRKC.a
-#endif
-          RKCLIB = -L$(RKCSRC) -lRKC
-#endif /* !HasSharedLibraries */
-#endif /* !defined(engineSwitch) */
-
-         DEFINES = $(ENGINE_DEFS)
-        INCLUDES =  -I$(CANNAROOT)/include
-
-            SRCS = cshost.c
-            OBJS = cshost.o
-          TARGET = cshost
-
-#if defined(__EMX__) || defined(__CYGWIN32__)
-AllTarget($(TARGET).exe)
-#else
-AllTarget($(TARGET))
-#endif
-NormalProgramTarget($(TARGET),$(OBJS),$(DEPRKCLIB),$(RKCLIB),)
-InstallProgram(cshost,$(cannaBinDir))
-InstallManPage(cshost,$(cannaManDir))
-DependTarget()
-LintTarget()
+#define SimpleCommand
+#define WantRKCLib
+#define TargetName cshost
+#define ManSrcName cshost
+#include "../cmd.tmpl"

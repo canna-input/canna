@@ -1,17 +1,27 @@
-/* $Id: Imakefile,v 1.2 2002/10/20 08:20:33 aida_s Exp $ */
+/* $Id: Imakefile,v 1.10 2003/09/08 01:14:33 aida_s Exp $ */
 #include "../../Canna.conf"
+#ifdef NARROW
+# define CannaWCharDef -DCANNA_WCHAR16
+# define LibName canna16
+# define RkcName RKC16
+#else
+# define CannaWCharDef
+# define LibName canna
+# define RkcName RKC
+#endif
 
          CANNAROOT = ../..
           SOLIBREV = 1
 
           CANNADIR = .
              RKDIR = ../RK
-            RKCDIR = ../RKC
-             XNDIR = ../Xn
+            RKCDIR = ../RkcName
 
-           HEADERS = canna.h sglobal.h
+           HEADERS = canna.h sglobal.h lisp.h
             IRSRCS = $(COOKSRCS) $(HEADERS)
            MAPSRCS = defaultmap.c
+   INCLUDEDMAPSRCS = chikujimap.h emptymap.h alphamap.h tanmap.h ichiranmap.h \
+		jishumap.h kigomap.h onoffmap.h yomimap.h t_reimap.h bunmap.h
           COOKSRCS = jrbind.c ebind.c $(CORESRCS)
           CORESRCS = lisp.c $(MAPSRCS) \
 			bushu.c chikuji.c commondata.c empty.c henkan.c hex.c \
@@ -19,11 +29,12 @@
 			kigo.c mode.c multi.c onoff.c parse.c romaji.c \
 			uiutil.c uldefine.c uldelete.c ulhinshi.c ulkigo.c \
 			ulmount.c ulserver.c util.c yesno.c bunsetsu.c \
-			engine.c RKroma.c RKkana.c
+			engine.c RKroma.c RKkana.c obind.c
            RKCSRCS = $(RKCDIR)/rkc.c $(RKCDIR)/convert.c \
-                     $(RKCDIR)/wconvert.c $(RKCDIR)/wutil.c
+                     $(RKCDIR)/wconvert.c $(RKCDIR)/wutil.c $(RKCDIR)/conf.c
 /*              SRCS = $(IRSRCS) $(RKCSRCS) */
-              SRCS = $(IRSRCS)
+              SRCS = $(IRSRCS) $(RKINDEPSRCS)
+       RKINDEPSRCS = cfuncs.c file.c strops.c
 
            IRIOBJS = $(COOKOBJS)
            MAPOBJS = defaultmap.o
@@ -34,14 +45,15 @@
 			kigo.o mode.o multi.o onoff.o parse.o romaji.o \
 			uiutil.o uldefine.o uldelete.o ulhinshi.o ulkigo.o \
 			ulmount.o ulserver.o util.o yesno.o bunsetsu.o \
-			engine.o RKroma.o RKkana.o
+			engine.o RKroma.o RKkana.o obind.o
         DEPRKCOBJS = $(RKCDIR)/rkc.o $(RKCDIR)/convert.o \
-                     $(RKCDIR)/wconvert.o $(RKCDIR)/wutil.o
-           RKCOBJS = rkc.o convert.o wconvert.o wutil.o
-              OBJS = $(COOKOBJS) $(RKOBJS) $(ENGINE_OBJS)
+                     $(RKCDIR)/wconvert.o $(RKCDIR)/wutil.o $(RKCDIR)/conf.o
+           RKCOBJS = rkc.o convert.o wconvert.o wutil.o conf.o
+       RKINDEPOBJS = cfuncs.o file.o strops.o
+              OBJS = $(COOKOBJS) $(RKOBJS) $(ENGINE_OBJS) $(RKINDEPOBJS)
 
           INCLUDES = -I$(CANNAROOT)/include
-           DEFINES = $(UILIB_DEFINES) $(ENGINE_DEFS)
+           DEFINES = $(UILIB_DEFINES) CannaWCharDef $(ENGINE_DEFS) -DNEED_RKINDEP_SUBST
    LOCAL_LIBRARIES = 
      LOCAL_LDFLAGS = 
           LINTLIBS = $(RKDIR)/llib-lRK.ln \
@@ -55,7 +67,6 @@
 #endif /* !engineSwitch */
 
 #if ProjectX > 5
-#define LibName canna
 #define SoRev		cannaDsoRev
 #define SHLIBDIR	libCannaDir
 #define USRLIBDIR	libCannaDir
@@ -70,20 +81,20 @@ LibraryObjectRule()
 
 #if DoSharedLib
 #if DoNormalLib
-SharedLibraryTarget(canna,$(cannaDsoRev),$(OBJS),shared,..)
+SharedLibraryTarget(LibName,$(cannaDsoRev),$(OBJS),shared,..)
 #else
-SharedLibraryTarget(canna,$(cannaDsoRev),$(OBJS),.,.)
+SharedLibraryTarget(LibName,$(cannaDsoRev),$(OBJS),.,.)
 #endif
-InstallSharedLibrary(canna,$(cannaDsoRev),$(libCannaDir))
+InstallSharedLibrary(LibName,$(cannaDsoRev),$(libCannaDir))
 #endif /* DoSharedLib */
 
 #if DoNormalLib
-NormalLibraryTarget(canna,$(OBJS))
-InstallLibrary(canna,$(libCannaDir))
+NormalLibraryTarget(LibName,$(OBJS))
+InstallLibrary(LibName,$(libCannaDir))
 #endif
 
 NormalLintTarget(*.c)
-LintLibraryTarget(canna,*.c)
+LintLibraryTarget(LibName,*.c)
 
 #endif /* ProjectX */
 
@@ -119,11 +130,75 @@ $(RKCOBJS): $(DEPRKCOBJS)
 sglobal.h: GSYM.awk globnames
 	awk -f GSYM.awk < globnames > $@
 
+#ifdef NARROW
+clean::
+	$(RM) *.c *.h GSYM.awk globnames
+#else
 clean::
 	$(RM) y.tab.h y.tab.c lex.yy.c gram.h gram.c lex.c sglobal.h
+#endif
 
+#ifdef NARROW
+LinkSourceFile(canna.h,../canna)
+/*LinkSourceFile(traceRK.h,../canna)*/
+LinkSourceFile(jrbind.c,../canna)
+LinkSourceFile(ebind.c,../canna)
+LinkSourceFile(defaultmap.c,../canna)
+LinkSourceFile(lisp.c,../canna)
+LinkSourceFile(lisp.h,../canna)
+LinkSourceFile(bushu.c,../canna)
+LinkSourceFile(chikuji.c,../canna)
+LinkSourceFile(commondata.c,../canna)
+LinkSourceFile(empty.c,../canna)
+LinkSourceFile(henkan.c,../canna)
+LinkSourceFile(hex.c,../canna)
+LinkSourceFile(ichiran.c,../canna)
+LinkSourceFile(jishu.c,../canna)
+LinkSourceFile(kctrl.c,../canna)
+LinkSourceFile(keydef.c,../canna)
+LinkSourceFile(kigo.c,../canna)
+LinkSourceFile(mode.c,../canna)
+LinkSourceFile(multi.c,../canna)
+LinkSourceFile(onoff.c,../canna)
+LinkSourceFile(parse.c,../canna)
+LinkSourceFile(romaji.c,../canna)
+LinkSourceFile(uiutil.c,../canna)
+LinkSourceFile(uldefine.c,../canna)
+LinkSourceFile(uldelete.c,../canna)
+LinkSourceFile(ulhinshi.c,../canna)
+LinkSourceFile(ulkigo.c,../canna)
+LinkSourceFile(ulmount.c,../canna)
+LinkSourceFile(ulserver.c,../canna)
+LinkSourceFile(util.c,../canna)
+LinkSourceFile(yesno.c,../canna)
+LinkSourceFile(bunsetsu.c,../canna)
+LinkSourceFile(RKroma.c,../canna)
+LinkSourceFile(RKkana.c,../canna)
+LinkSourceFile(GSYM.awk,../canna)
+LinkSourceFile(globnames,../canna)
+LinkSourceFile(chikujimap.h,../canna)
+LinkSourceFile(emptymap.h,../canna)
+LinkSourceFile(alphamap.h,../canna)
+LinkSourceFile(tanmap.h,../canna)
+LinkSourceFile(ichiranmap.h,../canna)
+LinkSourceFile(jishumap.h,../canna)
+LinkSourceFile(kigomap.h,../canna)
+LinkSourceFile(onoffmap.h,../canna)
+LinkSourceFile(yomimap.h,../canna)
+LinkSourceFile(t_reimap.h,../canna)
+LinkSourceFile(bunmap.h,../canna)
+LinkSourceFile(engine.c,../canna)
+LinkSourceFile(obind.c,../canna)
+#endif /* NARROW */
+LinkSourceFile(cfuncs.c,../RKindep)
+LinkSourceFile(file.c,../RKindep)
+LinkSourceFile(strops.c,../RKindep)
+#ifdef NARROW
+depend:: $(SRCS) $(HEADERS) $(INCLUDEDMAPSRCS)
+#endif
 DependTarget()
 
+#ifndef NARROW
 includes:: sglobal.h
 LinkFileList(includes,$(HEADERS), $(CANNAROOT)/include,../lib/canna)
 
@@ -145,3 +220,4 @@ InstallLibManPageLong(RkMapRom,$(cannaManDir),RkMapRoma)
 InstallLibManPageLong(RkOpenRo,$(cannaManDir),RkOpenRoma)
 
 InstallLibManPageAliases(uilib,$(cannaManDir),$(UIMANOBJS))
+#endif /* !NARROW */

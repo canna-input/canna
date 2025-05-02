@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: defaultmap.c,v 1.1.1.1 2002/10/19 08:27:48 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: defaultmap.c,v 1.2 2003/09/17 08:50:53 aida_s Exp $";
 #endif	/* lint */
 
 #include "canna.h"
@@ -235,11 +235,7 @@ BYTE default_kmap[256] =
 /* C-x */       NONE,
 /* C-y */       CANNA_FN_ConvertAsHex,
 /* C-z */       NONE,
-#ifdef WIN
-/* C-[ */       CANNA_FN_Quit,
-#else
 /* C-[ */       NONE,
-#endif
 /* C-\ */       NONE,
 /* C-] */       NONE,
 /* C-^ */       NONE,
@@ -340,21 +336,13 @@ BYTE default_kmap[256] =
 /* } */         CANNA_FN_FunctionalInsert,
 /* ~ */         CANNA_FN_FunctionalInsert,
 /* DEL */       NONE,
-#ifdef WIN
-/* Nfer */      CANNA_FN_KanaRotate,
-#else
 /* Nfer */      CANNA_FN_Kakutei,
-#endif
 /* Xfer */      CANNA_FN_Henkan,
 /* Up */        CANNA_FN_Prev,
 /* Left */      CANNA_FN_Backward,
 /* Right */     CANNA_FN_Forward,
 /* Down */      CANNA_FN_Next,
-#ifdef WIN
-/* Insert */    NONE,
-#else
 /* Insert */    CANNA_FN_KigouMode,
-#endif
 /* Rollup */    CANNA_FN_PageDown,
 /* Rolldown */  CANNA_FN_PageUp,
 /* Home */      CANNA_FN_BeginningOfLine,
@@ -364,11 +352,7 @@ BYTE default_kmap[256] =
 /* 8d */        NONE,
 /* 8e */        NONE,
 /* 8f */        NONE,
-#ifdef WIN
-/* S-nfer */    CANNA_FN_RomajiRotate,
-#else
 /* S-nfer */    NONE,
-#endif
 /* S-xfer */    CANNA_FN_Prev,
 /* S-up */      NONE,
 /* S-left */    CANNA_FN_Shrink,

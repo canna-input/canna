@@ -1,4 +1,4 @@
-/* $Id: Imakefile,v 1.1.1.1 2002/10/19 08:27:29 aida_s Exp $ */
+/* $Id: Imakefile,v 1.2 2003/09/17 10:15:09 aida_s Exp $ */
 #include "../Canna.conf"
 
 #ifdef SunArchitecture
@@ -25,7 +25,7 @@ SYS_LIBRARIES = -ltermcap -lcurses
 
 CANNAROOT = ..
 INCLUDES = -I$(CANNAROOT)/include
-DEFINES = -DCANNALIBDIR=\"$(cannaLibDir)\" $(pointerIntegerDef)
+DEFINES = -DCANNALIBDIR=\"$(cannaLibDir)\"
 OBJS = ccustom.o  parse.o lisp.o lex.o gram.o set.o wcanna.o util.o wiroha.o
 SRCS = keydef.h iroha.h canna.h mfdef.h set.h \
 		lisp.h symbolname.h \

@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static char rcsid[]="@(#) 102.1 $Id: dicar.c,v 1.2 2002/10/20 04:10:27 aida_s Exp $";
+static char rcsid[]="@(#) 102.1 $Id: dicar.c,v 1.4 2003/03/24 04:04:25 aida_s Exp $";
 #endif
 
 /*
@@ -40,6 +40,7 @@ static char rcsid[]="@(#) 102.1 $Id: dicar.c,v 1.2 2002/10/20 04:10:27 aida_s Ex
 #include <time.h>		/* 時間をとってくるため */
 #include <fcntl.h>
 #include <sys/types.h>
+#include "RKindep/file.h"
 
 static char *program;
 
@@ -63,18 +64,6 @@ char *msg;
 char *name;
 {
   (void)printf("%s - %s\n", msg, name);
-}
-
-static char *
-basename(name)
-char *name;
-{
-  char *s = name + strlen(name);
-  if (*--s == '/') *s = (char)0;
-  while (s-- >= name) {
-    if (*s == '/') return ++s;
-  }
-  return name;
 }
 
 /* cfuncdef
@@ -434,7 +423,7 @@ char **args;
       xgetDic(fd, (char *)0);
     else {
       for (i = 3 ; i < argn ; i++) {
-	xgetDic(fd, basename(args[i]));
+	xgetDic(fd, RkiBasename(args[i]));
       }
     }
     (void)close(fd);
@@ -453,7 +442,7 @@ char **args;
     if ((src = openForRead(args[2])) >= 0) {
       if ((atm = openForRead(args[i])) >= 0) {
 	(void)strcpy(fname, "#");
-	(void)strcat(fname, basename(args[2]));
+	(void)strcat(fname, RkiBasename(args[2]));
 	if ((dst = openForWrite(fname)) >= 0) {
 	  remakeDic(src, atm, dst);
 	  closeForWrite(dst, fname);
@@ -475,7 +464,7 @@ char **args;
   char fname[ND_HDRSIZ];
 
   (void)strcpy(fname, "#");
-  (void)strcat(fname, basename(args[2]));
+  (void)strcat(fname, RkiBasename(args[2]));
   if ((dst = openForWrite(fname)) >= 0) {
     for (i = 3 ; i < argn ; i++) {
       if ((atm = openForRead(args[i])) >= 0) {
@@ -498,7 +487,7 @@ char **args;
   for (i = 3 ; i < argn ; i++) {
     if ((src = openForRead(args[2])) >= 0) {
       (void)strcpy(fname, "#");
-      (void)strcat(fname, basename(args[2]));
+      (void)strcat(fname, RkiBasename(args[2]));
       if ((dst = openForWrite(fname)) >= 0) {
 	deleteDic(src, dst, args[i]);
 	closeForWrite(dst, args[i]);
@@ -515,7 +504,7 @@ char	**args;
 {
   char *opchar;
 
-  program = basename(args[0]);
+  program = RkiBasename(args[0]);
 
   if (argn < 3) usage();
 

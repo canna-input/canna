@@ -89,4 +89,4 @@ mkbindic(1), dicar(1)
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 .\" PERFORMANCE OF THIS SOFTWARE. 
 .\"
-.\" $Id: dpbindic.man,v 1.1.1.1.2.1 2003/01/15 13:42:36 aida_s Exp $
+.\" $Id: dpbindic.man,v 1.2 2003/01/15 13:41:02 aida_s Exp $

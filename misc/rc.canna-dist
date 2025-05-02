@@ -21,7 +21,7 @@
 # OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 # PERFORMANCE OF THIS SOFTWARE. 
 #
-# $Id: rc.canna-dist,v 1.1.2.1 2003/09/12 06:06:33 aida_s Exp $
+# $Id: rc.canna-dist,v 1.1 2003/03/04 19:23:53 aida_s Exp $
 #
 cannaserver=@(cannaSrvDir)/cannaserver
 cannakill=@(cannaKillDir)/cannakill

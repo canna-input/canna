@@ -21,13 +21,14 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[]="$Id: nword.c,v 1.3 2002/10/20 18:00:21 aida_s Exp $";
+static char rcsid[]="$Id: nword.c,v 1.5 2003/07/31 19:03:51 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */
 #include	"RKintern.h"
 
-#if defined(DEBUG_NWORD) || defined(RK_DEBUG)
+#if defined(DEBUG_NWORD) || defined(RK_DEBUG) || defined(TEST)
+#include <stdio.h>
 /* 
  * debug aids
  */
@@ -62,10 +63,7 @@ clearWord(w, bb)			/* make word empty */
     w->nw_flags = 0;
     w->nw_lit = 0;
     w->nw_prio = 0L;
-#ifdef LOGIC_HACK
     w->nw_count = 0;
-    w->nw_rcvec = 0;
-#endif
     w->nw_left = w->nw_next = (struct nword *)0;
     w->nw_kanji = (Wrec *)0;
   }
@@ -187,82 +185,32 @@ _RkFreeBunq(st)			/* freeWord = derefWord + killWord */
 extern unsigned	searchRut();
 extern int	entryRut();
 
-#ifdef LOGIC_HACK
-/* checkNeg -- 打ち消す接続を検査する
- * return value: 
- *    0: 関係なし
- *    1: 打ち消す
- *    2: 優先度を下げる
- */
-static
-int
-checkNeg(gram, rcvec)
-  struct RkKxGram *gram;
-  unsigned long rcvec;
-{
-  int m, l = 0, r = gram->ng_numneg;
-  unsigned long *neg = gram->ng_neg;
-
-  rcvec <<= 1;
-  while (l < r) {
-    m = (l + r) / 2;
-    if (neg[m] < rcvec) l = m + 1;
-    else r = m;
-  }
-  if (l >= gram->ng_numneg)
-    return 0;
-  switch ((int)(neg[l] ^ rcvec))
-  {
-  case 0: return 1;
-  case 1: return 2;
-  }
-  return 0;
-}
-#endif
-
 static
 struct nword	*
-#ifdef LOGIC_HACK
 concWord(cx, p, q, loc, bb) 		/* create the concatinated word p+q */
   struct RkContext	*cx;
-#else
-concWord(st, p, q, loc, bb) 		/* create the concatinated word p+q */
-  struct nstore		*st;
-#endif
   struct nword		*p, *q;	/* prefix word list, and right word */
   int			loc;
   int			bb;
 {
     struct nword	conc;
     struct nword	*pq;
-    struct nword	*t;
-    int			count;
 
-#ifndef LOGIC_HACK
-/* check limit conditions */
-    count = 0;
-    for (t = p; t; t = t->nw_left)
-	count++;
-    if (((unsigned long)(p->nw_klen + q->nw_klen) > RK_LEN_WMAX) ||
-         ((unsigned long)(p->nw_ylen + q->nw_ylen) > RK_LEN_WMAX) ||
-	 (count >= RK_CONC_NMAX))
-	return (struct nword *)0;
-#endif /* not LOGIC_HACK */
 /* create a concatinated word temoprally */
     conc = *q;
     conc.nw_klen  += p->nw_klen;
     conc.nw_ylen  += p->nw_ylen;
-#ifdef LOGIC_HACK
     conc.nw_flags = p->nw_flags&(NW_PRE|NW_SUC|NW_SWD|NW_LOWPRI);
-    conc.nw_rcvec = ((p->nw_rcvec << NW_RCBITS) | conc.nw_rowcol) & ((1 << NW_RCBITS * 3) - 1);
     conc.nw_count = p->nw_count + 1;
 /* check limit conditions */
     if (conc.nw_klen > RK_LEN_WMAX ||
 	conc.nw_ylen > RK_LEN_WMAX ||
 	conc.nw_count >= RK_CONC_NMAX)
 	return (struct nword *)0;
+#ifdef LOGIC_HACK
     if (conc.nw_count >= 3) {
-      switch (checkNeg(cx->gram->gramdic, conc.nw_rcvec))
+      switch (RkCheckNegGram(cx->gram->gramdic,
+	    p->nw_left->nw_rowcol, p->nw_rowcol, q->nw_rowcol))
       {
       case 1:
 	return (struct nword *)0;
@@ -270,9 +218,9 @@ concWord(st, p, q, loc, bb) 		/* create the concatinated word p+q */
 	conc.nw_flags |= NW_LOWPRI;
       }
     }
-#else
-    conc.nw_flags = p->nw_flags&(NW_PRE|NW_SUC|NW_SWD);
 #endif /* LOGIC_HACK */
+    if (p->nw_ylen == 1 && q->nw_rowcol == cx->gram->P_Ftte)
+      conc.nw_flags |= NW_LOWPRI; /* FIXME: replace to something better */
     conc.nw_prio = p->nw_prio;
     conc.nw_next = (struct nword *)0;
     conc.nw_left = p;
@@ -301,9 +249,7 @@ concWord(st, p, q, loc, bb) 		/* create the concatinated word p+q */
 	break;
     case	ND_MWD:
 	conc.nw_flags |= NW_MWD;
-#ifdef LOGIC_HACK
 	conc.nw_flags |= (q->nw_flags & NW_LOWPRI);
-#endif
 	conc.nw_prio = q->nw_prio;
 	break;
     case	ND_SWD:
@@ -318,11 +264,7 @@ concWord(st, p, q, loc, bb) 		/* create the concatinated word p+q */
 	break;
     };
 /* cache no sanshoudo wo kousinn suru */
-#ifdef LOGIC_HACK
     pq = allocWord(cx->store, bb);
-#else
-    pq = allocWord(st, bb);
-#endif
     if (pq) {
 	*pq = conc;
         p->nw_flags |= NW_FOLLOW;
@@ -1044,17 +986,12 @@ parseWord(cx, yy, ys, ye, class, xqh, maxclen, doflush, douniq)
       r = makeWord(cx, yy + clen, ys1, ye1, class,
 		   r, RIGHTSIZE -1 - (int)(r - right), doflush, douniq);
     for (t = 0; t < sameLen; t++) {
-      unsigned char	*cj;
       p = tail[t];
-      cj = (unsigned char *)(gram ? GetGramRow(gram, p->nw_rowcol) : 0);
       for (q = right; q < r; q++)  
 	if (Is_Word_Connect(cx) &&
-	    (q->nw_class >= ND_OPN || !cj || TestGram(cj, q->nw_rowcol)))  {
-#ifdef LOGIC_HACK
+	    (q->nw_class >= ND_OPN ||
+	     RkTestGram(gram, p->nw_rowcol, q->nw_rowcol)))  {
 	  struct nword	*pq = concWord(cx, p, q, clen, cx->gram->P_BB);
-#else
-	  struct nword	*pq = concWord(cx->store, p, q, clen, cx->gram->P_BB);
-#endif
 	  if (pq) {
 	    struct nword	*s;
 	    if (gram && !IsShuutan(gram, pq->nw_rowcol)) {
@@ -1287,8 +1224,12 @@ int
 compword(x, y)
 const struct compRec *x, *y;
 {
+  int lowdiff = (int)((unsigned char)y->word->nw_flags & NW_LOWPRI)
+    - (int)((unsigned char)x->word->nw_flags & NW_LOWPRI);
   long	d =  ((long) y->word->nw_prio) - ((long) (x->word->nw_prio));
 
+  if (lowdiff > 0) return(-1);
+  else if (lowdiff < 0) return(1);
   if (d > 0) return(1);
   else if(d < 0) return(-1);
   else {
@@ -1517,7 +1458,8 @@ evalSplit(cx, suc, ul)
 #else /* LOGIC_HACK */
 static
 void
-evalSplit(suc, ul)
+evalSplit(cx, suc, ul)
+     struct RkContext	*cx;
      struct nword	*suc;
      struct splitParm	*ul;
 {
@@ -1643,19 +1585,11 @@ calcSplit(cx, yy, top, xq, maxclen, flush)
       /* 右隣の文節を解析 */
       if (l1 <= maxary) {
 	if (!ul2[l1].l2) 
-#ifdef LOGIC_HACK
 	  evalSplit(cx, xq[l1].tree, &ul2[l1]);
-#else
-	  evalSplit(xq[l1].tree, &ul2[l1]);
-#endif
 	ul = ul2[l1];
       }
       else {
-#ifdef LOGIC_HACK
 	evalSplit(cx, xq[l1].tree, &ul);
-#else
-	evalSplit(xq[l1].tree, &ul);
-#endif
       }
       /* hikaku */
       l = l1 + ul.l2;
@@ -2296,3 +2230,4 @@ _RkLearnBun(cx, cur, mode)
   killWord(st, bun->nb_cand);
 }
 
+/* vim: set sw=2: */

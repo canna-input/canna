@@ -21,11 +21,19 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: ulkigo.c,v 1.1.1.1 2002/10/19 08:27:52 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: ulkigo.c,v 1.2 2003/01/10 13:08:45 aida_s Exp $";
 #endif
 
 #include	<errno.h>
 #include "canna.h"
+
+/*********************************************************************
+ *                      wchar_t replace begin                        *
+ *********************************************************************/
+#ifdef wchar_t
+# error "wchar_t is already defined"
+#endif
+#define wchar_t cannawc
 
 #ifndef NO_EXTEND_MENU
 extern int uiUtilIchiranTooSmall();
@@ -399,3 +407,11 @@ uiContext d;
            d->curkeisen, CANNA_MODE_LineMode, uuKigoKExitCatch, (int *)0));
 #endif
 }
+
+#ifndef wchar_t
+# error "wchar_t is already undefined"
+#endif
+#undef wchar_t
+/*********************************************************************
+ *                       wchar_t replace end                         *
+ *********************************************************************/

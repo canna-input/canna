@@ -1,4 +1,4 @@
-/* $Id: Imakefile,v 1.2.2.2 2003/09/12 05:48:44 aida_s Exp $ */
+/* $Id: Imakefile,v 1.5 2003/03/04 19:23:53 aida_s Exp $ */
 #include "../Canna.conf"
 
 CANNAROOT = ..

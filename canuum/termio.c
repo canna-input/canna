@@ -1,6 +1,6 @@
 /*
  *  termio.c,v 1.4 2002/06/13 21:27:47 hiroo Exp
- *  Canna: $Id: termio.c,v 1.4.2.2 2003/01/25 08:46:30 aida_s Exp $
+ *  Canna: $Id: termio.c,v 1.5 2003/01/24 14:42:02 aida_s Exp $
  */
 
 /*

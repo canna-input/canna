@@ -21,62 +21,36 @@
  */
 
 /* sccs_id[]="@(#) NEC UNIX( PC-UX/EWS-UX ) rkw.h 2.3 91/11/11 12:01:34"; */
-/* $Id: rkcw.h,v 1.4.2.1 2002/12/18 09:13:05 aida_s Exp $ */
-
-#if (defined(_WINDOWS) || defined(WIN32)) && !defined(WIN)
-#define WIN
-#endif
+/* $Id: rkcw.h,v 1.9 2003/09/17 08:50:53 aida_s Exp $ */
 
 #include "cannaconf.h"
 
-#ifdef WIN 
-#include <windows.h>
-#include <windowsx.h>
-#include <winsock.h>
-#include <io.h>
-#include <process.h>
-#define WCHAR_T
-#define ENGINE_SWITCH
-#ifndef USE_MALLOC_FOR_BIG_ARRAY
-#define USE_MALLOC_FOR_BIG_ARRAY
-#endif
-#ifndef OMIT_EUC_FUNCS
-#define OMIT_EUC_FUNCS
-#endif
-#endif
+#define exp(x) x
 
-#if defined(WIN) && !defined(WIN32)
-#define exp(x)	x __export CALLBACK
-#elif defined(WIN32)
-#define exp(x)	__declspec(dllexport) x
-#else
-#define exp(x)	x
-#endif
-
-#if !defined(CANNA_LIGHT) && !defined(WIN)
+#if !defined(CANNA_LIGHT)
 #define USE_EUC_PROTOCOL
 #endif
 
 #define EXTENSION
 #define DEBUG
-#if !defined(WIN)
 #define UNIXCONN
+
+#include "ccompat.h"
+#ifndef CANNAWC_DEFINED
+# define CANNAWC_DEFINED
+# ifdef CANNA_WCHAR16
+typedef canna_uint16_t cannawc;
+# else
+typedef canna_uint32_t cannawc;
+# endif
 #endif
 
-#include "widedef.h"
-#include "ccompat.h"
 
 #ifndef NULL
 #define NULL 0
 #endif
 
 #include "protodefs.h"
-
-#ifdef HAVE_WCHAR_OPERATION
-#ifndef JAPANESE_LOCALE
-#define JAPANESE_LOCALE "japan"
-#endif
-#endif
 
 /* function prototypes .. */
 

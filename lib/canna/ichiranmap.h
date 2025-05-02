@@ -21,16 +21,12 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char ichiranmap_id[] = "@(#) 102.1 $Id: ichiranmap.h,v 1.1.1.1 2002/10/19 08:27:49 aida_s Exp $";
+static char ichiranmap_id[] = "@(#) 102.1 $Id: ichiranmap.h,v 1.2 2003/09/17 08:50:53 aida_s Exp $";
 #endif /* lint */
 
 extern  DoFuncSequence(),UseOtherKeymap();
 
-#ifdef WIN
-struct funccfunc ichiran_funcs[] = {
-#else
 static struct funccfunc ichiran_funcs[] = {
-#endif
   {CANNA_FN_FunctionalInsert	,IchiranBangoKouho		},
   {CANNA_FN_Forward		,IchiranForwardKouho		},
   {CANNA_FN_Backward		,IchiranBackwardKouho		},

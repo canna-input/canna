@@ -21,20 +21,12 @@
  */
 
 /*
- * @(#) 102.1 $Id: widedef.h,v 1.1.1.1.2.2 2003/09/12 14:32:52 aida_s Exp $
+ * @(#) 102.1 $Id: widedef.h,v 1.7 2003/09/17 08:50:52 aida_s Exp $
  */
 
 #ifndef _WIDEDEF_H_
 #define _WIDEDEF_H_
 
-#if (defined(_WINDOWS) || defined(WIN32)) && !defined(WIN)
-#define WIN
-#endif
-
-#ifdef WIN
-#define WCHAR16
-#endif
-     
 #ifdef __FreeBSD__
 # include <osreldate.h>
 #endif
@@ -43,28 +35,6 @@
     || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__APPLE__)
 # include <machine/ansi.h>
 #endif
-
-#if defined(__STDC__) || defined(SVR4) || defined(sun) /* This may be wrong. */
-# if !defined(WCHAR16) && !defined(CANNA_WCHAR)
-#  define HAVE_WCHAR_OPERATION
-# endif
-#endif
-
-#ifdef HAVE_WCHAR_OPERATION
-#ifndef nec_ews_svr2
-#ifdef WIN
-#undef HAVE_WCHAR_OPERATION
-/* The reason why HAVE_WCHAR_OPERATION macro to be set `undef' is that
-   the wchar_t functions in Windows such as wcstombs() operates on
-   Shift JIS kanji code.  On the other hand, Canna source expects EUC
-   for multi-byte code string */
-#include <BASETYPS.H>
-#else /* UNIX */
-/* replace widec.h instead, if SunOS 4.0 */
-#include <stddef.h>
-#endif /* UNIX */
-#endif /* !nec_ews_svr2 */
-#endif /* HAVE_WCHAR_OPERATION */
 
 #if (defined(__FreeBSD__) && __FreeBSD_version < 500000) \
     || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__APPLE__)

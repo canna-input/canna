@@ -20,7 +20,7 @@
  * PERFORMANCE OF THIS SOFTWARE. 
  */
 
-/* $Id: lisp.h,v 1.1.1.1 2002/10/19 08:27:50 aida_s Exp $ */
+/* $Id: lisp.h,v 1.3 2003/09/17 10:15:09 aida_s Exp $ */
 
 #include "canna.h"
 
@@ -33,11 +33,7 @@
 #define VALGET  1
 #define VALSET  0
 
-#ifdef WIN
-#define CELLSIZE	5120	/* size of cell area (byte)		*/
-#else
 #define CELLSIZE	10240	/* size of cell area (byte)		*/
-#endif
 
 #define STKSIZE		1024	/* the depth of value & parameter stack	*/
 #define BUFSIZE	 	256	/* universal buffer size (byte)		*/
@@ -99,10 +95,12 @@ typedef POINTERINT	pointerint;
 
 #define mknum(x)	(NUMBER_TAG | ((x) & CELL_MASK))
 
-#ifdef BIGPOINTER
+#if SIZEOF_VOID_P == 8
 #define xnum(x)   ((((x) & 0x00800000)) ? (x | 0xffffffffff000000) : (x & 0x00ffffff))
-#else
+#elif SIZEOF_VOID_P == 4
 #define xnum(x)   ((((x) & 0x00800000)) ? (x | 0xff000000) : (x & 0x00ffffff))
+#else
+#error unsupported memory model
 #endif
 
 #define xstring(x) (((struct stringcell *)(celltop + celloffset(x)))->str)

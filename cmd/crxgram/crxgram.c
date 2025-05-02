@@ -21,13 +21,14 @@
  */
 
 #ifndef LINT
-static char rcsid[]="@(#) 102.1 $Id: crxgram.c,v 1.4 2002/10/20 18:00:21 aida_s Exp $";
+static char rcsid[]="@(#) 102.1 $Id: crxgram.c,v 1.6 2003/03/24 04:04:25 aida_s Exp $";
 #endif
 
 /* #include	"RKintern.h" */
 
 #include	"ccompat.h"
 #include	<stdio.h>
+#include	"RKindep/file.h"
 
 #define LOGIC_HACK
 
@@ -74,29 +75,13 @@ struct RkKxGram {
 static char	fileName[256];
 static int	lineNum;
 
-#if !defined(__GLIBC__)
-static char *
-basename(name)
-  char *name;
-{
-    char	*s = name + strlen(name);
-    if (!s)
-	return (char *)0;
-    if (*s == '/')
-	*s = (char)0;
-    while (s-- > name)
-	if (*s == '/')
-	    break;
-    return ++s;
-}
-#endif
 static void
 usage(prog)
   char	*prog;
 {
     (void)fprintf(stderr,
 		  "%s [-f inputs]\n",
-		  basename(prog));
+		  RkiBasename(prog));
     exit(1);
 }
 /*VARARGS*/

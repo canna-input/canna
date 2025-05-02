@@ -21,26 +21,30 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static	char	rcs_id[] = "@(#) 102.1 $Id: henkan.c,v 1.1.1.1.2.2 2003/01/17 07:27:44 aida_s Exp $";
+static	char	rcs_id[] = "@(#) 102.1 $Id: henkan.c,v 1.8 2003/09/25 14:33:49 aida_s Exp $";
 #endif /* lint */
 
 #include	"canna.h"
+#include	"rkcapi.h"
 
 #include	<errno.h>
 #include	<fcntl.h>
 #ifdef MEASURE_TIME
 #include <sys/types.h>
-#ifdef WIN
-#include <sys/timeb.h>
-#else
-/* If you compile with Visual C++ on WIN, then please comment out next line. */
 #include <sys/times.h>
-#endif
 #endif
 
 #ifdef luna88k
 extern int errno;
 #endif
+
+/*********************************************************************
+ *                      wchar_t replace begin                        *
+ *********************************************************************/
+#ifdef wchar_t
+# error "wchar_t is already defined"
+#endif
+#define wchar_t cannawc
 
 extern int defaultBushuContext;
 extern int yomiInfoLevel;
@@ -75,13 +79,11 @@ static void
 dicMesg(s, d)
 char *s, *d;
 {
-#ifndef WIN
   if (ckverbose == CANNA_FULL_VERBOSE) {
     char buf[128];
     sprintf(buf, "\"%s\"", d);
     printf("%14s %-20s を指定しています。\n", s, buf);
   }
-#endif
 }
 
 static void
@@ -121,7 +123,7 @@ char *dic;
 static void
 autodicError()
 {
-#ifndef WIN
+#ifndef CODED_MESSAGE
   jrKanjiError = "自動登録用辞書が存在しません";
 #else
   jrKanjiError = "\274\253\306\260\305\320\317\277\315\321\274\255\275\361"
@@ -130,69 +132,13 @@ autodicError()
   addWarningMesg(jrKanjiError);
 }
 
-#ifdef WIN
-
-static char *
-FindLogname(void)
+static void
+warnRKCErrors(errors)
+const char *const *errors;
 {
-  extern jrUserInfoStruct *uinfo;
-
-  if (uinfo)
-    return uinfo->uname;
-  return (char *)NULL;
+  for (; *errors; ++errors)
+    addWarningMesg((char *)*errors);
 }
-
-static char *
-FindGroupname(void)
-{
-  extern jrUserInfoStruct *uinfo;
-
-  if (uinfo)
-    return uinfo->gname;
-  return (char *)NULL;
-}
-
-#define DDPATH              "canna"
-#define DDUSER              "user"
-#define DDGROUP             "group"
-
-static int
-RkwSetDicPathTmp(int Context, char *dirname)
-{
-  char *uname, *gname;
-  int ret = -1;
-#ifndef WIN
-  char dichome[256];
-#else
-  char *dichome = malloc(256);
-  if (!dichome) {
-    return ret;
-  }
-#endif
-
-  uname = FindLogname();
-  gname = FindGroupname();
-
-  if (uname && uname[0]) {
-    if (gname && gname[0]) {
-      sprintf(dichome, "%s/%s:%s/%s:%s",
-                DDUSER, uname, DDGROUP, gname, DDPATH);
-    }
-    else {
-      sprintf(dichome, "%s/%s:%s",
-                DDUSER, uname, DDPATH);
-    }
-  }
-  else {
-    strcpy(dichome, DDPATH);
-  }
-  ret = RkwSetDicPath(Context, dichome);
-#ifdef WIN
-  (void)free(dichome);
-#endif
-  return ret;
-}
-#endif /* WIN */
 
 /*
  * かな漢字変換のための初期処理
@@ -216,7 +162,7 @@ KanjiInit()
   extern jrUserInfoStruct *uinfo;
   extern char *RkGetServerHost pro((void));
   int ret = -1;
-#ifndef WIN
+#ifndef USE_MALLOC_FOR_BIG_ARRAY
   char buf[256];
 #else
   char *buf = malloc(256);
@@ -225,7 +171,7 @@ KanjiInit()
   }
 #endif
 
-#if defined(DEBUG) && !defined(WIN)
+#if defined(DEBUG)
   if (iroha_debug) {
     fprintf(stderr,"\nサーバに接続した strokelimit = %d (default:%d)\n",
               cannaconf.strokelimit, STROKE_LIMIT);
@@ -247,7 +193,11 @@ KanjiInit()
       ptr = DICHOME;
     }
   }
-  if ((defaultContext = RkwInitialize(ptr)) == -1) {
+  if (ckverbose >= CANNA_HALF_VERBOSE)
+    RkcListenConfigErrors(&warnRKCErrors);
+  defaultContext = RkwInitialize(ptr);
+  RkcListenConfigErrors(NULL);
+  if (defaultContext == -1) {
     RkwInitError();
     ret = -1;
     goto return_ret;
@@ -276,26 +226,6 @@ KanjiInit()
                /* デフォルトコンテキスト(%d), 部首コンテキスト(%d)\n */
 
   if (defaultContext != -1) {
-#ifdef WIN
-    if((RkwSetDicPathTmp(defaultContext, "iroha")) == -1) {
-      jrKanjiError = "\274\255\275\361\244\316\245\307\245\243\245\354"
-	"\245\257\245\310\245\352\244\362\300\337\304\352\244\307\244\255"
-	  "\244\336\244\273\244\363\244\307\244\267\244\277";
-      /* 辞書のディレクトリを設定できませんでした */
-      RkwFinalize();
-      ret = NG;
-      goto return_ret;
-    }
-    if((RkwSetDicPathTmp(defaultBushuContext, "iroha")) == -1) {
-      jrKanjiError = "\274\255\275\361\244\316\245\307\245\243\245\354"
-	"\245\257\245\310\245\352\244\362\300\337\304\352\244\307\244\255"
-	  "\244\336\244\273\244\363\244\307\244\267\244\277";
-      /* 辞書のディレクトリを設定できませんでした */
-      RkwFinalize();
-      ret = NG;
-      goto return_ret;
-    }
-#endif /* WIN */
 
     if (saveapname[0]) {
       RkwSetAppName(defaultContext, saveapname);
@@ -333,7 +263,7 @@ KanjiInit()
             if (RkwMountDic(con, stp->name,
 			    cannaconf.kojin ? PL_ALLOW : PL_INHIBIT)
               == -1) {
-#if defined(DEBUG) && !defined(WIN)
+#if defined(DEBUG)
             if (iroha_debug) {
               fprintf(stderr, "saveddicname = %s\n", stp->name);
             }
@@ -349,7 +279,7 @@ KanjiInit()
     }
     else { /* KC_INITIALIZE から呼び出されている場合。
               または、マウント処理を行っていない場合 */
-#if defined(DEBUG) && !defined(WIN)
+#if defined(DEBUG)
       if (iroha_debug) {
         fprintf(stderr, "辞書は.cannaの通りにマウントする\n");
       }
@@ -477,7 +407,7 @@ KanjiInit()
   }
   ret = -1;
  return_ret:
-#ifdef WIN
+#ifdef USE_MALLOC_FOR_BIG_ARRAY
   (void)free(buf);
 #endif
   return ret;
@@ -506,20 +436,25 @@ KanjiFin()
     }
     if (dp->dicflag == DIC_MOUNTED) {
       if (RkwUnmountDic(con, dp->name) == -1) {
-#ifdef WIN
+#ifndef USE_MALLOC_FOR_BIG_ARRAY
+        char buf[256];
+#else
 	char *buf = malloc(128);
-	if (buf) {
+	if (buf)
+#endif
+	{
+#ifdef CODED_MESSAGE
 	  sprintf(buf, "%s \244\362\245\242\245\363\245\336\245\246\245\363"
 	  "\245\310\244\307\244\255\244\336\244\273\244\363\244\307\244\267"
 	  "\244\277", dp->name);
-	  addWarningMesg(buf);
-	  (void)free(buf);
-	}
 #else
-        char buf[256];
 	sprintf(buf, "%s をアンマウントできませんでした。", dp->name);
-	addWarningMesg(buf);
 #endif
+	  addWarningMesg(buf);
+#ifdef USE_MALLOC_FOR_BIG_ARRAY
+	  (void)free(buf);
+#endif
+	}
       }
     }
     np = dp->next;
@@ -674,7 +609,7 @@ yomiContext yc;
   tanContext tan, prevLeft = yc->left, curtan = (tanContext)0;
   tanContext st = (tanContext)NULL, et = (tanContext)NULL;
   BYTE *p, *q, *r;
-#ifndef WIN
+#ifndef USE_MALLOC_FOR_BIG_ARRAY
   wchar_t xxx[ROMEBUFSIZE];
 #else
   wchar_t *xxx = (wchar_t *)malloc(sizeof(wchar_t) * ROMEBUFSIZE);
@@ -815,7 +750,7 @@ yomiContext yc;
   tanbunToYomiAll(d, st, et);
 
  return_ret:
-#ifdef WIN
+#ifdef USE_MALLOC_FOR_BIG_ARRAY
   (void)free((char *)xxx);
 #endif
 
@@ -831,7 +766,7 @@ yomiContext yc;
   int scuryomi, ecuryomi, scurroma, ecurroma;
   tanContext tan, prevLeft = yc->left, prevRight = yc->right;
   BYTE *p, *q, *r;
-#ifndef WIN
+#ifndef USE_MALLOC_FOR_BIG_ARRAY
   wchar_t xxx[ROMEBUFSIZE];
 #else
   wchar_t *xxx = (wchar_t *)malloc(sizeof(wchar_t) * ROMEBUFSIZE);
@@ -895,7 +830,7 @@ yomiContext yc;
 			}
 			yc->left = tan;
 		      }
-#if defined(DEBUG) && !defined(WIN)
+#if defined(DEBUG)
 		      {
 			char yyy[ROMEBUFSIZE];
 			WCstombs(yyy, tan->kanji, ROMEBUFSIZE);
@@ -1025,7 +960,7 @@ yomiContext yc;
   tanbunToYomiAll(d, tan, prevRight);
 
  return_ret:
-#ifdef WIN
+#ifdef USE_MALLOC_FOR_BIG_ARRAY
   (void)free((char *)xxx);
 #endif
 
@@ -1373,7 +1308,7 @@ yomiContext yc;
   unsigned int mode;
   extern defaultContext;
 
-#if defined(DEBUG) && !defined(WIN)
+#if defined(DEBUG)
   if (iroha_debug) {
 /*    printf("yomi     => "); Wprintf(hc->yomi_buffer); putchar('\n');*/
     printf("yomi len => %d\n", hc->yomilen);
@@ -2030,7 +1965,7 @@ uiContext	d;
 {
   yomiContext yc = (yomiContext)d->modec;
   int i, j, l = -1, ret = 0;
-#ifndef WIN
+#ifndef USE_MALLOC_FOR_BIG_ARRAY
   wchar_t tmpbuf[ROMEBUFSIZE];
 #else
   wchar_t *tmpbuf = (wchar_t *)malloc(sizeof(wchar_t) * ROMEBUFSIZE);
@@ -2067,7 +2002,7 @@ uiContext	d;
     ret = 0;
   }
  return_ret:
-#ifdef WIN
+#ifdef USE_MALLOC_FOR_BIG_ARRAY
   (void)free((char *)tmpbuf);
 #endif
   return ret;
@@ -2106,9 +2041,7 @@ uiContext d;
 #ifdef DO_RENGO_LEARNING
 #define RENGOBUFSIZE 256
 
-  /* This will not be defined when WIN is defined.  So I don't care
-     about the local array located below.  1996.6.5 kon */
-
+  /* BIGARRAY */
   if (RengoGakushu && hc->nbunsetsu > 1) { /* 連語学習をしようかなぁ */
     RkLex  lex[2][RENGOBUFSIZE];
     wchar_t yomi[2][RENGOBUFSIZE];
@@ -2250,7 +2183,8 @@ uiContext d;
   yomiContext yc = (yomiContext)d->modec;
   tanContext tan;
 
-  if (cannaconf.RenbunContinue || cannaconf.ChikujiContinue) {
+  if ((yc->generalFlags & CANNA_YOMI_CHIKUJI_MODE)
+      ? cannaconf.ChikujiContinue : cannaconf.RenbunContinue) {
     d->nbytes = 0;
     for (tan = (tanContext)yc ; tan->right ; tan = tan->right)
       /* bodyless 'for' */;
@@ -2492,8 +2426,7 @@ static
 TanPrintTime(d)
 uiContext	d;
 {
-  /* MEASURE_TIME will not be defined when WIN is defined.  So I will not
-     care about arrays located on stack below.  1996.6.5 kon */
+  /* BIGARRAY */
   unsgined char tmpbuf[1024];
   static wchar_t buf[256];
   yomiContext yc = (yomiContext)d->modec;
@@ -2528,7 +2461,7 @@ jrKanjiPipeError()
   makeAllContextToBeClosed(0);
 
   RkwFinalize();
-#if defined(DEBUG) && !defined(WIN)
+#if defined(DEBUG)
   if (iroha_debug) {
     fprintf(stderr, "\300\334\302\263\244\254\300\332\244\354\244\277\n");
                     /* 接続が切れた */
@@ -2738,7 +2671,7 @@ int head;
 {
   int retval, len;
   yomiContext yc = (yomiContext)d->modec;
-#ifndef WIN
+#ifndef USE_MALLOC_FOR_BIG_ARRAY
   wchar_t xxx[ROMEBUFSIZE];
 #else
   wchar_t *xxx;
@@ -2747,7 +2680,7 @@ int head;
   if (yc->id != YOMI_CONTEXT) {
     return TbChooseChar(d, head);
   }
-#ifdef WIN
+#ifdef USE_MALLOC_FOR_BIG_ARRAY
   xxx = (wchar_t *)malloc(sizeof(wchar_t) * ROMEBUFSIZE);
   if (!xxx) {
     return 0;
@@ -2780,7 +2713,7 @@ int head;
   }
   retval = NothingChangedWithBeep(d);
  done:
-#ifdef WIN
+#ifdef USE_MALLOC_FOR_BIG_ARRAY
   (void)free((char *)xxx);
 #endif
   return retval;
@@ -2804,3 +2737,11 @@ uiContext d;
 }
 
 #include	"tanmap.h"
+
+#ifndef wchar_t
+# error "wchar_t is already undefined"
+#endif
+#undef wchar_t
+/*********************************************************************
+ *                       wchar_t replace end                         *
+ *********************************************************************/

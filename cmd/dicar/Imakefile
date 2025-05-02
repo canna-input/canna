@@ -1,22 +1,7 @@
-/* $Id: Imakefile,v 1.2 2002/10/20 04:10:27 aida_s Exp $ */
+/* $Id: Imakefile,v 1.3 2003/01/26 04:36:33 aida_s Exp $ */
 #include "../../Canna.conf"
-
-      CANNAROOT = ../..
-       INCLUDES = -I$(CANNAROOT)/include -I$(CANNAROOT)/lib/RK
-#ifdef __EMX__
-LOCAL_LIBRARIES = $(CANNAROOT)/lib/RK/RK.a
-#else
-LOCAL_LIBRARIES = $(CANNAROOT)/lib/RK/libRK.a
-#endif
-           SRCS = dicar.c
-
-#if defined(__EMX__) || defined(__CYGWIN32__)
-AllTarget(dicar.exe)
-#else
-AllTarget(dicar)
-#endif
-NormalProgramTarget(dicar,dicar.o,$(LOCAL_LIBRARIES),$(LOCAL_LIBRARIES),)
-InstallProgram(dicar,$(cannaBinDir))
-InstallManPage(dicar,$(cannaManDir))
-DependTarget()
-LintTarget()
+#define SimpleCommand
+#define WantRKLib
+#define TargetName dicar
+#define ManSrcName dicar
+#include "../cmd.tmpl"

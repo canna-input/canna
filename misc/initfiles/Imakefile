@@ -1,4 +1,4 @@
-/* $Id: Imakefile,v 1.1.1.1.2.2 2003/09/12 05:48:44 aida_s Exp $ */
+/* $Id: Imakefile,v 1.3 2003/02/03 20:13:01 aida_s Exp $ */
 #include "../../Canna.conf"
 
 #ifdef unix /* for unix.canna.  Some system define unix as 1. */

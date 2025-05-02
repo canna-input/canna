@@ -1,0 +1,270 @@
+2003-09-26 Toru TAKAMIZU <ttaka@earth.email.ne.jp>
+
+	* pubdic/Imakefile: sync with HEAD
+	* pubdic/a.p: add 5 entries
+	* pubdic/h.p: add 1 entry
+	* pubdic/k.p: add 7 entries
+	* pubdic/m.p: add 3 entries
+	* pubdic/r.p: add 3 entries
+	* pubdic/s.p: add 3 entries
+	* pubdic/t.p: correct POS
+	* pubdic/y.p: add 1 entry
+	* words/chimei.t: add 2 entries
+
+2003-09-09 Toru TAKAMIZU <ttaka@earth.email.ne.jp>
+
+	* pubdic/a.p: #T09 -> #T05 for an entry. Now it can be followed
+	  by "desu"
+	* pubdic/k.p: ditto
+	* pubdic/h.p: add 2 entries
+	* pubdic/s.p: add 5 entries
+	* pubdic/t.p: add 1 entry
+	* pubdic/y.p: add 1 entry
+
+2003-09-06 Toru TAKAMIZU <ttaka@earth.email.ne.jp>
+
+	* grammar/Imakefile: sync with HEAD branch
+	* words/Imakefile: ditto
+	* words/dics.dir: ditto
+
+2003-07-06 Toru TAKAMIZU <ttaka@earth.email.ne.jp>
+
+	* pubdic/h.p: add 3 entries
+	* pubdic/t.p: add 1 entry
+	* pubdic/w.p: add 1 entry
+
+2003-06-29 Toru TAKAMIZU <ttaka@earth.email.ne.jp>
+
+	* pubdic/a.p: add 10 entries
+	* pubdic/t.p: add 5 entries
+
+2003-06-27 Toru TAKAMIZU <ttaka@earth.email.ne.jp>
+
+	* pubdic/k.p: add 3 entries
+	* pubdic/m.p: add 1 entry
+	* pubdic/t.p: add 2 entries
+
+2003-05-01 Toru TAKAMIZU <ttaka@earth.email.ne.jp>
+
+	* pubdic/m.p: preparing for grammar/gram.goto change
+	* pubdic/n.p: ditto
+	* pubdic/r.p: ditto
+	* pubdic/s.p: ditto
+	* pubdic/t.p: ditto
+	* pubdic/w.p: ditto
+	* pubdic/y.p: ditto
+	* grammar/gram.goto: move JTNO from COMMON_GOKAN to T_GOKAN,
+	  in order to avoid impossible combinations, i.e. #F?? + #JTNO.
+
+2003-04-19 Toru TAKAMIZU <ttaka@earth.email.ne.jp>
+
+	* pubdic/a.p: preparing for grammar/gram.goto change
+	* pubdic/h.p: ditto
+	* pubdic/k.p: ditto
+
+2003-04-08 Toru TAKAMIZU <ttaka@earth.email.ne.jp>
+
+	* pubdic/a.p: add 2 entries
+	* pubdic/t.p: add 1 entry
+	* words/chimei.t: remove redundant entries
+	* words/chimei.t: add 8 entries
+
+2003-04-07 Toru TAKAMIZU <ttaka@earth.email.ne.jp>
+
+	* pubdic/a.p: add 3 entries
+	* pubdic/k.p: add 5 entries
+	* pubdic/s.p: add 1 entry
+	* pubdic/t.p: add 2 entries
+	* pubdic/y.p: add 2 entries
+	* words/chimei.t: add entries for new cities
+	* words/chimei.t: correct the error of the previous commit -- the
+	  ones I added were not in canna-form, but in pubdic-form.
+
+2003-04-04 Toru TAKAMIZU <ttaka@earth.email.ne.jp>
+
+	* pubdic/a.p: add 9 entries
+	* pubdic/k.p: add 11 entries
+	* pubdic/m.p: add 2 entries
+	* pubdic/s.p: add 2 entries
+
+2003-04-02 Toru TAKAMIZU <ttaka@earth.email.ne.jp>
+
+	* pubdic/n.p: change "nihonyuuseikousya" to "nipponyuuseikousya".
+	  I should have looked it up.
+
+2003-04-01 Toru TAKAMIZU <ttaka@earth.email.ne.jp>
+
+	* pubdic/?.p: add entries of katakata words that have a prolonged
+	  vowel at the last syllable. Now you don't have to rely solely
+	  on "long vowel symbol" entry in suffix.ctd in order to input
+	  these words. (IMHO the entry is too productive.)
+	* pubdic/?.p: add ministry names
+	* pubdic/a.p: add 3 entries
+	* pubdic/h.p: add 5 entries including
+	  - "hoture" as #KSr
+	  - "bosoboso" as #F04
+	* pubdic/k.p: add 1 entry
+	* pubdic/s.p: add 2 entries
+	* pubdic/w.p: add 4 entries
+
+2003-03-31 Toru TAKAMIZU <ttaka@earth.email.ne.jp>
+
+	* pubdic/t.p: add 7 entries including
+	  - "tohaittemo" as #CJ
+	  - "torituke" as #KSr
+	  - "dokuzenteki" as #T15
+	  - "dotabata" as #T00
+
+2003-03-30 Toru TAKAMIZU <ttaka@earth.email.ne.jp>
+
+	* pubdic/a.p: add 5 entries including
+	  - "irekae" -- kanji alternatives
+	  - "osihaka" -- ditto
+	* pubdic/h.p: add 10 entries including
+	  - "hukureaga" as #R5
+	  - "hohoe" -- kanji alternative
+	  - "boroboro" and "potapota" as #F04
+	  - "boke" as #KSr
+	* pubdic/n.p: add 4 entries including
+	  - "nikutarasi" as #KY
+	  - "noriki" as #T08
+	* pubdic/y.p: add 4 entries -- "youhou" and related words
+
+2003-03-28 Toru TAKAMIZU <ttaka@earth.email.ne.jp>
+
+	* pubdic/a.p: add 12 entries including
+	  - "intiki" as #T00
+	  - "eakon" as #T35
+	  - "obuzye" as #T35
+	* pubdic/r.p: add 2 entries.
+	  - "returetu" as #F03
+	  - "retorikku" as #T35
+	* pubdic/s.p: add 11 entries including
+	  - "zurugasiko" as #KY
+	  - "seka" as #S5
+	  - "sensenkyoukyou" as #F03
+	  - "souhoteki" as #T15
+	* words/chimei.t: add 3 entries
+
+2003-03-26 Toru TAKAMIZU <ttaka@earth.email.ne.jp>
+
+	* pubdic/a.p: add many entries including
+	  - "akademikku" as #T17
+	  - "araware" -- kanji alternatives
+	  - "intaahon", "intoro", "inhura"
+	  - "otyoku" as #R5r
+	* pubdic/a.p: change "eikoku" #KK -> #CNS
+	* pubdic/k.p: add 19 entries including
+	  - "kaita" as #S5r
+	  - "kire" as #KSr
+	  - "girigiri" and "guragura" as #T00
+	  - "keti" as #T05
+	* pubdic/t.p: add 17 entries including
+	  - "taisite" as #F14
+	  - "datositemo" as #CJ
+	  - "tidikoma" as #R5
+	  - "tootorozikaru" as #T17
+	  - "tottekawa" as #R5
+
+2003-03-24 Toru TAKAMIZU <ttaka@earth.email.ne.jp>
+
+	* pubdic/a.p: add 18 entries including
+	  - "itigiteki" as #T15
+	  - "ikete" as #KS
+	  - "isyou", "irusu", "ooboe", "okasi", "okarada", etc.
+	* pubdic/h.p: add 18 entries including
+	  - "bakibaki" as #F04
+	  - "baribari" as #F04 and #T36 (the latter because of "baribarino")
+	  - "bakibaki" as #F04
+	  - "hazukasinagara" as #F14
+	* pubdic/k.p: add 1 entry
+	  - "gurippu" as #T35
+
+2003-03-23 Toru TAKAMIZU <ttaka@earth.email.ne.jp>
+
+	* words/software.t: remove entries that also have an entry in
+	  pubdic/?.p
+	* words/kanasmpl.t: ditto
+	* pubdic/a.p: add 15 entries including
+	  - "akui" as #T35
+	  - "awatadasi" as #KY
+	  - many others
+	* pubdic/a.p: correct okurigana of "arawa"
+	* pubdic/s.p: add 10 entries including
+	  - "syunjiteki" as #T15
+	  - "syoge" as #KS
+	  - "sinsi" as #T19
+	* pubdic/s.p: remove one of the two entries of "sutorappu"
+
+2003-03-22 Toru TAKAMIZU <ttaka@earth.email.ne.jp>
+
+	* ChangeLog: correct the date of the previous commit
+	* pubdic/h.p: add 14 entries
+	  - "hayakukara" and "hayaitoko" as #F14
+	  - "batabata" as #F04
+	  - "biki" and "hiki" as #SUC
+	  - "hinomaru" as #KK
+	  - others as #T30 and #T35
+	* pubdic/k.p: correct "kanari" #T06 -> #T16
+	* pubdic/k.p: add 6 entries
+	* pubdic/m.p: add 11 entries
+	  - "masi" as #T05
+	  - "matigaina" as #KY
+	  - "matigae" as #KS
+	  - "mukuware" as #KS
+	  - "muzinzou" as #T15
+	  - others
+
+2003-03-21 Toru TAKAMIZU <ttaka@earth.email.ne.jp>
+
+	* pubdic/s.p: add 6 entries (#T35 & #T30)
+
+2003-03-19 Toru TAKAMIZU <ttaka@earth.email.ne.jp>
+
+	* pubdic/h.p: add 13 entries (#T35 & #T30)
+	* pubdic/k.p: add 11 entries (#T35 & #T30)
+	* pubdic/k.p: change "kansai" #CN -> #CNS
+	* pubdic/k.p: correct "kogimiyo" and "kogimiyou" to "kokimiyo"
+	  and "kokimiyou" respectively.
+	* pubdic/n.p: add 14 entries (#T35 & #T30)
+ 	* pubdic/n.p: change "nihonkai" #KK -> #CNS
+ 	* pubdic/s.p: add 13 entries (#T35 & #T30)
+	* pubdic/t.p: add 15 entries (#T35 & #T30)
+
+2003-03-18 Toru TAKAMIZU <ttaka@earth.email.ne.jp>
+
+	* pubdic/h.p: add 12 entries (#T35 & #T30)
+	* pubdic/k.p: add 16 entries. These include new ministries and
+	  their abbreviation as #KK, other than #T35 and #T30.
+	* words/chimei.t: change names of railway line #CN -> #CNS
+	* words/chimei.t: remove "sinkansen" as #CN, bacause pubdic/s.p has
+	  "sinkansen" entry as #T35.
+
+2003-03-17 Toru TAKAMIZU <ttaka@earth.email.ne.jp>
+
+	* ChangeLog: All POS's are now "#" prefixed.
+	* "sort -s -k 1,1 pubdic/?.p"
+	* pubdic/h.p: add 12 entries (#T35 & #T30)
+	* pubdic/k.p: add 10 entries (#T35 & #T30)
+	* pubdic/k.p: correct "kaiousei", "kasei" and "kinsei" #KK -> #CNS
+	  and remove "kinsei" as #T35
+	* pubdic/m.p: add 11 entries. Among these are "miribaaru" as #JS,
+	  and "monbukagakusyou" and its abbreviation "monkasyou" as #KK.
+	* pubdic/m.p: correct "mokusei" #CN -> #CNS and "meiousei" #KK -> #CNS
+	* pubdic/s.p: add 10 entries (#T35 & #T30)
+	* pubdic/s.p: correct "suisei" #KK -> #CNS
+	* pubdic/s.p: correct "sirikonbaree" #KK -> #CNS
+	* pubdic/t.p: add 13 entries (#T35 & #T30)
+	* pubdic/t.p: correct "tennousei" and "dosei" #KK -> #CNS
+
+2003-03-16 Toru TAKAMIZU <ttaka@earth.email.ne.jp>
+
+	* pubdic/h.p: add 17 entries (#T35 & #T30)
+	* pubdic/h.p: correct "pontotyou" #CN -> #CNS
+	* pubdic/k.p: add 11 entries (#T35 & #T30)
+	* pubdic/r.p: add 10 entries (#T35 & #T30)
+	* pubdic/s.p: add 14 entries (#T35 & #T30)
+	* pubdic/s.p: remove 1 entry "sanpai" ("zanpai"'s wrong reading?)
+	* pubdic/t.p: add 14 entries (#T35 & #T30)
+
+$Header: /cvsroot/canna/canna/dic/ideo/ChangeLog,v 1.2 2003/09/27 06:18:38 aida_s Exp $

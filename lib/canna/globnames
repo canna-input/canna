@@ -19,7 +19,7 @@
 # OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 # PERFORMANCE OF THIS SOFTWARE. 
 #
-#$Id: globnames,v 1.1.1.1 2002/10/19 08:27:49 aida_s Exp $
+#$Id: globnames,v 1.8 2003/09/23 09:10:14 aida_s Exp $
 AlphaMode
 BackspaceBehavesAsQuit
 CannaBeep
@@ -37,6 +37,7 @@ ChikujiTanDeletePrevious
 ConvertAsBushu
 CursorWrap
 DoFuncSequence
+EUCListCallback
 EmptyBaseEisu
 EmptyBaseHan
 EmptyBaseHenkan
@@ -88,8 +89,14 @@ ReverseWidely
 ReverseWord
 RkGetServerHost
 RkSetServerName
-RkcConnectIrohaServer
-RkcGetServerFD
+rkc_config
+rkc_configure
+rkc_config_fin
+rkc_errors
+RkcErrorBuf_get
+RkcConfMgr_get_string
+RkcConfMgr_get_number
+RkcConfMgr_get_yesno
 RomajiClearYomi
 RomajiFlushYomi
 RomajiStoreYomi
@@ -98,6 +105,7 @@ RomkanaInit
 RomkanaTable
 SelectDirect
 ServerFD
+ServerTimeout
 TanBackwardBunsetsu
 TanBeginningOfBunsetsu
 TanBubunKakutei
@@ -198,6 +206,7 @@ clisp_main
 code_input
 confirmContext
 containUnconvertedKey
+context_table
 convertAsHex
 copyS8
 currentModeInfo
@@ -308,7 +317,6 @@ kojin
 kouho_threshold
 leaveAdjustMode
 leaveJishuMode
-locale_insufficient
 makeAllContextToBeClosed
 makeGLineMessage
 makeGLineMessageFromString
@@ -330,6 +338,7 @@ newYomiContext
 nkeysup
 nothermodes
 onoff_mode
+owcListCallback
 parse
 parse_string
 popCallback

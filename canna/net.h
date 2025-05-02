@@ -21,7 +21,12 @@
  */
 
 /* sccs_id[]="@(#) NEC UNIX( PC-UX/EWS-UX ) net.h 1.1 90/11/01 16:25:42"; */
-/* $Id: net.h,v 1.2 2002/10/20 04:10:25 aida_s Exp $ */
+/* $Id: net.h,v 1.3 2003/09/24 14:50:39 aida_s Exp $ */
+
+#ifndef NET_H
+#define NET_H
+
+#include "ccompat.h"
 
 #if defined(nec_ews_svr2) || defined(pcux)
 #include <sys/types.h>
@@ -37,3 +42,16 @@
 #include <sys/un.h>
 #endif
 #endif
+
+#ifdef HAVE_IN_ADDR_T
+typedef in_addr_t canna_in_addr_t;
+#else
+typedef canna_uint32_t canna_in_addr_t;
+#endif
+#ifdef HAVE_SOCKLEN_T
+typedef socklen_t canna_socklen_t;
+#else
+typedef int canna_socklen_t;
+#endif
+
+#endif /* NET_H */

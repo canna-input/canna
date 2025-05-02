@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static char rcsid[]="@(#) 102.1 $Id: crxdic.c,v 1.3.2.2 2003/09/12 14:32:52 aida_s Exp $";
+static char rcsid[]="@(#) 102.1 $Id: crxdic.c,v 1.11 2003/09/25 14:37:24 aida_s Exp $";
 #endif
 
 #include "RKintern.h"
@@ -33,6 +33,8 @@ static char rcsid[]="@(#) 102.1 $Id: crxdic.c,v 1.3.2.2 2003/09/12 14:32:52 aida
 #include <fcntl.h>
 #include <assert.h>
 #include "ccompat.h"
+#include "RKindep/file.h"
+#include "RKindep/cksum.h"
 
 #if !defined( HYOUJUN_GRAM )
 #ifndef WINDOWS_STYLE_FILENAME
@@ -108,6 +110,8 @@ struct dictionary {
     unsigned		empty;
     int			type;
     char		*name;
+    char		*gramdata;
+    size_t		gramsz;
 };
 
 struct TextDic {
@@ -140,6 +144,8 @@ char	dicname[1024];
 char	*localename = DEFAULT_JAPANESE_LOCALE;
 int	search = 0;
 int	type = JMWD;
+int	compat = 0;
+int	with_gram = 0;
 
 extern	Wchar	*euctous();
 int getp pro((struct node *));
@@ -155,6 +161,10 @@ char *s;
 {
   char *p = (char *)malloc(strlen(s) + 1);
   if (p) strcpy(p, s);
+  else {
+    fprintf(stderr, "no space\n");
+    exit(1);
+  }
   return p;
 }
 
@@ -911,140 +921,129 @@ init_dic(name, dictype, maxpage)
   return dic;
 }
 
-setHeader(hd, jdic_type, Wwidth, Wtype,
-	  notice, copyright, LocaleName,
-	  dmname, codmname, HSize, Size, Doff, Poff,
-	  totalCand, totalRec, totalPage, Lnd, Snd)
-     
-     struct HD	*hd;
-     int	jdic_type;
-     unsigned	Wwidth, HSize, Size, Doff, Poff;
-     char	*notice, *copyright, *LocaleName, *dmname, *codmname;
-     char 	*Wtype;
-     unsigned	totalRec;
-     unsigned	totalCand;
-     unsigned	totalPage;
-     unsigned	Lnd;
-     unsigned	Snd;
-{
-  int		i;
-  unsigned char s[5];
-
-  if (!hd)
-    return(-1);
-
-  for (i = 0; i < HD_MAXTAG; i++) {
-    hd->data[i].ptr = 0;
-    hd->flag[i] = 0;
-  }
-  hd->data[HD_MAG].var = bst4_to_l("CDIC");
-  hd->flag[HD_MAG] = -1;
-  hd->data[HD_VER].var = bst4_to_l("R3.0");
-  hd->flag[HD_VER] = -1;
-  hd->data[HD_TIME].var = tloc = time(0);
-  hd->flag[HD_TIME] = -1;
-  hd->data[HD_DMNM].ptr = (unsigned char *)STrdup(dmname);
-  hd->flag[HD_DMNM] = strlen(dmname);
-  hd->data[HD_LANG].ptr = (unsigned char *)STrdup(LocaleName);
-  hd->flag[HD_LANG] = strlen(LocaleName);
-  hd->data[HD_WWID].var = Wwidth;
-  hd->flag[HD_WWID] = -1;
-  strcpy((char *)s, Wtype);
-  hd->data[HD_WTYP].var = bst4_to_l(s);
-  hd->flag[HD_WTYP] = -1;
-  if (notice) {
-    hd->data[HD_NOTE].ptr = (unsigned char *)STrdup(notice);
-    hd->flag[HD_NOTE] = strlen(notice);
-  }
-  if (copyright) {
-    hd->data[HD_COPY].ptr = (unsigned char *)STrdup(copyright);
-    hd->flag[HD_COPY] = strlen(copyright);
-  }
-  hd->data[HD_TYPE].var = bst4_to_l(DEF_TYPE);
-  hd->flag[HD_TYPE] = -1;
-  hd->data[HD_HSZ].var = HSize;
-  hd->flag[HD_HSZ] = -1;
-  hd->data[HD_SIZ].var = Size;
-  hd->flag[HD_SIZ] = -1;
-  
-  hd->data[HD_DROF].var = Doff;
-  hd->flag[HD_DROF] = -1;
-    
-  hd->data[HD_PGOF].var = Poff;
-  hd->flag[HD_PGOF] = -1;
-
-  hd->data[HD_L2P].var = 13;
-  hd->flag[HD_L2P] = -1;
-
-  hd->data[HD_L2C].var = 11;
-  hd->flag[HD_L2C] = -1;
-    
-  hd->data[HD_REC].var = totalRec;
-  hd->flag[HD_REC] = -1;
-    
-  hd->data[HD_CAN].var = totalCand;
-  hd->flag[HD_CAN] = -1;
-    
-  hd->data[HD_PAG].var = totalPage;
-  hd->flag[HD_PAG] = -1;
-    
-  hd->data[HD_LND].var = Lnd;
-  hd->flag[HD_LND] = -1;
-    
-  hd->data[HD_SND].var = Snd;
-  hd->flag[HD_SND] = -1;
-    
-  return(0);
-}
-
 static void
 makeHeader(dic)
      struct dictionary	*dic;
 {
   unsigned char		*buf;
-  unsigned		size;
+  size_t		size;
   struct HD		hd;
+  canna_uint32_t	crc;
+  unsigned		i;
+  RkiCksumCalc		calc;
+  unsigned		off;
     
-  setHeader(&hd,
-	    dic->type,
-	    dic->Cwidth,
-	    DEF_WTYP,
-	    (char *)0,
-	    (char *)0,
-	    DEFAULT_JAPANESE_LOCALE,
-	    dic->name,
-	    "",
-	    0, 0, 0, 0,
-	    dic->TotalCand,
-	    dic->TotalRec, 
-	    dic->TotalPage,
-	    dic->Lnd,
-	    dic->Snd
-	    );
+  if (RkiCksumCRCInit(&calc)
+      || RkiCksumAdd(&calc, dic->Dir->buf, dic->Dir->dirsiz)) {
+    fprintf(stderr, "no space\n");
+    exit(1);
+  }
+  for (i = 0; i < dic->TotalPage; i++) {
+    const struct page *P = &dic->Page[i];
+    
+    if (RkiCksumAdd(&calc, P->buf, dic->PageSize)) {
+      fprintf(stderr, "no space\n");
+      exit(1);
+    }
+  }
+  crc = RkiCksumCRCFinish(&calc);
+
+  for (i = 0; i < HD_MAXTAG; i++) {
+    hd.data[i].ptr = NULL;
+    hd.flag[i] = 0;
+  }
+  hd.data[HD_MAG].var = bst4_to_l("CDIC");
+  hd.flag[HD_MAG] = -1;
+  if (compat) {
+    hd.data[HD_VER].var = bst4_to_l("R3.0");
+    hd.flag[HD_VER] = -1;
+  } else {
+    hd.data[HD_CURV].var = 0x300702L;
+    hd.flag[HD_CURV] = -1;
+    hd.data[HD_CMPV].var = 0x300702L;
+    hd.flag[HD_CMPV] = -1;
+  }
+  hd.data[HD_TIME].var = tloc = time(0);
+  hd.flag[HD_TIME] = -1;
+  hd.data[HD_DMNM].ptr = (unsigned char *)STrdup(dic->name);
+  hd.flag[HD_DMNM] = strlen(dic->name);
+  hd.data[HD_LANG].ptr = (unsigned char *)STrdup(DEFAULT_JAPANESE_LOCALE);
+  hd.flag[HD_LANG] = strlen(DEFAULT_JAPANESE_LOCALE);
+  hd.data[HD_WWID].var = dic->Cwidth;
+  hd.flag[HD_WWID] = -1;
+  hd.data[HD_WTYP].var = bst4_to_l(DEF_WTYP);
+  hd.flag[HD_WTYP] = -1;
+  hd.data[HD_TYPE].var = bst4_to_l(DEF_TYPE);
+  hd.flag[HD_TYPE] = -1;
+  hd.data[HD_HSZ].var = 0; /* dummy */
+  hd.flag[HD_HSZ] = -1;
+  hd.data[HD_SIZ].var = 0; /* dummy */
+  hd.flag[HD_SIZ] = -1;
+
+  hd.data[HD_DROF].var = 0; /* dummy */
+  hd.flag[HD_DROF] = -1;
+    
+  hd.data[HD_PGOF].var = 0; /* dummy */
+  hd.flag[HD_PGOF] = -1;
+
+  hd.data[HD_L2P].var = 13;
+  hd.flag[HD_L2P] = -1;
+
+  hd.data[HD_L2C].var = 11;
+  hd.flag[HD_L2C] = -1;
+    
+  hd.data[HD_REC].var = dic->TotalRec;
+  hd.flag[HD_REC] = -1;
+    
+  hd.data[HD_CAN].var = dic->TotalCand;
+  hd.flag[HD_CAN] = -1;
+    
+  hd.data[HD_PAG].var = dic->TotalPage;
+  hd.flag[HD_PAG] = -1;
+    
+  hd.data[HD_LND].var = dic->Lnd;
+  hd.flag[HD_LND] = -1;
+    
+  hd.data[HD_SND].var = dic->Snd;
+  hd.flag[HD_SND] = -1;
+    
+  if (!compat) {
+    hd.data[HD_CRC].var = crc;
+    hd.flag[HD_CRC] = -1;
+  }
+
+  if (!compat && with_gram) {
+    hd.data[HD_GRAM].var = 0; /* dummy */
+    hd.flag[HD_GRAM] = -1;
+    hd.data[HD_GRSZ].var = dic->gramsz;
+    hd.flag[HD_GRSZ] = -1;
+  }
+  
   if (!(buf = _RkCreateHeader(&hd, &size))) {
     fprintf(stderr, "no space\n");
     exit(1);
   }
+  free(buf);
 
-  free((char *)buf);
+  off = size;
+  hd.data[HD_HSZ].var = off;
+  hd.flag[HD_HSZ] = -1;
+  hd.data[HD_DROF].var = off;
+  hd.flag[HD_DROF] = -1;
+    
+  off += dic->Dir->dirsiz;
+  hd.data[HD_PGOF].var = off;
+  hd.flag[HD_PGOF] = -1;
 
-  setHeader(&hd,
-	    dic->type,
-	    dic->Cwidth,
-	    DEF_WTYP,
-	    (char *)0,
-	    (char *)0,
-	    DEFAULT_JAPANESE_LOCALE,
-	    dic->name, "", size,
-	    size + dic->TotalPage * dic->PageSize + dic->Dir->dirsiz,
-	    size,
-	    size + dic->Dir->dirsiz,
-	    dic->TotalCand,
-	    dic->TotalRec, 
-	    dic->TotalPage,
-	    dic->Lnd,
-	    dic->Snd
-	    );
+  off += dic->TotalPage * dic->PageSize;
+  if (!compat && with_gram) {
+    hd.data[HD_GRAM].var = off;
+    off += dic->gramsz;
+  }
+
+  hd.data[HD_SIZ].var = off; /* exclude grammar size if 3.0 compatible mode */
+  hd.flag[HD_SIZ] = -1;
+  
   if (!(buf = _RkCreateHeader(&hd, &size))) {
     fprintf(stderr, "no space.\n");
     exit(1);
@@ -1094,6 +1093,13 @@ write_file(out, dic)
       exit(1);
     }
   }
+  if (with_gram) {
+    if (write(fd, (char *)dic->gramdata, dic->gramsz) != dic->gramsz) {
+      fprintf(stderr, "%s: cannot write\n", program);
+      close(fd);
+      exit(1);
+    }
+  }
   close(fd);
 }
 
@@ -1106,19 +1112,10 @@ usage()
   fprintf(stderr, "\t-n dicname\n");
   fprintf(stderr, "\t-m \n");
   fprintf(stderr, "\t-s \n");
+  fprintf(stderr, "\t-g \n");
+  fprintf(stderr, "\t-c ver\n");
+  fprintf(stderr, "compatible version: 3.0, 3.7\n");
   exit(1);
-}
-
-static char *
-basename(name)
-     char	*name;
-{
-  char	*s = name + strlen(name);
-  
-  while (s-- > name)
-    if (*s == '/')
-      return(++s);
-  return(name);
 }
 
 static void
@@ -1140,6 +1137,20 @@ parse_arg(argc, argv)
     } else if (!strcmp(argv[i], "-m")) {
       type= JMWD;
       continue;
+    } else if (!strcmp(argv[i], "-g")) {
+      with_gram = 1;
+      continue;
+    } else if (!strcmp(argv[i], "-c")) {
+      if (++i < argc) {
+	if (!strcmp(argv[i], "3.0")) {
+	  compat = 1;
+	  continue;
+	} else if (!strcmp(argv[i], "3.7")) {
+	  compat = 0;
+	  continue;
+	}
+      }
+      usage();
     } else if (!strcmp(argv[i], "-o") && !outfile[0]) {
       if (++i < argc) {
 	strcpy(outfile, argv[i]);
@@ -1157,6 +1168,8 @@ parse_arg(argc, argv)
     usage();
   }
   if (!textfile[0] || !outfile[0])
+    usage();
+  if (with_gram && (type != JSWD || !gfile))
     usage();
 }
 
@@ -1187,10 +1200,10 @@ main (argc, argv)
   struct RkKxGram	*gram;
   char			date[26], tempfile[1024];
   
-  program = basename(argv[0]);
+  program = RkiBasename(argv[0]);
   textfile[0] = dicname[0] = outfile[0] = 0;
   parse_arg(argc, argv);
-  (void)strcpy(tempfile, basename(textfile));
+  (void)strcpy(tempfile, RkiBasename(textfile));
   for (i = strlen(tempfile), dicname[i] = 0; i--;)
     if (tempfile[i] == '.')
       dicname[i] = 0;
@@ -1199,23 +1212,33 @@ main (argc, argv)
   if (!dicname[0])
     usage();
 
+  if (!(dic = init_dic(dicname, type, 1024))) {
+    fprintf(stderr, "no space.\n");
+    exit(1);
+  }
   if (!gfile) {
     if(!(gram = RkOpenGram(HYOUJUN_GRAM))) {
       fprintf(stderr, "Warning: cannot open grammar file %s.\n", HYOUJUN_GRAM);
       exit(1);
     }
   } else {
-    if ((fd = open(gfile, 0)) < 0 || !(gram = RkReadGram(fd))) {
-      fprintf(stderr, "%s: cannot open grammar file %s.\n", program, gfile);
-      exit(1);
-    }
+    FILE *fp = fopen(gfile, "r");
+    if (!fp)
+      goto gram_err;
+    if (!(dic->gramdata = RkiReadWholeFile(fp, &dic->gramsz)))
+      goto gram_err;
+    fclose(fp);
+    if ((fd = open(gfile, 0)) < 0 || !(gram = RkReadGram(fd, dic->gramsz)))
+      goto gram_err;
     close(fd);
+    goto gram_ok;
+gram_err:
+    fprintf(stderr, "%s: cannot open grammar file %s.\n", program, gfile);
+    exit(1);
+    /* NOTREACHED */
+gram_ok:;
   }
 
-  if (!(dic = init_dic(dicname, type, 1024))) {
-    fprintf(stderr, "no space.\n");
-    exit(1);
-  }
   topnd = creat_tree(dic, gram);
   alloc_dir(dic);
   alloc_page(dic, dic->TotalPage);
@@ -1237,3 +1260,4 @@ main (argc, argv)
 		dicname, dic->TotalRec, dic->TotalCand);
   return(0);
 }
+/* vim: set sw=2: */

@@ -19,12 +19,12 @@
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 .\" PERFORMANCE OF THIS SOFTWARE. 
 .\"
-.\" $Id: server.man,v 1.6.2.1 2003/09/12 05:00:49 aida_s Exp $
+.\" $Id: server.man,v 1.9 2003/02/04 14:04:54 aida_s Exp $
 .TH CANNASERVER 1M
 .SH "NAME"
 cannaserver \- Kana-Kanji conversion server
 .SH "SYNOPSIS"
-.B "cannaserver [\-d] [\-u \fIuserid\fP] [\-inet] [\-l \fIn\fP] [\-syslog] [\-p \fInum\fP] [\fIddpath\fP] "
+.B "cannaserver [\-d] [\-u \fIuserid\fP] [\-inet] [\-inet6] [\-l \fIn\fP] [\-syslog] [\-p \fInum\fP] [\fIddpath\fP] "
 .SH "DESCRIPTION"
 .PP
 cannaserver(1M) provides the Kana\-Kanji conversion service.
@@ -34,8 +34,8 @@ start it up manually.
 .PP
 By default, cannaserver(1M) only accepts connections from clients
 at the same host where the server is running (via UNIX domain socket).
-You can make it accessible from other hosts via TCP by using option \-inet.
-Whether you use this option or not, you can get access
+You can make it accessible from other hosts via TCP by using option \-inet
+(or \-inet6). Whether you use this option or not, you can get access
 control based on user and host using @(AccessFile).
 .PP
 cannaserver(1M) immediately forks and gets into the background after
@@ -60,6 +60,9 @@ This option lets cannaserver(1M) accept connections from remote hosts
 using inet domain socket (IPv4).
 By default, the cannaserver(1M) uses only UNIX domain socket,
 i.e. only clients in your local machine can connect to the server.
+.IP "\-inet6" 12
+Enable IPv6. If this option is used solely, IPv4 access is disabled.
+If you want to use IPv4 at the same time, use both \-inet and \-inet6.
 .IP "\-l \fIn\fP" 12
 Outputs the cannaserver(1M) log to /tmp/canna.log.  n (1 to 5)
 specifies the log level.

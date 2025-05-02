@@ -21,16 +21,24 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: uldelete.c,v 1.1.1.1.2.1 2003/01/15 13:42:37 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: uldelete.c,v 1.4 2003/09/17 08:50:53 aida_s Exp $";
 #endif
 
-#if !defined(NO_EXTEND_MENU) && !defined(WIN)
+#if !defined(NO_EXTEND_MENU)
 #include	<errno.h>
 #include 	"canna.h"
 
 #ifdef luna88k
 extern int errno;
 #endif
+
+/*********************************************************************
+ *                      wchar_t replace begin                        *
+ *********************************************************************/
+#ifdef wchar_t
+# error "wchar_t is already defined"
+#endif
+#define wchar_t cannawc
 
 extern exp(int) RkwGetServerVersion pro((int *, int *));
 extern exp(int) RkwChmodDic pro((int, char *, int));
@@ -243,13 +251,13 @@ int *num_return;
   if (defaultContext < 0) {
     if ((KanjiInit() < 0) || (defaultContext < 0)) {
 #ifdef STANDALONE
-#ifndef WIN
+#ifndef CODED_MESSAGE
       jrKanjiError = "かな漢字変換できません";
 #else
       jrKanjiError = "\244\253\244\312\264\301\273\372\312\321\264\271\244\307\244\255\244\336\244\273\244\363";
 #endif
 #else
-#ifndef WIN
+#ifndef CODED_MESSAGE
       jrKanjiError = "かな漢字変換サーバと通信できません";
 #else
       jrKanjiError = "\244\253\244\312\264\301\273\372\312\321\264\271\245\265"
@@ -408,7 +416,7 @@ tourokuContext tc;
 
   dic = (deldicinfo *)malloc((nelem + 1) * sizeof(deldicinfo));
   if (dic == (deldicinfo *)NULL) {
-#ifndef WIN
+#ifndef CODED_MESSAGE
     jrKanjiError = "malloc (getEffectDic) できませんでした";
 #else
     jrKanjiError = "malloc (getEffectDic) \244\307\244\255\244\336\244\273"
@@ -422,7 +430,7 @@ tourokuContext tc;
     if (errno == EPIPE) {
       jrKanjiPipeError();
     }
-#ifndef WIN
+#ifndef CODED_MESSAGE
     jrKanjiError = "辞書検索用コンテクストを作成できませんでした";
 #else
     jrKanjiError = "\274\255\275\361\270\241\272\367\315\321\245\263\245\363"
@@ -434,7 +442,7 @@ tourokuContext tc;
 
 #ifdef STANDALONE
   if ((RkwSetDicPath(workContext, "iroha")) == NG) {
-#ifndef WIN
+#ifndef CODED_MESSAGE
     jrKanjiError = "辞書ディレクトリを設定できませんでした";
 #else
     jrKanjiError = "\274\255\275\361\245\307\245\243\245\354\245\257\245\310\245\352\244\362\300\337\304\352\244\307\244\255\244\336\244\273\244\363\244\307\244\267\244\277";
@@ -615,12 +623,12 @@ RkStat *st;
   wchar_t **mdic;
 
   if(!tc) {
-#if !defined(DEBUG) && !defined(WIN)
+#if !defined(DEBUG)
     printf("tc = NULL\n");
 #endif
   }
   if(!tc->udic) {
-#if !defined(DEBUG) && !defined(WIN)
+#if !defined(DEBUG)
     printf("tc->udic = NULL\n");
 #endif
   }
@@ -638,7 +646,7 @@ RkStat *st;
 
 #ifdef STANDALONE
   if ((RkwSetDicPath(tc->delContext, "iroha")) == NG) {
-#ifndef WIN
+#ifndef CODED_MESSAGE
     jrKanjiError = "辞書ディレクトリを設定できませんでした";
 #else
     jrKanjiError = "\274\255\275\361\245\307\245\243\245\354\245\257\245\310\245\352\244\362\300\337\304\352\244\307\244\255\244\336\244\273\244\363\244\307\244\267\244\277";
@@ -1070,13 +1078,13 @@ mode_context env;
   if(defaultContext == -1) {
     if((KanjiInit() < 0) || (defaultContext == -1)) {
 #ifdef STANDALONE
-#ifndef WIN
+#ifndef CODED_MESSAGE
       jrKanjiError = "かな漢字変換できません";
 #else
       jrKanjiError = "\244\253\244\312\264\301\273\372\312\321\264\271\244\307\244\255\244\336\244\273\244\363";
 #endif
 #else
-#ifndef WIN
+#ifndef CODED_MESSAGE
       jrKanjiError = "かな漢字変換サーバと通信できません";
 #else
       jrKanjiError = "\244\253\244\312\264\301\273\372\312\321\264\271\245\265"
@@ -1230,4 +1238,13 @@ uiContext d;
 
   return(0);
 }
-#endif /* !NO_EXTEND_MENU && !WIN */
+
+#ifndef wchar_t
+# error "wchar_t is already undefined"
+#endif
+#undef wchar_t
+/*********************************************************************
+ *                       wchar_t replace end                         *
+ *********************************************************************/
+
+#endif /* !NO_EXTEND_MENU */

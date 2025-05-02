@@ -19,7 +19,7 @@
 ;; OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 ;; PERFORMANCE OF THIS SOFTWARE. 
 
-;;  $Id: unix.canna,v 1.1.1.1.2.3 2003/09/12 05:00:49 aida_s Exp $
+;;  $Id: unix.canna,v 1.6 2003/09/25 15:24:33 aida_s Exp $
 
 ;; 記号置き換え変換を利用するか。
 
@@ -53,6 +53,10 @@
 ; 辞書は mkdic user の様なコマンドを打つことで簡単に作成することがで
 ; きます。
 ;
+; :katanana を先行させて記述した辞書は、カタカナ語の自動登録辞書に
+; なります。字種変換でカタカナに変換して確定すると、自動的にサ変
+; 名詞として登録されます。
+;
 (use-dictionary
  "iroha"
  "fuzokugo"
@@ -60,6 +64,7 @@
  "hojoswd"
  :bushu "bushu"
  :user  "user"
+ :katakana "katakana"
  )
 
 ;;; さまざまなパラメタの設定
@@ -126,6 +131,9 @@
 
 ; 一覧の時も次の入力を認めるか
 (setq allow-next-input 		 t)	; default t
+
+; 最初の変換の時までサーバへの接続を遅延するか
+(setq delay-connect t)			; default nil
 
 ; 一文字レベルのローマ字かな変換の補助テーブル
 (if use-symbolic-definition

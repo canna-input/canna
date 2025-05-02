@@ -21,12 +21,20 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[] = "$Id: ebind.c,v 1.1.1.1.2.1 2002/12/21 13:07:13 aida_s Exp $";
+static char rcsid[] = "$Id: ebind.c,v 1.6 2003/09/17 08:50:53 aida_s Exp $";
 #endif
 
 #include "canna.h"
 
 #define MAX_BYTE_PER_CHAR 4
+
+/*********************************************************************
+ *                      wchar_t replace begin                        *
+ *********************************************************************/
+#ifdef wchar_t
+# error "wchar_t is already defined"
+#endif
+#define wchar_t cannawc
 
 extern int howToReturnModeInfo;
 
@@ -221,6 +229,47 @@ jrKanjiStatus *kanji_status_return;
 		      ch, nbytes);
 }
 		      
+int
+EUCListCallback(client_data, func, items, nitems, cur_item)
+char *client_data;
+int func;
+wchar_t **items;
+int nitems, *cur_item;
+{
+  const jrEUCListCallbackStruct *elistcb;
+  int r = -1;
+  char **eitems = NULL;
+  char *ebuf = NULL;
+  char *ep;
+  size_t buflen = 0;
+  int i;
+
+  elistcb = (const jrEUCListCallbackStruct *)client_data;
+  if (!items) /* CANNA_LIST_Insert sets 'nitems' to the pressed key (!=0) */
+    return elistcb->callback_func(elistcb->client_data,
+	func, NULL, nitems, cur_item);
+  for (i = 0; i < nitems; i++) {
+    /* EUC(最大3バイト) + 終端ヌル */
+    buflen += WStrlen(items[i]) * 3 + 1;
+  }
+  ebuf = (char *)malloc(buflen);
+  eitems = (char **)malloc((nitems + 1) * sizeof(char **));
+  if (!ebuf || !eitems)
+    goto last;	/* XXX: 単に-1を返していいのか？ */
+  ep = ebuf;
+  for (i = 0; i < nitems; i++) {
+    size_t len = WCstombs(ep, items[i], ebuf + buflen - ep);
+    eitems[i] = ep;
+    ep += len + 1;  /* バッファは常に足りていてヌル終端がある */
+  }
+  eitems[nitems] = NULL;
+  r = elistcb->callback_func(elistcb->client_data,
+      func, eitems, nitems, cur_item);
+last:
+  free(ebuf);
+  free(eitems);
+  return r;
+}
 
 int
 XKanjiControl2(display, window, request, arg)
@@ -230,8 +279,9 @@ BYTE *arg;
   int ret = -1, len1, len2;
   wcKanjiStatusWithValue wksv;
   wcKanjiStatus wks;
+  jrListCallbackStruct list_cb;
   int ch;
-#ifndef WIN
+#ifndef USE_MALLOC_FOR_BIG_ARRAY
   wchar_t arg2[256];
   wchar_t wbuf[320], wbuf1[320], wbuf2[320];
 #else
@@ -310,9 +360,13 @@ BYTE *arg;
       }
     }
     goto return_ret;
-  case KC_SETLISTCALLBACK: /* どうしたら良いかわからないもの */
-    ret = -1;
+  case KC_SETLISTCALLBACK: /* dirty, dirty hack */
+    /* list_cbはKC_setListCallbackでd->elistcbに引っ越す */
+    list_cb.client_data = (char *)arg;
+    list_cb.callback_func = &EUCListCallback;
+    ret = XwcKanjiControl2(display, window, request, (char *)&list_cb);
     goto return_ret;
+    /* FALLTHROUGH */
   default: /* ワイドでもEUCでも変わらないもの */
     ret = XwcKanjiControl2(display, window, request, arg);
     goto return_ret;
@@ -351,7 +405,7 @@ BYTE *arg;
     goto return_ret;
   }
  return_ret:
-#ifdef WIN
+#ifdef USE_MALLOC_FOR_BIG_ARRAY
   (void)free((char *)wbuf2);
   (void)free((char *)wbuf1);
   (void)free((char *)wbuf);
@@ -385,3 +439,11 @@ jrKanjiControl(context, request, arg)
   return XKanjiControl2((unsigned int)0, (unsigned int)context,
 			request, (BYTE *)arg);
 }
+
+#ifndef wchar_t
+# error "wchar_t is already undefined"
+#endif
+#undef wchar_t
+/*********************************************************************
+ *                       wchar_t replace end                         *
+ *********************************************************************/

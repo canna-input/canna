@@ -1,17 +1,6 @@
-/* $Id: Imakefile,v 1.3 2002/10/20 14:29:57 aida_s Exp $ */
+/* $Id: Imakefile,v 1.4 2003/01/26 04:36:32 aida_s Exp $ */
 #include "../../Canna.conf"
-
-      CANNAROOT = ../..
-       INCLUDES = -I$(CANNAROOT)/include
-           SRCS = ctow.c
-
-#if defined(__EMX__) || defined(__CYGWIN32__)
-AllTarget(ctow.exe)
-#else
-AllTarget(ctow)
-#endif
-SingleProgramTarget(ctow,ctow.o,,)
-InstallProgram(ctow,$(cannaBinDir))
-InstallManPage(ctow,$(cannaManDir))
-DependTarget()
-LintTarget()
+#define SimpleCommand
+#define TargetName ctow
+#define ManSrcName ctow
+#include "../cmd.tmpl"

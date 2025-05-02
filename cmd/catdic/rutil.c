@@ -24,7 +24,7 @@
  * rutil.c
  */
 #ifndef lint
-static char rcs[] = "@(#) 112.1 $Id: rutil.c,v 1.2 2002/10/20 14:29:57 aida_s Exp $";
+static char rcs[] = "@(#) 112.1 $Id: rutil.c,v 1.3 2003/02/01 19:34:20 aida_s Exp $";
 #endif
 
 #ifdef ENGINE_SWITCH
@@ -32,6 +32,7 @@ static char rcs[] = "@(#) 112.1 $Id: rutil.c,v 1.2 2002/10/20 14:29:57 aida_s Ex
 #endif
 
 #include <stdio.h>
+#define CANNA_NEW_WCHAR_AWARE
 #include <canna/RK.h>
 
 #ifdef USE_VARARGS

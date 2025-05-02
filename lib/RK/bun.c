@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[] = "$Id: bun.c,v 1.2.2.1 2003/01/06 04:42:08 aida_s Exp $";
+static char rcsid[] = "$Id: bun.c,v 1.6 2003/09/21 10:16:49 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */
@@ -42,6 +42,152 @@ static char rcsid[] = "$Id: bun.c,v 1.2.2.1 2003/01/06 04:42:08 aida_s Exp $";
 
 #define	STRCMP(d, s)	strcmp((char *)(d), (char *)(s))
 extern	void	usncopy();
+
+#ifdef RK_LOG
+#include	<stdio.h>
+static FILE *
+openLogFile(cxnum)
+int cxnum;
+{
+    char file[128];
+    FILE *fp;
+    sprintf(file, "/tmp/henkan%03d.log", cxnum);
+    fp = fopen(file, "a");
+    return fp;
+}
+
+static char *
+nword2str(cx, w, yomi)
+struct RkContext *cx;
+struct nword *w;
+Wchar *yomi;
+{
+    static unsigned char msg[RK_LINE_BMAX];
+    static unsigned char eyomi[RK_LINE_BMAX];
+    struct nword *words[RK_CONC_NMAX], **p, *wp;
+    int msg_idx = 0;
+    char *hinsi;
+    Wchar *kanji, *_RkGetKanji();
+    unsigned char *ekanji, *ustoeuc();
+
+    for (wp = w, p = words; wp; wp = wp->nw_left) 
+	*p++ = wp;
+
+    while (p-- > words) {
+        int yomi_len, hinsi_len;
+
+	wp = *p;
+	if (!wp->nw_left)
+	    continue;
+	kanji = _RkGetKanji(wp, yomi + wp->nw_left->nw_ylen, cx->concmode);
+	ekanji = ustoeuc(kanji, wp->nw_klen - wp->nw_left->nw_klen,
+			 msg + msg_idx, RK_LINE_BMAX - msg_idx);
+	msg_idx = ekanji - msg;
+        ustoeuc(yomi + wp->nw_left->nw_ylen, 
+                wp->nw_ylen - wp->nw_left->nw_ylen, eyomi, RK_LINE_BMAX);
+        yomi_len = strlen(eyomi);
+	hinsi = RkGetGramName(cx->gram->gramdic, wp->nw_rowcol);
+	hinsi_len = strlen(hinsi);
+        if (msg_idx + 1 + yomi_len + hinsi_len + 2 >= RK_LINE_BMAX)
+	    break;
+        sprintf(msg + msg_idx, "/%s[%s]", eyomi, hinsi);
+        msg_idx += 1 + yomi_len + hinsi_len + 2;
+    }
+    msg[msg_idx] = 0;
+
+    return msg;
+}
+
+static
+dumpBunq(cx, from, end, log, fp)
+struct RkContext *cx;
+int from;
+unsigned end;
+int log; /* 0 候補変更 1 変換開始 2 確定 3 文節長変更 */
+FILE *fp;
+{
+    int i;
+    struct nstore *store = cx->store;
+    struct nbun *bun = store->bunq + from;
+    struct henkanlog *l = store->hlog;
+
+    for (i = 0; i < from; i++) l = l->next;
+    if (log & 1) {
+	/* 文節長変更情報の初期化 */
+	char **prev = store->blog;
+	int nprev = store->nblog;
+	store->nblog = end;
+	store->blog = (char **)malloc(sizeof(char *) * end);
+	/* この文節までの情報は全部コピー */
+	if (log == 3)
+	    for (i = 0; i <= from; i++)
+		store->blog[i] = prev[i];
+	/* 残りは捨てる */
+	for (i = from + (log == 3); i < nprev; i++)
+	    if (prev[i]) free(prev[i]);
+	if (prev) free(prev);
+	/* 以降は初期化 */
+	for (i = from + (log == 3); i < end; i++)
+	    store->blog[i] = NULL;
+    }
+    for ( i = from; i < end; i++, bun++) {
+	struct nword *w;
+	char *henkan;
+	int n = bun->nb_curcand;
+	/* 現在候補の取得 */
+	for ( w = bun->nb_cand; w; w = w->nw_next ) {
+	    if ( CanSplitWord(w) && bun->nb_curlen == w->nw_ylen )
+		if ( n-- <= 0 ) break;
+	}
+	if (log & 1) {
+	    /* ログを取る領域を確保 */
+	    struct henkanlog *p = NULL, *q;
+	    if (q = l->next) {
+		p = q->next;
+		if (q->henkan) {
+		    if (log == 3 && from == i && !store->blog[i])
+			store->blog[i] = q->henkan;
+		    else
+			if (q->henkan[0]) free(q->henkan);
+		}
+		free(q);
+	    }
+	    l = l->next = (struct henkanlog *)
+		    malloc(sizeof(struct henkanlog));
+	    l->next = p;
+	} else if (log == 2) l = l->next;
+
+	if (!w) {
+	    if (log & 1) l->henkan = "";
+	    else if (log == 2) {
+		unsigned char msg[RK_LINE_BMAX];
+		unsigned char *ekanji, *ustoeuc();
+		ustoeuc(store->yomi + bun->nb_yoff, bun->nb_curlen,
+			msg, RK_LINE_BMAX);
+		fprintf(fp, "リテラル %s\n", msg);
+	    }
+	} else {
+	    henkan = nword2str(cx, w, store->yomi + bun->nb_yoff);
+	    if (log & 1) {
+		l->henkan = (char *)malloc(strlen(henkan) + 1);
+		strcpy(l->henkan, henkan);
+	    }
+	    else if (log == 2) {
+		if (store->blog[i]) {
+		    fprintf(fp, "誤変換 文節長変更 %s -> %s\n",
+			    store->blog[i], henkan);
+		}
+		if (STRCMP(l->henkan, henkan))
+		    fprintf(fp, "誤変換 %s -> %s\n", l->henkan, henkan);
+		else
+		    fprintf(fp, "正解 %s\n", henkan);
+	    }
+	}
+    } 
+    fprintf(fp, "\n");
+    fflush(fp);
+}
+#endif
 
 static void
 freeBunStorage(s)
@@ -77,6 +223,12 @@ allocBunStorage(len)
     s->xqh = (struct nword **)0;
     s->nyomi = (unsigned)0;
     s->maxyomi = (unsigned)len;
+#ifdef RK_LOG
+    s->nblog = 0;
+    s->blog = NULL;
+    s->hlog = &s->dmi;
+    s->dmi.next = NULL; s->dmi.henkan = NULL;
+#endif
 
     s->yomi = (Wchar *)calloc((s->maxyomi+1+2*OVERRUN_MARGIN), sizeof(Wchar));
     s->maxbunq = (unsigned)len;
@@ -239,6 +391,13 @@ RkwBgnBun(cx_num, yomi, n, kouhomode)
     cx->store->nyomi = n;
     cx->store->bunq[0].nb_yoff = 0;
     i = _RkRenbun2(cx, mask1 & RK_TANBUN ? n : 0);
+#ifdef RK_LOG
+    {
+	FILE *fp = openLogFile(cx_num);
+	dumpBunq(cx, 0, cx->store->maxbun, 1, fp);
+	fclose(fp);
+    }
+#endif
     return(i);
   } else {
     cx->concmode |= RK_MAKE_WORD;
@@ -288,6 +447,13 @@ RkwEndBun(cx_num, mode)
       return -1;
     };
   }
+#ifdef RK_LOG
+  if (mode) {
+      FILE *fp = openLogFile(cx_num);
+      dumpBunq(cx, 0, store->maxbun, 2, fp);
+      fclose(fp);
+  }
+#endif
   for (i = 0; i < (int)store->maxbun; i++)
     (void)_RkLearnBun(cx, i, mode);
   if (cx->flags & CTX_XAUT)
@@ -415,7 +581,17 @@ _RkResize(cx_num, len, t)
     len = HowManyChars(store->yomi + store->bunq[store->curbun].nb_yoff, len);
   if (0 < len && (unsigned)(bun->nb_yoff + len) <= store->nyomi) {
     bun->nb_flags |= RK_REARRANGED;
+#ifndef RK_LOG
     return(_RkRenbun2(cx, len));
+#else
+    {
+	int ret_val = _RkRenbun2(cx, len);
+	FILE *fp = openLogFile(cx_num);
+	dumpBunq(cx, store->curbun, store->maxbun, 3, fp);
+	fclose(fp);
+	return ret_val;
+    }
+#endif
   }
   return(store->maxbun);
 }
@@ -465,7 +641,17 @@ int
   if (store->nyomi > (unsigned)(bun->nb_yoff + bun->nb_curlen) &&
 	   store->yomi[bun->nb_yoff + bun->nb_curlen]) {
     bun->nb_flags |= RK_REARRANGED;
+#ifdef RK_LOG
+    {
+	int ret_val = _RkRenbun2(cx, (int)(bun->nb_curlen + 1)); 
+	FILE *fp = openLogFile(cx_num);
+	dumpBunq(cx, store->curbun, store->maxbun, 3, fp);
+	fclose(fp);
+	return ret_val;
+    }
+#else
     return(_RkRenbun2(cx, (int)(bun->nb_curlen + 1)));
+#endif
   }
   return(store->maxbun);
 }
@@ -488,7 +674,17 @@ RkwShorten(cx_num)
   }
   if (bun->nb_curlen > 1) {
     bun->nb_flags |= RK_REARRANGED;
+#ifdef RK_LOG
+    {
+	int ret_val = _RkRenbun2(cx, (int)(bun->nb_curlen - 1)); 
+	FILE *fp = openLogFile(cx_num);
+	dumpBunq(cx, store->curbun, store->maxbun, 3, fp);
+	fclose(fp);
+	return ret_val;
+    }
+#else
     return(_RkRenbun2(cx, (int)(bun->nb_curlen - 1)));
+#endif
   }
   return(store->maxbun);
 }
@@ -561,9 +757,22 @@ RkwStoreYomi(cx_num, yomi, nlen)
       cp -= 1;
   } else
     usncopy((store->yomi + bun->nb_yoff), yomi, (unsigned)nlen);
+#ifdef RK_LOG
+  {
+      int ret_val = _RkRenbun2(cx, 0); 
+      FILE *fp = openLogFile(cx_num);
+      fputs("読みの置換\n", fp);
+      dumpBunq(cx, store->curbun, store->maxbun, 1, fp);
+      fclose(fp);
+      if ((i = ret_val) != -1)
+	  store->curbun = cp;
+      return(i);
+  }
+#else
   if ((i = _RkRenbun2(cx, 0)) != -1)
     store->curbun = cp;
   return(i);
+#endif
 }
 
 /* RkGoTo/RkLeft/RkRight
@@ -1547,8 +1756,8 @@ RkwSync(cx_num, dicname)
 RkwGetSimpleKanji(cxnum, dicname, yomi, maxyomi,
 		  kanjis, maxkanjis, hinshis, maxhinshis)
 int cxnum, maxyomi, maxkanjis, maxhinshis;
-char *dicname, *hinshis;
-Wchar *yomi, *kanjis;
+char *dicname;
+Wchar *yomi, *kanjis, *hinshis;
 {
   return -1;
 }

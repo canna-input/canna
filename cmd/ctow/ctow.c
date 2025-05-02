@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static char rcs[]="@(#) 112.1 $Id: ctow.c,v 1.2.2.1 2003/01/15 13:42:35 aida_s Exp $";
+static char rcs[]="@(#) 112.1 $Id: ctow.c,v 1.3 2003/01/15 13:41:02 aida_s Exp $";
 #endif
 /* ctow.c  テキスト形式の辞書を「かんな」からＷｎｎのものに変換する。
  *	ctow [-f parts-of-speech table ] [cannadic] [wnndic]

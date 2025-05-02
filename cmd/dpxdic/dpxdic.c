@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static char rcsid[]="@(#) 102.1 $Id: dpxdic.c,v 1.3 2002/10/20 14:29:57 aida_s Exp $";
+static char rcsid[]="@(#) 102.1 $Id: dpxdic.c,v 1.7 2003/09/18 12:59:58 aida_s Exp $";
 #endif
 
 #include "RKintern.h"
@@ -34,6 +34,7 @@ static char rcsid[]="@(#) 102.1 $Id: dpxdic.c,v 1.3 2002/10/20 14:29:57 aida_s E
 #endif
 
 #include "ccompat.h"
+#include "RKindep/file.h"
 
 #ifndef HYOUJUN_GRAM
 #ifdef USE_OBSOLETE_STYLE_FILENAME
@@ -46,20 +47,6 @@ static char rcsid[]="@(#) 102.1 $Id: dpxdic.c,v 1.3 2002/10/20 14:29:57 aida_s E
 int	inv = 0;
 static	char	*program;
 static	unsigned char ebuf[8048];
-
-char *
-basename(name)
-char	*name;
-{
-    char	*s = name + strlen(name);
-    
-    if (*s == '/')
-	*s = (char)0;
-    while (s-- >= name)
-	if (*s == '/')
-	    return ++s;
-    return name;
-}
 
 unsigned char *
 show_a_cand(gram, wrec, or)
@@ -447,7 +434,8 @@ getdic(dic, filenm, dmnm)
     }
     doff = off;
     off += hd.data[HD_SIZ].var;
-    if (!strncmp(".swd", (char *)(hd.data[HD_DMNM].ptr + strlen((char *)hd.data[HD_DMNM].ptr) - 4), 4)) {
+    if (HD_VERSION(&hd) < 300702L &&
+	!strncmp(".swd", (char *)(hd.data[HD_DMNM].ptr + strlen((char *)hd.data[HD_DMNM].ptr) - 4), 4)) {
       if (lseek(fd, off, 0) < 0 || read(fd, (char *)ll, 4) != 4)
 	err = 1;
       off += bst4_to_l(ll) + 4;
@@ -485,7 +473,7 @@ main (argc, argv)
   char			bn[256];
   int			fd;
 
-  program = basename(argv[0]);
+  program = RkiBasename(argv[0]);
   for (i = 1; i < argc && argv[i][0] == '-'; i++) {
     if (!strcmp(argv[i], "-i") ) {
       inv = 1;
@@ -520,7 +508,7 @@ main (argc, argv)
 #ifdef __CYGWIN32__
     setmode(fd, O_BINARY);
 #endif
-    gram = RkReadGram(fd);
+    gram = RkReadGram(fd, (size_t)-1);
     close(fd);
   }
   (void)strcpy(bn, argv[i]);

@@ -21,11 +21,19 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: ulhinshi.c,v 1.1.1.1 2002/10/19 08:27:52 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: ulhinshi.c,v 1.3 2003/09/17 08:50:53 aida_s Exp $";
 #endif
 
 #include <errno.h>
 #include "canna.h"
+
+/*********************************************************************
+ *                      wchar_t replace begin                        *
+ *********************************************************************/
+#ifdef wchar_t
+# error "wchar_t is already defined"
+#endif
+#define wchar_t cannawc
 
 #ifndef NO_EXTEND_MENU
 #ifdef luna88k
@@ -40,7 +48,7 @@ static int tourokuYes pro((uiContext)),
            tangoTouroku pro((uiContext));
 
 static char *e_message[] = {
-#ifndef WIN
+#ifndef CODED_MESSAGE
   /*0*/"さらに細かい品詞分けのための質問をしても良いですか?(y/n)",
   /*1*/"読みと候補を 終止形で入力してください。",
   /*2*/"読みと候補の 活用が違います。入力しなおしてください。",
@@ -136,7 +144,7 @@ static char *e_message[] = {
 #define message_num (sizeof(e_message) / sizeof(char *))
 static wchar_t *message[message_num];
 
-#ifdef WIN
+#ifndef CODED_MESSAGE
 static char sgyouA[] = "かがさたなばまらわ";
 static char sgyouI[] = "きぎしちにびみりい";
 static char sgyouU[] = "くぐすつぬぶむるう";
@@ -194,7 +202,6 @@ wchar_t *to_buf, *x1, *x2, *from_buf;
 }
 #endif /* NO_EXTEND_MENU */
 
-#ifndef WIN
 void
 EWStrcat(buf, xxxx)
 wchar_t *buf;
@@ -205,7 +212,6 @@ char *xxxx;
   MBstowcs(x, xxxx, 1024);
   WStrcat(buf, x);
 }
-#endif
 
 #ifndef NO_EXTEND_MENU
 static void
@@ -463,7 +469,7 @@ uiContext	d;
 
   makeHinshi(d); /* 品詞、エラーメッセージ、質問をセットしてくる */
 
-#if defined(DEBUG) && !defined(WIN)
+#if defined(DEBUG)
   if(iroha_debug) {
     printf("tc->genbuf=%s, tc->qbuf=%s, tc->hcode=%s\n", tc->genbuf, tc->qbuf,
 	   tc->hcode);
@@ -1113,3 +1119,11 @@ uiContext	d;
   return(0); /* 単語登録完了 */
 }
 #endif /* NO_EXTEND_MENU */
+
+#ifndef wchar_t
+# error "wchar_t is already undefined"
+#endif
+#undef wchar_t
+/*********************************************************************
+ *                       wchar_t replace end                         *
+ *********************************************************************/

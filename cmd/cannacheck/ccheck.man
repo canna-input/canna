@@ -18,7 +18,7 @@
 .\" USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 .\" PERFORMANCE OF THIS SOFTWARE.
-.\" $Id: ccheck.man,v 1.1.1.1.2.1 2003/09/12 05:48:43 aida_s Exp $
+.\" $Id: ccheck.man,v 1.2 2003/09/04 12:09:02 takasan Exp $
 .TH CANNACHECK 1
 .SH "NAME"
 cannacheck \- Display information about Japanese input system Canna

@@ -20,48 +20,28 @@
  * PERFORMANCE OF THIS SOFTWARE. 
  */
 
-/* $Id: RK.h,v 1.2.2.1 2003/09/12 13:36:48 aida_s Exp $ */
+/* $Id: RK.h,v 1.10 2003/09/21 10:16:49 aida_s Exp $ */
 #ifndef		_RK_h
 #define		_RK_h
 
-#if (defined(_WINDOWS) || defined(WIN32)) && !defined(WIN)
-#define WIN
-#endif
-
-#ifdef WIN
-#include <windows.h>
-#endif
-
-#ifndef _WCHAR_T
-# if defined(WCHAR_T) || defined(_WCHAR_T_) || defined(__WCHAR_T) \
-  || defined(_GCC_WCHAR_T) || defined(_WCHAR_T_DEFINED)
-#  define _WCHAR_T
-# endif
-#endif
 
 #ifdef canna_export
 # define CANNA_EXP_PREDEFINED
 #else /* canna_export has not been not defined */
-# if (defined(RK_INTERNAL) && defined(ENGINE_SWITCH)) || !defined(WIN)
-#  define canna_export(x) x
-# else
-#  ifdef WIN32
-#   define canna_export(x) __declspec(dllexport) x
-#  else /* !WIN32 */
-#   define canna_export(x) x __export CALLBACK
-#  endif /* !WIN32 */
-# endif
+# define canna_export(x) x
 #endif
 
 #ifdef pro
 #define CANNA_PRO_PREDEFINED
 #else
-#if defined(__STDC__) || defined(__cplusplus) || defined(WIN)
+#if defined(__STDC__) || defined(__cplusplus)
 #define pro(x) x
 #else
 #define pro(x) ()
 #endif
 #endif
+
+#include <canna/sysdep.h>
 
 typedef	struct {
    int		ylen;		/* yomigana no nagasa (in byte) */ 
@@ -190,7 +170,20 @@ struct RkRxDic	{
 extern "C" {
 #endif
 
-#if defined(_WCHAR_T)
+#ifndef CANNAWC_DEFINED
+# if defined(CANNA_NEW_WCHAR_AWARE)
+#  define CANNAWC_DEFINED
+#  ifdef CANNA_WCHAR16
+typedef canna_uint16_t cannawc;
+#  else
+typedef canna_uint32_t cannawc;
+#  endif
+# elif defined(_WCHAR_T)
+#  error "You can't use old wide character for RK interface"
+# endif
+#endif
+
+#ifdef CANNAWC_DEFINED
 
 canna_export(void) RkwFinalize pro((void));
 canna_export(int) RkwInitialize pro((char *));
@@ -205,9 +198,9 @@ canna_export(int) RkwUnmountDic pro((int, char *));
 canna_export(int) RkwRemountDic pro((int, char *, int));
 canna_export(int) RkwSync pro((int, char *));
 canna_export(int) RkwGetMountList pro((int, char *, int));
-canna_export(int) RkwDefineDic pro((int, char *, wchar_t *));
-canna_export(int) RkwDeleteDic pro((int, char *, wchar_t *));
-canna_export(int) RkwBgnBun pro((int, wchar_t *, int, int));
+canna_export(int) RkwDefineDic pro((int, char *, cannawc *));
+canna_export(int) RkwDeleteDic pro((int, char *, cannawc *));
+canna_export(int) RkwBgnBun pro((int, cannawc *, int, int));
 canna_export(int) RkwEndBun pro((int, int));
 canna_export(int) RkwGoTo pro((int, int));
 canna_export(int) RkwLeft pro((int));
@@ -219,22 +212,22 @@ canna_export(int) RkwPrev pro((int));
 canna_export(int) RkwResize pro((int, int));
 canna_export(int) RkwEnlarge pro((int));
 canna_export(int) RkwShorten pro((int));
-canna_export(int) RkwSubstYomi pro((int, int, int, wchar_t *, int));
-canna_export(int) RkwStoreYomi pro((int, wchar_t *, int));
-canna_export(int) RkwGetLastYomi pro((int, wchar_t *, int));
+canna_export(int) RkwSubstYomi pro((int, int, int, cannawc *, int));
+canna_export(int) RkwStoreYomi pro((int, cannawc *, int));
+canna_export(int) RkwGetLastYomi pro((int, cannawc *, int));
 canna_export(int) RkwFlushYomi pro((int));
 canna_export(int) RkwRemoveBun pro((int, int));
 canna_export(int) RkwGetStat pro((int, RkStat *));
-canna_export(int) RkwGetYomi pro((int, wchar_t *, int));
-canna_export(int) RkwGetHinshi pro((int, wchar_t *, int));
-canna_export(int) RkwGetKanji pro((int, wchar_t *, int));
-canna_export(int) RkwGetKanjiList pro((int, wchar_t *, int));
+canna_export(int) RkwGetYomi pro((int, cannawc *, int));
+canna_export(int) RkwGetHinshi pro((int, cannawc *, int));
+canna_export(int) RkwGetKanji pro((int, cannawc *, int));
+canna_export(int) RkwGetKanjiList pro((int, cannawc *, int));
 canna_export(int) RkwGetLex pro((int, RkLex *, int));
-canna_export(int) RkwCvtHira pro((wchar_t *, int, wchar_t *, int));
-canna_export(int) RkwCvtKana pro((wchar_t *, int, wchar_t *, int));
-canna_export(int) RkwCvtHan pro((wchar_t *, int, wchar_t *, int));
-canna_export(int) RkwCvtZen pro((wchar_t *, int, wchar_t *, int));
-canna_export(int) RkwCvtEuc pro((wchar_t *, int, wchar_t *, int));
+canna_export(int) RkwCvtHira pro((cannawc *, int, cannawc *, int));
+canna_export(int) RkwCvtKana pro((cannawc *, int, cannawc *, int));
+canna_export(int) RkwCvtHan pro((cannawc *, int, cannawc *, int));
+canna_export(int) RkwCvtZen pro((cannawc *, int, cannawc *, int));
+canna_export(int) RkwCvtEuc pro((cannawc *, int, cannawc *, int));
 canna_export(int) RkwCreateDic pro((int, char *, int));
 canna_export(int) RkwQueryDic pro((int, char *, char *, struct DicInfo *));
 canna_export(void) RkwCloseRoma pro((struct RkRxDic *));
@@ -248,9 +241,10 @@ canna_export(int) RkwRemoveDic pro((int, char *, int));
 canna_export(int) RkwRenameDic pro((int, char *, char *, int));
 canna_export(int) RkwChmodDic pro((int, char *, int));
 canna_export(int) RkwGetWordTextDic pro((int, unsigned char *,
-					 unsigned char *, wchar_t *, int));
-canna_export(int) RkwGetSimpleKanji pro((int, char *, wchar_t *, int,
-					 wchar_t *, int, char *, int));
+					 unsigned char *, cannawc *, int));
+canna_export(int) RkwGetSimpleKanji pro((int, char *, cannawc *, int,
+					 cannawc *, int, cannawc *, int));
+canna_export(int) RkwStoreRange pro((int, cannawc *, int));
 
 #endif
 
@@ -297,16 +291,14 @@ int	RkCvtKana pro((unsigned char *, int, unsigned char *, int));
 int	RkCvtHan pro((unsigned char *, int, unsigned char *, int));
 int	RkCvtZen pro((unsigned char *, int, unsigned char *, int));
 int	RkCvtNone pro((unsigned char *, int, unsigned char *, int));
-#ifndef WIN
 int	RkCvtEuc pro((unsigned char *, int, unsigned char *, int));
-#endif
 int	RkQueryDic pro((int, char *, char *, struct DicInfo *));
 
 #ifdef __cplusplus
 }
 #endif
 
-#if defined(ENGINE_SWITCH) || defined(WIN)
+#if defined(ENGINE_SWITCH)
 struct rkfuncs {
   int (*GetProtocolVersion) pro((int *, int *));
   char *(*GetServerName) pro((void));
@@ -360,7 +352,7 @@ struct rkfuncs {
   int (*GetWordTextDic) pro((int, unsigned char	*, unsigned char *,
 			     wchar_t *, int));
   int (*GetSimpleKanji) pro((int, char *, wchar_t *, int, wchar_t *, int,
-			     char *, int));
+			     wchar_t *, int));
 };
 #endif /* ENGINE_SWITCH */
 

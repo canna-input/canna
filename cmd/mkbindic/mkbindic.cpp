@@ -20,7 +20,7 @@ XCOMM USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 XCOMM OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 XCOMM PERFORMANCE OF THIS SOFTWARE. 
 
-XCOMM $Id: mkbindic.cpp,v 1.2.2.3 2003/01/15 13:42:37 aida_s Exp $
+XCOMM $Id: mkbindic.cpp,v 1.6 2003/08/24 09:40:27 aida_s Exp $
 #include "cannaconf.h"
 #if defined(SYSV) || defined(SVR4)
 # ifdef nec_ews
@@ -39,7 +39,9 @@ cpp_text=;
 spl_text=;
 bck_text=;
 flag=;
+compat_flag=;
 sortcmd="sort -d -s +0 -1"
+usage="usage: mkbindic [-m|-s] [-name dicname] [-c version] textfile [cpp-args ...]";
 : ${TMPDIR:=/tmp}
 
 /* main */
@@ -50,7 +52,7 @@ sortcmd="sort -d -s +0 -1"
 	    if [ -z "$flag" ]; then {
 		flag="-m";
 	    } else {
-		echo "usage: mkbindic [-m|-s] [-name dicname] textfile [cpp-args ...]";
+		echo "$usage";
 		exit 1;
 	    } fi;
 	    ;;
@@ -58,7 +60,7 @@ sortcmd="sort -d -s +0 -1"
 	    if [ -z "$flag" ]; then {
 		flag="-s";
 	    } else {
-		echo "usage: mkbindic [-m|-s] [-name dicname] textfile [cpp-args ...]";
+		echo "$usage";
 		exit 1;
 	    } fi;
 	    ;;
@@ -67,7 +69,16 @@ sortcmd="sort -d -s +0 -1"
 	    if [ -z "$dic_name" ]; then {
 		dic_name=$1;
 	    } else {
-		echo "usage: mkbindic [-m|-s] [-name dicname] textfile [cpp-args ...]";
+		echo "$usage";
+		exit 1;
+	    } fi;
+	    ;;
+	-c)
+    	    shift;
+	    if [ -z "$compat_flag" ]; then {
+		compat_flag="-c $1";
+	    } else {
+		echo "$usage";
 		exit 1;
 	    } fi;
 	    ;;
@@ -83,15 +94,15 @@ sortcmd="sort -d -s +0 -1"
     }; done
 /* input file */
     if [ -z "$text_file" ]; then
-	echo "usage: mkbindic [-m|-s] [-name dicname] textfile [cpp-args ...]";
+	echo "$usage";
 	exit 1;
     fi;
     if [ ! -r $text_file ]; then 
-	echo "mkbindic: cannot open $text_file";
+	echo "$usage";
 	exit 1;
     fi;
     if [ -d $text_file ]; then 
-	echo "mkbindic: cannot open $text_file";
+	echo "$usage";
 	exit 1;
     fi;
     if [ "$dic_name" != "" ]; then
@@ -247,11 +258,11 @@ sortcmd="sort -d -s +0 -1"
     fi;
 #ifdef nec_ews
 /* \c for crxdic echo back unexpected \n */
-    echo "crxdic $flag -o $dic_name $text_file\c";
+    echo "crxdic $flag $compat_flag -o $dic_name $text_file\c";
 #else
-    echo "crxdic $flag -o $dic_name $text_file";
+    echo "crxdic $flag $compat_flag -o $dic_name $text_file";
 #endif
-    crxdic $flag -o $dic_name $text_file;
+    crxdic $flag $compat_flag -o $dic_name $text_file;
     if [ $? != 0 ]; then
         mv $bck_text $text_file;
 	echo "mkbindic: fatal error. exit";

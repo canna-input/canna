@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static char rcsid[]="@(#) 102.1 $Id: crfreq.c,v 1.2.2.1 2003/01/15 13:42:35 aida_s Exp $";
+static char rcsid[]="@(#) 102.1 $Id: crfreq.c,v 1.5 2003/09/24 14:50:39 aida_s Exp $";
 #endif
 
 #include "RKintern.h"
@@ -105,10 +105,10 @@ main(argc, argv)
 {
   struct HD	hd;
   off_t		off, doff; 
-  unsigned	sz;
+  size_t	sz;
   unsigned char	ll[4], *buf;
-  char		*flnm = (char *)0, *dmnm, freq[RK_MAX_HDRSIZ];
-  char		*frqf, *frqe, freqfile[RK_MAX_HDRSIZ];
+  char		*flnm = (char *)0, *dmnm, freq[RK_OLD_MAX_HDRSIZ];
+  char		*frqf, *frqe, freqfile[RK_OLD_MAX_HDRSIZ];
   int		bit_size, fd, fr, fqoffset, i, j, k, lk, nc, nw, vds = 0, err;
   int		fnum;
   long		fqbytes;
@@ -150,7 +150,7 @@ main(argc, argv)
   if (!flnm)
     usage();
 
-  if (strlen(flnm) >= RK_MAX_HDRSIZ || strlen(dmnm) >= RK_MAX_HDRSIZ ||
+  if (strlen(flnm) >= RK_OLD_MAX_HDRSIZ || strlen(dmnm) >= RK_OLD_MAX_HDRSIZ ||
       (fd = open(flnm, O_RDONLY)) < 0) {
     (void)fprintf(stderr, "%s: cannot open %s\n", program, flnm);
     exit(1);
@@ -164,7 +164,8 @@ main(argc, argv)
        lk = strcmp(dmnm, (char *)hd.data[HD_DMNM].ptr)) {
     doff = off;
     off += hd.data[HD_SIZ].var;
-    if (!strncmp(".swd", (char *)(hd.data[HD_DMNM].ptr + strlen((char *)hd.data[HD_DMNM].ptr) - 4), 4)) {
+    if (HD_VERSION(&hd) < 0x300702L &&
+	!strncmp(".swd", (char *)(hd.data[HD_DMNM].ptr + strlen((char *)hd.data[HD_DMNM].ptr) - 4), 4)) {
       if (lseek(fd, off, 0) < 0 || read(fd, (char *)ll, 4) != 4) 
 	err = 1;
       off += bst4_to_l(ll) + 4;

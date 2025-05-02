@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: empty.c,v 1.1.1.1 2002/10/19 08:27:48 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: empty.c,v 1.2 2003/09/17 08:50:53 aida_s Exp $";
 #endif /* lint */
 
 #include "canna.h"
@@ -529,48 +529,6 @@ uiContext d;
   EmptyBaseModeInfo(d, yc);
   return 0;
 }
-
-#ifdef WIN
-
-extern specialfunc pro((uiContext, int));
-
-static HenkanRegion pro((uiContext));
-
-static
-HenkanRegion(d)
-uiContext d;
-{
-  return specialfunc(d, CANNA_FN_HenkanRegion);
-}
-
-static PhonoEdit pro((uiContext));
-
-static
-PhonoEdit(d)
-uiContext d;
-{
-  return specialfunc(d, CANNA_FN_PhonoEdit);
-}
-
-static DicEdit pro((uiContext));
-
-static
-DicEdit(d)
-uiContext d;
-{
-  return specialfunc(d, CANNA_FN_DicEdit);
-}
-
-static Configure pro((uiContext));
-
-static
-Configure(d)
-uiContext d;
-{
-  return specialfunc(d, CANNA_FN_Configure);
-}
-
-#endif
 
 #ifndef NO_EXTEND_MENU
 static int

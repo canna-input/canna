@@ -1,6 +1,6 @@
 /*
  *  termcap.c,v 1.6 2002/06/13 21:27:47 hiroo Exp
- *  Canna: $Id: termcap.c,v 1.3.2.1 2003/01/11 17:53:57 aida_s Exp $
+ *  Canna: $Id: termcap.c,v 1.3 2003/01/04 07:31:02 aida_s Exp $
  */
 
 /*

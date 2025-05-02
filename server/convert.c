@@ -21,27 +21,19 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: convert.c,v 1.1.1.1.2.4 2003/09/12 14:11:09 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: convert.c,v 1.10 2003/09/22 04:48:17 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */
 
-#include <stdio.h>
-#include <errno.h>
-#include <sys/types.h>
-
+#include "server.h"
 #include <patchlevel.h>
 
-#include "net.h"
-#include "IR.h"
-
-#ifdef CANNA_LIGHT
+#if CANNA_LIGHT
 #ifdef EXTENSION
 #undef EXTENSION
 #endif
-#else /* !CANNA_LIGHT */
-#define USE_EUC_PROTOCOL
-#endif /* !CANNA_LIGHT */
+#endif
 
 #define SIZEOFSHORT 2 /* for protocol */
 #define SIZEOFLONG  4 /* for protocol */
@@ -56,8 +48,12 @@ static char rcs_id[] = "@(#) 102.1 $Id: convert.c,v 1.1.1.1.2.4 2003/09/12 14:11
 #define IR_INT_MAX 32767
 #define IR_INT_INVAL(x) ((unsigned int)x > IR_INT_MAX)
 
-extern void CheckSignal pro((void));
-extern int  errno;
+#ifdef MIN
+# undef MIN
+#endif
+#define MIN RKI_MIN
+static int ProcReq0 pro((char *buf, int size));
+static const char *ProtoName[];
 
 #ifdef DEBUGPROTO
 static void
@@ -90,17 +86,15 @@ int n;
 #endif /* !DEBUGPROTO */
 
 typedef struct {
-#ifdef __STDC__
-  int (*func)(ClientPtr *), (*extdat)(char *, int);
-#else
-  int (*func)(), (*extdat)();
-#endif
+  int (*func) pro((ClientPtr *));
+  int (*extdat) pro((char *, int));
 } oreqproc;
 
-extern oreqproc Vector[];
+static oreqproc Vector[];
 #ifdef EXTENSION
-extern oreqproc ExtensionVector[];
+static oreqproc ExtensionVector[];
 #endif /* EXTENSION */
+static const char *ExtensionName[][2] ;
 
 static IRReq	Request ;
 static IRAck	Acknowledge ;
@@ -198,68 +192,40 @@ int cnt;
 
 #endif /* USE_EUC_PROTOCOL */
 
+int
 ir_error(clientp)
-ClientPtr *clientp ;
+ClientPtr *clientp ; /* ARGSUSED */
 {
-    ClientPtr client = *clientp ;
-    char *buf = local_buffer ;
-    int size ;
-	
-    while( (size = read( client->id, (char *)buf, LOCAL_BUFSIZE )) == LOCAL_BUFSIZE ) {
-#ifdef DEBUG
-	Dmsg(5,"ごみデータ\n")	;
-	DebugDump( 5, buf, size );
-#endif
-    }
-    if( size == -1 && errno == EINTR )
-	CheckSignal();
+    ir_debug(Dmsg(5, "ir_error() invoked\n"));
     return( -1 ) ;
 }
 
+#ifdef DEBUG
 static int
-CheckVersion( req, client )
-Req2 *req ;
-ClientPtr client ;
+WriteClient(client, buf, size)
+ClientPtr client;
+const BYTE *buf;
+size_t size;
 {
-    char *data = req->name, *logname ;
-    int clienthi, clientlo ;
-    char *buf ;
-
-    if( !(buf = (char *)strtok( (char *)data, "." )) )
-	return( -1 ) ;
-    clienthi = atoi( buf ) ;
-
-    if( !(buf = (char *)strtok((char *)NULL, ":")) )
-	return( -1 ) ;
-    clientlo = atoi( buf ) ;
-
-    if( !(logname = strtok( (char *)NULL, ":" )) )
-	return( -1 ) ;
-
-    strcpy( (char *)req->name, (char *)logname ) ;
-
-   ir_debug( Dmsg( 5,"UserName:[%s]\n", req->name ); )
-   ir_debug( Dmsg( 5,"client:hi[%d],lo[%d]\n", clienthi, clientlo ); )
-   ir_debug( Dmsg( 5,"server:hi[%d],lo[%d]\n", canna_server_hi, canna_server_lo ); )
-#ifndef USE_EUC_PROTOCOL
-    if (clienthi < 2) {
-      return RETURN_VERSION_ERROR_STAT;
-    }
-#endif /* USE_EUC_PROTOCOL */
-    if( canna_server_hi < clienthi )
-	return( RETURN_VERSION_ERROR_STAT ) ;
-
-    client->version_hi = (short)clienthi ;
-    client->version_lo = (short)clientlo ;
-
-    if( clienthi < canna_server_hi )
-	return( clientlo );
-    else
-	return( canna_server_lo );
+    ir_debug( Dmsg(10, "WriteClient:") );
+    ir_debug( DebugDump( 10, buf, size ) );
+    return ClientBuf_store_reply(client->client_buf, buf, size);
 }
+#else
+# define WriteClient(c, b, s) ClientBuf_store_reply((c)->client_buf, b, s)
+#endif
 
-static int WriteClient();
-extern char *ProtoName[] ;
+static int
+SendTypeE1Reply2(client_buf, stat)
+ClientBuf *client_buf;
+int stat;
+{
+    BYTE buf[4], *p = buf;
+
+    LTOL4(stat, p);
+
+    return ClientBuf_store_reply(client_buf, buf, sizeof buf);
+}
 
 #define SendType0Reply SendTypeE1Reply
 
@@ -272,7 +238,7 @@ int stat;
 
     LTOL4(stat, p);
 
-    return WriteClient(client->id, buf, sizeof(buf));
+    return WriteClient(client, buf, sizeof(buf));
 }
 
 #ifdef USE_EUC_PROTOCOL
@@ -298,7 +264,7 @@ int stat, cnt, slen;
 	    strcpy((char *)p, wp); p += nlen;
 	}
 
-	res = WriteClient(client->id, bufp, sz);
+	res = WriteClient(client, bufp, sz);
 	if (bufp != lbuf) free((char *)bufp);
 	return res;
     }
@@ -323,7 +289,7 @@ BYTE *extdata;
 	if (storefunc)
 	    (*storefunc)(client, stat, extdata, p);
 
-	res = WriteClient(client->id, bufp, sz);
+	res = WriteClient(client, bufp, sz);
 	if (bufp != lbuf) free((char *)bufp);
 	return res;
     }
@@ -351,7 +317,7 @@ int stat, cnt, slen;
 	LTOL4( cnt, p ) ; p += SIZEOFLONG;
 	bcopy( infoptr, p, cnt ) ;
 
-	res = WriteClient(client->id, bufp, sz);
+	res = WriteClient(client, bufp, sz);
 	if (bufp != lbuf) free((char *)bufp);
 	return res;
     }
@@ -360,8 +326,8 @@ int stat, cnt, slen;
 
 /* IR_SER_STATが TypeE5Replyそのものである */
 
-#define SendTypeE5Reply(client, size) \
-    WriteClient(client->id, Acknowledge.SendAckBuffer, size)
+#define SendTypeE5Reply(client_buf, size) \
+    ClientBuf_store_reply(client_buf, Acknowledge.SendAckBuffer, size)
 
 /* IR_SER_STAT2が TypeE6Replyそのものである */
 
@@ -369,73 +335,42 @@ int stat, cnt, slen;
 
 /* IR_HOSTは正確には TypeE2Replyではないので TypeE7Replyを作る */
 
-#define SendTypeE7Reply SendTypeE5Reply
+#define SendTypeE7Reply(client, size) \
+    WriteClient(client, Acknowledge.SendAckBuffer, size)
 
 #endif /* USE_EUC_PROTOCOL */
 
-ir_initialize(clientp)
-ClientPtr *clientp ;
+static const char *
+irerrhdr(client)
+ClientPtr client;
 {
-    extern CheckAccessControlList() ;
-#ifdef USE_UNIX_SOCKET
-    extern struct sockaddr_un unsock; 
-#endif
+    static char buf[50];
+    int proto = Request.Request2.Type;
+    sprintf(buf, "[%.25s](%.20s)", client->username, ProtoName[proto - 1]);
+    return buf;
+}
+
+static void
+print_context_error(client)
+ClientPtr client;
+{
+    PrintMsg( "%s Context Err\n", irerrhdr(client));
+}
+
+static int
+ir_initialize(clientp, client_buf)
+ClientPtr *clientp;
+ClientBuf *client_buf;
+{
     Req2 *req = &Request.Request2 ;
-    ClientPtr client = *clientp ;
-    int cxnum, ret, stat = -1;
+    int stat;
 
-    /* プロトコルバージョンのチェック */
-    if( (ret = CheckVersion( req, client )) < 0 ) {
-	if( SendType0Reply(client, ret) < 0 ) {
-	    return( -1 ) ;
-	}
-	CloseDownClient( client ) ;
-	*clientp = (ClientPtr)0;
-	return( 0 ) ;
-    }
-    ir_debug( Dmsg(5, "PROTOCOL.Version[%d:%d]\n",client->version_hi ,ret);)
-    client->username = malloc(strlen((char *)req->name ) + 1);
-    if (client->username)
-	strcpy( client->username, (char *)req->name ) ;
-    else
-      client->username = (char *)NULL ;
-    
-    /* コンテクスト配列の拡張チェック */
-    if(!WidenClientContext(client, N_INIT_CONTEXTS)){
-      PrintMsg("コンテクスト配列の拡張に失敗しました。\n");
-#ifdef USE_UNIX_SOCKET
-      PrintMsg("remove [%s]\n" ,unsock.sun_path);
-      unlink(unsock.sun_path);   /* UNIXドメインで作ったファイルを消す。*/
-#endif
-      exit(1);
-    }    
-
-    if( ConnectionSetup( client ) > 0) {
-        if (CheckAccessControlList(client->hostaddr, client->username) < 0) {
-	    if (SendType0Reply(client, stat) < 0) {
-	      return -1;
-	    }
-
-	    PrintMsg("[%s](%s) Access denied\n", 
-		     client->username, ProtoName[ req->Type -1 ] ) ;
-	    CloseDownClient( client ) ;
-	    *clientp = (ClientPtr)0;
-	    return( 0 ) ;
-	}
-	cxnum = RkwCreateContext() ;
-	if( cxnum >= 0 ) {
-	    if (SetDicHome( client, cxnum ) > 0) {
-	      set_cxt(client, cxnum);
-	      stat = ((ret << 0x10) | cxnum);
-	    }
-	    else {
-	      RkwCloseContext(cxnum);
-	    }
-	}
-	
-    }
-
-    return SendType0Reply(client, stat);
+    stat = open_session(clientp, req->name, client_buf);
+    if (SendTypeE1Reply2(client_buf, stat) < 0)
+	return -1;
+    if (stat == -1)
+	EventMgr_finalize_notify(global_event_mgr, client_buf);
+    return 0;
 }
 
 #ifdef USE_EUC_PROTOCOL
@@ -449,8 +384,7 @@ register ClientPtr *clientp ;
 	return( -1 ) ;
 
     /* close処理＆後始末（コンテクストの開放等） */
-    CloseDownClient( client ) ;
-    *clientp = (ClientPtr)0;
+    close_session(clientp, 1);
     return( 0 ) ;
 }
 
@@ -478,7 +412,8 @@ ClientPtr *clientp ;
 	Req0 *req0 = &Request.Request0 ;
 
 	RkwCloseContext(cxnum);
-	PrintMsg("[%s](%s) Can't set dictionary home\n", client->username, ProtoName[ req0->Type -1 ] ) ;
+	PrintMsg("%s Can't set dictionary home\n",
+		irerrhdr(client, req0->Type));
     }
     return SendTypeE1Reply(client, stat);
 }
@@ -500,8 +435,7 @@ ClientPtr *clientp ;
 	  }
 	}
     } else {
-	PrintMsg("[%s](%s) Context Err[%d]\n",
-		 client->username, ProtoName[ req->Type - 1 ], cxnum ) ;
+	PrintMsg("%s Context Err[%d]\n", irerrhdr(client), cxnum ) ;
     }
 
     return SendTypeE1Reply(client, stat);
@@ -510,7 +444,6 @@ ClientPtr *clientp ;
 ir_close_context(clientp)
 ClientPtr *clientp ;
 {
-    extern void off_cxt();
     Req1 *req = &Request.Request1 ;
     ClientPtr client = *clientp ;
     int cxnum, stat = -1;
@@ -520,7 +453,7 @@ ClientPtr *clientp ;
 	stat = RkwCloseContext(cxnum);
 	off_cxt(client, cxnum);
     } else {
-	PrintMsg( "[%s](%s) Context Err\n", client->username, ProtoName[ req->Type - 1 ]  ) ;
+	print_context_error(client);
     }
 
     return SendTypeE1Reply(client, stat);
@@ -545,8 +478,7 @@ ClientPtr *clientp ;
 	    size = listsize(dicnames, ret);
 	}
     } else {
-	PrintMsg("[%s](%s) Context Err[%d]\n",
-		 client->username, ProtoName[ req->Type - 1 ], cxnum ) ;
+	PrintMsg("%s Context Err[%d]\n", irerrhdr(client), cxnum );
     }
 
     return SendTypeE2Reply(client, ret, (ret < 0)? 0: ret, dicnames, size);
@@ -576,10 +508,10 @@ ClientPtr *clientp ;
 		size = ret + 1;
 	    }
 	} else {
-	    PrintMsg("[%s](%s) bunsetu move failed\n", client->username, ProtoName[ req->Type - 1 ] ) ;
+	    PrintMsg("%s bunsetu move failed\n", irerrhdr(client));
        }
     } else {
-	PrintMsg( "[%s](%s) Context Err\n", client->username, ProtoName[ req->Type - 1 ]  ) ;
+	print_context_error(client);
     }
     return SendTypeE2Reply(client, ret, (ret > 0)? 1: 0, yomi, size);
 }
@@ -609,7 +541,7 @@ ClientPtr *clientp ;
 	euc2ushort( data, strlen( (char *)data ), cbuf, CBUFSIZE );
 	ret = RkwDefineDic( cxnum, (char *)dicname, (Ushort *)cbuf );
     } else {
-	PrintMsg( "[%s](%s) Context Err\n", client->username, ProtoName[ req->Type - 1 ]   ) ;
+	print_context_error(client);
     }
 
     return SendTypeE1Reply(client, ret);
@@ -633,7 +565,7 @@ ClientPtr *clientp ;
 	euc2ushort( data, strlen( (char *)data ), cbuf, CBUFSIZE );
 	ret = RkwDeleteDic( cxnum, (char *)dicname, (Ushort *)cbuf );
     } else {
-	PrintMsg( "[%s](%s) Context Err\n", client->username, ProtoName[ req->Type - 1 ]   ) ;
+	print_context_error(client);
     }
 
     return SendTypeE1Reply(client, ret);
@@ -658,7 +590,7 @@ ClientPtr *clientp ;
 	    size = listsize(dicnames, ret);
 	}
     } else {
-	PrintMsg( "[%s](%s) Context Err\n", client->username, ProtoName[ req->Type - 1 ]   ) ;
+	print_context_error(client);
     }	
     return SendTypeE2Reply(client, ret, (ret < 0)? 0: ret, dicnames, size);
 }
@@ -679,7 +611,7 @@ ClientPtr *clientp ;
 	dicname = req->data ;
 	ret = RkwMountDic( cxnum, (char *)dicname, mode | MMountFlag) ;
     } else {
-	PrintMsg( "[%s](%s) Context Err\n", client->username, ProtoName[ req->Type - 1 ]   ) ;
+	print_context_error(client);
     }
 
     return SendTypeE1Reply(client, ret);
@@ -697,7 +629,7 @@ ClientPtr *clientp ;
        ir_debug( Dmsg(5,"dicname = %s\n", req->data ); )
 	ret = RkwUnmountDic( cxnum, (char *)req->data ) ;
     } else {
-	PrintMsg( "[%s](%s) Context Err\n", client->username, ProtoName[ req->Type - 1 ]   ) ;
+	print_context_error(client);
     }
 
     return SendTypeE1Reply(client, ret);
@@ -717,7 +649,7 @@ ClientPtr *clientp ;
        ir_debug( Dmsg(5,"dicname = %s\n", req->data ); )
 	ret = RkwRemountDic( cxnum, (char *)req->data, where ) ;
     } else {
-	PrintMsg( "[%s](%s) Context Err\n", client->username, ProtoName[ req->Type - 1 ]   ) ;
+	print_context_error(client);
     }
 
     return SendTypeE1Reply(client, ret);
@@ -742,7 +674,7 @@ ClientPtr *clientp ;
 	    size = listsize(dicnames, ret);
 	}
     } else {
-	PrintMsg( "[%s](%s) Context Err\n", client->username, ProtoName[ req->Type - 1 ]   ) ;
+	print_context_error(client);
     }	
 
     return SendTypeE2Reply(client, ret, (ret < 0)? 0: ret, dicnames, size);
@@ -772,11 +704,12 @@ ClientPtr *clientp ;
 	    /* 最優先候補リストを取得する */
 	    size = getFirstKouho(cxnum, 0, ret, &stat, (BYTE **)&datap);
 	} else {
-	    PrintMsg( "[%s](%s) kana-kanji convert failed\n", client->username, ProtoName[ req->Type - 1 ]  ) ;
+	    PrintMsg( "%s kana-kanji convert failed\n",
+		    irerrhdr(client));
 	    *datap = '\0' ;
 	}
     } else {
-	PrintMsg( "[%s](%s) Context Err\n", client->username, ProtoName[ req->Type - 1 ]  ) ;
+	print_context_error(client);
 	*datap = (char)0 ;
     }	
     ret = SendTypeE2Reply(client, stat, (stat < 0)? 0: stat, datap, size);
@@ -797,18 +730,21 @@ ClientPtr *clientp ;
 	if( len ) {
 	    mode = 1 ;
 	    if( RkwGoTo( cxnum, 0 ) != 0 ) {	
-		PrintMsg("[%s](%s) ir_convert_end: RkwGoTo failed\n", client->username, ProtoName[ req->Type - 1 ]  ) ;
+		PrintMsg("%s ir_convert_end: RkwGoTo failed\n",
+			irerrhdr(client));
 	    }
 	   ir_debug( Dmsg( 5,"学習させる候補\n" ); )
 	    /* カレント候補を先頭に移動クライアントが選んだ候補を */	
 	    /* ＲＫに知らせる */		
 	    for( i = 0; i < len; i++ ){ 
 		if( req->kouho[ i ] != RkwXfer( cxnum, req->kouho [ i ] ) ) {
-		    PrintMsg("[%s](%s) ir_convert_end: RkwXfer failed\n", client->username, ProtoName[ req->Type - 1 ]  ) ;
+		    PrintMsg("%s ir_convert_end: RkwXfer failed\n",
+			    irerrhdr(client));
 		}
 	       ir_debug( DebugDispKanji( cxnum, i ); )	
 		if( RkwRight( cxnum ) == 0 && i != (len - 1) ) { 	
-		    PrintMsg("[%s](%s) ir_convert_end: RkwRight failed\n", client->username, ProtoName[ req->Type - 1 ]	 ) ;
+		    PrintMsg("%s ir_convert_end: RkwRight failed\n",
+			    irerrhdr(client));
 		}
 	    }
 	   ir_debug( Dmsg( 5,"\n" ); )
@@ -817,7 +753,7 @@ ClientPtr *clientp ;
 	}
 	ret = RkwEndBun( cxnum, mode ) ;
     } else {
-	PrintMsg( "[%s](%s) Context Err\n", client->username, ProtoName[ req->Type - 1 ]  ) ;
+	print_context_error(client);
     }
 
     return SendTypeE1Reply(client, ret);
@@ -868,10 +804,10 @@ ClientPtr *clientp ;
 	    strcpy( (char *)yomi, (char *)workbuf );
 	    size += clen;
 	} else {
-	    PrintMsg("[%s](%s) bunsetu move failed\n", client->username, ProtoName[ req->Type - 1 ]  ) ;
+	    PrintMsg("%s bunsetu move failed\n", irerrhdr(client));
        }
     } else {
-	PrintMsg( "[%s](%s) Context Err\n", client->username, ProtoName[ req->Type - 1 ]  ) ;
+	print_context_error(client);
     }
     return SendTypeE2Reply(client, ret, (ret < 0)? 0: (ret + 1), kouho, size);
 }
@@ -910,7 +846,7 @@ ClientPtr *clientp ;
 	/* 最優先候補リストを取得する */
 	size = getFirstKouho(cxnum, bunsetu, ret, &stat, &lbufp);
     } else {
-	PrintMsg( "[%s](%s) Context Err\n", client->username, ProtoName[ req->Type - 1 ]  ) ;
+	print_context_error(client);
     }
     ret = SendTypeE2Reply(client, stat, (stat < 0)? 0: stat - bunsetu,
 			  (char *)lbufp, size);
@@ -944,10 +880,10 @@ ClientPtr *clientp ;
 	if ((ret = RkwStoreYomi( cxnum, (Ushort *)cbuf, ret )) >= 0) {
 	    size = getFirstKouho(cxnum, bunsetu, ret, &stat, &lbufp);
 	} else {
-	    PrintMsg("[%s](%s) RkwStoreYomi faild\n", client->username, ProtoName[ req->Type - 1 ]  ) ;
+	    PrintMsg("%s RkwStoreYomi faild\n", irerrhdr(client));
 	}
     } else {
-	PrintMsg( "[%s](%s) Context Err\n", client->username, ProtoName[ req->Type - 1 ]  ) ;
+	print_context_error(client);
     }
     ret = SendTypeE2Reply(client, stat, (stat < 0)? 0: stat,
 			  (char *)lbufp, size);
@@ -958,7 +894,6 @@ ClientPtr *clientp ;
 ir_query_extension( clientp )
 ClientPtr *clientp ;
 {
-    extern char *ExtensionName[][2] ;
     Req12 *req = &Request.Request12 ;
     ClientPtr client = *clientp ;
     int i = 0 ;
@@ -975,13 +910,7 @@ ClientPtr *clientp ;
     return SendTypeE1Reply(client, status);
 }
 
-static void iroha2canna();
-
-#ifdef __STDC__
-extern char *insertUserSla(char *, int);
-#else
-extern char *insertUserSla();
-#endif
+static void iroha2canna pro((char *));
 
 #ifdef EXTENSION
 ir_list_dictionary( clientp )
@@ -1033,7 +962,7 @@ ClientPtr *clientp ;
        ir_debug( Dmsg(5,"dicname = %s\n", req->data ); )
 	ret = RkwCreateDic(cxnum, (unsigned char *)req->data, req->mode);
     } else {
-	PrintMsg( "[%s](%s) Context Err\n", client->username, ProtoName[ req->Type - 1 ]   ) ;
+	print_context_error(client);
     }
 
     return SendTypeE1Reply(client, ret);
@@ -1052,7 +981,7 @@ ClientPtr *clientp ;
        ir_debug( Dmsg(5,"dicname = %s\n", req->data ); )
 	ret = RkwRemoveDic(cxnum, (unsigned char *)req->data, 0);
     } else {
-	PrintMsg( "[%s](%s) Context Err\n", client->username, ProtoName[ req->Type - 1 ]   ) ;
+	print_context_error(client);
     }
 
     return SendTypeE1Reply(client, ret);
@@ -1071,7 +1000,7 @@ ClientPtr *clientp ;
       ret = RkwRenameDic(cxnum, (unsigned char *)req->dicname,
 			 (unsigned char *)req->textdicname, req->mode);
     } else {
-	PrintMsg( "[%s](%s) Context Err\n", client->username, ProtoName[ req->Type - 1 ]   ) ;
+	print_context_error(client);
     }
 
     return SendTypeE1Reply(client, ret);
@@ -1117,7 +1046,7 @@ ClientPtr *clientp ;
 	    size = cnt + SIZEOFLONG;
 	}
     } else {
-	PrintMsg( "[%s](%s) Context Err\n", client->username, ProtoName[ req->Type - 1 ]   ) ;
+	print_context_error(client);
     }
     return SendTypeE4Reply(client, ret, cnt, infobuf, size);
 }
@@ -1183,7 +1112,7 @@ ClientPtr *clientp ;
 	size = SIZEOFLONG * 7;
 
     } else {
-	PrintMsg( "[%s](%s) Context Err\n", client->username, ProtoName[ req->Type - 1 ]  ) ;
+	print_context_error(client);
     }
     return SendTypeE3Reply(client, ret, storeStat, (BYTE *)&stat, size);
 }
@@ -1234,13 +1163,11 @@ ClientPtr *clientp ;
 	size = tangosu * SIZEOFLONG * 5;
 
     } else {
-	PrintMsg( "[%s](%s) Context Err\n", client->username, ProtoName[ req->Type - 1 ]  ) ;
+	print_context_error(client);
     }
 
     return SendTypeE3Reply(client, tangosu, storeLex, (BYTE *)lex, size);
 }
-
-extern void ClientStat();
 
 #ifdef DEBUG
 void
@@ -1248,14 +1175,14 @@ DispDebug( client )
 ClientPtr client ;
 {
     char    return_date[DATE_LENGH] ;
-    long    wtime = client->used_time ;
+    long    wtime = (long)client->used_time ;
     char    buf[10] ;
 
     (void)ClientStat( client, GETDATE, 0, return_date ) ;
     Dmsg(5,"ユーザ名         :%s\n", client->username ) ;
     Dmsg(5,"コネクトした時間 :%s\n", return_date ) ;
     Dmsg(5,"ホスト名         :%s\n", client->hostname ) ;
-    sprintf( buf,"%02d:%02d:%02d", wtime/3600, (wtime%3600)/60, (wtime%3600)%60 ) ;
+    sprintf( buf,"%02ld:%02ld:%02ld", wtime/3600, (wtime%3600)/60, (wtime%3600)%60 ) ;
     Dmsg(5,"ユーザ消費時間   :%s\n\n", buf ) ;
 }	
 #endif
@@ -1276,24 +1203,25 @@ char *buf ;
   return SendSize + SIZEOFLONG;
 }
 
-ir_server_stat2( clientp )
-ClientPtr *clientp ;
+int
+ir_server_stat2( client_buf )
+ClientBuf *client_buf ;
 {
-    ClientPtr client = *clientp ;
     char *sendp = Acknowledge.SendAckBuffer ;
     char *savep ;
     register ClientPtr	    who ;
     ClientPtr *OutPut;
     int     RequestCount[ MAXREQUESTNO ] ;
-    int     i, j, count, len, retval, max_cx, n;
+    int     i, j, len, retval, max_cx, n;
+    size_t count;
 
-    OutPut = (ClientPtr *)malloc(connow_socks * sizeof(ClientPtr));
+    OutPut = get_all_other_clients(NULL, &count);
 
     /* プロトコルバージョンセット */
     sendp += SetServerVersion( sendp ) ;
 
     /* 現在時刻セット */
-    LTOL4( time( (long *)0 ), sendp ) ; sendp += SIZEOFLONG ;
+    LTOL4( time( NULL ), sendp ) ; sendp += SIZEOFLONG ;
 
     /* プロトコル数セット */
     LTOL4( REALREQUEST, sendp ) ; sendp += SIZEOFLONG ;
@@ -1314,12 +1242,6 @@ ClientPtr *clientp ;
     sendp += ( REALREQUEST * SIZEOFLONG ) ;
 
     /* 接続しているクライアント数セット */
-    if (OutPut) {
-      count = ConnectClientCount(client, OutPut, connow_socks) ;
-    }
-    else {
-      count = 0;
-    }
     LTOL4( count, sendp ) ; sendp += SIZEOFLONG ;
 
     /* コンテクスト数をセット */
@@ -1339,18 +1261,20 @@ ClientPtr *clientp ;
 
     LTOL4(max_cx, sendp ) ; sendp += SIZEOFLONG ;
 
-    if( SendTypeE6Reply(client, sendp - Acknowledge.SendAckBuffer) < 0 ) {
+    if( SendTypeE6Reply(client_buf, sendp - Acknowledge.SendAckBuffer) < 0 ) {
       retval = -1;
       goto stat2done;
     }
 
     /* 各クライアント情報をセット */
     for( i = 0; i < count; i ++ ) {
+	int id;
 	savep = sendp = Acknowledge.SendAckBuffer ;
 	who = OutPut[ i ] ;
 	sendp += SIZEOFLONG ;
 
-	LTOL4( who->id, sendp ) ; sendp += SIZEOFLONG ;
+	id = ClientBuf_getfd(who->client_buf);
+	LTOL4( id, sendp ) ; sendp += SIZEOFLONG ;
 	LTOL4( who->usr_no, sendp ) ; sendp += SIZEOFLONG ;
 	LTOL4( who->used_time, sendp ) ; sendp += SIZEOFLONG ;
 	LTOL4( who->idle_date, sendp ) ; sendp += SIZEOFLONG ;
@@ -1393,7 +1317,7 @@ ClientPtr *clientp ;
 	/* クライアント管理情報リスト長セット */
 	LTOL4( sendp - (savep + SIZEOFLONG), savep ) ;
 
-	if( SendTypeE6Reply(client, sendp - savep) < 0 ) {
+	if( SendTypeE6Reply(client_buf, sendp - savep) < 0 ) {
 	  retval = -1;
 	  goto stat2done;
 	}
@@ -1401,9 +1325,7 @@ ClientPtr *clientp ;
 	who ++ ;
     }
 
-    CloseDownClient( client ) ;
-    *clientp = (ClientPtr)0;
-
+    EventMgr_finalize_notify(global_event_mgr, client_buf);
     retval = 1;
   stat2done:
     if (OutPut) {
@@ -1412,35 +1334,34 @@ ClientPtr *clientp ;
     return retval;
 }
 
-ir_server_stat( clientp )
-ClientPtr *clientp ;
+int
+ir_server_stat( client_buf )
+ClientBuf *client_buf ;
 {
     char *sendp = Acknowledge.SendAckBuffer ;
-    ClientPtr client = *clientp ;
     register ClientPtr	    who ;
     register ClientStatPtr  Wp ;
     ClientPtr		    *OutPut;
     ClientStatRec	    *Sstat;
-    int 		    i, j, count, InfoSize, SendSize, retval;
+    int 		    i, j, InfoSize, SendSize, retval;
     int 		    RequestCount[ OLD_MAXREQUESTNO ] ;
+    size_t		    count;
 
-    OutPut = (ClientPtr *)malloc(connow_socks * sizeof(ClientPtr));
-    Sstat = (ClientStatRec *)malloc(connow_socks * sizeof(ClientStatRec));
+    OutPut = get_all_other_clients(NULL, &count);
+    Sstat = (ClientStatRec *)malloc(count * sizeof(ClientStatRec));
 
-    if (OutPut && Sstat) {
-      count = ConnectClientCount(client, OutPut, connow_socks) ;
-    }
-    else {
-      count = 0;
-    }
+    if (!OutPut || !Sstat)
+	count = 0; /* 単にエラーにすべきでは? */
 
     InfoSize = sizeof( ClientStatRec )*count ;
 
     Wp = Sstat ;
     for( i = 0 ; i < count; i++ ) {
+        int id;
 	who = OutPut[ i ] ;
        ir_debug( DispDebug( who ); )
-	Wp->id = htonl( who->id ) ;		
+        id = ClientBuf_getfd(who->client_buf);
+	Wp->id = htonl( id ) ;		
 	Wp->usr_no = htonl( who->usr_no ) ;	
 	Wp->used_time = htonl( who->used_time ) ;	
 	Wp->idle_date = htonl( who->idle_date ) ;
@@ -1474,20 +1395,19 @@ ClientPtr *clientp ;
     LTOL4( count, sendp ) ; sendp += SIZEOFLONG ;
 
     /* サーバの現在の時刻を通知する */
-    LTOL4( time( (long *)0 ), sendp ) ; sendp += SIZEOFLONG ;
+    LTOL4( time( NULL ), sendp ) ; sendp += SIZEOFLONG ;
 
     /* 実際にクライアント情報を通知する */
     if (Sstat) { /* 疑問 */
       bcopy( Sstat, sendp, InfoSize ) ; sendp += InfoSize ;
     }
 
-    if( SendTypeE5Reply(client, sendp - Acknowledge.SendAckBuffer) < 0 ) {
+    if( SendTypeE5Reply(client_buf, sendp - Acknowledge.SendAckBuffer) < 0 ) {
       retval = -1;
       goto statdone;
     }
 
-    CloseDownClient( client ) ;
-    *clientp = (ClientPtr)0;
+    EventMgr_finalize_notify(global_event_mgr, client_buf);
     retval = 1;
   statdone:
     if (OutPut) {
@@ -1503,8 +1423,6 @@ ir_host_ctl( clientp )
 ClientPtr *clientp ;
 {
     ClientPtr client = *clientp ;
-    extern NumberAccessControlList() ;
-    extern ACLPtr ACLHead ;
     char *sendp = Acknowledge.SendAckBuffer ;
     char *savep = Acknowledge.SendAckBuffer + SIZEOFLONG ;
     char *namep ;
@@ -1531,229 +1449,130 @@ ClientPtr *clientp ;
     if( SendTypeE7Reply(client, sendp - Acknowledge.SendAckBuffer) < 0 )
 	return( -1 ) ;
 
-    CloseDownClient( client ) ;
-    *clientp = (ClientPtr)0;
+    close_session(clientp, 1);
     return( 1 ) ;
 }
 
 #endif /* USE_EUC_PROTOCOL */
 
-static
-WriteClient( ClientFD, buf, size )
-int ClientFD ;
-char *buf ;
-int size ;
+int
+ir_nosession(clientp, client_buf)
+ClientPtr *clientp;
+ClientBuf *client_buf;
 {
-    register int write_stat ;
-    register char *bufindex = buf ;
-    register int todo = size ;
+    int proto = Request.Request2.Type, r;
 
-   ir_debug( Dmsg( 10, "WriteClient:" ) ; )
-   ir_debug( DebugDump( 10, buf, size ); )
-   ir_debug(probe("Write: %d\n", size, buf));
-
-    while ( size > 0 ) {
-	errno = 0;
-	write_stat = write( ClientFD, (char *)bufindex, todo ) ;
-	if (write_stat >= 0) {
-	    size -= write_stat;
-	    todo = size;
-	    bufindex += write_stat;
-	    continue ;
-	} else if (errno == EWOULDBLOCK) {   /* pc98 */
-	    continue ;
-#ifdef EMSGSIZE
-	} else if (errno == EMSGSIZE) {
-	    if (todo > 1)
-		todo >>= 1;
-	    else
-		continue ;
+    switch (proto) {
+	case IR_INIT:
+	    r = ir_initialize(clientp, client_buf);
+	    break;
+#ifdef USE_EUC_PROTOCOL
+	case IR_SER_STAT:
+	     r = ir_server_stat(client_buf);
+	    break;
+	case IR_SER_STAT2:
+	     r = ir_server_stat2(client_buf);
+	    break;
 #endif
-	} else if (errno == EINTR) {
-	    CheckSignal();
-	} else {
-	    /* errno set by write system call. */
-	    PrintMsg( "Write Error[ %d ]\n", errno ) ;
-	    return( -1 ) ;
-	}
-    }
-
-    return( 0 ) ;
+	default:
+	    r = ir_error(clientp);
+	    break;
+    };
+    return r;
 }
 
 /*
  * もともとio.cに入れいていたものをここから下に置く
  */
 
-#define READ_HEADER_SIZE    SIZEOFLONG
-#define READ_SIZE	    2048
-#define SIZE4	4   /* sizeof( int ) */
+#define SIZE4	4
 #define SIZE8	8
 #define SIZE12	12
 #define SIZE16	16
 #define SIZE20	20
-#define TRY_COUNT   10
 
-static char
-ReadRequestBuffer[ READ_SIZE ] ;	/* デフォルトバッファ */
-
-static int  ReadSize = READ_SIZE ;     /* バッファサイズ */
-
-static char
-*readbufptr = ReadRequestBuffer ;	/* デフォルトバッファ */
-
-extern int (* CallFunc)() ;
-
-ReadRequestFromClient(who, status )
-ClientPtr who;
-int *status;	      /* read at least n from client */
+int
+parse_euc_request(request, data, len, username, hostname)
+int *request;
+BYTE *data;
+size_t len;
+const char *username;
+const char *hostname;
 {
-    int (* ReqCallFunc)() ;
-#ifdef DEBUG
-    extern char *DebugProc[][2] ;
-    extern const char *CallFuncName;
-#endif
-    char *bufptr = ReadRequestBuffer ;
+    int (*ReqCallFunc) pro((char *, int)) ;
     register Req0 *req0 = &Request.Request0 ;
-    int client = who->id, n = 0  ;
-    int     readsize ;		    /* 一回に読み込んだサイズ */
-    int     bufsize = ReadSize ;   /* バッファサイズ */
-    int     bufcnt = 0 ;	    /* 読み込んだ累積サイズ */
-    int     empty_count = 0 ;
+    const char *username0 = username ? username : "";
+    const char *hostname0 = hostname ? hostname : "";
+    int needsize;
 
-    if( readbufptr != ReadRequestBuffer ) {	   /* 前回バッファを大きく */
-       ir_debug( Dmsg( 8,"free readbufptr.\n" ); ) /* した場合は，デフォルト*/
-	free( (char *)readbufptr ) ;			   /* に戻す */
-	readbufptr = ReadRequestBuffer ;
-	ReadSize = READ_SIZE ;
-    }
+    ir_debug(Dmsg(5, "EUCプロトコルのリクエストを解析, 長さ=%d\n", len));
+    if (len < 4)
+	return 4 - len;
 
-    while( empty_count < TRY_COUNT ) {
-	if ( (readsize = read( client, (char *)bufptr, bufsize )) < 0) {
+    req0->Type = (int)L4TOL(data);
+    ir_debug( Dmsg(10, "NewReadRequest:") );
+    ir_debug( DebugDump( 10, (char *)data, len ) );
+    ir_debug(Dmsg(5,"Client: <%s@%s> [%d]\n",
+		   username0, hostname0, req0->Type ));
 
-	    if (errno == EINTR)
-		CheckSignal();
-	    if (who->username) {
-		PrintMsg( "[%s] ", who->username  ) ;
-	    }
-	    PrintMsg( "Read request failed\n" ) ;
-	    ir_debug( Dmsg( 5, "ReadRequestFromClient: Read request failed\n"); )
-	    *status = -1 ;
-	    return( 0 ) ;
-	} else if ( readsize == 0 ) {	
-	    empty_count ++ ;
-	    continue ;
-	}
-       ir_debug( Dmsg( 10, "ReadRequest:" ) ; )
-       ir_debug( DebugDump( 10, bufptr, readsize ); )
-	empty_count = 0;
-	bufcnt += readsize ;
-	if( (n == 0) && (bufcnt >= 4) ) 
-	    req0->Type = (int)L4TOL(bufptr);
-	
-	if (!(who->username)) {
-	    ir_debug( Dmsg(5,"Client: <@%s> [%d]\n",
-			   who->hostname, req0->Type ) ; );
-	} else {
-	    ir_debug( Dmsg(5,"Client: <%s@%s> [%d]\n",
-			   who->username, who->hostname, req0->Type ) ; );
-	}
-	
-	if( (0 > req0->Type) || 
-	   ( (req0->Type > REALREQUEST) && (req0->Type < EXTBASEPROTONO) ) ||
-		(req0->Type > (MAXEXTREQUESTNO+EXTBASEPROTONO)) ) {
-	    if (who->username) {
-		PrintMsg( "[%s] ", who->username  ) ;
-	    }
-	    PrintMsg( "Request error[ %d ]\n", req0->Type ) ;
-	    *status = -1 ;
-	    return( 0 ) ;
-	}
-	
-	/* プロトコルのタイプ毎にデータを呼んでくる関数を呼ぶ */
-	if( req0->Type >= EXTBASEPROTONO ) {
+    if( (0 > req0->Type) || 
 #ifdef EXTENSION
-	    int request = req0->Type - EXTBASEPROTONO ;
-	    ReqCallFunc = ExtensionVector[ request ].extdat;
-	    CallFunc = ExtensionVector[ request ].func;
-#else /* !EXTENSION */
-	    extern int ProcReq0();
-
-	    CallFunc = ir_error;
-	    ReqCallFunc = ProcReq0; /* これではいけないような気がする */
-#endif /* !EXTENSION */
+       ( (req0->Type > REALREQUEST) && (req0->Type < EXTBASEPROTONO) ) ||
+	    (req0->Type > (MAXEXTREQUESTNO+EXTBASEPROTONO))
+#else
+       (req0->Type > REALREQUEST)
+#endif
+	    ) {
+	if (username) {
+	    PrintMsg( "[%s] ", username  ) ;
 	}
-	else {
-	   ir_debug( Dmsg( 8,"Now Call %s\n", DebugProc[ req0->Type ][ 1 ] ); )
-	    ReqCallFunc = Vector[ req0->Type ].extdat;
-	    CallFunc = Vector[ req0->Type ].func;
-	}
-	if( (n = (* ReqCallFunc)( readbufptr, bufcnt ))  < 0 ) {
-	    if (who->username) {
-		PrintMsg( "[%s] ", who->username  ) ;
-	    }
-	    PrintMsg( "Read Data failed\n") ;
-	    *status = -1 ;
-	    return( 0 ) ;	
-	} else if( n == 0 ) {
-	    break ;
-	} else {
-	    bufsize -= readsize ;
-	    /* 読み込むべきデータがバッファサイズより */
-	    /* 多い場合には，アロケートし直す */	
-	    if( n > bufsize ) { 
-		char *local_bufptr ;
-
-		local_bufptr = (char *)malloc(bufcnt + n);
-		if (local_bufptr) {
-		   ir_debug( Dmsg( 8,"malloc size is %d.\n", bufcnt + n ); )
-		    bcopy( readbufptr, local_bufptr, bufcnt ) ;
-		    if( readbufptr != ReadRequestBuffer )
-			free( (char *)readbufptr ) ;
-		    readbufptr = local_bufptr ;
-		    bufptr = local_bufptr + bufcnt ;
-		    ReadSize = bufcnt + n ;
-		    bufsize = n ;
-		} else {
-		    *status = -1 ;
-		    if (who->username) {
-			PrintMsg( "[%s] ", who->username  ) ;
-		    }
-		    PrintMsg( "Read Buffer allocate failed\n") ;
-		    return( 0 ) ;	
-		}
-	    } else {
-		bufptr += readsize ;
-	    }
-	    continue ;
-	}
+	PrintMsg( "Request error[ %d ]\n", req0->Type ) ;
+	return -1;
     }
-
-    if( empty_count >= TRY_COUNT ) {
-	*status = -1 ;
-	if (who->username) {
-	    PrintMsg( "[%s] ", who->username ) ;
+	
+#ifdef EXTENSION
+    /* プロトコルのタイプ毎にデータを呼んでくる関数を呼ぶ */
+    if( req0->Type >= EXTBASEPROTONO ) {
+	int xrequest = req0->Type - EXTBASEPROTONO ;
+	ReqCallFunc = ExtensionVector[ xrequest ].extdat;
+	CallFunc = ExtensionVector[ xrequest ].func;
+    }
+    else
+#endif /* EXTENSION */
+    {
+       ir_debug( Dmsg( 8,"Now Call %s\n", DebugProc[ req0->Type ][ 1 ] ); )
+	ReqCallFunc = Vector[ req0->Type ].extdat;
+	CallFunc = Vector[ req0->Type ].func;
+    }
+    if( (needsize = (* ReqCallFunc)( data, len ))  < 0 ) {
+	if (username) {
+	    PrintMsg( "[%s] ", username  ) ;
 	}
-	PrintMsg( "Read Over Time!!\n") ;
-	return( 0 ) ;	
+	PrintMsg( "Read Data failed\n") ;
+	return -1;
+    } else if (needsize > 0) {
+	return needsize;
     }
 
     /* プロトコルの種類毎に統計を取る */
-    if( req0->Type < MAXREQUESTNO ) {
-	who->pcount[ req0->Type ] ++ ;
+#ifdef EXTENSION
+    if( req0->Type < MAXREQUESTNO )
+#endif
 	TotalRequestTypeCount[ req0->Type ] ++ ;
-    }
 
-    (void)ClientStat(who, SETTIME, req0->Type , 0);
-
-    *status = 1 ;
+    *request = req0->Type;
 #ifdef DEBUG
-    if (req0->Type < EXTBASEPROTONO)
+# ifdef EXTENSION
+    if (req0->Type >= EXTBASEPROTONO)
+	CallFuncName = "(extension)";
+    else
+# endif
 	CallFuncName = DebugProc[req0->Type][0];
 #endif
-    return( req0->Type ) ;
+    return 0;
 }
 
+static int
 ProcReq0( buf, size )
 char *buf ;
 int size ;
@@ -2119,9 +1938,10 @@ char *dirnames;
 #endif /* USE_EUC_PROTOCOL */
 
 #ifdef DEBUG
+void
 DebugDump( level, buf, size )
 int level, size ;
-char *buf ;
+const char *buf ;
 {
     char buf1[80] ;
     char buf2[17] ;
@@ -2153,6 +1973,7 @@ char *buf ;
 
 }
 
+void
 DebugDispKanji( cxnum, num )
 int cxnum, num ;
 {
@@ -2219,11 +2040,11 @@ char *dirname, *dicname, *info ;
 
 #endif /* PROTO */
 
-oreqproc Vector[] =
+static oreqproc Vector[] =
 {
 #ifdef USE_EUC_PROTOCOL
 /* 0x00 */	{ ir_error,		   ProcReq0 },
-/* 0x01 */	{ ir_initialize,	   ProcReq2 },
+/* 0x01 */	{ ir_error /* hack */,	   ProcReq2 },
 /* 0x02 */	{ ir_finalize,		   ProcReq0 },
 /* 0x03 */	{ ir_create_context,	   ProcReq0 },
 /* 0x04 */	{ ir_duplicate_context,    ProcReq1 },	
@@ -2245,13 +2066,13 @@ oreqproc Vector[] =
 /* 0x14 */	{ ir_store_yomi,	   ProcReq9 },	
 /* 0x15 */	{ ir_get_lex,		   ProcReq11 }, 
 /* 0x16 */	{ ir_get_stat,		   ProcReq5 },	
-/* 0x17 */	{ ir_server_stat,	   ProcReq0 },		
-/* 0x18 */	{ ir_server_stat2,	   ProcReq0 },		
+/* 0x17 */	{ ir_error /* hack */,	   ProcReq0 },		
+/* 0x18 */	{ ir_error /* hack */,	   ProcReq0 },		
 /* 0x19 */	{ ir_host_ctl,		   ProcReq0 },
 /* 0x1a */	{ ir_query_extension,	   ProcReq12 }
 #else /* !USE_EUC_PROTOCOL */
 /* 0x00 */	{ ir_error,		   ProcReq0 },
-/* 0x01 */	{ ir_initialize,	   ProcReq2 },
+/* 0x01 */	{ ir_error /* hack */,	   ProcReq2 },
 #if 0
 /* 0x02 */	{ ir_error,		   ProcReq0 },
 /* 0x03 */	{ ir_error,		   ProcReq0 },
@@ -2283,7 +2104,7 @@ oreqproc Vector[] =
 } ;
 
 #ifdef EXTENSION
-oreqproc ExtensionVector[] =
+static oreqproc ExtensionVector[] =
 {
 #ifdef USE_EUC_PROTOCOL
 /* 0x00 */	{ ir_list_dictionary,	   ProcReq9 },
@@ -2301,7 +2122,7 @@ oreqproc ExtensionVector[] =
 } ;
 #endif /* EXTENSION */
 
-char *ProtoName[] = {
+static const char *ProtoName[] = {
     "IR_INIT",
     "IR_FIN",	
     "IR_CRE_CON",	
@@ -2331,7 +2152,7 @@ char *ProtoName[] = {
 } ;			
 
 #ifdef DEBUG
-char *DebugProc[][2] = {
+const char *DebugProc[][2] = {
     { "ir_null",		      "ProcReq0" } ,
     { "ir_initialize",		      "ProcReq2" } ,
     { "ir_finalize",		      "ProcReq0" } ,
@@ -2362,7 +2183,7 @@ char *DebugProc[][2] = {
 } ;			
 #endif
 
-char *ExtensionName[][2] = {
+static const char *ExtensionName[][2] = {
     /* Request Name		Start Protocol Number */					
 #ifdef EXTENSION
     { REMOTE_DIC_UTIL,		"65536" }, /* 0x10000 */

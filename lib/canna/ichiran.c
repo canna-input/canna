@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static	char	rcs_id[] = "@(#) 102.1 $Id: ichiran.c,v 1.1.1.1 2002/10/19 08:27:49 aida_s Exp $";
+static	char	rcs_id[] = "@(#) 102.1 $Id: ichiran.c,v 1.3 2003/09/17 08:50:53 aida_s Exp $";
 #endif /* lint */
 
 #include	<errno.h>
@@ -30,6 +30,14 @@ static	char	rcs_id[] = "@(#) 102.1 $Id: ichiran.c,v 1.1.1.1 2002/10/19 08:27:49 
 #ifdef luna88k
 extern int errno;
 #endif
+
+/*********************************************************************
+ *                      wchar_t replace begin                        *
+ *********************************************************************/
+#ifdef wchar_t
+# error "wchar_t is already defined"
+#endif
+#define wchar_t cannawc
 
 extern int TanNextKouho();
 
@@ -332,7 +340,7 @@ int *nelem, *currentkouho;
   /* RkwGetKanjiList で得る、すべての候補のための領域を得る */
   if ((work = (wchar_t *)malloc(ROMEBUFSIZE * sizeof(wchar_t)))
                                                == (wchar_t *)NULL) {
-#ifndef WIN
+#ifndef CODED_MESSAGE
     jrKanjiError = "malloc (getIchiranList) できませんでした";
 #else
     jrKanjiError = "malloc (getIchiranList) \244\307\244\255\244\336\244\273\244\363\244\307\244\267\244\277";
@@ -410,7 +418,7 @@ newIchiranContext()
 
   if ((icxt = (ichiranContext)malloc(sizeof(ichiranContextRec)))
                                           == (ichiranContext)NULL) {
-#ifndef WIN
+#ifndef CODED_MESSAGE
     jrKanjiError = "malloc (newIchiranContext) できませんでした";
 #else
     jrKanjiError = "malloc (newIchiranContext) \244\307\244\255\244\336"
@@ -727,7 +735,7 @@ int currentkouho;
   ic->glineifp[line].gllen   = 0;
   ic->glineifp[line].gldata  = (wchar_t *)NULL;
 
-#if defined(DEBUG) && !defined(WIN)
+#if defined(DEBUG)
   if (iroha_debug) {
     int i;
     for(i=0; ic->glineifp[i].glkosu; i++)
@@ -1694,5 +1702,13 @@ uiContext d;
 {
   return IchiranQuitThenDo(d, CANNA_FN_CaseRotate);
 }
+
+#ifndef wchar_t
+# error "wchar_t is already undefined"
+#endif
+#undef wchar_t
+/*********************************************************************
+ *                       wchar_t replace end                         *
+ *********************************************************************/
 
 #include	"ichiranmap.h"

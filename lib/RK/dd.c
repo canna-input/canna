@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[]="$Id: dd.c,v 1.4 2002/10/20 15:48:11 aida_s Exp $";
+static char rcsid[]="$Id: dd.c,v 1.5 2003/09/17 08:50:52 aida_s Exp $";
 #endif
 /*LINTLIBRARY*/
 
@@ -41,27 +41,6 @@ static char rcsid[]="$Id: dd.c,v 1.4 2002/10/20 15:48:11 aida_s Exp $";
 #endif
 #include <sys/types.h>
 #include <sys/stat.h>
-
-#ifdef WIN
-#include <direct.h> /* for getcwd() */
-#endif
-
-#ifdef WIN
-#if 0
-#define rename(x, y) (MoveFileEx((x), (y), MOVEFILE_REPLACE_EXISTING) ? 0 : -1)
-#ifndef HAVE_RENAME
-#define HAVE_RENAME
-#endif
-#endif /* 0 */
-
-#define unlink(x) (DeleteFile(x) ? 0 : -1)
-#define sprintf wsprintf
-/* The definitions below assumes that TCHAR == char in Windows environment */
-#define strcpy(x, y) lstrcpy((x), (y))
-#define strlen(x) lstrlen(x)
-#define strcat(x, y) lstrcat((x), (y))
-#define strcmp(x, y) lstrcmp((x), (y))
-#endif
 
 #define	Calloc		calloc
 #define cx_gwt		cx_extdata.ptr
@@ -264,11 +243,7 @@ _RkRealizeDF(df)
 {
   struct DD	*dd = df->df_direct;
   char		*pathname;
-#ifdef WIN 
-  int oldmask;
-#else
   unsigned long oldmask;
-#endif
   int t;
     
   _RkRealizeDD(dd);
@@ -277,23 +252,7 @@ _RkRealizeDF(df)
   if (pathname) {
     oldmask = umask(2);
     /* create a file */
-#ifdef WIN
-    {
-      HANDLE fd;
-      fd = CreateFile(pathname, GENERIC_WRITE,
-		      FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
-		      CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-      if (fd == INVALID_HANDLE_VALUE) {
-	t = -1;
-      }
-      else {
-	CloseHandle(fd);
-	t = 0;
-      }
-    }
-#else
     t = close(creat(pathname, CREAT_MODE));
-#endif
     (void)free(pathname);
     (void)umask(oldmask);
     if (t >= 0) {
@@ -530,14 +489,8 @@ _RkReadDD(name)
   struct DDT		*ddt;
   struct RkParam	*sx = RkGetSystem();
   int r, w;
-#ifndef WIN
   int fdes;
   FILE		*fp;
-#else
-  HANDLE fp, mfp;
-  DWORD dwFileSize;
-  char *pdir, *qdir, *sdir, *edir;
-#endif
 
 #ifndef USE_MALLOC_FOR_BIG_ARRAY
   char		direct[RK_PATH_BMAX];
@@ -585,7 +538,6 @@ _RkReadDD(name)
   (void)strcpy(direct, path);
   (void)strcat(direct, dics_dir);
 
-#ifndef WIN
   /* check for accessing right */
   if ((fdes = open(direct, 0)) < 0) { /* no file? */
     dd->dd_flags |= DD_WRITEOK;
@@ -603,26 +555,7 @@ _RkReadDD(name)
       dd->dd_flags |= DD_WRITEOK;
     }
   }
-#else /* WIN */
-  {
-    DWORD attr;
 
-    attr = GetFileAttributes(direct);
-    if (attr == 0xFFFFFFFF) {
-      dd->dd_flags |= DD_WRITEOK;
-    }
-    else {
-      if (!(attr & FILE_ATTRIBUTE_HIDDEN)) {
-	dd->dd_flags |= DD_READOK;
-      }
-      if (!(attr & FILE_ATTRIBUTE_READONLY)) {
-	dd->dd_flags |= DD_WRITEOK;
-      }
-    }
-  }
-#endif /* WIN */
-
-#ifndef WIN
 #ifdef __EMX__
   fp = fopen(direct, "rt");
 #else
@@ -631,69 +564,21 @@ _RkReadDD(name)
   if (!fp) {
     goto return_dd;
   }
-#else
-  /* do memory mapping for scaning dics.dir */
-  fp = CreateFile(direct, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE,
-		  NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-  if (fp !=  INVALID_HANDLE_VALUE) {
-    dwFileSize = GetFileSize(fp, NULL);
-
-    if (dwFileSize == 0) {
-      mfp = NULL;
-      sdir = pdir = edir = (char *)0;
-      goto map_ok;
-    }
-
-    mfp = CreateFileMapping(fp, NULL, PAGE_READONLY, 0, 0, NULL);
-    if (mfp != NULL) {
-      pdir = sdir =
-	(char *)MapViewOfFile(mfp, FILE_MAP_READ, 0, 0, dwFileSize);
-      if (sdir) {
-	edir = sdir + dwFileSize;
-	goto map_ok;
-      }
-      CloseHandle(mfp);
-    }
-    CloseHandle(fp);
-  }
-  goto return_dd;
-
- map_ok:
-  
-#endif
   ddLines = &dd->dd_text;
   /* read dics_dir lines */
-#ifndef WIN
-  while (fgets((char *)line, RK_LINE_BMAX, fp))
-#else
-  while (pdir < edir)
-#endif
-  {
+  while (fgets((char *)line, RK_LINE_BMAX, fp)) {
     int		dftype, dmclass;
 
     ddt = (struct DDT *)malloc(sizeof(struct DDT));
     if (!ddt)
       continue;
 
-#ifdef WIN
-    for (qdir = pdir ;
-	 *qdir && *qdir != '\r' && *qdir != '\n' && qdir < edir ;
-	 qdir++) /* empty */;
-    ddt->ddt_spec = malloc(qdir - pdir + 3); /* 3 for \r\n\0 */
-#else
     ddt->ddt_spec = malloc(strlen((char *)line) + 2); /* 2 for \n\0 */
-#endif
     if (!ddt->ddt_spec)
       {
 	free(ddt);
 	continue;
       };
-#ifdef WIN
-    strncpy(ddt->ddt_spec, pdir, qdir - pdir);
-    ddt->ddt_spec[qdir - pdir] = '\0';
-    while ((*qdir == '\r' || *qdir == '\n') && qdir < edir) qdir++;
-    pdir = qdir;
-#else
     {
       int len = strlen((char *)line);
       if (line[len - 1] == '\n') {
@@ -701,7 +586,6 @@ _RkReadDD(name)
       }
     }
     strcpy(ddt->ddt_spec, (char *)line);
-#endif
 
     ddt->ddt_next = ddLines;
     ddt->ddt_prev = ddLines->ddt_prev;
@@ -719,14 +603,8 @@ _RkReadDD(name)
     (void)strcpy(file, path);
     (void)strcat(file, "/");
     (void)strcat(file, (char *)lnk);
-#ifndef WIN
     if (close(open(file, 0)) < 0)
       continue;
-#else
-    if (GetFileAttributes(file) == 0xFFFFFFFF) {
-      continue;
-    }
-#endif
     df = _RkAllocDF(dd, lnk, dftype);
     if (df) {
       dm = _RkAllocDM(df, member, nickname, dmclass);
@@ -742,15 +620,7 @@ _RkReadDD(name)
       };
     };
   };
-#ifndef WIN
   (void)fclose(fp);
-#else
-  if (mfp) {
-    UnmapViewOfFile(sdir);
-    CloseHandle(mfp);
-  }
-  CloseHandle(fp);
-#endif
 
  return_dd:
 #ifdef USE_MALLOC_FOR_BIG_ARRAY
@@ -827,11 +697,7 @@ _RkCreateUniquePath(dd, proto)
     int		count;
     struct DF		*f;
     struct DF		*fh = &dd->dd_files;
-#ifdef WIN 
-    int                 oldmask;
-#else
     unsigned long       oldmask;
-#endif
     char		*filename;
     
     count = 0;
@@ -845,23 +711,8 @@ _RkCreateUniquePath(dd, proto)
     if (filename) {
       oldmask = umask(2);
       
-#ifdef WIN
-      {
-	HANDLE fd;
-	fd = CreateFile(filename, GENERIC_WRITE, 
-			FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
-			CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-	if (fd == INVALID_HANDLE_VALUE) {
-	  count++;
-	}
-	else {
-	  CloseHandle(fd);
-	}
-      }
-#else
       if (close(creat(filename, CREAT_MODE)) < 0)
 	count++;
-#endif
       (void)free(filename);
       (void)umask(oldmask);
       if (!count)
@@ -890,13 +741,8 @@ _RkRealizeDD(dd)
   int			n;
   int ret = -1;
   int tmpres;
-#ifndef WIN
   int			fdes;
   long		tloc;
-#else
-  HANDLE fdes;
-  SYSTEMTIME curtime;
-#endif
 #ifdef __EMX__
   struct stat		statbuf;
 #endif
@@ -922,39 +768,18 @@ _RkRealizeDD(dd)
 #endif
 
   /* create directory if needed */
-#ifdef WIN
-  if (CreateDirectory(dd->dd_path, 0) == FALSE &&
-      GetLastError() != ERROR_ALREADY_EXISTS) {
+  if (mkdir(dd->dd_path, MKDIR_MODE) < 0 &&
+      errno != EEXIST) {
     goto return_ret;
   }
-#else
-    if (mkdir(dd->dd_path, MKDIR_MODE) < 0 &&
-	errno != EEXIST) {
-      goto return_ret;
-    }
-    /* change owner
-    if (pw)
-    chown(dd->dd_path, getuid(), pw->pw_gid);
-    */
-#endif /* WIN */
   /* dics.dir */
   (void)strcpy(dicsdir, dd->dd_path);
   (void)strcat(dicsdir, "/dics.dir");
   backup[0] = 0;
-#ifndef WIN
   tmpres = close(open(dicsdir, 0));
-#else
-  tmpres = (GetFileAttributes(dicsdir) == 0xFFFFFFFF) ? -1 : 0;
-#endif
   if (tmpres >= 0) {
     (void)strcpy(backup, dd->dd_path);
     (void)strcat(backup, "/#dics.dir");
-#ifdef WIN
-    DeleteFile(backup);
-    if (!MoveFile(dicsdir, backup)) {
-      goto return_ret;
-    }
-#else /* !WIN */
 #ifdef HAVE_RENAME
 #ifdef __EMX__
     unlink(backup);
@@ -969,24 +794,11 @@ _RkRealizeDD(dd)
     }
     unlink(dicsdir);
 #endif /* !HAVE_RENAME */
-#endif /* !WIN */
   };
   /* create dics.dir */
     
-#ifdef WIN  
-  fdes = CreateFile(dicsdir, GENERIC_READ | GENERIC_WRITE,
-		    FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
-		    CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-  if (fdes == INVALID_HANDLE_VALUE)
-#else
-  if ((fdes = creat(dicsdir, CREAT_MODE)) < 0)
-#endif
-  {
+  if ((fdes = creat(dicsdir, CREAT_MODE)) < 0) {
     if (backup[0]) {
-#ifdef WIN
-      DeleteFile(dicsdir);
-      MoveFile(backup, dicsdir);
-#else /* !WIN */
 #ifdef HAVE_RENAME
 #ifdef __EMX__
       unlink(dicsdir);
@@ -998,7 +810,6 @@ _RkRealizeDD(dd)
 	unlink(backup);
       }
 #endif
-#endif /* !WIN */
     }
     goto return_ret;
   };
@@ -1006,45 +817,18 @@ _RkRealizeDD(dd)
   setmode(fdes, O_BINARY);
 #endif
 /* header */
-#ifndef WIN
   tloc = time(0);
   strcpy(whattime, ctime(&tloc));
   whattime[strlen(whattime)-1] = 0;
-#else
-  GetLocalTime(&curtime);
-  wsprintf(whattime, "%d/%d/%d %d:%02d:%02d",
-	   curtime.wYear, curtime.wMonth, curtime.wDay,
-	   curtime.wHour, curtime.wMinute, curtime.wSecond);
-#endif
   (void)strcpy(header, "#CANNA dics.dir [");
   (void)strcat(header, whattime);
   (void)strcat(header, "] ");
   (void)strcat(header, dd->dd_name);
-#ifdef WIN
-  (void)strcat(header, "\r");
-#endif
   (void)strcat(header, "\n");
   n = strlen(header);
-#ifndef WIN
   tmpres = write(fdes, header, n);
-#else
-  {
-    DWORD written;
-
-    if (!WriteFile(fdes, header, n, &written, NULL)) {
-      tmpres = -1;
-    }
-    else {
-      tmpres = written;
-    }
-  }
-#endif
   if (tmpres != n) {
     if (backup[0]) {
-#ifdef WIN
-      DeleteFile(dicsdir);
-      MoveFile(backup, dicsdir);
-#else /* !WIN */
 #ifdef HAVE_RENAME
 #ifdef __EMX__
       unlink(dicsdir);
@@ -1056,15 +840,10 @@ _RkRealizeDD(dd)
 	unlink(backup);
       }
 #endif
-#endif /* !WIN */
     }
     else
       unlink(dicsdir);
-#ifndef WIN
     close(fdes);
-#else
-    CloseHandle(fdes);
-#endif
     goto return_ret;
   };
   /* fill up bodies */
@@ -1073,36 +852,16 @@ _RkRealizeDD(dd)
     if (strncmp(ddt->ddt_spec, "#CANNA ",  7)) {
       n = strlen(ddt->ddt_spec);
 
-#ifndef WIN
       ddt->ddt_spec[n] = '\n';
       tmpres = write(fdes, ddt->ddt_spec, n + 1);
       if (tmpres > 0) {
 	tmpres--; /* for \n */
       }
 	
-#else
-      {
-	DWORD written;
-
-	ddt->ddt_spec[n] = '\r';
-	ddt->ddt_spec[n + 1] = '\n';
-	if (!WriteFile(fdes, ddt->ddt_spec, n + 2, &written, NULL)) {
-	  tmpres = -1;
-	}
-	else {
-	  tmpres = written - 2; /* 2 for \r\n */
-	}
-      }
-#endif
-
       ddt->ddt_spec[n] = '\0';
 
       if (tmpres != n) {
 	if (backup[0]) {
-#ifdef WIN
-	  DeleteFile(dicsdir);
-	  MoveFile(backup, dicsdir);
-#else /* !WIN */
 #ifdef HAVE_RENAME
 #ifdef __EMX__
 	  unlink(dicsdir);
@@ -1114,23 +873,14 @@ _RkRealizeDD(dd)
 	    unlink(backup);
 	  }
 #endif
-#endif /* !WIN */
 	}
 	else
 	  unlink(dicsdir);
-#ifndef WIN
 	close(fdes);
-#else
-	CloseHandle(fdes);
-#endif
 	goto return_ret;
       };
     };
-#ifndef WIN
   close(fdes);
-#else
-  CloseHandle(fdes);
-#endif
   /* change owner
   if (pw)
   chown(dicsdir, getuid(), pw->pw_gid);

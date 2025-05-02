@@ -1,0 +1,26 @@
+/* $Id: Imakefile,v 1.8 2003/09/25 06:30:22 aida_s Exp $ */
+#include "../../Canna.conf"
+CANNAROOT = ../..
+DEFINES = 
+INCLUDES = -I$(CANNAROOT)/include
+
+OBJS = cfuncs.o basename.o cksum.o file.o strops.o
+SRCS = cfuncs.c basename.c cksum.c file.c strops.c
+HEADER = cfuncs.h file.h cksum.h ecfuncs.h strops.h
+SUBST = cfuncs.sub file.sub cksum.sub ecfuncs.sub strops.sub
+
+NormalLibraryObjectRule()
+NormalLibraryTarget(RKindep,$(OBJS))
+NormalLintTarget($(SRCS))
+LintLibraryTarget(RKindep,$(SRCS))
+DependTarget()
+
+.SUFFIXES: .exp .sub
+.exp.sub: ../canna/GSYM.awk
+	awk -f ../canna/GSYM.awk < $< > $@
+
+includes:: $(SUBST)
+clean::
+	$(RM) $(SUBST)
+
+LinkFileList(includes,$(HEADER) $(SUBST),$(CANNAROOT)/include/RKindep,../../lib/RKindep)

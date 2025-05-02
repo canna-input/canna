@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: bushu.c,v 1.1.1.1 2002/10/19 08:27:48 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: bushu.c,v 1.3 2003/09/17 08:50:53 aida_s Exp $";
 #endif /* lint */
 
 #include	<errno.h>
@@ -30,6 +30,14 @@ static char rcs_id[] = "@(#) 102.1 $Id: bushu.c,v 1.1.1.1 2002/10/19 08:27:48 ai
 #ifdef luna88k
 extern int errno;
 #endif
+
+/*********************************************************************
+ *                      wchar_t replace begin                        *
+ *********************************************************************/
+#ifdef wchar_t
+# error "wchar_t is already defined"
+#endif
+#define wchar_t cannawc
 
 extern wchar_t *WString();
 
@@ -263,7 +271,7 @@ newForIchiranContext()
 
   if ((fcxt = (forichiranContext)malloc(sizeof(forichiranContextRec)))
                                              == (forichiranContext)NULL) {
-#ifndef WIN
+#ifndef CODED_MESSAGE
     jrKanjiError = "malloc (newForIchiranContext) できませんでした";
 #else
     jrKanjiError = "malloc (newForIchiranContext) \244\307\244\255\244\336\244\273\244\363\244\307\244\267\244\277";  /* できませんでした */
@@ -283,7 +291,7 @@ uiContext d;
 
   if (pushCallback(d, d->modec, NO_CALLBACK, NO_CALLBACK,
                                   NO_CALLBACK, NO_CALLBACK) == 0) {
-#ifndef WIN
+#ifndef CODED_MESSAGE
     jrKanjiError = "malloc (pushCallback) できませんでした";
 #else
     jrKanjiError = "malloc (pushCallback) \244\307\244\255\244\336\244\273\244\363\244\307\244\267\244\277"; /* できませんでした */
@@ -801,3 +809,10 @@ int              flag;
 }
 
 
+#ifndef wchar_t
+# error "wchar_t is already undefined"
+#endif
+#undef wchar_t
+/*********************************************************************
+ *                       wchar_t replace end                         *
+ *********************************************************************/

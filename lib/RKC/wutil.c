@@ -21,17 +21,19 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "$Id: wutil.c,v 1.2 2002/10/20 14:29:59 aida_s Exp $";
+static char rcs_id[] = "$Id: wutil.c,v 1.7 2003/09/17 15:13:27 aida_s Exp $";
 #endif
 
-#include "rkcw.h"
-#ifndef WIN
 #include "sglobal.h"
-#endif
+#include "rkcw.h"
 
-#ifdef HAVE_WCHAR_OPERATION
-#include <locale.h>
+/*********************************************************************
+ *                      wchar_t replace begin                        *
+ *********************************************************************/
+#ifdef wchar_t
+# error "wchar_t is already defined"
 #endif
+#define wchar_t cannawc
 
 int
 ushort2eucsize(src, srclen)
@@ -167,6 +169,7 @@ int srclen, destlen;
   return euc2ushort(src, srclen, dest, destlen);
 }
 
+#ifndef CANNA_WCHAR16
 static int
 wchar2ushort32(src, srclen, dest, destlen)
 register wchar_t *src;
@@ -243,6 +246,8 @@ int srclen, destlen;
   return i;
 }
 
+#else /* CANNA_WCHAR16 */
+
 static int
 wchar2ushort16(src, srclen, dest, destlen)
 wchar_t *src;
@@ -272,72 +277,12 @@ int srclen, destlen;
   *dest = (wchar_t)0;
   return i;
 }
+#endif /* CANNA_WCHAR16 */
 
 /*
  * ワイドキャラクタオペレーション
  *
  */
-
-static BYTE wchar_type; /* ワイドキャラクタのタイプ(下を見よ) */
-
-#define CANNA_WCTYPE_16 0  /* 16ビット表現 */
-#define CANNA_WCTYPE_32 1  /* 32ビット表現 */
-#define CANNA_WCTYPE_OT 99 /* その他の表現 */
-
-/*
- rkcWCinit() -- ワイドキャラクタとしてどれが使われているかを確認する
-
-        この関数が呼び出されるまえに setlocale がなされていなければならない
- */
-
-#define TYPE16A 0x0000a4a2L
-#define TYPE32A 0x30001222L
-
-int
-rkcWCinit()
-{
-#ifdef HAVE_WCHAR_OPERATION
-  unsigned char *a = (unsigned char *)"あ"; /* 0xa4a2 */
-  wchar_t wc[24];
-  unsigned long	l;
-
-  if (mbstowcs(wc, a, sizeof(wc) / sizeof(wchar_t)) != 1) {
-    /* 多分 setlocale がなされていない */
-    setlocale(LC_CTYPE, "");
-    if (mbstowcs(wc, a, sizeof(wc) / sizeof(wchar_t)) != 1) {
-      setlocale(LC_CTYPE, JAPANESE_LOCALE);
-      if (mbstowcs(wc, a, sizeof(wc) / sizeof(wchar_t)) != 1) {
-	return -1;
-      }
-    }
-  }
-  l = (unsigned long)wc[0];
-  if (l == TYPE16A) {
-    wchar_type = CANNA_WCTYPE_16;
-  }
-#ifndef WCHAR16
-  else if (l == TYPE32A) {
-    wchar_type = CANNA_WCTYPE_32;
-  }
-#endif
-  else {
-    wchar_type = CANNA_WCTYPE_OT;
-  }
-#else /* !HAVE_WCHAR_OPERATION */
-
-#ifdef	WCHAR16
-    wchar_type = CANNA_WCTYPE_16;
-#else /* WCHAR16 */
-  if (sizeof(wchar_t) == 2)
-    wchar_type = CANNA_WCTYPE_16;
-  else
-    wchar_type = CANNA_WCTYPE_32;
-#endif /* WCHAR16 */
-
-#endif /* !HAVE_WCHAR_OPERATION */
-
-  return 0;
-}
 
 int
 wchar2ushort(src, slen, dst, dlen)
@@ -345,10 +290,11 @@ wchar_t *src;
 Ushort *dst;
 int slen, dlen;
 {
-    if( wchar_type == CANNA_WCTYPE_16 )
-	return( wchar2ushort16( src, slen, dst, dlen ) );
-    else
-	return( wchar2ushort32( src, slen, dst, dlen ) );
+#ifdef CANNA_WCHAR16
+    return( wchar2ushort16( src, slen, dst, dlen ) );
+#else
+    return( wchar2ushort32( src, slen, dst, dlen ) );
+#endif
 }
 
 int
@@ -357,10 +303,11 @@ Ushort *src;
 wchar_t *dst;
 int slen, dlen;
 {
-    if( wchar_type == CANNA_WCTYPE_16)
-	return( ushort2wchar16( src, slen, dst, dlen ) );
-    else
-	return( ushort2wchar32( src, slen, dst, dlen ) );
+#ifdef CANNA_WCHAR16
+    return( ushort2wchar16( src, slen, dst, dlen ) );
+#else
+    return( ushort2wchar32( src, slen, dst, dlen ) );
+#endif
 }
 
 exp(int)
@@ -415,3 +362,11 @@ int n;
   *wd = 0;
   return res;
 }
+
+#ifndef wchar_t
+# error "wchar_t is already undefined"
+#endif
+#undef wchar_t
+/*********************************************************************
+ *                       wchar_t replace end                         *
+ *********************************************************************/

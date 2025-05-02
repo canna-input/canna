@@ -1,17 +1,7 @@
-/* $Id: Imakefile,v 1.3 2002/10/20 14:29:58 aida_s Exp $ */
+/* $Id: Imakefile,v 1.4 2003/01/26 04:36:34 aida_s Exp $ */
 #include "../../Canna.conf"
-
-      CANNAROOT = ../..
-       INCLUDES = -I$(CANNAROOT)/include
-           SRCS = splitwd.c
-
-#if defined(__EMX__) || defined(__CYGWIN32__)
-AllTarget(splitword.exe)
-#else
-AllTarget(splitword)
-#endif
-SingleProgramTarget(splitword,splitwd.o,,)
-InstallProgram(splitword,$(cannaBinDir))
-InstallManPageLong(splitwd,$(cannaManDir),splitword)
-DependTarget()
-LintTarget()
+#define SimpleCommand
+#define TargetName splitword
+#define SrcName splitwd
+#define ManSrcName splitwd
+#include "../cmd.tmpl"

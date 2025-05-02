@@ -1,29 +1,6 @@
-/* $Id: Imakefile,v 1.2 2002/10/20 04:10:25 aida_s Exp $ */
+/* $Id: Imakefile,v 1.3 2003/01/26 04:36:31 aida_s Exp $ */
 #include "../../Canna.conf"
-
-       CANNAROOT = ../..
-        CANNASRC = $(CANNAROOT)/lib/canna
-#if 0
-#if HasSharedLibraries
-      SOCANNAREV = 1
-     DEPCANNALIB = $(CANNASRC)/libcanna.so.$(SOCANNAREV)
-#else
-     DEPCANNALIB = $(CANNASRC)/libcanna.a
-#endif
-        CANNALIB = -L$(CANNASRC) -lcanna
-#endif
-         DEFINES = 
-        INCLUDES = -I$(CANNAROOT)/include
-            OBJS = canlisp.o
-            SRCS = canlisp.c
-          TARGET = canlisp
-
-#if defined(__EMX__) || defined(__CYGWIN32__)
-AllTarget($(TARGET).exe)
-#else
-AllTarget($(TARGET))
-#endif
-NormalProgramTarget($(TARGET),$(OBJS),$(DEPCANNALIB),$(CANNALIB),)
-InstallProgram($(TARGET),$(cannaBinDir))
-DependTarget()
-LintTarget()
+#define SimpleCommand
+#define WantCannaLib
+#define TargetName canlisp
+#include "../cmd.tmpl"

@@ -1,30 +1,9 @@
-/* $Id: Imakefile,v 1.2 2002/10/20 04:10:25 aida_s Exp $ */
+/* $Id: Imakefile,v 1.3 2003/01/26 04:36:31 aida_s Exp $ */
 #include "../../Canna.conf"
-
-       CANNAROOT = ../..
-        CANNASRC = $(CANNAROOT)/lib/canna
-#if 0
-#if HasSharedLibraries
-      SOCANNAREV = 1
-     DEPCANNALIB = $(CANNASRC)/libcanna.so.$(SOCANNAREV)
-#else
-     DEPCANNALIB = $(CANNASRC)/libcanna.a
-#endif
-        CANNALIB = -L$(CANNASRC) -lcanna
-#endif
-         DEFINES = -DCHECK_COMMAND $(wcharDefinition) $(pointerIntegerDef)
-        INCLUDES = -I$(CANNAROOT)/include
-            OBJS = main.o
-            SRCS = main.c
-          TARGET = cannacheck
-
-#if defined(__EMX__) || defined(__CYGWIN32__)
-AllTarget($(TARGET).exe)
-#else
-AllTarget($(TARGET))
-#endif
-NormalProgramTarget($(TARGET),$(OBJS),$(DEPCANNALIB),$(CANNALIB),)
-InstallProgram($(TARGET),$(cannaBinDir))
-InstallManPageLong(ccheck,$(cannaManDir),$(TARGET))
-DependTarget()
-LintTarget()
+CMDSUBDEFINES = -DCHECK_COMMAND
+#define SimpleCommand
+#define TargetName cannacheck
+#define SrcName main
+#define ManSrcName ccheck
+#define WantCannaLib
+#include "../cmd.tmpl"

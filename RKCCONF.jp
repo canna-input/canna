@@ -1,0 +1,58 @@
+RKCの設定ファイルについて
+$Id: RKCCONF.jp,v 1.3 2003/08/07 16:13:24 aida_s Exp $
+
+『かんな』の中で、ユーザーインターフェースに関する部分は、lispベースの.cannaで
+設定を行いますが、サーバとの接続に関連した設定は、.cannaでの設定に馴染まない
+ため、.cannax/rkc.confというファイルに書きます。
+
+rkc.confの書式は次のようになります。
+
+// sample rkc.conf
+host "*" {
+  server_timeout 1000;
+};
+host "foo,bar" {
+  server_timeout 300;
+};
+host "foo" {
+  server_timeout 700;
+};
+cannahost "bar";
+cannahost "unix,foo";
+
+hostブロックには、接続先のサーバごとの設定を書きます。現在の設定項目は次の
+通りです。なお"*"は全サーバを表します。
+
+server_timeout <number> (default: 500)
+サーバとの接続や通信中のタイムアウトをミリ秒単位で指定します。
+
+hostブロックの外では、全体の設定を書きます。現在の設定項目は次の通りです。
+
+cannahost <string> (default: "")
+接続先を"hostname[:num],hostname[:num],..."の形式で指定します。空文字列
+に設定した場合は、CANNAHOST環境変数で指定したサーバに、それも設定されて
+いなければローカルのサーバにUNIXドメインで接続を行います。
+
+なお、同じ項目に関する設定があれば、常に最後に書いたものが優先されます。
+したがって、上の例では、cannahostは"unix,foo"になり、server_timeoutは、fooに
+接続する場合は700ms、barに接続する場合は300ms、それ以外に接続する場合は1000ms
+となります。
+
+整数を設定する項目では、Cと同様の演算子を利用できます。ただし=や++のような
+変数を変化させる演算子はありません。また、演算はすべてunsigned intで行われます。
+
+設定ファイルは読み込み前にcpp(1)で処理されます。cpp以外のプリプロセッサを
+利用することも可能で、この場合はプリプロセッサを起動するコマンドを環境変数
+CANNA_RKC_PREPROCESSORで設定します。引数にはrkc.confの絶対パスが与えられ、
+sh -cで起動されます。例えば、
+CANNA_RKC_PREPROCESSOR='m4 -DFOO'; export CANNA_RKC_PREPROCESSOR
+とすると、
+sh -c 'm4 -DFOO /home/yourname/.cannax/rkc.conf'
+が内部で実行され、その出力が読み込まれます。
+
+なお、コメントの/*...*/は、cppを使えばcppによって取り除かれますが、cpp以外を
+利用した場合でも、canna自身がコメントと判断して読み飛ばすので、いずれの場合も
+コメントとして有効になります。
+
+この他、環境によってcppに-traditionalが付いたり、cppとcannaで式の解釈が微妙に
+異なる場合があるので、高度にプリプロセッサを利用する場合は注意してください。

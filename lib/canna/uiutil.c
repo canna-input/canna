@@ -21,11 +21,19 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: uiutil.c,v 1.1.1.1 2002/10/19 08:27:51 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: uiutil.c,v 1.3 2003/09/17 08:50:53 aida_s Exp $";
 #endif
 
 #include "canna.h"
 #include "patchlevel.h"
+
+/*********************************************************************
+ *                      wchar_t replace begin                        *
+ *********************************************************************/
+#ifdef wchar_t
+# error "wchar_t is already defined"
+#endif
+#define wchar_t cannawc
 
 #ifndef NO_EXTEND_MENU
 
@@ -69,7 +77,7 @@ static e_menuitem e_helptable[] = {
 };
 
 static e_menuitem e_uusonotatable[] = { 
-#ifndef WIN
+#ifndef CODED_MESSAGE
   {"変換方式",       MENU_NEXT_MENU, MT_HENKAN},
 #ifndef STANDALONE /* This is not used in Windows environment */
   {"サーバ操作",     MENU_NEXT_MENU, MT_SERV},
@@ -93,7 +101,7 @@ static e_menuitem e_uusonotatable[] = {
   {"\245\320\241\274\245\270\245\347\245\363\311\275\274\250", MENU_FUNC_NUM,  CANNA_FN_ShowVersion},
   /* ファイル表示 */
   {"\245\325\245\241\245\244\245\353\311\275\274\250",   MENU_NEXT_MENU, MT_FILE},
-#endif /* WIN */
+#endif
 };
 
 static e_menuitem e_uukigotable[] = {
@@ -214,7 +222,7 @@ struct _e_menu *eucmenu;
   menuitem *menubody;
   wchar_t *wp, **wpp;
   menustruct *res = (menustruct *)0;
-#ifndef WIN
+#ifndef USE_MALLOC_FOR_BIG_ARRAY
   wchar_t buf[MBUFSIZE];
 #else
   wchar_t *buf = (wchar_t *)malloc(sizeof(wchar_t) * MBUFSIZE);
@@ -253,7 +261,7 @@ struct _e_menu *eucmenu;
     res->nentries = n;
     res->modeid = CANNA_MODE_ExtendMode;
   }
-#ifdef WIN
+#ifdef USE_MALLOC_FOR_BIG_ARRAY
   (void)free((char *)buf);
 #endif
   return res;
@@ -585,3 +593,11 @@ menustruct *table;
   return(retval);
 }
 #endif /* NO_EXTEND_MENU */
+
+#ifndef wchar_t
+# error "wchar_t is already undefined"
+#endif
+#undef wchar_t
+/*********************************************************************
+ *                       wchar_t replace end                         *
+ *********************************************************************/

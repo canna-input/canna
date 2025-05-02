@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: keydef.c,v 1.1.1.1 2002/10/19 08:27:50 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: keydef.c,v 1.2 2003/09/17 08:50:53 aida_s Exp $";
 #endif /* lint */
 
 #include "canna.h"
@@ -467,7 +467,7 @@ unsigned char key;
       return p->kinou_seq;
     }
   }
-#ifndef WIN
+#ifndef CODED_MESSAGE
   debug_message("actFromHash:キーシケンスをみつけられませんでした。\n",0,0,0);
 #else
   debug_message("actFromHash:\245\255\241\274\245\267\245\261\245\363\245\271"
@@ -755,7 +755,7 @@ struct map ***ppp;
       return p;
     }
   }
-#ifndef WIN
+#ifndef CODED_MESSAGE
   debug_message("mapFromHash:mapがみつかりません。\n",0,0,0);
 #else
   debug_message("mapFromHash:map\244\254\244\337\244\304\244\253\244\352"

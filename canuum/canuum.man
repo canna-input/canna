@@ -1,4 +1,4 @@
-.\" $Id: canuum.man,v 1.1.2.1 2003/01/11 17:53:57 aida_s Exp $
+.\" $Id: canuum.man,v 1.1 2002/12/21 22:44:56 aida_s Exp $
 .nr X 0
 .if \nX=0 .ds X} canuum 1 "Japanese input utility" "\&"
 .TH \*(X}

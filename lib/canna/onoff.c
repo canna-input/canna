@@ -21,11 +21,19 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static	char	rcs_id[] = "@(#) 102.1 $Id: onoff.c,v 1.1.1.1 2002/10/19 08:27:50 aida_s Exp $";
+static	char	rcs_id[] = "@(#) 102.1 $Id: onoff.c,v 1.3 2003/09/17 08:50:53 aida_s Exp $";
 #endif /* lint */
 
 #include	<errno.h>
 #include	"canna.h"
+
+/*********************************************************************
+ *                      wchar_t replace begin                        *
+ *********************************************************************/
+#ifdef wchar_t
+# error "wchar_t is already defined"
+#endif
+#define wchar_t cannawc
 
 #ifndef NO_EXTEND_MENU
 #define ICHISIZE 9
@@ -247,7 +255,7 @@ unsigned char *status;
   oc->glineifp[line].gllen   = 0;
   oc->glineifp[line].gldata  = (wchar_t *)NULL;
 
-#if defined(DEBUG) && !defined(WIN)
+#if defined(DEBUG)
   if (iroha_debug) {
     int i;
     for(i=0; oc->glineifp[i].glkosu; i++)
@@ -309,7 +317,7 @@ uiContext d;
 
   popOnOffMode(d);
 
-#if defined(DEBUG) && !defined(WIN)
+#if defined(DEBUG)
   if(iroha_debug) {
     mountContext mc = (mountContext)d->modec;
     int i;
@@ -330,5 +338,13 @@ uiContext d;
   return(retval);
 }
 #endif /* NO_EXTEND_MENU */
+
+#ifndef wchar_t
+# error "wchar_t is already undefined"
+#endif
+#undef wchar_t
+/*********************************************************************
+ *                       wchar_t replace end                         *
+ *********************************************************************/
 
 #include	"onoffmap.h"

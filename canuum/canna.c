@@ -48,27 +48,23 @@
  */
 
 #ifndef lint
-static char rcsid[] = "$Id: canna.c,v 1.2.2.2 2003/09/17 01:47:02 aida_s Exp $";
+static char rcsid[] = "$Id: canna.c,v 1.9 2003/09/17 08:50:52 aida_s Exp $";
 #endif
 
 #include "commonhd.h"
 #include "sdefine.h"
 #include "sheader.h"
 #include "wnn_config.h"
-#undef HAVE_STRING_H
-#undef HAVE_STRCHR
-#undef HAVE_STRRCHR
-#undef HAVE_MEMSET
-#undef HAVE_MEMCPY
-#undef HAVE_STDLIB_H
-#undef HAVE_INDEX
-#undef HAVE_RINDEX
-#undef HAVE_BZERO
-#undef HAVE_BCOPY
-#include "ccompat.h"
+#if defined(__STDC__) || defined(__cplusplus)
+# define pro(x) x
+#else
+# define pro(x) ()
+#endif
 
 #include <errno.h>
 
+#if 0
+/* old wchar(this also must work unless !SUPPORT_OLD_WCHAR) */
 #ifndef _WCHAR_T
 #define _WCHAR_T
 #define _WCHAR_T_NOTDEFINED
@@ -80,6 +76,12 @@ static char rcsid[] = "$Id: canna.c,v 1.2.2.2 2003/09/17 01:47:02 aida_s Exp $";
 #ifdef _WCHAR_T_NOTDEFINED
 #undef _WCHAR_T_NOTDEFINED
 #undef _WCHAR_T
+#endif
+#else
+#define CANNA_WCHAR16
+#define CANNA_NEW_WCHAR_AWARE
+#include <canna/jrkanji.h>
+#include <canna/RK.h>
 #endif
 
 #include <fcntl.h>

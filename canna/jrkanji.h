@@ -25,15 +25,11 @@
  *	8/16 bit String Manipulations.
  *
  *      "@(#)kanji.h	2.3    88/10/03 10:25:34"
- *      "@(#) 102.1 $Id: jrkanji.h,v 1.1.1.1 2002/10/19 08:27:28 aida_s Exp $"
+ *      "@(#) 102.1 $Id: jrkanji.h,v 1.7 2003/09/25 07:24:54 aida_s Exp $"
  */
 
 #ifndef _JR_KANJI_H_
 #define _JR_KANJI_H_
-
-#if (defined(_WINDOWS) || defined(WIN32)) && !defined(WIN)
-#define WIN
-#endif
 
 #ifndef _WCHAR_T
 # if defined(WCHAR_T) || defined(_WCHAR_T_) || defined(__WCHAR_T) \
@@ -45,21 +41,14 @@
 #ifdef pro
 #define CANNA_PRO_PREDEFINED
 #else
-#if defined(__STDC__) || defined(__cplusplus) || defined(WIN)
+#if defined(__STDC__) || defined(__cplusplus)
 #define pro(x) x
 #else
 #define pro(x) ()
 #endif
 #endif
 
-#if defined(_WINDOWS) && !defined(WIN32)
-#define exp(x)	x __export CALLBACK
-#elif defined(WIN32)
-#define exp(x)	__declspec(dllexport) x
-#else
-#define exp(x)	x
-#endif
-
+#include <canna/sysdep.h>
 #include <canna/keydef.h>
 #include <canna/mfdef.h>
 
@@ -196,17 +185,38 @@ typedef struct {
   int  kouhocount;	/* 候補数表示 */
 } jrCInfoStruct;
 
-#ifdef _WCHAR_T
+#define CANNA_EUC_LISTCALLBACK
+typedef struct {
+  char *client_data;
+  int (*callback_func) pro((char *, int, char **, int, int *));
+} jrEUCListCallbackStruct;
+
+#ifndef CANNAWC_DEFINED
+# if defined(_WCHAR_T) || defined(CANNA_NEW_WCHAR_AWARE)
+#  define CANNAWC_DEFINED
+#  ifdef CANNA_NEW_WCHAR_AWARE
+#   ifdef CANNA_WCHAR16
+typedef canna_uint16_t cannawc;
+#   else
+typedef canna_uint32_t cannawc;
+#   endif
+#  elif defined(_WCHAR_T) /* !CANNA_NEW_WCHAR_AWARE */
+typedef wchar_t cannawc;
+#  endif
+# endif
+#endif
+
+#ifdef CANNAWC_DEFINED
 
 typedef struct {
-    wchar_t *echoStr;		/* local echo string */
+    cannawc *echoStr;		/* local echo string */
     int length;		        /* length of echo string */
     int revPos;                 /* reverse position  */
     int revLen;                 /* reverse length    */
     unsigned long info;		/* その他の情報 */
-    wchar_t  *mode;		/* モード情報 */
+    cannawc  *mode;		/* モード情報 */
     struct {
-      wchar_t       *line;
+      cannawc       *line;
       int           length;
       int           revPos;
       int           revLen;
@@ -215,14 +225,14 @@ typedef struct {
 
 typedef struct {
   int  val;
-  wchar_t *buffer;
+  cannawc *buffer;
   int  n_buffer;
   wcKanjiStatus *ks;
 } wcKanjiStatusWithValue;
 
 typedef struct {
   char *client_data;
-  int (*callback_func) pro((char *, int, wchar_t **, int, int *));
+  int (*callback_func) pro((char *, int, cannawc **, int, int *));
 } jrListCallbackStruct;
 
 typedef struct {
@@ -248,7 +258,7 @@ typedef struct {
 #define CANNA_LIST_Convert	  13
 #define CANNA_LIST_Insert	  14
 
-#endif /* _WCHAR_T */
+#endif /* CANNAWC_DEFINED */
 
 #define CANNA_NO_VERBOSE   0
 #define CANNA_HALF_VERBOSE 1
@@ -259,10 +269,11 @@ typedef struct {
 
 #ifdef __cplusplus
 extern "C" {
+#endif
 extern char *jrKanjiError;
+extern int (*jrBeepFunc) pro((void));
+#ifdef __cplusplus
 }
-#else
-extern char *jrKanjiError;
 #endif
 
 #define wcBeepFunc jrBeepFunc
@@ -271,36 +282,29 @@ extern char *jrKanjiError;
 extern "C" {
 #endif
 
-exp(int) jrKanjiString pro((const int, const int, char *, const int,
+int jrKanjiString pro((const int, const int, char *, const int,
 			    jrKanjiStatus *));
-exp(int) jrKanjiControl pro((const int, const int, char *));
-exp(int) kanjiInitialize pro((char ***));
-exp(int) kanjiFinalize pro((char ***));
-exp(int) createKanjiContext pro((void));
-exp(int) jrCloseKanjiContext pro((const int, jrKanjiStatusWithValue *));
+int jrKanjiControl pro((const int, const int, char *));
+int kanjiInitialize pro((char ***));
+int kanjiFinalize pro((char ***));
+int createKanjiContext pro((void));
+int jrCloseKanjiContext pro((const int, jrKanjiStatusWithValue *));
 
-#ifdef _WCHAR_T
-exp(int) wcKanjiString pro((const int, const int, wchar_t *, const int,
+#ifdef CANNAWC_DEFINED
+#ifdef CANNA_NEW_WCHAR_AWARE
+# define wcKanjiString cannawcKanjiString
+# define wcKanjiControl cannawcKanjiControl
+# define wcCloseKanjiContext cannawcCloseKanjiContext
+#endif /*CANNA_NEW_WCHAR_AWARE */
+int wcKanjiString pro((const int, const int, cannawc *, const int,
 			    wcKanjiStatus *));
-exp(int) wcKanjiControl pro((const int, const int, char *));
-exp(int) wcCloseKanjiContext pro((const int, wcKanjiStatusWithValue *));
-#endif /* _WCHAR_T */
+int wcKanjiControl pro((const int, const int, char *));
+int wcCloseKanjiContext pro((const int, wcKanjiStatusWithValue *));
+#endif /* CANNAWC_DEFINED */
 
 #ifdef __cplusplus
 }
 #endif
-
-#if defined(WIN) && defined(_RK_h)
-void close_libcanna pro((void));
-int open_libcanna pro((char *));
-
-struct cannafn {
-  struct rkfuncs Rk;
-  int (*KanjiControl) pro((const int, const int, char *));
-  int (*KanjiString) pro((const int, const int, wchar_t *, const int,
-			  wcKanjiStatus *));
-};
-#endif /* _WINDOWS */
 
 #ifdef CANNA_PRO_PREDEFINED
 #undef CANNA_PRO_PREDEFINED

@@ -265,7 +265,7 @@
 
   see README.ja.
 
-/* Copyright (c) 2002 Canna Project. All rights reserved.
+/* Copyright (c) 2003 Canna Project. All rights reserved.
  *
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without
@@ -309,4 +309,4 @@
  * PERFORMANCE OF THIS SOFTWARE. 
  */
 
-($Id: README,v 1.5.2.1 2003/09/21 06:46:15 aida_s Exp $)
+($Id: README,v 1.6 2003/09/25 15:24:31 aida_s Exp $)

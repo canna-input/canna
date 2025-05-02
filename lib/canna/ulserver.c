@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: ulserver.c,v 1.1.1.1 2002/10/19 08:27:52 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: ulserver.c,v 1.3 2003/09/17 08:50:53 aida_s Exp $";
 #endif
 
 #ifndef NO_EXTEND_MENU
@@ -31,6 +31,14 @@ static char rcs_id[] = "@(#) 102.1 $Id: ulserver.c,v 1.1.1.1 2002/10/19 08:27:52
 #ifdef luna88k
 extern int errno;
 #endif
+
+/*********************************************************************
+ *                      wchar_t replace begin                        *
+ *********************************************************************/
+#ifdef wchar_t
+# error "wchar_t is already defined"
+#endif
+#define wchar_t cannawc
 
 static int serverChangeDo();
 
@@ -216,7 +224,7 @@ int len;
 
   WStrncpy(newServerName, d->buffer_return, len);
   newServerName[len] = 0;
-#if defined(DEBUG) && !defined(WIN)
+#if defined(DEBUG)
   if(iroha_debug)
     printf("iroha_server_name = [%s]\n", newServerName);
 #endif
@@ -224,11 +232,7 @@ int len;
   jrKanjiPipeError();
   WCstombs(tmpServName, newServerName, 256);
   if (RkSetServerName(tmpServName) && (p = index((char *)tmpServName, '@'))) {
-#ifdef WIN
-    char xxxx[512];
-#else
     char xxxx[1024];
-#endif
     *p = '\0';
     sprintf(xxxx, "\244\253\244\312\264\301\273\372\312\321\264\271\245\250\245\363\245\270\245\363 %s \244\317\315\370\315\321\244\307\244\255\244\336\244\273\244\363\n",
 	    tmpServName);
@@ -272,3 +276,11 @@ int len;
 
 #endif /* STANDALONE */
 #endif /* NO_EXTEND_MENU */
+
+#ifndef wchar_t
+# error "wchar_t is already undefined"
+#endif
+#undef wchar_t
+/*********************************************************************
+ *                       wchar_t replace end                         *
+ *********************************************************************/

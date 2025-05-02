@@ -20,7 +20,7 @@
  * PERFORMANCE OF THIS SOFTWARE. 
  */
 
-/* $Id: symbolname.h,v 1.1.1.1.2.1 2003/09/12 13:18:05 aida_s Exp $
+/* $Id: symbolname.h,v 1.4 2003/08/05 12:03:01 aida_s Exp $
  */
 
 #define S_HenkanNyuuryokuMode	"henkan-nyuuryoku-mode"
@@ -209,6 +209,7 @@
 #define S_VA_QuicklyEscape	"quickly-escape-from-kigo-input"
 #define S_VA_InhibitHanKana	"inhibit-hankaku-kana"
 #define S_VA_CodeInput          "code-input"
+#define S_VA_DelayConnect       "delay-connect"
 
 #define S_IF_HenkanNyuryoku     "(japanese-mode)"
 #define S_IF_ZenHiraKakutei     "(japanese-mode base-kakutei)"

@@ -1,23 +1,115 @@
-/* $Id: Imakefile,v 1.4.2.1 2003/01/06 04:36:58 aida_s Exp $ */
+/* $Id: Imakefile,v 1.11 2003/09/25 06:30:20 aida_s Exp $ */
 #include "./Canna.conf"
 
 #define IHaveSubdirs
 #define PassCDebugFlags 'CDEBUGFLAGS=$(CDEBUGFLAGS)'
+#ifndef ConfigureEnv
+# define ConfigureEnv CPPFLAGS='$(ALLDEFINES)' CC='$(CC)' CFLAGS='$(CANNA_PURE_CFLAGS)'
+#endif
+#ifndef ConfigureArgs
+# define ConfigureArgs
+#endif
+#ifdef UseInet6
+# define CannaConfInet6 echo "#define INET6"
+#else
+# define CannaConfInet6 echo "/* #undef INET6 */"
+#endif
+
       WORLDOPTS = /* -k */
         SUBDIRS = lib canna server cmd dic misc doc
         INCLUDE = ./include/canna
-AllTarget(cannaconf.h)
+     RKIINCLUDE = ./include/RKindep
+        DEFINES = $(CANNA_DEFINES)
+CONFIGURE_CMD = ConfigureEnv IN_MAKE=yes ./configure --prefix=$(cannaPrefix) ConfigureArgs
+PURE_CFLAGS = $(CDEBUGFLAGS) $(CCOPTIONS) /* $(THREADS_CFLAGS) $(MODULE_CFLAGS) */
+supportOldWchar = SupportOldWchar
+
+
+AllTarget(cannaconf.h accanna.h pubconf.h)
 MakeSubdirs($(SUBDIRS))
 DependSubdirs($(SUBDIRS))
 
 clean::
 	$(RM) -r include cannaconf.h
+distclean::
+	$(RM) accanna.h config.log config.cache config.status pubconf.h
 
-includes:: cannaconf.h
+includes:: cannaconf.h accanna.h pubconf.h
 	$(RM) -r include
 	MakeDir($(INCLUDE))
+	MakeDir($(RKIINCLUDE))
 
-MakeCannaConfigH(cannaconf.h)
+/* 以下は cannaconf.h を作るルール */
+cannaconf.h: Canna.conf
+	@echo "creating $@"
+#ifdef OS2Architecture
+	@echo "#ifndef CANNACONF_H" > junkjunk
+	@echo "#define CANNACONF_H" > junkjunk
+	@echo "#include \"accanna.h\"" > junkjunk
+	@echo "/* for cannaserver */" > junkjunk
+	@echo "#define DICHOME '$(DicDir)'" >> junkjunk
+	@echo "#define ERRDIR '$(ErrDir)'" >> junkjunk
+	@echo "#define USE_INET_SOCKET" >> junkjunk
+	@echo "#define ACCESS_FILE '$(AccessFile)'" >> junkjunk
+	@echo "/* for lib/RKC */" >> junkjunk
+	@echo "#define CANNAHOSTFILE '$(cannaLibDir)/cannahost'" >> junkjunk
+	@echo "/* for lib/canna */" >> junkjunk
+	@echo "#define CANNALIBDIR '$(cannaLibDir)'" >> junkjunk
+	@echo "#define SUPPORT_OLD_WCHAR '$(supportOldWchar)'" >> junkjunk
+	@echo "/* for scripts */" >> junkjunk
+	@echo "#define CANNABINDIR $(cannaBinDir)" >> junkjunk
+	@echo "/* others */" >> junkjunk
+	@echo "#define CANNA_LIGHT $(cannaLight)" >> junkjunk
+	@echo "#ifdef nec" >> junkjunk
+	@echo "#undef nec" >> junkjunk
+	@echo "#endif" >> junkjunk
+	@CannaConfInet6 >> junkjunk
+	@echo "#endif /* !CANNACONF_H */" >> junkjunk
+	@sed -e "s/'/\\\"/" -e "s/'/\\\"/" < junkjunk > junk
+	@$(RM) junkjunk
+#else
+	@(echo "#ifndef CANNACONF_H";\
+	 echo "#define CANNACONF_H";  \
+	 echo "#include \"accanna.h\"";  \
+	 echo "/* for cannaserver */";  \
+	 echo "#define DICHOME \"$(DicDir)\"";  \
+	 echo "#define ERRDIR \"$(ErrDir)\"";   \
+	 echo "#define USE_UNIX_SOCKET"; \
+	 echo "#define USE_INET_SOCKET"; \
+	 echo "#define IR_UNIX_DIR \"$(UnixSockDir)\""; \
+	 echo "#define IR_UNIX_SOCKNAME \"$(UnixSockName)\""; \
+	 echo "#define ACCESS_FILE \"$(AccessFile)\""; \
+	 echo "/* for lib/RKC */";\
+	 echo "#define CANNAHOSTFILE \"$(cannaLibDir)/cannahost\"";\
+	 echo "/* for lib/canna */";\
+	 echo "#define CANNALIBDIR \"$(cannaLibDir)\""; \
+	 echo "#define SUPPORT_OLD_WCHAR $(supportOldWchar)"; \
+	 echo "/* for scripts */";\
+	 echo "#define CANNABINDIR $(cannaBinDir)"; \
+	 echo "/* others */";\
+	 echo "#define CANNA_LIGHT $(cannaLight)"; \
+	 echo "#ifdef nec"; \
+	 echo "#undef nec"; \
+	 echo "#endif"; \
+	 CannaConfInet6; \
+	 echo "#endif /* !CANNACONF_H */") > junk
+#endif /* OS2Architecture */
+	@if test -r $@ && cmp -s junk $@; then \
+	   echo "$@ unchanged"; \
+	   rm junk; \
+	 else \
+	   mv junk $@; \
+	 fi
+
+XCOMM Invoke configure only when accanna.h does not exist for faster build
+accanna.h pubconf.h:
+	$(CONFIGURE_CMD)
+XCOMM If you want to invoke configure explicitly, do "make config"
+config::
+	$(CONFIGURE_CMD)
+reconfig::
+	$(RM) config.cache
+	$(CONFIGURE_CMD)
 
 CANNAROOT = .
 SERVERDIR = server dic/phono dic/ideo
@@ -33,7 +125,7 @@ instmost:: mkbindir mklibdir mkdicdir mkerrdir
 
 MakeDirectories(mkbindir, $(cannaBinDir))
 MakeDirectories(mklibdir, $(cannaLibDir))
-#ifdef __EMX__
+#ifdef InstallAsUser
 MakeDirectories(mkdicdir, $(DicDir))
 MakeDirectories(mkerrdir, $(ErrDir))
 #else
@@ -42,6 +134,9 @@ MakeDirectoriesLong(mkerrdir, $(ErrDir), $(cannaOwner), $(cannaGroup))
 #endif
 
 LinkFileList(includes,cannaconf.h,$(CANNAROOT)/include,..)
+LinkFileList(includes,accanna.h,$(CANNAROOT)/include,..)
+LinkFileList(includes,pubconf.h,$(CANNAROOT)/include/canna,../..)
+InstallMultiple(pubconf.h,$(cannaIncDir))
 
 canna:: 
 	@echo ""

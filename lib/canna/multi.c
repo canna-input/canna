@@ -21,11 +21,19 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char m_s_map_id[] = "@(#) 102.1 $Id: multi.c,v 1.1.1.1 2002/10/19 08:27:50 aida_s Exp $";
+static char m_s_map_id[] = "@(#) 102.1 $Id: multi.c,v 1.2 2003/01/10 13:08:45 aida_s Exp $";
 #endif /* lint */
 
 #include "canna.h"
 #include <canna/mfdef.h>
+
+/*********************************************************************
+ *                      wchar_t replace begin                        *
+ *********************************************************************/
+#ifdef wchar_t
+# error "wchar_t is already defined"
+#endif
+#define wchar_t cannawc
 
 #define NONE CANNA_FN_Undefined
 
@@ -293,3 +301,11 @@ int fnum;
   }
   return NothingForGLineWithBeep(d);  /* 登録していないキーを押した */
 }
+
+#ifndef wchar_t
+# error "wchar_t is already undefined"
+#endif
+#undef wchar_t
+/*********************************************************************
+ *                       wchar_t replace end                         *
+ *********************************************************************/

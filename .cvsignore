@@ -3,3 +3,11 @@ Makefile
 Canna.conf
 include
 cannaconf.h
+accanna.h
+accanna.h.in
+configure
+config.status
+config.log
+config.cache
+autom4te.cache
+pubconf.h

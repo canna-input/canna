@@ -21,11 +21,19 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[]="@(#) 102.1 $Id: RKkana.c,v 1.1.1.1 2002/10/19 08:27:47 aida_s Exp $";
+static char rcsid[]="@(#) 102.1 $Id: RKkana.c,v 1.3 2003/09/17 08:50:53 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */
 #include "canna.h"
+
+/*********************************************************************
+ *                      wchar_t replace begin                        *
+ *********************************************************************/
+#ifdef wchar_t
+# error "wchar_t is already defined"
+#endif
+#define wchar_t cannawc
 
 /* RkCvtZen
  *	hankaku moji wo zenkaku moji ni suru 
@@ -722,7 +730,7 @@ wchar_t *dst, *src;
 int maxdst, srclen;
 {
   int len = 0;
-#ifndef WIN
+#ifndef USE_MALLOC_FOR_BIG_ARRAY
   char cbuf[CBUFSIZE], cbuf2[CBUFSIZE];
 #else
   char *cbuf, *cbuf2;
@@ -746,7 +754,7 @@ int maxdst, srclen;
     cbuf2[len] = '\0';
     len = MBstowcs(dst, cbuf2, maxdst);
   }
-#ifdef WIN
+#ifdef USE_MALLOC_FOR_BIG_ARRAY
   free(cbuf2);
   free(cbuf);
 #endif
@@ -758,7 +766,7 @@ wchar_t *dst, *src;
 int maxdst, srclen;
 {
   int len = 0;
-#ifndef WIN
+#ifndef USE_MALLOC_FOR_BIG_ARRAY
   char cbuf[CBUFSIZE], cbuf2[CBUFSIZE];
 #else
   char *cbuf, *cbuf2;
@@ -783,7 +791,7 @@ int maxdst, srclen;
     cbuf2[len] = (unsigned char)0;
     len = MBstowcs(dst, cbuf2, maxdst);
   }
-#ifdef WIN
+#ifdef USE_MALLOC_FOR_BIG_ARRAY
   free(cbuf2);
   free(cbuf);
 #endif
@@ -795,7 +803,7 @@ wchar_t *dst, *src;
 int maxdst, srclen;
 {
   int len = 0;
-#ifndef WIN
+#ifndef USE_MALLOC_FOR_BIG_ARRAY
   char cbuf[CBUFSIZE], cbuf2[CBUFSIZE];
 #else
   char *cbuf, *cbuf2;
@@ -820,7 +828,7 @@ int maxdst, srclen;
     cbuf2[len] = '\0';
     len = MBstowcs(dst, cbuf2, maxdst);
   }
-#ifdef WIN
+#ifdef USE_MALLOC_FOR_BIG_ARRAY
   free(cbuf2);
   free(cbuf);
 #endif
@@ -832,7 +840,7 @@ wchar_t *dst, *src;
 int maxdst, srclen;
 {
   int len = 0;
-#ifndef WIN
+#ifndef USE_MALLOC_FOR_BIG_ARRAY
   char cbuf[CBUFSIZE], cbuf2[CBUFSIZE];
 #else
   char *cbuf, *cbuf2;
@@ -857,7 +865,7 @@ int maxdst, srclen;
     cbuf2[len] = '\0';
     len = MBstowcs(dst, cbuf2, maxdst);
   }
-#ifdef WIN
+#ifdef USE_MALLOC_FOR_BIG_ARRAY
   free(cbuf2);
   free(cbuf);
 #endif
@@ -884,7 +892,7 @@ wchar_t *dst, *src;
 int maxdst, srclen, flags, *status;
 {
   int len = 0, ret;
-#ifndef WIN
+#ifndef USE_MALLOC_FOR_BIG_ARRAY
   char cbuf1[CBUFSIZE], cbuf2[CBUFSIZE];
 #else
   char *cbuf1, *cbuf2;
@@ -913,7 +921,7 @@ int maxdst, srclen, flags, *status;
   else {
     *status = -ret;
   }
-#ifdef WIN
+#ifdef USE_MALLOC_FOR_BIG_ARRAY
   free(cbuf2);
   free(cbuf1);
 #endif
@@ -935,7 +943,7 @@ int maxdst, srclen, flags, *ulen, *dlen, *tlen, *rule;
   int status = 0;
   char tmpch;
   int len, ret, fdlen, fulen, ftlen;
-#ifndef WIN
+#ifndef USE_MALLOC_FOR_BIG_ARRAY
   char cbuf1[CBUFSIZE], cbuf2[CBUFSIZE];
   wchar_t wbuf[CBUFSIZE];
 #else
@@ -980,7 +988,7 @@ int maxdst, srclen, flags, *ulen, *dlen, *tlen, *rule;
     cbuf1[fulen] = '\0';
     *ulen = MBstowcs(wbuf, cbuf1, CBUFSIZE);
   }
-#ifdef WIN
+#ifdef USE_MALLOC_FOR_BIG_ARRAY
   free(cbuf2);
   free(cbuf1);
 #endif
@@ -993,7 +1001,7 @@ wchar_t *dst, *src;
 int maxdst, srclen, flags;
 {
   int ret = 0, len;
-#ifndef WIN
+#ifndef USE_MALLOC_FOR_BIG_ARRAY
   char cbuf1[CBUFSIZE], cbuf2[CBUFSIZE];
 #else
   char *cbuf1, *cbuf2;
@@ -1022,10 +1030,17 @@ int maxdst, srclen, flags;
     ret = 0;
     *dst = (wchar_t)0;
   }
-#ifdef WIN
+#ifdef USE_MALLOC_FOR_BIG_ARRAY
   free(cbuf2);
   free(cbuf1);
 #endif
   return ret;
 }
 
+#ifndef wchar_t
+# error "wchar_t is already undefined"
+#endif
+#undef wchar_t
+/*********************************************************************
+ *                       wchar_t replace end                         *
+ *********************************************************************/

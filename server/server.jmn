@@ -19,14 +19,14 @@
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 .\" PERFORMANCE OF THIS SOFTWARE. 
 .\"
-.\" $Id: server.jmn,v 1.6.2.1 2003/09/12 05:00:49 aida_s Exp $
+.\" $Id: server.jmn,v 1.10 2003/09/15 14:37:56 aida_s Exp $
 .nr X 0
 .if \nX=0 .ds X} cannaserver 1M "日本語機能ユーティリティ" "\&"
 .TH \*(X}
 .SH "名前"
 cannaserver \- かな漢字変換サーバ
 .SH "形式"
-.B "cannaserver [\-d] [\-u \fIuserid\fP] [\-inet] [\-l \fIn\fP] [\-syslog] [\-p \fInum\fP] [\fIddpath\fP] "
+.B "cannaserver [\-d] [\-u \fIuserid\fP] [\-inet] [\-inet6] [\-l \fIn\fP] [\-syslog] [\-p \fInum\fP] [\fIddpath\fP] "
 .SH "説明"
 .PP
 かな漢字変換サービスを提供します。通常 cannaserver(1M)は /etc/rc
@@ -35,7 +35,7 @@ cannaserver \- かな漢字変換サーバ
 .PP
 cannaserver(1M)は、デフォルトではUNIXドメインソケットを通した同一
 ホストのクライアントからの接続しか受け付けません。ただし、オプション
--inetにより、TCP 接続も受け入れるようになります。
+-inet（または-inet6）により、TCP 接続も受け入れるようになります。
 上記のいずれの設定であっても、ホスト、ユーザ単位でアクセスを制御する
 ために @(AccessFile) ファイルを用いることができます。
 .PP
@@ -65,6 +65,9 @@ cannaserver(1M) がリモートホストからの inetドメインソケットを用いた
 接続を受け付けるようになります。これを指定しないと、 cannaserver(1M) は
 UNIXドメインソケットを用いて、同一ホストのクライアントと接続すること
 しかできません。
+.IP "\-inet6" 12
+IPv6サポートを有効にします。これを単独で指定した場合は、IPv4での接続は
+できません。IPv4も有効にするには、-inet -inet6と指定します。
 .IP "\-l \fIn\fP" 12
 cannaserver(1M) のログを /tmp/canna.log に出力します。n でログ
 のレベルを設定します。ログのレベルとして 1〜5 の数字を指定

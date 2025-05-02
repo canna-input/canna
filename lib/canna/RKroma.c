@@ -21,15 +21,12 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[]="@(#) 102.1 $Id: RKroma.c,v 1.2.2.1 2003/09/12 13:36:48 aida_s Exp $";
+static char rcsid[]="@(#) 102.1 $Id: RKroma.c,v 1.4 2003/09/17 08:50:53 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */
 #include "canna.h"
 
-#ifdef WIN
-#include <io.h>
-#endif
 #include <fcntl.h>
 
 #define S2TOS(s2)	(((unsigned short)(s2)[0]<<8)|(s2)[1])
@@ -39,10 +36,6 @@ static char rcsid[]="@(#) 102.1 $Id: RKroma.c,v 1.2.2.1 2003/09/12 13:36:48 aida
                 ((unsigned long) ((unsigned char)(l4)[2])))  << 8)      | \
                 ((unsigned long) ((unsigned char)(l4)[3])))
 
-#ifdef WIN
-#define JAPANESE_SORT
-#endif
-
 #ifdef JAPANESE_SORT
 
 struct romaRec {
@@ -50,7 +43,7 @@ struct romaRec {
   unsigned char bang;
 };
 
-#if !defined(__STDC__) && !defined(WIN)
+#if !defined(__STDC__)
 extern void qsort();
 #endif
 
@@ -387,7 +380,7 @@ int		*status;
     int			byte;
     int			found = 1;
     struct rstat *m;
-#ifndef WIN
+#ifndef USE_MALLOC_FOR_BIG_ARRAY
     struct rstat match[256];
 #else
     struct rstat *match;
@@ -476,7 +469,7 @@ done:
 	    *dst = 0;
 	};
     };
-#ifdef WIN
+#ifdef USE_MALLOC_FOR_BIG_ARRAY
     (void)free((char *)match);
 #endif
     return count;
@@ -542,7 +535,7 @@ int		*rule_id_inout;
   int			found = 1;
   int templen, lastrule;
   struct rstat *m;
-#ifndef WIN
+#ifndef USE_MALLOC_FOR_BIG_ARRAY
   struct rstat match[256];
 #else
   struct rstat *match;
@@ -729,7 +722,7 @@ int		*rule_id_inout;
     }
   }
  return_found:
-#ifdef WIN
+#ifdef USE_MALLOC_FOR_BIG_ARRAY
   (void)free((char *)match);
 #endif
   return found;
@@ -752,7 +745,7 @@ unsigned	flags;
     int count = 0;
     unsigned xp = 0;
     unsigned char key;
-#ifndef WIN
+#ifndef USE_MALLOC_FOR_BIG_ARRAY
     unsigned char xxxx[64], yyyy[64];
 #else
     unsigned char *xxxx, *yyyy;
@@ -801,7 +794,7 @@ unsigned	flags;
 	}
       }
     }
-#ifdef WIN
+#ifdef USE_MALLOC_FOR_BIG_ARRAY
     (void)free((char *)yyyy);
     (void)free((char *)xxxx);
 #endif

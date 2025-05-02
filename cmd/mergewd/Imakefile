@@ -1,16 +1,7 @@
-/* $Id: Imakefile,v 1.2 2002/10/20 04:10:28 aida_s Exp $ */
+/* $Id: Imakefile,v 1.3 2003/01/26 04:36:33 aida_s Exp $ */
 #include "../../Canna.conf"
-
-      CANNAROOT = ../..
-       INCLUDES = -I$(CANNAROOT)/lib/RK -I$(CANNAROOT)/include
-           SRCS = mergewd.c
-
-#if defined(__EMX__) || defined(__CYGWIN32__)
-AllTarget(mergeword.exe)
-#else
-AllTarget(mergeword)
-#endif
-NormalProgramTarget(mergeword,mergewd.o,,,)
-InstallProgram(mergeword,$(cannaBinDir))
-DependTarget()
-LintTarget()
+#define SimpleCommand
+#define TargetName mergeword
+#define SrcName mergewd
+#define WantRKLib
+#include "../cmd.tmpl"

@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: ulmount.c,v 1.1.1.1 2002/10/19 08:27:52 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: ulmount.c,v 1.3 2003/09/17 08:50:53 aida_s Exp $";
 #endif
 
 #ifndef NO_EXTEND_MENU
@@ -31,6 +31,14 @@ static char rcs_id[] = "@(#) 102.1 $Id: ulmount.c,v 1.1.1.1 2002/10/19 08:27:52 
 #ifdef luna88k
 extern int errno;
 #endif
+
+/*********************************************************************
+ *                      wchar_t replace begin                        *
+ *********************************************************************/
+#ifdef wchar_t
+# error "wchar_t is already defined"
+#endif
+#define wchar_t cannawc
 
 /* cfunc mountContext
  *
@@ -44,7 +52,7 @@ newMountContext()
 
   if ((mcxt = (mountContext)calloc(1, sizeof(mountContextRec)))
                                            == (mountContext)NULL) {
-#ifndef WIN
+#ifndef CODED_MESSAGE
     jrKanjiError = "malloc (newMountContext) できませんでした";
 #else
     jrKanjiError = "malloc (newMountContext) \244\307\244\255\244\336\244\273"
@@ -90,7 +98,7 @@ uiContext d;
   if (pushCallback(d, d->modec,
                    NO_CALLBACK, NO_CALLBACK,
                    NO_CALLBACK, NO_CALLBACK) == 0) {
-#ifndef WIN
+#ifndef CODED_MESSAGE
     jrKanjiError = "malloc (pushCallback) できませんでした";
 #else
     jrKanjiError = "malloc (pushCallback) \244\307\244\255\244\336\244\273"
@@ -160,13 +168,13 @@ mode_context env;
   if(defaultContext == -1) {
     if((KanjiInit() != 0) || (defaultContext == -1)) {
 #ifdef STANDALONE
-#ifndef WIN
+#ifndef CODED_MESSAGE
       jrKanjiError = "かな漢字変換できません";
 #else
       jrKanjiError = "\244\253\244\312\264\301\273\372\312\321\264\271\244\307\244\255\244\336\244\273\244\363";
 #endif
 #else
-#ifndef WIN
+#ifndef CODED_MESSAGE
       jrKanjiError = "かな漢字変換サーバと通信できません";
 #else
       jrKanjiError = "\244\253\244\312\264\301\273\372\312\321\264\271\245\265"
@@ -332,7 +340,7 @@ uiContext d;
   extern defaultContext;
 
   if((dicLbuf = malloc(ROMEBUFSIZE)) == (char *)NULL) {
-#ifndef WIN
+#ifndef CODED_MESSAGE
     jrKanjiError = "malloc (getDicList) できませんでした";
 #else
     jrKanjiError = "malloc (getDicList) \244\307\244\255\244\336\244\273";
@@ -342,13 +350,13 @@ uiContext d;
   if(defaultContext == -1) {
     if((KanjiInit() != 0) || (defaultContext == -1)) {
 #ifdef STANDALONE
-#ifndef WIN
+#ifndef CODED_MESSAGE
       jrKanjiError = "かな漢字変換できません";
 #else
       jrKanjiError = "\244\253\244\312\264\301\273\372\312\321\264\271\244\307\244\255\244\336\244\273\244\363";
 #endif
 #else
-#ifndef WIN
+#ifndef CODED_MESSAGE
       jrKanjiError = "かな漢字変換サーバと通信できません";
 #else
       jrKanjiError = "\244\253\244\312\264\301\273\372\312\321\264\271"
@@ -380,7 +388,7 @@ uiContext d;
     return NG;
   }
   if((dicLp = (char **)calloc(dicLc + 1, sizeof(char *))) == (char **)NULL) {
-#ifndef WIN
+#ifndef CODED_MESSAGE
     jrKanjiError = "malloc (getDicList) できませんでした";
 #else
     jrKanjiError = "malloc (getDicList) \244\307\244\255\244\336\244\273"
@@ -390,7 +398,7 @@ uiContext d;
     return(NG);
   }
   if((soldp = (BYTE *)malloc(dicLc + 1)) == (BYTE *)NULL) {
-#ifndef WIN
+#ifndef CODED_MESSAGE
     jrKanjiError = "malloc (getDicList) できませんでした";
 #else
     jrKanjiError = "malloc (getDicList) \244\307\244\255\244\336\244\273"
@@ -401,7 +409,7 @@ uiContext d;
     return(NG);
   }
   if((snewp = (BYTE *)malloc(dicLc + 1)) == (BYTE *)NULL) {
-#ifndef WIN
+#ifndef CODED_MESSAGE
     jrKanjiError = "malloc (getDicList) できませんでした";
 #else
     jrKanjiError = "malloc (getDicList) \244\307\244\255\244\336\244\273"
@@ -423,13 +431,13 @@ uiContext d;
   if(defaultContext == -1) {
     if((KanjiInit() != 0) || (defaultContext == -1)) {
 #ifdef STANDALONE
-#ifndef WIN
+#ifndef CODED_MESSAGE
       jrKanjiError = "かな漢字変換できません";
 #else
       jrKanjiError = "\244\253\244\312\264\301\273\372\312\321\264\271\244\307\244\255\244\336\244\273\244\363";
 #endif
 #else
-#ifndef WIN
+#ifndef CODED_MESSAGE
       jrKanjiError = "かな漢字変換サーバと通信できません";
 #else
       jrKanjiError = "\244\253\244\312\264\301\273\372\312\321\264\271"
@@ -513,7 +521,7 @@ uiContext d;
   }
 
   mc = (mountContext)d->modec;
-#if defined(DEBUG) && !defined(WIN)
+#if defined(DEBUG)
   if(iroha_debug) {
     int i;
 
@@ -552,11 +560,7 @@ uiContext d;
 
   /* 候補一覧行が狭くて候補一覧が出せない */
   if(oc->tooSmall) {
-#ifndef WIN
     wchar_t p[512];
-#else
-    wchar_t p[64];
-#endif
 
     ichiranFin(d);
     popCallback(d); /* OnOff をポップ */
@@ -579,4 +583,13 @@ uiContext d;
 
   return(retval);
 }
+
+#ifndef wchar_t
+# error "wchar_t is already undefined"
+#endif
+#undef wchar_t
+/*********************************************************************
+ *                       wchar_t replace end                         *
+ *********************************************************************/
+
 #endif /* NO_EXTEND_MENU */

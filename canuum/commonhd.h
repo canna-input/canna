@@ -1,6 +1,6 @@
 /*
  *  commonhd.h,v 1.9 2002/05/05 05:13:08 hiroo Exp
- *  Canna: $Id: commonhd.h,v 1.4.2.2 2003/01/23 17:20:30 aida_s Exp $
+ *  Canna: $Id: commonhd.h,v 1.6 2003/02/01 20:16:33 aida_s Exp $
  */
 
 /*
@@ -36,11 +36,6 @@
 /****************
  * Common header 
  ****************/
-
-#ifdef CANNA
-#include "cannaconf.h"
-#endif
-
 #include <stdio.h>
 
 #define JSERVER_VERSION 0x4200  /* minor version */

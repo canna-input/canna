@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: commondata.c,v 1.1.1.1 2002/10/19 08:27:48 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: commondata.c,v 1.4 2003/09/25 14:33:49 aida_s Exp $";
 #endif /* lint */
 
 #include "canna.h"
@@ -125,8 +125,6 @@ char *server_name = (char *)NULL;
 int chikuji_debug = 0;
 int auto_define = 0;
 
-int locale_insufficient = 0;
-
 void (*keyconvCallback)() = (void (*)())0;
 
 extraFunc *extrafuncp = (extraFunc *)NULL;
@@ -138,9 +136,6 @@ char *hiraautodic = (char *)NULL; /* ひらがな語自動登録用辞書 */
 
 /* ユーザ情報 */
 jrUserInfoStruct *uinfo = (jrUserInfoStruct *)NULL;
-
-/* スタンドアロンかどうかのフラグ */
-int standalone = 0;
 
 void
 InitCannaConfig(cf)
@@ -160,6 +155,7 @@ struct CannaConfig *cf;
   cf->kCount = 1;
   cf->hexCharacterDefiningStyle = HEX_USUAL;
   cf->ChikujiContinue = 1;
+  cf->RenbunContinue = 1;
   cf->MojishuContinue = 1;
   cf->kojin = 1;
   cf->indexSeparator = DEFAULTINDEXSEPARATOR;
@@ -238,7 +234,5 @@ restoreBindings()
   nkeysup = 0;
   chikuji_debug = 0;
   keyconvCallback = (void (*)())0;
-  locale_insufficient = 0;
   freeUInfo();
-  standalone = 0;
 }

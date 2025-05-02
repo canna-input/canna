@@ -1,164 +1,325 @@
+2003-09-27 AIDA Shinra <shinra@j10n.org>
+
+	* dic/ideo/*: Sync with DIC_WORK branch. See dic/ideo/ChangeLog for
+	  details.
+	* canna/patchlevel.h: bump to 3.7beta1
+
+2003-09-26 AIDA Shinra <shinra@j10n.org>
+
+	* Update documents for 3.7 beta release.
+	* CHANGES.jp: truncated
+	* OCHANGES.jp: moved everything here from CHANGES.jp
+	* INSTALL: Updated. Removed description about ancient systems.
+	* INSTALL.jp: ditto
+	* README.jp: cannuum is now secure. 
+	* misc/initfiles/sample.canna: describe :katakana
+	* misc/initfiles/verbose.canna: ditto
+	* misc/initfiles/unix.canna: describe and enable :katakana
+
+2003-09-25 AIDA Shinra <shinra@j10n.org>
+
+	* Type of CRC is canna_uint32_t.
+	* lib/RKindep/cksum.h: use canna_uint32_t
+	* lib/RKindep/cksum.c: ditto
+	* cmd/crxdic/crxdic.c: ditto
+
+2003-09-25 AIDA Shinra <shinra@j10n.org>
+
+	* Fix renbun-continue problem.
+	* lib/canna/commondata.c(InitCannaConfig): turn default value of
+	  renbun-continue to t
+	* lib/canna/henkan.c(TanKakuteiYomiInsert): handle renbun-continue
+	  properly
+	* misc/initfiles/verbose.canna: updated
+
+2003-09-25 AIDA Shinra <shinra@j10n.org>
+
+	* canna/ccompat.h: avoid isolated semicolon in global scope
+	* cmd/cannastat/cannastat.c: add RCSID
+	* cmd/crrdic/*: removed because crrdic is obsoleted by kpdic
+
+2003-09-25 AIDA Shinra <shinra@j10n.org>
+
+	* canna/jrkanji.h: Add declaration of jrBeepFunc. Remove exp() macro.
+	* lib/canna/canna.h: exp() macro is moved here
+
+2003-09-25 AIDA Shinra <shinra@j10n.org>
+
+	* lib/RKC/conf.c(Parser_stmt): "foo" "bar" are converted to "foobar"
+	  (syn_host): ditto
+	  (Parser_getstr): added
+	* lib/RKC/confP.h: updated
+
+2003-09-25 AIDA Shinra <shinra@j10n.org>
+
+	* Build cleanup and an experimental rule to build shared library.
+	* We no longer support EUC protocol.
+	* Canna.conf.dist: Lots of new macros. Especially make variables
+	  "supportOldWchar" and "inet6Definition" are replaced with cpp macros
+	  "SupportOldWchar" and "UseInet6".
+	* Imakefile: change the method to create cannaconf.h
+	* dic/ideo/pubdic/Imakefile: use ProgramTargetName rhan #if
+	* server/Imakefile: ditto
+	* cmd/cmd.tmpl: ditto
+	* cmd/catdic/Imakefile: ditto
+	* cmd/mkbindic/Imakefile: remove -Ui386
+	* cmd/mkromdic/Imakefile: remove -Ui386
+	* lib/RKindep/Imakefile: place all:: target first
+
+2003-09-25 AIDA Shinra <shinra@j10n.org>
+
+	* lib/RKC/rkc.c(RkcConnectIrohaServer): invoke rkc_configure()
+
+2003-09-24 AIDA Shinra <shinra@j10n.org>
+
+	* Now canna works on 64bit Solaris. I believe canna also works in
+	  other 64bit environments with minor changes.
+	* configure.ac: check in_addr_t and socklen_t
+	* canna/net.h: Define canna_in_addr_t and canna_socklen_t here.
+	  For this include "ccompat.h" first and place an include guard.
+	* cmd/cannastat/cannastat.c: remove verbose include
+	* cmd/crfreq/crfreq.c: fix type of header size
+	* lib/RK/RKintern.h(HD_TAGSIZ): correct definition
+	* lib/RK/ngram.c(RkKxGram): typeof(ng_neg) is canna_uint32_t
+	  (RkReadGram): ditto
+	  (RkCheckNegGram): ditto
+	* lib/RKC/wconvert.c(connect_unix): correct length of sockaddr
+	  (connect_inet, INET6): type of port
+	  (connect_inet, !INET6): type of hostinetaddr. use h_addr_list
+	  if available.
+	* lib/RKindep/file.c(RkiConnect): type of 5th argument of getsockopt
+	* lib/canna/lisp.c(patom): cast properly due to varargs
+	* server/comm.c(open_inet_socket): use socklen_t
+	* server/main.c(process_request): forgot to pass first argument to
+	  Dmsg
+	* server/wconvert.c(ExtensionRequest): static
+
+2003-09-23 AIDA Shinra <shinra@j10n.org>
+
+	* cmd/cannastat/cannastat.c: cast time_t properly for printf
+
+2003-09-23 AIDA Shinra <shinra@j10n.org>
+
+	* Fix RKC ABI problem.
+	  RkcGetServerFD and RkcConnectIrohaServer were renamed by
+	  sglobal.h, but their renamed names changed every time globnames
+	  changed.
+	  Now we export these functions in original names and renamed names
+	  in 3.5/3.6. Cannastat and cshost in 3.5/3.6 work fine with new
+	  3.7devel3 library, but these commands in older 3.7 fail to work.
+	  For change of native ABI we bump patchlevel and minor version of
+	  shared libraries.
+	* lib/RKC/rkc.c(G070_RkcGetServerFD): add for 3.5/3.6 compatibility
+	  (G069_RkcConnectIrohaSrever): ditto
+	* cmd/cannastat/cannastat.c: don't include sglobal.h
+	* cmd/cshost/cshost.c: ditto
+	* canna/patchlevel.h: bump to 3.7devel3
+	* Canna.conf.dist(cannaDsoRev): bump to 1.2
+
+2003-09-23 AIDA Shinra <shinra@j10n.org>
+
+	* More portable cshost. Ver.1 server support is removed.
+	* cmd/cshost/cshost.c(CannaDispControlList): rewrite
+	  (IrohaDispControlList): removed
+
+2003-09-23 AIDA Shinra <shinra@j10n.org>
+
+	* server/comm.h(EventMgr_run): make sure to send all of reply after
+	  KillServer request.
+
+2003-09-23 AIDA Shinra <shinra@j10n.org>
+
+	* Fully rewrite cannastat. 
+	* New cannastat is more portable to 64bit environments.
+	* Implement strict error check.
+	* canna/rkcapi.h: new APIs
+	* cmd/cannastat/cannastat.c: rewrite
+	* lib/RKC/convert.c(ReadServer): export as RkcRecvEReply
+	  (WriteServer): export as RkcSendERequest
+	* lib/RKC/wconvert.c(ReadServer): export as RkcRecvWReply
+	  (WriteServer): export as RkcSendWRequest
+	* server/IR.h: move many definitions to server.h
+	* server/server.h: move many definitions from IR.h
+
+2003-09-22 AIDA Shinra <shinra@j10n.org>
+
+	* Fix IR_STAT and IR_STAT2 and inhibit other protocols before IR_INIT.
+	* server/convert.c(SendTypeE5Reply): change first argument
+	  (ir_initialize): make sure to close connection in error case
+	  (ir_server_stat2): change first argument
+	  (ir_server_stat): ditto
+	  (ir_nosession): added
+	  (parse_euc_request): s/request/xrequest/
+	  (Vector): reject IR_STAT and IR_STAT2 when session is up
+	* server/main.c(process_request): perform dispatch via ir_nosession
+
+2003-09-22 AIDA Shinra <shinra@j10n.org>
+
+	* server/misc.c(get_all_other_clients): correct syntax error
+
 2003-09-21 AIDA Shinra <shinra@j10n.org>
 
-	* CHANGES.jp: updated for 3.6p4
-	* README: canuum is now secure
-	* README.jp: ditto
-	* misc/initfiles/verbose.canna: autodef dic
-	* canna/patchleve.h: bump to 3.6p4
+	* ServerNG: 50% scratched reimplementation of cannaserver.
+	* Now cannaserver does not use bitmap of sockets to manage clients.
+	  This makes it far easy to port cannaserver to 64bit environments.
+	* Now cannaserver performs fully multiplexed I/O. Especially
+	  we are free from hangs waiting for response from dead client.
+	* Intitialization, termination and error handling is much more
+	  clean.
+	* All code derived from X server retired.
+	* All functions have prototypes.
+	* configure.ac: check syslog(), vsyslog() and time_t.
+	* canna/protodefs.h: simplify !EXTENSION case
+	* lib/RKindep/file.h(RKI_FD_SETSIZE): added
+	* server/IR.h: Now contains only minimum definitions for use
+	  in cannastat and cshost.
+	* server/server.h: place prototype declarations here
+	* server/WaitFor.c: Removed.
+	* server/connectoin.c: Removed. Some code are moved into comm.c
+	  and session.c.
+	* server/convert.c: Reduce use of ClientRec by some formal changes.
+	* server/wconvert.c: ditto
+	* server/comm.c: added
+	* server/session.c: added
+	* server/util.c: add const qualifier, replace int to size_t
+
+2003-09-21 AIDA Shinra <shinra@j10n.org>
+
+	* lib/RK/RK.h: Fix 7th arguemnt's type of RkwGetSimpleKanji.
+	  Declare RkwStoreRange.
+	* lib/RK/bun.c(RkwGetSimpleKanji): fix 7th arguemnt's type
+	* lib/RKC/rkc.c(RkwGetSimpleKanji): ditto
+	* lib/canna/engine.c(RkwGetSimpleKanji): ditto
+
+2003-09-21 AIDA Shinra <shinra@j10n.org>
+
+	* lib/canna/kctrl.c(KC_initialize): fix condition
+	* cmd/cannacheck/main.c: remove "delay-connect" desc
+
+2003-09-21 AIDA Shinra <shinra@j10n.org>
+
+	* lib/canna/kctrl.c(KC_initialize): s/chkverbose/ckverbose/
+
+2003-09-21 AIDA Shinra <shinra@j10n.org>
+
+	* configure.ac: add spaces at the top of lines of AC_CHECK_FUNCS
+
+2003-09-21 AIDA Shinra <shinra@j10n.org>
+
+	* lib/canna/kctrl.c(KC_initialize): ignore delay-connect in verbose
+	  mode for cannacheck.
+
+2003-09-18 AIDA Shinra <shinra@j10n.org>
+
+	* cmd/dpxdic/dpxdic.c(getdic): 300702L format dictionary
+
+2003-09-18 AIDA Shinra <shinra@j10n.org>
+
+	* Cleanup includes and definitions in RKC and server.
+	* canna/protodefs.h(MIN): removed
+	* RKindep/ecfuncs.h(RKI_MIN): added
+	  (RKI_MAX): added
+	* lib/RKC/*: cleaned up
+	* server/*: cleaned up
+	* server/server.h: added
 
 2003-09-17 AIDA Shinra <shinra@j10n.org>
 
-	* cmd/cannastat/cannastat.c(main): getdatasize = htons(ResevShort)
+	* Get rid of BIGPOINTER switch and replace to canna_intptr_t.
+	* configure.ac: test sizeof(void *)
+	* canna/sysdep.h: add canna_intptr_t and fix typo in canna_uint32_t
+	  definition.
+	* Canna.conf.dist: remove pointerIntegerDef and wcharDefinition
+	* ccustom/Imakefile: ditto
+	* cmd/cmd.tmpl: ditto
+	* ccustom/lisp.h: use canna_intptr_t instead of POINTERINT
+	* cmd/cannacheck/main.c: ditto
+	* lib/canna/canna.h: define POINTERINT to canna_intptr_t
+	* lib/canna/lisp.c: replace unsigned POINTERINT to canna_uintptr_t
+	* lib/canna/lisp.h: use SIZEOF_VOID_P instead of BIGPOINTER switch
 
 2003-09-17 AIDA Shinra <shinra@j10n.org>
 
-	* doc/misc/wchar.tex: Old Kon san's mail address was removed.
-	* [Canna-dev 127]: canlisp manual
-	* doc/lisp/canlisp.tex: Updated. Old Kon san's mail address was
-	  removed.
+	* Remove most code for Windows port. It is generally ad hoc and making
+	  difficult to maintain related code. In addition working Canna for
+	  Windows requires additional proprietary code. Even if we ported
+	  Canna to non-UNIX system again, the implementation would be far
+	  from Canna for Windows anyway.
+	* lib/canna/*: New compile time switches "USE_MALLOC_FOR_BIG_ARRAY"
+	  and "CODED_MESSAGE" are introduced. Some part of Windows code
+	  is left and can be enabled by turning these switches on.
+
+2003-09-17 AIDA Shinra <shinra@j10n.org>
+
+	* add sysdep.h and pubconf.h for canna_intXX_t.
+	* configure.ac: create pubconf.h
+	* Imakefile: create, link, and install pubconf.h
+	* canna/sysdep.h: added
+	* canna/ccompat.h: include "canna/sysdep.h"
+	* canna/Imakefile: link and install sysdep.h
+	* canna/jrkanji.h: include <canna/sysdep.h> and use canna_uintXX_t
+	* lib/RK/RK.h: ditto
+	* lib/RKC/rkcw.h: use canna_uintXX_t to define cannawc
+	* canna/protodefs.h: use canna_uint16_t to define Ushort
+	* server/IR.h(LENTODATA): use canna_uintXX_t
+	  (DATATOLEN): ditto
+
+2003-09-17 AIDA Shinra <shinra@j10n.org>
+
 	* [Canna-dev 245]: new key symbols and others (by Ikumi san)
 	* doc/man/guide/tex/custom.tex: remove server-timeout
 	* dic/phono/tut.kpdef(tgu): tai->kuma (Reported by KIHARA Hideto san)
 	* canuum/canna.c(convert_getterm): use new key symbols
-	* cmd/catdic/Imakefie: install chmoddic.1 (first reported in
-	  [Canna-dev 164])
+
+2003-09-17 AIDA Shinra <shinra@j10n.org>
+
+	* doc/misc/wchar.tex: removed obsolete document
+	* doc/misc/.cvsignore: removed
+	* doc/Imakefile: no need to put symlink to canna.sty in doc/misc
+	* [Canna-dev 127]: canlisp manual
+	* doc/lisp/canlisp.tex: Updated. Old Kon san's mail address was
+	  removed.
+
+2003-09-16 AIDA Shinra <shinra@j10n.org>
+
+	* lib/RKC/convert.c(ReadServer): continue in EINTR case
+	  (WriteServer): select()
+	* lib/RKC/wconvert.c(READIT): continue in EINTR case
+	  (WriteServer): select()
 
 2003-09-15 AIDA Shinra <shinra@j10n.org>
 
-	* canuum/README.jp: remove libspt desc
+	* canuum/README.jp: Sync with release branch.
+	  Update libspt download page.
 
 2003-09-15 AIDA Shinra <shinra@j10n.org>
 
-	* server/connection.c(open_inet_socket): Dmsg was wrong, htons() was
-	  not needed
+	* CHANGES.jp: sync with release branch
+	* INSTALL: ditto
+	* INSTALL.jp: ditto
+	* canuum/canna.c(init_uum): remove nonsensical "< 0"
+	* server/server.jmn(SYNOPSIS): add -inet6
+
+2003-09-15 AIDA Shinra <shinra@j10n.org>
+
+	* cmd/cannacheck/main.c: server name mignt be NULL if delay-connect
+	  option is set
+
+2003-09-15 AIDA Shinra <shinra@j10n.org>
+
+	* misc/.cvsignore: add manual.sed
+	* misc/initfiles/verose.canna(server-timeout): removed
 
 2003-09-12 AIDA Shinra <shinra@j10n.org>
 
-	* Merge remainder.
-	* Canna.conf.dist(cannaDsoRev): add Darwin dylib
-	* canna/widedef.h: add Darwin wchar
-	* cmd/crxdic/crxdic.c: Improve boundary and internal sanity checks.
-	  Some of error exit() are replaced to assert().
-	  (fil_dic): remove pg arg
-	* lib/RK/RKintern.h(RK_ASSERT): added
-	* lib/RK/ngram.c: Fix wrong boundary check. Some of error return are
-	  replaced to RK_ASSERT().
-	  (RkParseWrec): Remove workaround for above wrong boundary check.
-	  And improvements of sanity checks.
-	  (RkParseOWrec): ditto
-	* lib/RK/util.c(_Rkpanic): use vfprintf
-	  (RkAssertFail): added
 	* [Canna-dev 241]: bug report from Chinen san
 	* lib/RK/fq.c(readNV): bad pointer
 
-2003-09-12 AIDA Shinra <shinra@j10n.org>
+2003-09-09 Toru TAKAMIZU <ttaka@earth.email.ne.jp>
 
-	* Merge changes in server (excluding RK) and RKC.
-	* server/main.c(main): initialize first and fork last
-	* server/misc.c(BecomeDaemon): Move init code to EarlyInit. _exit()
-	  instead of exit(). If both -d and -l is given output messages over
-	  the given priority to stdout.
-	* server/misc.c(EarlyInit): added
-	* lib/RKC/wconvert.c: make "extension" protocol sensical
-	* server/IRwproto.h: ditto
-	* server/wconvert.c: ditto
-	* server/main.c(Dispatch): output extension name to debug log
-	* server/wconvert.c(ReadWideRequestFromClient): ditto
-	* server/convert.c(ReadRequestFromClient): ditto
-	* lib/RKC/wconvert.c(SendType21Request): fix request size ([Canna-dev
-	  231] cpdic was broken)
-	* lib/RKC/rkc.c(uinfo): change to static to prevent a conflict with
-	  uilib's uinfo
-
-2003-09-12 AIDA Shinra <shinra@j10n.org>
-
-	* Merge changes in tools and others.
-	* misc/canna: really removed
-	* Several fixes related to romaji-kana conversion.
-	* cmd/dpromdic/dpromdic.c(printch): escape cpp-unsafe characters
-	* cmd/kpdic/kpdic.c(getWORD): Interpret "\xXX" format. "n\x27" was
-	  "nx27" for 9 years!
-	  (main): correct size header of PTDIC
-	* cmd/mkromdic/mkromdic.cpp: expand CPP macro
-	* lib/RK/RK.h: add RX_PTDIC
-	* lib/canna/RKroma.c: make PTDIC format work
-	  (readHeader): added
-	  (RkwOpenRoma): move header operations to readHeader
-	* Binary dictionary was not created properly. It caused wrong
-	  learning sometimes.
-	* cmd/crxdic/crxdic.c(getp): returned number was not prime
-	  (fil_ltab): "csn" record in link table was wrong
-
-2003-09-12 AIDA Shinra <shinra@j10n.org>
-
-	* Merge changes in UIlib.
-	* lib/canna/uldefine.c(uuT2TangoEveryTimeCatch): also set SENTOU flag 
-	  to submitted string in romajiBuffer.
-	* [Canna:05811] [Canna:05812] autodef was broken
-	* lib/canna/lisp.c(Lusedic): handle ":katakana",":hiragana"
-	* lib/canna/romaji.c(doKakutei): define proper word.
-	* [Canna-dev 212]: KC_DO behaviour
-	* lib/canna/kctrl.c(KC_do): return number of commited characters for
-	  consistency with EUC API
-	* [Canna-dev 213]: Ikumi-san: key mappings and misc/canna removal
-	* lib/canna/lisp.c(keywordtable): add some key symbols
-	  (LdefXKeysym): removed because nobody use and don't work and
-	  considered harmful
-	* canna/symbolname.h(S_defXKeysym): removed
-	* lib/canna/alphamap.h: delete extra space
-	* lib/canna/emptymap.h: delete extra space
-	* [Canna-dev 220]: tango touroku problem
-	* lib/canna/uldefine.c(dicTourokuControl): set tblflag
-
-2003-09-12 AIDA Shinra <shinra@j10n.org>
-
-	* misc/default.ca: forgot 'cvs add'
-	* misc/rc.canna-dist: ditto
-	* misc/.cvsignore: add manual.sed
-
-2003-09-12 AIDA Shinra <shinra@j10n.org>
-
-	* Merge changes in configuration and build files.
-	* Canna.conf.dist(ConvertPathName): add @(DicDir) ([Canna-dev 182],
-	  Takamizu san)
-	* cmd/cannacheck/ccheck.man: remove a blank line
-	* dic/ideo/words/dics.dir: remove fuzokugo.cld
-	* dic/ideo/grammer/Imakefile: don't create fuzokugo.cld.
-	* separate default.canna and verbose.canna. (proposed by
-	  TAMUKI san, Plamo maintainer)
-	* misc/default.ca: place it again
-	* misc/initfiles/default.ca: rename to verbose.canna
-	* misc/initfiles/verbose.canna: renamed from default.ca and slightly
-	  modified.
-	* misc/initfiles/Imakefile: install verbose.canna instead of
-	  default.ca
-	* misc/canna: removed because we have rc.canna
-	* [Canna-dev 185]: misc patch by Ikumi san
-	* cmd/mkbindic/Imakefile: quote CPP
-	* cmd/mkromdic/Imakefile: dittto
-	* dic/phono/kana.kpdef: use \xnn escape seq
-	* dic/phono/newjis.kpdef: ditto
-	* lib/canna/RkPhono.jmn: remove dup file
-	* misc/Imakefile: create rc.canna, don't install [rc]Makefile
-	* misc/cMakefile: removed
-	* misc/rMakefile: reomved
-	* misc/rc.canna-dist: new script source
-
-2003-09-12 AIDA Shinra <shinra@j10n.org>
-
-	* Merge changes in documents.
-	* lib/canna/RkPhono.jmn: remove dup file (Ikumi san)
-	* server/server.man: updated (Takamizu san)
-	* server/server.jmn: ditto
 	* misc/initfiles/unix.canna: fix a typo ([Canna-dev 216]).
-	* misc/initfiles/default.ca: (setq inhibit-hankaku-kana nil)
+	* misc/initfiles/verbose.canna: (setq inhibit-hankaku-kana nil)
 	  ([Canna-dev 216])
-	* [Canna-dev 190]: Ikumi-san: documentations improved.
-	  - Canna.conf.dist: correct some wording
-	  - INSTALL: explanation about automatic startup now makes the
-	    reader refer to the sample script rather than shows an
-	    example that assumes a certain directory layout etc.
-	  - INSTALL.jp: ditto
 	* document patch from Ikumi-san ([Canna-dev 216]). The document
 	  is now compliant with LaTeX2e, while the old one depends on
 	  LaTeX. Note that LaTeX 2.09 cannot typeset the document after
@@ -179,36 +340,635 @@
 	  - doc/man/guide/tex/customfn.tex
 	  - doc/README.jp
 	  - doc/canna.sty
-	* doc/intern/dic.txt: added. it also describes 3.7devel2-formatted
-	  dictionaries.
+
+2003-09-08 AIDA Shinra <shinra@j10n.org>
+
+	* lib/RKC/conf.c(read_pipe_with_errors): prevent hang when my zombie
+	  process disappeared by client's wait()
+
+2003-09-08 AIDA Shinra <shinra@j10n.org>
+
+	* [Canna-dev 239]: build error and error handling for rkc.conf
+	* lib/RKC/conf.c(config_path): better error messages
+	* lib/canna/Imakefile(clean): fix NARROW
+
+2003-09-07 AIDA Shinra <shinra@j10n.org>
+
+	* lib/RK/ngram.c(RkReadGram): fix grammar offset calculation,
+	  reduce gcc's warning
+	  (RkCopyWrec): initialize a variable
+	* lib/RK/util.c(_RkReadHeader): fix copy size
+	  (_RkCreateHeader): another fix of position calculation
+
+2003-09-06 AIDA Shinra <shinra@j10n.org>
+
+	* lib/RKC/conf.c: cast 0xdeadbeef to int
+	  (config_path): avoid PATH_MAX; now return a pointer allocated via
+	  malloc()
+	  (rkc_configure): change error handling for above change
+	* lib/RKC/confP.h: cast 0xdeadbeef to int
+	* lib/RKindep/strops.exp: add three entries
+	* lib/RKindep/strops.h(RKI_STRBUF_ADDCH): added
+	* lib/RKindep/strops.c(RkiStrbuf_add): added
+	  (RkiStrbuf_addmem): added
+	  (RkiStrbuf_addch): added
+	* Canna.conf.dist(CANNA_DEFINES): added for __EXTENSIONS__ on sun
+	* Imakefile(DEFINES): added for CANNA_DEFINES
+	* cmd/cmd.tmpl(DEFINES): add CANNA_DEFINES
+	* lib/RK/RKintern.h: fix RK_ASSERT
+	* lib/RK/util.c(_Rkpanic): s/fprintf/vfprintf/
+	  (_RkCreateHeader): fix datasz calculation
+	* lib/RKC/Imakefile: merge RKC16/Imakefile
+	* lib/RKC16/Imakefile: merge into RKC/Imakefile and include it
+	* lib/canna/Imakefile: merge canna16/Imakefile
+	* lib/canna16/Imakefile: merge into canna/Imakefile and include it
+
+2003-09-06 AIDA Shinra <shinra@j10n.org>
+
+	* lib/canna/Imakefile(RKINDEPSRCS): fix typo
+	* server/misc.c(EarlyInit): -l <num> was not working
+
+2003-09-06 AIDA Shinra <shinra@j10n.org>
+
+	* [Canna-dev 231]: cpdic failure and cpp's stderr
+	* lib/RKC/wconvert.c(SendType21Request): fix request size
+	* lib/RKC/Imakefile: add strops.[co]
+	* lib/RKC16/Imakefile: ditto
+	* lib/canna/Imakefile: ditto
+	* lib/canna16/Imakefile: ditto
+	* lib/RKC/conf.c(read_pipe_with_errors): added
+	  (rkc_configure): use read_pipe_with_errors() instead of popen()
+	  (Lexer_new): receive complete input instead of FILE *
+	* lib/RKC/confP.h(Lexer): remove rdbuf, curr and rdend is now const
+	  char *
+	* lib/RKindep/strops.c: added
+	* lib/RKindep/strops.exp: added
+	* lib/RKindep/strops.h: added
+
+2003-09-04 AIDA Shinra <shinra@j10n.org>
+
+	* dic/ideo/words/Imakefile: fix DIC_3_6_COMPAT
+	* dic/ideo/grammer/Imakefile: ditto
+
+2003-09-04 AIDA Shinra <shinra@j10n.org>
+
+	* [Canna-dev 226][Canna-dev 227]: isnumber
+	* lib/RKC/conf.c(Lexer_next): s/isnumber/isdigit/
+
+2003-09-04 Toru TAKAMIZU <ttaka@earth.email.ne.jp>
+
+	* cmd/cannacheck/ccheck.man: remove a blank line
+
+2003-08-31 AIDA Shinra <shinra@j10n.org>
+
+	* doc/intern/dic.txt: fix spelling
+
+2003-08-31 AIDA Shinra <shinra@j10n.org>
+
+	* [Canna-dev 220]: tango touroku problem
+	* lib/canna/uldefine.c(dicTourokuControl): set tblflag
+
+2003-08-24 AIDA Shinra <shinra@j10n.org>
+
+	* doc/intern/dic.txt: previous commit was insufficient
+	* Canna.conf.dist(DIC_3_6_COMPAT): new cpp option
+	* dic/ideo/words/Imakefile: support DIC_3_6_COMPAT
+	* dic/ideo/grammer/Imakefile: ditto
+	* cmd/mkbindic/mkbindic.cpp: support -c option
+	* cmd/mkbindic/mkbindic.man: updated
+	* cmd/mkbindic/mkbindic.jmn: updated
+
+2003-08-24 AIDA Shinra <shinra@j10n.org>
+
+	* New dictionary header. The new format is incompatible with former
+	  format, therefore some compatibility feature are introduced.
+	  Crxdic has "3.6-compatible" mode. Crfreq generates old .cld if
+	  .cbd is old format. Server can mount both old and new dictionaries.
+	  These stuff will be removed someday.
+	* canna/patchlevel.h: bump to 3.7devel2
+	* lib/RK/RKintern.h: include <unistd.h> and <fcntl.h>
+	  (HD_*): reorder and change to enum
+	  (HD_VERSION): new macro
+	  (HD_TAG_*): moved into util.c
+	  (struct ND): new member "version"
+	* lib/RK/ngram.c(RkReadGram): New argument "gramsz". Size check is
+	  performed by "gramsz".
+	  (RkOpenGram): Deal with new grammer data storage.
+	* lib/RK/permdic.c(openDF): Deal with new grammer data storage.
+	  remove "WIN" code.
+	* lib/RK/util.c(HD_*): moved from RKintern.h
+	  (read_tags): added
+	  (_RkReadHeader): rewritten to handle new format
+	  (_RkCreateHeader): ditto
+	* cmd/crfreq/crfreq.c(main): s/RK_MAX_HDRSIZ/RK_OLD_MAX_HDRSIZ.
+	  Deal with new grammer data storage.
+	* cmd/crxdic/crxdic.c(struct dictionary): new members "gram{data,sz}"
+	  (parse_arg): -c and -g option
+	  (STrdup): check memory allocation error
+	  (setHeader): removed
+	  (makeHeader): rewritten
+	  (write_file): write grammer data here instead of "cat" in Makefile
+	  (main): store grammer in memory
+	* cmd/dpxdic/dpxdic.c(main): catch RkReadGram API change up
+	* dic/ideo/grammer/Imakefile: don't create fuzokugo.cld.
+	  include cnj.bits to fuzokugo.cbd by "crxdig -g" instead of "cat".
+	* dic/ideo/words/dics.dir: remove fuzokugo.cld
+	* doc/intern/dic.txt: updated
+
+2003-08-17 AIDA Shinra <shinra@j10n.org>
+
+	* doc/intern/dic.txt: documentation of binary dictionary format
+
+2003-08-16 AIDA Shinra <shinra@j10n.org>
+
+	* Binary dictionary was not created properly. It caused wrong
+	  learning sometimes.
+	* cmd/crxdic/crxdic.c(getp): returned number was not prime
+	  (fil_ltab): "csn" record in link table was wrong
+
+2003-08-16 AIDA Shinra <shinra@j10n.org>
+
+	* cmd/crxdic/crxdic.c: Improve boundary and internal sanity checks.
+	  Some of error exit() are replaced to assert().
+	  (fil_dic): remove pg arg
+	* lib/RK/RKintern.h(RK_ASSERT): added
+	* lib/RK/ngram.c(wstowrec): Fix wrong boundary check. Some of error
+	  return are replaced to RK_ASSERT().
+	  (RkParseWrec): Remove workaround for above wrong boundary check.
+	  And improvements of sanity checks.
+	  (RkParseOWrec): ditto
+	* lib/RK/util.c(_Rkpanic): use vfprintf
+	  (RkAssertFail): added
+	* lib/RKC/convert.c(ServerTimeout): fix declaration
+	* lib/RKC/wconvert.c(ServerTimeout): define externally
+	* lib/canna/globnames: add ServerTimeout again
+	* server/misc.c(EarlyInit): fix -d handling
+	  (BecomeDaemon): ditto
+
+2003-08-08 AIDA Shinra <shinra@j10n.org>
+
+	* Preprocess rkc.conf by cpp.
+	* Canna.conf.dist(RKC_DEFINES): add -DCPP
+	* RKCCONF.jp: updated
+	* lib/RKC/conf.c(rkc_configure): popen cpp
+	  (Lexer_new): initialize linetop flag
+	  (Lexer_next): read "# line" generated by preprocessors
+	* lib/RKC/confP.h(Lexer): new member "linetop"
+
+2003-08-07 AIDA Shinra <shinra@j10n.org>
+
+	* lib/RKC/conf.c(Parser_eval): disallow EOF in expressions
+
+2003-08-07 AIDA Shinra <shinra@j10n.org>
+
+	* Implement C-like expressions evaluator for rkc.conf.
+	* RKCCONF.jp: updated
+	* lib/RKC/conf.c(match_operator1): added
+	  (match_operator2): added
+	  (Lexer_next): process operators, add postfix_op flag
+	  (op_dump): added for debug
+	  (Token_dump): add TOK_SEMICOLON and TOK_OPERATOR
+	  (Parser_next): pass postfix_op flag to Lexer_next(), dump token
+	  if CONF_LEXER_DEBUG is defined
+	  (Parser_next_postfixop): added
+	  (Parser_stmt): evaluate expressions
+	  (Parser_eval_error): added
+	  (Parser_eval): added
+	  (calc_*): added
+	  (top_statements): turn to static
+	  (host_statements): turn to static
+	  (RkcConfMgr_find): fix logic
+	* lib/RKC/confP.h(CONF_LEXER_DEBUG): add debug flag
+	  (CONF_EVAL_DEBUG): add debug flag
+	  (TokenType): add TOK_OPERATOR
+	  (Operator): added
+	  (TokenVal): new member "opval" to store an operator
+	  (Parser): new member "exprval"
+
+2003-08-05 AIDA Shinra <shinra@j10n.org>
+
+	* Implement RKC configuration infrastracture.
+	* RKCCONF.jp: new documentation
+	* configure.ac: check strlcpy()
+	* canna/rkcapi.h(INT_HEADER): added
+	* canna/Imakefile: add rkcapi.h
+	* canna/symbolname.h: remove "server-timeout"
+	* lib/RK/RK.h(RkwSetTimeout,RkwGetTimeout): removed
+	* lib/RKC/Imakefile: add conf.c, conf.h and confP.h
+	  create symbolic link to rkcapi.h in $(CANNAROOT)/includes.
+	* lib/RKC/conf.c: added configurator implementation
+	* lib/RKC/conf.h: added
+	* lib/RKC/confP.h: added
+	* lib/RKC/rkc.c(ServerTimeout): move into wconvert.c
+	  (config_error_handler): added
+	  (RkwInitialize): remove CANNA_TIMEOUT feature.
+	  invoke config_error_handler. invoke rkc_configure/rkc_config_fin.
+	  (RkwFinalize): invoke rkc_config_fin.
+	  (RkcListenConfigErrors): added
+	  (RkwGetTimeout): removed
+	  (RkwSetTimeout): removed
+	* lib/RKC/rkc.h: include "rkcapi.h"
+	* lib/RKC/wconvert.c(ServerTimeout): moved from rkc.c
+	  (rkc_build_cannaserver_list): check "cannahost" in rkc.conf.
+	  (rkc_Connect_Iroha_Server): set ServerTimeout here
+	* lib/RKC16/Imakefile: add conf.c, conf.h and confP.h
+	* lib/RKindep/Imakefile: add ecfuncs.h
+	* lib/RKindep/cfuncs.c(RkiAltStrlcpy): added
+	  (RkiAltStrlcat): added
+	* lib/RKindep/ecfuncs.exp: added for RkiAltStrl{cat,cpy}
+	* lib/RKindep/ecfuncs.h: added for strlcpy and strlcat
+	* lib/RKindep/file.c(RkiGetLine): added
+	  (RkiReadWholeFile): added
+	* lib/RKindep/file.exp: added RkiGetLine and RkiReadWholeFile
+	* lib/RKindep/file.h: ditto
+	* lib/canna/Imakefile(RKCSRCS): add conf.c
+	  (RKCOBJS): add conf.o
+	* lib/canna16/Imakefile: ditto
+	* lib/canna/globnames: add config related functions and remove
+	  ServerTimeout.
+	* lib/canna/henkan.c(warnRKCErrors): added
+	  (KanjiInit): report RKC config errors if you are in verbose mode
+	* lib/canna/lisp.c(VServTimeout): removed
+
+2003-08-02 AIDA Shinra <shinra@j10n.org>
+
+	* fix chkconc build.
+	* lib/RK/RKintern.h(struct RkGramIterator): added
+	  (RkNextGram): added
+	* lib/RK/ngram.c(RkFirstGram): added
+	  (RkEndGram): added
+	* cmd/chkconc: use RkGramIterator
+
+2003-08-01 AIDA Shinra <shinra@j10n.org>
+
+	* lib/RK/permdic.c(_Rkpopen): fix copy and paste error
+
+2003-08-01 AIDA Shinra <shinra@j10n.org>
+
+	* Change internal representation of conjunctions. Conjunction
+	  matrix is packed per rows and referred by binary search.
+	  It can also hold some flags. This is first step to increase
+	  maximum number of hinshi.
+	* lib/RK/RKintern.h(RkKxDic): move RkKxDic to ngram.c.
+	  (TestGram): replaced to RkTestGram()
+	  (struct nword): remove nw_rcvec
+	* lib/RK/ngram.c(RkKxGram): added and new records
+	  (gram_fill_conjcells): added
+	  (RkGetGramSize): #ifdef unused
+	  (RkTestGram): added to replace TestGram() macro
+	  (RkCheckNegGram): moved from nword.c and compute rcvec here
+	* lib/RK/nword.c(checkNeg): renamed to RkCheckNegGram and moved
+	  into ngram.c
+	  (concWord): use RkCheckNegGram and remove unused variable
+	  (parseWord): use RkTestGram
+	* lib/RK/bun.c(nword2str): use RkGetGramName instead of direct
+	  access to nw_strtab
+
+2003-07-31 AIDA Shinra <shinra@j10n.org>
+
+	* [Canna-dev 218]: Ftte
+	  Lower priority of 1 letter word + Ftte. Just a first step.
+	* lib/RK/RKintern.h(RkGram): add P_Ftte
+	  (nword): move nw_count outside #ifdef LOGIC_HACK
+	  (NW_LOWPRI): move outside #ifdef LOGIC_HACK
+	* lib/RK/context.c(_RkInitialize): get P_Ftte
+	* lib/RK/permdic.c(_Rkpopen): ditto
+	* lib/RK/nword.c: move some LOGIC_HACK code outside #ifdefs.
+	  better to remove !LOGIC_HACK code?
+	  (concWord): NW_LOWPRI to Ftte
+	  (compword): place NW_LOWPRI words after all !NW_LOWPRI word.
+
+2003-07-06 AIDA Shinra <shinra@j10n.org>
+
+	* [Canna-dev 213]: Ikumi-san: key mappings and misc/canna removal
+	* lib/canna/lisp.c(keywordtable): add some key symbols
+	  (LdefXKeysym): removed because nobody use and don't work and
+	  considered harmful
+	* canna/symbolname.h(S_defXKeysym): removed
+	* lib/canna/alphamap.h: delete extra space
+	* lib/canna/emptymap.h: delete extra space
+	* misc/canna: removed because we have rc.canna
+
+2003-07-06 Toru TAKAMIZU <ttaka@earth.email.ne.jp>
+
+	* [Canna-dev 190]: Ikumi-san: documentations improved.
+	  - Canna.conf.dist: correct some wording
+	  - INSTALL: explanation about automatic startup now makes the
+	    reader refer to the sample script rather than shows an
+	    example that assumes a certain directory layout etc.
+	  - INSTALL.jp: ditto
+
+2003-07-03 AIDA Shinra <shinra@j10n.org>
+
+	* [Canna-dev 212]: KC_DO behaviour
+	* lib/canna/kctrl.c(KC_do): return number of commited characters for
+	  consistency with EUC API
+
+2003-06-29 AIDA Shinra <shinra@j10n.org>
+
+	* lib/RKindep/cksum.c(RkiCksumCRCAdd): char -> unsigned char
+	* cmd/crxdic/crxdic.c(makeHeader): dic->hdr is empty and useless here.
+	  use dic->Dir->buf instead.
+
+2003-06-29 AIDA Shinra <shinra@j10n.org>
+
+	* Several fixes related to romaji-kana conversion.
+	* cmd/dpromdic/dpromdic.c(printch): escape cpp-unsafe characters
+	* cmd/kpdic/kpdic.c(getWORD): Interpret "\xXX" format. "n\x27" was
+	  "nx27" for 9 years!
+	  (main): correct size header of PTDIC
+	* cmd/mkromdic/mkromdic.cpp: expand CPP macro
+	* lib/RK/RK.h: add RX_PTDIC
+	* lib/canna/RKroma.c: make PTDIC format work
+	  (readHeader): added
+	  (RkwOpenRoma): move header operations to readHeader
+
+2003-06-23 AIDA Shinra <shinra@j10n.org>
+
+	* lib/RKC/rkc.c(uinfo): change to static to prevent a conflict with
+	  uilib's uinfo
+	* lib/RKindep/Imakefile: don't use .SUFFIXES::, which conflicts with
+	  all other .SUFFIXES:.
+	* lib/canna/uldefine.c(uuT2TangoEveryTimeCatch): also set SENTOU flag 
+	  to submitted string in romajiBuffer.
+	* Canna.conf.dist(cannaDsoRev): add Darwin dylib
+	* canna/widedef.h: add Darwin wchar
+
+2003-05-28 AIDA Shinra <shinra@j10n.org>
+
+	* server/main.c(main): initialize first and fork last
+	* server/misc.c(BecomeDaemon): move init code to EarlyInit
+	* server/misc.c(EarlyInit): added
+
+2003-05-28 AIDA Shinra <shinra@j10n.org>
+
+	* server/main.c(main): fork later
+	* server/misc.c(BecomeDaemon): _exit() instead of exit()
+
+2003-04-06 AIDA Shinra <shinra@j10n.org>
+
+	* Merge stat patch by Fujieda-san and Kanou san. (default off)
+	* lib/RK/Imakefile: add /* -RK_LOG */
+	* lib/RK/RKintern.h: apply stat patch.
+	* lib/RK/bun.c: ditto
+
+2003-04-05 AIDA Shinra <shinra@j10n.org>
+
+	* server/misc.c(GetAddrListFromName): resolve INET4 and INET6
+	  independently.
+
+2003-03-30 AIDA Shinra <shinra@j10n.org>
+
+	* server/connection.c(GetConnectionInfo): revert the way to
+	  descriminate UNIX socket.
+	* server/main.c(NextAvailableClient): don't close socket here
+
+2003-03-29 AIDA Shinra <shinra@j10n.org>
+
+	* lib/RKindep/file.h: include <sys/time.h> family for struct timeval.
+
+2003-03-29 AIDA Shinra <shinra@j10n.org>
+
+	* Implement demand connection and timeout for client.
+	* lib/RKindep/file.c: added
+	* lib/RKindep/file.h: typedef rki_fd_set, RKI_FD_SET(), RkiConnect
+	* lib/RKindep/Imakefile: compile file.c
+	* lib/RKindep/file.exp: add RkiConnect
+	* configure.ac: check FD_ISSET and fd_set
+	* canna/symbolname.h: add "delay-connect", "server-timeout"
+	* lib/RK/RK.h: add RkwSetTimeout, RkwGetTimeout
+	* lib/RKC/Imakefile: include RKindep/file.c
+	* lib/RKC16/Imakefile: ditto
+	* lib/canna/Imakefile: ditto
+	* lib/canna16/Imakefile: ditto
+	* lib/RKC/convert.c(ReadServer): select()
+	* lib/RKC/wconvert.c(ReadServer): select()
+	  (try_connect): added
+	  (connect_inet): use try_connect
+	* lib/RKC/rkc.c(RkwInitialize): check CANNA_TIMEOUT env
+	  (RkwGetTimeout): added
+	  (RkwSetTimeout): added
+	* lib/canna/canna.h(CannaConfig): add DelayConnect
+	* lib/canna/commondata.c(standalone): removed
+	  (DelayConnect): added
+	* lib/canna/globnames: add ServerTimeout (in libRKC)
+	* lib/canna/kctrl.c(KC_initialize): KanjiInit only if DelayConnect,
+	  remove standalone flag
+	* lib/canna/lisp.c(VServTimeout): added
+	  (VDelayConnect): added
+	* lib/canna/util.c(KanjiInitError): remove standalone flag
+	* misc/initfiles/unix.canna: (setq delay-connect t)
+	* misc/initfiles/verbose.canna: delay-connect, server-timeout
+
+2003-03-26 AIDA Shinra <shinra@j10n.org>
+
+	* reimplement INET6 and ACL.
+	* configure.ac: check struct hostent.h_addr_list;
+	* lib/RKC/wconvert.c: allow scoped address
+	* server/IR.h: change address structures and change macros.
+	* server/connection.c: separate INET socket and INET6 socket.
+	  (GetConnectionInfo): use getnameinfo.
+	* server/convert.c: reject IPv4 mapped address.
+	* server/main.c: GetConnectionInfo error check.
+	* server/misc.c: add new address handling.
+	  (ACLCheckHostName): removed
+	  (IR_Are_Addr_Equal): removed
+	  (GetAddressFromName): removed
+	  (AddrAreEqual): added
+	  (GetAddrListFromName): added
+	  (SearchAddrList): added
+	  (FreeAddrList): added
+	  (CreateAccessControlList): don't treat kernel hostname specially.
+	  allow scoped address.
+	  allow duplicate addresses.
+	  (CheckAccessControlList): don't treat kernel hostname specially.
+	* server/wconvert.c(irw_killserver): cleanup
+
+2003-03-24 AIDA Shinra <shinra@j10n.org>
+
+	* Inhibit direct configure invocation.
+	* Imakefile: set IN_MAKE=yes
+	* configure.ac: test $IN_MAKE
+	* canuum/Imakefile: set IN_MAKE=yes
+	* canuum/configure.in: test $IN_MAKE
+
+2003-03-24 AIDA Shinra <shinra@j10n.org>
+
+	* RKindep cleanup.
+	* Imakefile: mkdir ./include/RKindep
+	* canna/ccompat.h: include "RKindep/cfuncs.h" instead of RKindep.h
+	* cmd/chkconc/chkconc.c: include "RKindep/file.h"
+	* cmd/crxgram/crxgram.c: ditto
+	* cmd/dicar/dicar.c: ditto
+	* cmd/dpxdic/dpxdic.c: ditto
+	* cmd/crxdic/crxdic.c: include "RKindep/file.h",
+	  move cksum.h into RKindep/
+	* lib/RKindep/.cvsignore: RKIsubst.h -> *.sub
+	* lib/RKindep/cksum.h: ditto
+	* lib/RKindep/Imakefile: RKIsubst -> *.sub, separate RKindep.h
+	* lib/RKindep/basename.c: include "RKindep/file.h"
+	* lib/RKindep/cksum.c: move "RKindep/cksum.h" into RKindep/
+	* lib/RKindep/exports: removed and separated to *.exp
+	* lib/RKindep/RKindep.h: removed
+	* lib/RKindep/cfuncs.h: added
+	* lib/RKindep/file.h: added
+	* lib/RKindep/cfuncs.exp: added
+	* lib/RKindep/file.exp: added
+	* lib/RKindep/cksum.exp: added
+
+2003-03-19 AIDA Shinra <shinra@j10n.org>
+
+	* Check cbd/cld consistency by CRC instead of *.cbd age.
+	* lib/RKindep/cksum.c: added
+	* lib/RKindep/cksum.h: added
+	* lib/RKindep/exports: add RkiCksum* APIs
+	* lib/RKindep/Makefile: add cksum.[ch]
+	* lib/RK/RKintern.h: add #CRC tag
+	* lib/RK/permdic.c: ditto
+	* lib/RK/util.c: add #CRC tag, remove essential_tag[] (unused)
+	* lib/RK/fq.c: compare CRC
+	* cmd/crxdic/crxdic.c: calculate CRC and store in #CRC tag
+
+2003-03-10 AIDA Shinra <shinra@j10n.org>
+
+	* [Canna-dev 182]: DicDir (by Takamizu san)
+	* Canna.conf.dist(ConvertPathName): add @(DicDir)
+
+2003-03-05 AIDA Shinra <shinra@j10n.org>
+
+	* [Canna-dev 185]: misc patch by Ikumi san
+	* cmd/mkbindic/Imakefile: quote CPP
+	* cmd/mkromdic/Imakefile: dittto
+	* dic/phono/kana.kpdef: use \xnn escape seq
+	* dic/phono/newjis.kpdef: ditto
+	* lib/canna/RkPhono.jmn: remove dup file
+	* misc/Imakefile: create rc.canna, don't install [rc]Makefile
+	* misc/cMakefile: removed
+	* misc/rMakefile: reomved
+	* misc/rc.canna-dist: new script source
+
+2003-02-04 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* server/server.man: misc improvements (by Takamizu san)
+	* server/server.jmn: ditto
+
+2003-02-04 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* separate default.canna and verbose.canna. (proposed by
+	  TAMUKI san, Plamo maintainer)
+	* misc/default.ca: place it again
+	* misc/initfiles/default.ca: rename to verbose.canna
+	* misc/initfiles/verbose.canna: renamed from default.ca and slightly
+	  modified
+
+2003-02-04 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* lib/canna/romaji.c(doKakutei): save d->current_mode for
+	  bubun-kakutei
+
+2003-02-03 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* lib/canna/ebind.c(EUCListCallback): check items == NULL case
+	* lib/RKC/wconvert.c: make "extension" protocol sensical
+	* server/IRwproto.h: ditto
+	* server/wconvert.c: ditto
+	* server/main.c(Dispatch): output extension name to debug log
+	* server/wconvert.c(ReadWideRequestFromClient): ditto
+	* server/convert.c(ReadRequestFromClient): ditto
+	* server/misc.c(BecomeDaemon): if both -d and -l is given output
+	  messages over the given priority to stdout.
+	* canna/patchlevel.h: rename to 3.7devel1
 
 2003-02-02 AIDA Shinra <aida-s@jcom.home.ne.jp>
 
-	* (repository): rename RELBR_3 to RELBR_3_6 (cvs admin -n)
+	* configure.ac: check sys/select.h
+	* server/connectoin.c: HAVE_SYS_SELECT_H instead of AIXV3
+	* server/WaitFor.c: ditto
+	* canna/protodef.h: correct ifdef around typedef Ushort and BYTE
+	* canna/ccompat.h(RCSID): forgot to define to empty for lint
+	* canuum/commonhd.h: don't need to include "cannaconf.h"
+
+2003-02-02 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* canna/ccompat.h: const hack is done in accanna.h
+	  (WARN_REFERENCES): only use on ELF platform
+	  (RCSID): __attribute((__unused__)) instead of .ident
+	* cmd/canlisp/canlisp.c: include "ccompat.h"
+	* cmd/forcpp/forcpp.c: ditto
+	* cmd/forsort/forsort.c: ditto
+	* cmd/catdic/can.c: define CANNA_NEW_WCHAR_AWARE
+	* cmd/catdic/rutic.c: ditto
+	* cmd/dpromdic/dpromdic.c: include "ccompat.h" and define
+	  CANNA_NEW_WCHAR_AWARE
+	* cmd/wtoc/wtoc.c: include "ccompat.h"
+	  (salloc): don't declare malloc() here
+	* lib/canna/obind.c(owcListCallback): check items == NULL case
+
+2003-02-02 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* [Canna-dev 164] [Canna-dev 169]: doc and Imakefile patches by
+	  Takamizu san.
+	* server/server.jmn: more clear and accurate desc
+	* server/server.man: ditto
+	* cmd/catdic/Imakefile: install chmoddic.1
 
 2003-01-25 AIDA Shinra <aida-s@jcom.home.ne.jp>
 
-	* canuum/configure.in: check union wait
-	* canuum/acconfig.h: HAVE_UNION_WAIT
-	* canuum/jhlp.c(chld_handler): HAVE_UNION_WAIT
-	* canuum/termio.c(openTermData): don't invoke reset_shell_mode()
+	* oops, I forgot to add configure.ac and cmd/cmd.tmpl.
+
+2003-01-25 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* autoconfize, cmd/*/Imakefile cleanup and add libRKindep
+	* Canna.conf.dist: define some make variables
+	  (MakeCannaConfigH): include accanna.h from cannaconf.h
+	* Imakefile: invoke configure to create accanna.h
+	  (distclean): remove files created by configure
+	* mkrelease.sh: generate configure and accanna.h.in
+	* configure.ac: added
+	* .cvsignore: add generated files by autoconf
+	* canna/ccompat.h: move HAVE_* to accanna.h.
+	  include RKindep.h and define compatibility macros.
+	  modify some macros.
+	  (RCSID): new macro
+	* canuum/Imakefile: rename ConfigureEnv and ConfigureArgs to
+	  distinguish toplevel configure and canuum configure
+	* canuum/canna.c: don't include "ccompat.h"
+	* cmd/cmd.tmpl: added
+	* cmd/*/Imakefile: cleanup using cmd.tmpl
+	* cmd/chkconc/chkconc.c: use RkiBasename() instead of basename()
+	* cmd/crxdic/crxdic.c: ditto
+	* cmd/crxgram/crxgram.c: ditto
+	* cmd/dicar/dicar.c: ditto
+	* cmd/dpxdic/dpxdic.c: ditto
+	* lib/Imakefile: add libRKindep
+	* lib/RKC/Imakefile: join cfuncs.c in libRKindep
+	* lib/RKC16/Imakefile: ditto
+	* lib/canna/Imakefile: ditto
+	* lib/canna16/Imakefile: ditto
+	* lib/RK/RKintern.h: define HAVE_RENAME in accanna.h
+	* server/Imakefile: cleanup
+	* lib/RKindep/Imakefile: added
+	* lib/RKindep/cfuncs.c: added
+	* lib/RKindep/basename.c: added
+	* lib/RKindep/RKindep.h: added
+	* lib/RKindep/exports: added
+	* lib/RKindep/.cvsignore: added
+
+2003-01-25 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
 	* Canna.conf.dist: MANSUFF(X (thanks to nanashi san)
 	* mkrelease.sh: remove autom4te.cache
-	* canna/patchlevel.h: 3.6p3 release
 
 2003-01-24 AIDA Shinra <aida-s@jcom.home.ne.jp>
 
-	* canna/patchlevel.h: 3.6p2 release
+	* canuum/configure.in: check union wait
+	* canuum/jhlp.c(chld_handler): HAVE_UNION_WAIT
+	* canuum/termio.c(openTermData): don't invoke reset_shell_mode()
 
 2003-01-24 AIDA Shinra <aida-s@jcom.home.ne.jp>
 
 	* canuum/jhlp.c(open_ttyp): I_PUSH
 	* canuum/commonhd.h: fix typo (s/CONFIG_TEMRIO/CONFIG_TERMINFO)
-
-2003-01-23 AIDA Shinra <aida-s@jcom.home.ne.jp>
-
-	* Canna.conf: CannaDsoRev is now 1.1 in all platforms.
-	* CHANGES.jp: update
 
 2003-01-21 AIDA Shinra <aida-s@jcom.home.ne.jp>
 
@@ -217,6 +977,23 @@
 	* misc/initfiles/default.ca: fix typo, 3.5 options
 	* misc/initfiles/sample.canna: ditto
 	* misc/initfiles/unix.canna: ditto
+
+2003-01-18 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* lib/canna/obind.c(owcListCallback): correct owbuf size
+
+2003-01-18 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* Implement KC_SETLISTCALLBACK for EUC and old wchar_t. (dirty)
+	* canna/jrkanji.h(jrEUCListCallbackStruct): added
+	  (CANNA_EUC_LISTCALLBACK): added to inform this API
+	* lib/canna/canna.h(uiContext): add elistcb
+	* lib/canna/ebind.c(EUCListCallback): added
+	  (XKanjiControl2): map KC_SETLISTCALLBACK
+	* lib/canna/obind.c(owcListCallback): added
+	  (owcKanjiControl2): map KC_SETLISTCALLBACK
+	* lib/canna/globnames: add EUCListCallback and owcListCallback
+	* lib/canna/kctrl.c(KC_setListCallback): set d->elistcb
 
 2003-01-17 AIDA Shinra <aida-s@jcom.home.ne.jp>
 
@@ -271,19 +1048,259 @@
 	  "nami" "nakaten" symbol defs as comment.
 	* misc/initfiles/unix.ca: add "nami" symbol
 
-2003-01-12 AIDA Shinra <aida-s@jcom.home.ne.jp>
+2003-01-13 AIDA Shinra <aida-s@jcom.home.ne.jp>
 
-	* INSTALL: update
-	* INSTALL.jp: update
-	* canuum/README.jp: update
-
-2003-01-12 AIDA Shinra <aida-s@jcom.home.ne.jp>
-
-	* canuum/*: merge canuum from HEAD.
-	  don't use libspt because it's still alpha release.
-	* mkrelease.sh: invoke autoconf
+	* wchar_t fix final step: now our cannawc does not need wchar_t hack.
+	* Canna.conf.dist(supportOldWchar): added
+	* canna/jrkanji.h: check CANNA_NEW_WCHAR_AWARE
+	* canna/widedef.h: don't define cannawc here
+	* canuum/canna.c: use new wide character
+	* cmd/cannacheck/main.c: don't include "widedef.h". instead
+	  <canna/RK.h> is needed.
+	  (CANNA_NEW_WCHAR_AWARE): define
+	* canna/ccompat.h(WARN_REFERENCES): added (copied from FreeBSD)
+	* lib/RK/RK.h: demand CANNA_NEW_WCHAR_AWARE
+	* lib/RK/RKintern.h(CANNA_NEW_WCHAR_AWARE): define
+	  (cannawc): typedef to Wchar here
+	* lib/RKC/rkc.c(RkwInitialize): rkcWCinit is removed
+	* lib/RKC/rkcw.h(cannawc): typedef here
+	* lib/RKC/wutil.c: replace rkcWCinit and wchar_type to #ifdef
+	* lib/RKC16/Imakefile(DEFINES): undef WCHAR16, define CANNA_WCHAR16
+	* lib/canna/Imakefile: add obind.[co]
+	* lib/canna/obind.c: added
+	* lib/canna/canna.h: don't include "widedef.h" here
+	  (CANNA_NEW_WCHAR_AWARE): define
+	* lib/canna/engine.c: use CANNA_WCHAR16
+	* lib/canna/globnames: add context_table
+	* lib/canna/kctrl.c(KC_initialize): WCinit is removed
+	  (context_table): change to global
+	* lib/canna/util.c: replace WCinit and wchar_type to #ifdef
+	* lib/canna/lisp.c: ditto (WIN_CANLISP)
+	* lib/canna16/Imakefile: add obind.[co]
+	  (DEFINES): undef WCHAR16, define CANNA_WCHAR16
 
 2003-01-10 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* we no longer need JAPANESE_LOCALE
+	* Canna.conf.dist: remove JapaneseLocale and JAPANESE_LOCALE
+	* canuum/jhlp.c: don't use LANG
+	* canuum/wnn_config.h: remove JAPANESE_LOCALE
+
+2003-01-10 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* sample/*: sample.c is a worst sample. It's hard to make cope with
+	  new wide character. Remove them.
+
+2003-01-10 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* wchar_t fix step 3: add cannawc hook (no API/ABI changes for now)
+	* canna/jrkanji.h: use cannawc instead of wchar_t
+	* canna/widedef.h: ditto
+	* lib/RK/RK.h: ditto
+	* lib/RKC/*: replace wchar_t to cannawc by macro carefully
+	* lib/canna/*: ditto
+	* server/IR.h: typedef Ushort cannawc; remove alternative prototypes
+	* server/util.c: don't include widedef.h
+	  (wchar2ushort32): removed (unused function)
+	  (ushort2wchar32): removed (unused function)
+
+2003-01-06 AIDA Shinra <aida-s@jcom.home.ne.jp>
+	
+	* completely remove libc's mbstowcs
+	* lib/RKC/rkcw.h: remove JAPANESE_LOCALE
+	* lib/RKC/wutil.c: remove HAVE_WCHAR_OPERATION
+	* lib/canna/canna.h: remove JAPANESE_LOCALE
+	* sample/sample.c: distinguish X/libc wchar_t and canna wchar
+	  (main): always invoke setlocale()
+	  (euc): removed; always behaves as euc==1
+	  (proc_keypress): always behaves as euc==1
+	  (proc_ctl_keypress): remove HAVE_WCHAR_OPERATION
+	  (checkOptions): -euc option is not needed
+	  (checkGLineWidth): convert X/libc wchar to canna wchar
+	  (WCinit): remove HAVE_WCHAR_OPERATION
+	  (mywcstombs): added
+	  (mymbstowcs): added
+
+2003-01-06 AIDA Shinra <aida-s@jcom.home.ne.jp>
+	
+	* wchar_t fix step 2: remove libc's mbstowcs()
+	* Canna.conf(wcharDefinition): empty
+	  (Wlib): removed
+	* canna/widedef.h: remove HAVE_WCHAR_OPERATION
+	* lib/canna/canna.h: ditto
+	* lib/canna/commondata.c(locale_insufficient): removed
+	* lib/canna/globnames: remove locale_insufficient
+	* lib/canna/jrbind.c(XwcLookupKanji2): remove if(locale_insufficient)
+	* lib/canna/util.c(WCinit): remove HAVE_WCHAR_OPERATION case
+	  (CNvW2E): ditto
+	  (CANNA_mbstowcs): always compiled
+	  (CANNA_wcstombs): always compiled
+	* lib/canna/lisp.c(WCinit): remove HAVE_WCHAR_OPERATION case although
+	  it is Windows only code
+
+2003-01-06 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* canuum/uumimport.sh: don't use -ko; it is needless because FreeWnn
+	  files are checkouted with -kv. now RCSID is expanded correctly.
+	* canuum/* (FreeWnn files): cvs admin -kkv
+
+2003-01-06 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* Imakefile(instmost): added
+
+2003-01-06 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* canuum/Imakefile(ConfigureEnv): fix quote
+	* canuum/commonhd.h: redefine TERMCAP/TERMINFO here according to
+	  CONFIG_TERMIO here
+	* canuum/configure.in: check killpg, getpgid, getpgrp
+	* canuum/jhlp.c(chld_handler): use KILLPG macro
+	  (do_end): ditto
+	  (setsize): ditto
+	* canuum/wnn_os.h: move TERMCAP/TERMINFO redefinition to commonhd.h
+	  (KILLPG): new macro
+	  (GETPGID): new macro
+	  (GETMYPGRP): new macro
+
+2003-01-05 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* lib/RK/bun.c(RkStoreYomi): allow yomi == NULL && len == 0
+
+2003-01-05 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* [Canna-dev 119] chikuji input was broken
+	* lib/RKC/wconvert.c(SendType11Request): stop buffer overrun
+	* server/wconvert.c(irw_store_yomi): len = ushortstrlen() unless
+	  req->yomi == NULL
+	  (irw_store_range): ditto
+	  (ProcWideReq11): allow empty string that is not null terminated
+
+2003-01-04 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* canuum/*: add RCSID
+	* canuum/jhlp.c: remove code commented out
+	* canuum/ttyfdslot.c: removed
+	* canuum/sheader.h: remove ttyfdslot(), setutmp(), saveutmp() and
+	  resetutmp()
+	* canuum/freewnn-uum.files: remove ttyfdslot.c and setutmp.c
+
+2003-01-04 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* Get pty with libspt:
+	  http://members.jcom.home.ne.jp/aida-s/libspt/
+	* canuum/Imakefile: link libspt
+	  (INSTUGIDFLAGS): don't need any privilege.
+	* canuum/jhlp.c(main): remove utmp logging without libspt completely.
+	  (SysV j_term_save): remove meaningless cfset[io]speed.
+	  (chld_handler): spt_utmp_set_exit()
+	  (ptyfd, ttypfd): -1 init
+	  (exec_cmd): use libspt, fix USE_LINUX_TERM, remove old utmp code.
+	  (open_pty): use libspt
+	  (do_end): libspt related cleanup, remove old utmp code, comment out
+	  needless TIOCSSIZE.
+	  (ptyname): don't compile when libspt is used.
+	* canuum/setutmp.c: removed because libspt does this
+
+2002-12-28 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* cmd/Imakefile(SUBDIRS): add chkconc
+	* server/IR.h: define _WCHAR_t again after include "canna/RK.h"
+	* canna/widedef.h: FreeBSD 5.x and OpenBSD
+
+2002-12-28 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* [canna-dev 97] [canna-dev 106] [canna-dev 107]
+	  New direcroty hierarchy.
+	* Canna.conf.dist: new directory hierarchy if !ObsoleteInstallDir
+	  (MakeCannaConfigH for !EMX): preserve old cannaconf.h if unchanged
+	* cmd/catdic/Imakefil: cannakill in cannaSrvDir if !ObsoleteInstallDir
+
+2002-12-28 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* cleanuped tty handling of canuum and TERMCAP/TERMINFO detection.
+	* canuum/.cvsignore: add config.h.in
+	* canuum/Imakefile(TERMCAP_LIB): added
+	  (distclean): delete config.cache and config.status
+	  (reconfig): added
+	* canuum/canna.c: don't include <sgtty.h>, <curses.h>, <term.h>
+	  directly. latter 2 are included from "wnn_os.h".
+	* canuum/config.h.in: remove from CVS. instead generate by
+	  mkrelease.sh.
+	* canuum/acconfig.h: added (ported from FreeWnn)
+	  (HAVE_TERMINFO): added
+	* mkrelease.sh: generate canuum/config.h.in using autoheader2.5
+	* configure.in: Do not set CDEBUGFLAGS/CCOPTIONS when CANNA.
+	  Do not use AC_SEARCH_LIBS to detect terminal library.
+	  Check termcap.h, sgtty.h, sys/termio.h and termios.h.
+	  Choose appropreate terminal library. (ported from vim6.1)
+	  Check setsid, dup2.
+	* canuum/freewnn-uum.files: remove config.h.in and add acconfig.h
+	* canuum/jhlp.c: move #include <curses.h> and <term.h> to wnn_os.h.
+	  include termios.h or termio.h or sgtty.h appropreately.
+	  (USE_LINUX_TERM): Added new macro. If you define it, old linux
+	  specific terminal handling code is used instead of new POSIX based
+	  one.  I don't know why such a special code was needed, but leave it
+	  just in case.
+	  (ttyfd): initialize before open_pty()
+	  (j_term_save): added. POSIX termios ready.
+	  (j_term_restore): ditto
+	  (j_term_p_init): ditto
+	  (j_term_init): now POSIX termios ready
+	  (open_ttyp): move some code to j_term_*.
+	  (open_pty): ditto
+	  (do_end): move cleanup code to j_term_restore.
+	  (change_size): change #ifdefs
+	  (exec_cmd): Add new code to use POSIX setsid(). If it is not
+	  available or USE_LINUX_TERM is specified, old code is used.
+	* canuum/termcap.c: Move #include <curses.h>, <ncurses.h> and
+	  <term.h> to "wnn_os.h".
+	* termio.h: ditto
+	* wnn_os.h: Use configure result instead of old TERMCAP/TERMINFO
+	  definitions when CONFIG_TERMINFO is defined. In this case
+	  include <curses.h>, <ncurses.h>, <term.h> and/or <termcap.h>
+	  appropreately.
+
+2002-12-22 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* lib/canna/henkan.c(doTanBubunMuhenkan): correctly calculate first
+	  bunsetsu to convert to yomiContext.
+
+2002-12-22 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* add .cvsignore to all directories.
+
+2002-12-22 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* ChangeLog(previous commit): avoid keyword substitution
+
+2002-12-22 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* canuum/canuum.man: added (but no complete)
+	* canuum/README.copyright: s/Canuum.files/freewnn-uum.files/g
+	* canuum/checkout.sh: cleanup, add RCSID
+	* canuum/uumimport.sh: cleanup, add RCSID
+
+2002-12-22 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* canuum/Bring.sh: remove obsolete files
+	* canuum/Canuum.patch: ditto
+	* canuum/Uum.files: ditto
+	* canuum/configure.in: do not use canuum.tmpl
+
+2002-12-21 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* canuum/*: imported uum from FreeWnn and canuumized.
+	* mkrelease.sh: invoke autoconf
+
+2002-12-21 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* lib/canna/ebind.c(XLookupKanji2): cast to unsigned char first
+
+2002-12-18 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* ChangeLog(2002-11-09 first commit): correct filename
+
+2002-12-18 AIDA Shinra <aida-s@jcom.home.ne.jp>
 
 	* Prevent wrong learning. It had occured in two situations:
 	  1. bubun kakutei at bunsetsus (probably) except in jishu-henkan mode
@@ -302,73 +1319,64 @@
 	  (enterTanHenkanMode): more strict error handling
 	* lib/canna/romaji.c(TbBubunKakutei): commented out (already unused)
 
-2003-01-06 AIDA Shinra <aida-s@jcom.home.ne.jp>
+2002-12-16 AIDA Shinra <aida-s@jcom.home.ne.jp>
 
-	* [Canna-dev 119] chikuji input was broken
-	* lib/RKC/wconvert.c(SendType11Request): stop buffer overrun
-	* server/wconvert.c(irw_store_yomi): len = ushortstrlen() unless
-	  req->yomi == NULL
-	  (irw_store_range): ditto
-	  (ProcWideReq11): allow empty string that is not null terminated
-	* lib/RK/bun.c(RkStoreYomi): allow yomi == NULL && len == 0
+	* lib/RK/Imakefile: RkMountD -> RkMountDic
 
-2003-01-06 AIDA Shinra <aida-s@jcom.home.ne.jp>
+2002-12-16 AIDA Shinra <aida-s@jcom.home.ne.jp>
 
-	* server/IR.h: define _WCHAR_t again after include "canna/RK.h"
-	* canna/widedef.h: FreeBSD 5.x and OpenBSD
- 	* Imakefile(instmost): added
+	[Canna:05811] [Canna:05812] autodef was broken
+	* lib/canna/lisp.c(Lusedic): handle ":katakana",":hiragana"
+	* lib/canna/romaji.c(doKakutei): define proper word
 
-2003-01-06 AIDA Shinra <aida-s@jcom.home.ne.jp>
+2002-12-12 AIDA Shinra <aida-s@jcom.home.ne.jp>
 
-	* add .cvsignore to all directories.
-
-2002-12-28 AIDA Shinra <aida-s@jcom.home.ne.jp>
-
-	* [canna-dev 97] [canna-dev 106] [canna-dev 107]
-	  New direcroty hierarchy.
-	  Currently old hierarchy is default on stable branch.
-	* Canna.conf.dist: new directory hierarchy if !ObsoleteInstallDir
-	  (ObsoleteInstallDir): set by default
-	  (MakeCannaConfigH for !EMX): preserve old cannaconf.h if unchanged
-	* cmd/catdic/Imakefil: cannakill in cannaSrvDir if !ObsoleteInstallDir
-
-2002-12-21 AIDA Shinra <aida-s@jcom.home.ne.jp>
-
-	* lib/canna/ebind.c(XLookupKanji2): cast to unsigned char first
-
-2002-12-18 AIDA Shinra <aida-s@jcom.home.ne.jp>
-
-	* INSTALL.jp: s/lockfile/socket/g
-	* INSTALL: ditto
-	* CHANGES.jp: more desc about one-letter word hack
-	* cmd/mkbindic/mkbindic.cpp: use only yomi as sort key
 	* lib/canna/romaji.c(howFarToGoBackward): Stop at HENKANSUMI char.
 	  Otherwise we cannot edit the words in tango-touroku if
 	  character-based-move is true.
 	  (howFarToGoForward): ditto
-	  (TbBubunKakutei): commented out (already unused)
 
-2002-12-18 AIDA Shinra <aida-s@jcom.home.ne.jp>
+2002-12-12 AIDA Shinra <aida-s@jcom.home.ne.jp>
 
-	* Oh, forgot to include last 4 changes.
-
-2002-12-18 AIDA Shinra <aida-s@jcom.home.ne.jp>
-
-	* dic/ideo/grammar/Imakefile: add DESTDIR (thanks to SUZUKI san)
-	* cmd/catdic/Imakefile: remove wrong DESTDIR (thanks to SUZUKI san)
 	* server/convert.c:
 	  if CANNA_LIGHT -> ifdef (thanks to Ayamura KIKUCHI san)
 	* lib/RKC/rkcw.h: ditto
 	* lib/RKC/convert.c: ditto
-	* lib/RK/Imakefile: RkMountD -> RkMountDic
+	* ChangeLog: correct previous commit date
+	
+2002-12-12 AIDA Shinra <aida-s@jcom.home.ne.jp>
 
-2002-12-18 AIDA Shinra <aida-s@jcom.home.ne.jp>
+	* CHANGES.jp: more desc about one-letter word hack
+	* cmd/mkbindic/mkbindic.cpp: use only yomi as sort key
+	
+2002-12-02 AIDA Shinra <aida-s@jcom.home.ne.jp>
 
-	* dic/ideo/pubdic/a.p(adabana): fix kanji
-	  (atsureki): fix kanji
-	  (ankou): only two letter "ankou" is allowed.
-	  (abushiga): mabushiba
-	* dic/ideo/pubdic/m.p(mabushiba): added
+	* server/wconvert.c: CANNA-2002-1 security fix.
+	* server/convert.c: ditto
+	* server/util.c(ushortmemchr): added
+
+2002-11-09 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* cmd/catdic/Imakefile: remove wrong DESTDIR (thanks to SUZUKI san)
+
+2002-11-09 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* dic/ideo/grammar/Imakefile: add DESTDIR (thanks to SUZUKI san)
+	* INSTALL.jp: s/lockfile/socket/g
+	* INSTALL: ditto
+
+	Corrected in 2002-12-18: s/words/grammar/
+
+2002-11-07 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* server/util.c(ushort2euc): reverted previous wrong SS3 fix.
+	  (euc2ushort): should be here.
+	* canna/patchlevel.h: bump to 4.0-devel.
+	* Canna.conf: CannaDsoRev is now 1.1 in all platforms.
+
+2002-11-07 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* ChangeLog: correct date
 	* [canna-dev 50] [canna-dev 85]:
 	  patch by ikumi-san. dic fixes.
 	* dic/ideo/a.p: correct kanjis
@@ -381,33 +1389,63 @@
 	* dic/ideo/p.p: correct kanjis
 	* dic/ideo/w.p: correct kanjis
 
-2002-12-18 AIDA Shinra <aida-s@jcom.home.ne.jp>
-
-	* server/misc.c(BecomeDaemon): hook SIGTERM before fork
- 	  (Reset): only raise a flag and return
- 	  (CheckSignal): added
- 	* server/wconvert.c(ReadWideRequestFromClient): check signal
- 	  (WriteClient): ditto
- 	* server/convert.c(ReadRequestFromClient): ditto
- 	  (WriteClient): ditto
- 	  (ir_error): ditto
- 	* server/WaitFor.c: ditto
-
-2002-12-02 AIDA Shinra <aida-s@jcom.home.ne.jp>
-
-	* server/wconvert.c: CANNA-2002-1 security fix.
-	* server/convert.c: ditto
-	* server/util.c(ushortmemchr): added
-
 2002-11-07 AIDA Shinra <aida-s@jcom.home.ne.jp>
 
-	* ChangeLog: fix my mail address
+	* ChangeLog: unified format
+	* server/misc.c(BecomeDaemon): hook SIGTERM before fork
+	  (Reset): only raise a flag and return
+	  (CheckSignal): added
+	* server/wconvert.c(ReadWideRequestFromClient): check signal
+	  (WriteClient): ditto
+	* server/convert.c(ReadRequestFromClient): ditto
+	  (WriteClient): ditto
+	  (ir_error): ditto
+	* server/WaitFor.c: ditto
+	  
+	  Corrected on 2002-11-07: not 2002-11-05
+
+2002-11-05 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* dic/ideo/pubdic/a.p(abushiga): magbushiga
+	* dic/ideo/pubdic/m.p(mabushiga): added
+
+2002-11-05 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
 	* [canna-dev 50] [canna-dev 58] [canna-dev 75]:
-	  patch by Ikumi-san. currently dic fixes are not marged.
+	  patch by Ikumi-san. currently dic errors are not checked except
+	  ones of a.p, so fix only them.
 	* cmd/catdic/Imakefile: add chmoddic, DESTDIR
 	* dic/ideo/words/Imakefile: fix text dic permission, add DESTDIR
 	* lib/RK/Imakefile: s/RkRgnBun/RkBgnBun/
-	* server/util.c(euc2ushort): SS3 conversion was wrong.
+	* server/util.c: SS3 conversion was wring.
+	* dic/ideo/pubdic/a.p(adabana): fix kanji
+	  (atsureki): fix kanji
+	  (ankou): only two letter "ankou" is allowed.
+
+2002-11-05 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* ChangeLog: fix my mail address
+	* Canna.conf.dist(inet6Definition): added
+	  (CANNASERVER_DEFINES, RKC_DEFINES): add inet6Definition
+	* lib/RKC/wconvert.c(connect_inet): create inet6 socket
+	  (rkc_Connect_Iroha_Server): IPv6 [x::y] address expression support
+	* server/IR.h: add some in6_addr support
+	* server/connection.c(open_inet_socket): create inet6 socket
+	  Dmsg was wrong, htons() was not needed(!INET6 only)
+	  (CreateWellKnownSockets): call open_inet_socket when UseInet6
+	  (GetConnectionInfo): support IPv6 address
+	* server/convert.c(ir_initialize): IPv4 address check
+	* server/misc.c: use IR_ARE_ADDR_EQUAL, Address
+	  (IR_No_Address, IR_Unix_Address): added
+	  (UseInet6): added
+	  (USAGE): add -inet6 desc
+	  (BecomeDaemon): initialize IR_No_Address if needed, check -inet6
+	  (GetAddressFromName): added
+	  (IR_Are_Addr_Equal): added
+	  (CreateAccessControlList): IPv6 [x::y] address expression support
+	* server/server.man: add -inet6 desc
+	* server/server.jmn: ditto
+	* server/wconvert.c(irw_killserver): check IPv6 case
 
 2002-10-24 AIDA Shinra <aida-s@jcom.home.ne.jp>
 
@@ -577,4 +1615,4 @@
 
 	* Virgin import of Canna3.5b2.
 
-$Id: ChangeLog,v 1.10.2.38 2003/09/21 06:46:15 aida_s Exp $
+$Id: ChangeLog,v 1.150 2003/09/27 06:18:38 aida_s Exp $

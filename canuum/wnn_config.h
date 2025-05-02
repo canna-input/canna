@@ -1,6 +1,6 @@
 /*
  *  wnn_config.h,v 1.5 2001/09/16 11:50:47 hiroo Exp
- *  Canna: $Id: wnn_config.h,v 1.4.2.1 2003/01/11 17:53:57 aida_s Exp $
+ *  Canna: $Id: wnn_config.h,v 1.4 2003/01/10 14:46:40 aida_s Exp $
  */
 
 /*

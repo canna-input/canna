@@ -20,19 +20,16 @@
  * PERFORMANCE OF THIS SOFTWARE. 
  */
 
-static char rcs_id[] = "@(#) 102.1 $Id: main.c,v 1.2 2002/10/20 14:29:56 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: main.c,v 1.6 2003/09/21 09:08:17 aida_s Exp $";
 
-#include "widedef.h"
+/* 自動判別支援コメント: これはEUC-JPだぞ。幅という字があれば大丈夫。 */
 
 #include <stdio.h>
+#define CANNA_NEW_WCHAR_AWARE
 #include <canna/jrkanji.h>
+#include <canna/RK.h>
 #include "ccompat.h"
-
-#ifdef BIGPOINTER
-#define POINTERINT long long
-#else /* !SX */
-#define POINTERINT long
-#endif /* !SX */
+#include "rkcapi.h"
 
 int IROHA_verbose = 0;
   
@@ -68,14 +65,17 @@ char *argv[], *envp[];
     jrKanjiControl(0, KC_SETSERVERNAME, servername);
   }
   jrKanjiControl(0, KC_SETVERBOSE,
-		 (char *)(POINTERINT)(IROHA_verbose ?
+		 (char *)(canna_intptr_t)(IROHA_verbose ?
 				CANNA_FULL_VERBOSE : CANNA_HALF_VERBOSE));
   if (jrKanjiControl(0, KC_INITIALIZE, (char *)&warn) != -1) {
     if (IROHA_verbose) {
-      char *p, *RkwGetServerName();
+      char *p;
 
       p = RkwGetServerName();
-      printf("サーバ \"%s\" に接続します。\n", p);
+      if (p)
+	  printf("サーバ \"%s\" に接続します。\n", p);
+      else
+	  printf("接続先のサーバが不明です\n", p);
     }
     if (warn) {
       char **p;

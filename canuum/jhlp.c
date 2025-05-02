@@ -1,6 +1,6 @@
 /*
  *  jhlp.c,v 1.13 2002/08/26 09:27:21 aono Exp
- *  Canna: $Id: jhlp.c,v 1.7.2.3 2003/01/25 08:46:30 aida_s Exp $
+ *  Canna: $Id: jhlp.c,v 1.9 2003/01/24 14:42:02 aida_s Exp $
  */
 
 /*

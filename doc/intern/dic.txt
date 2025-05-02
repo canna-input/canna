@@ -1,6 +1,6 @@
 cannaのバイナリ辞書の形式
 
-$Id: dic.txt,v 1.4.2.1 2003/09/12 05:00:48 aida_s Exp $
+$Id: dic.txt,v 1.4 2003/08/31 14:15:17 aida_s Exp $
 
 
 cannaの辞書には自立語辞書と付属語辞書があり、それぞれMWD,SWDというコードで

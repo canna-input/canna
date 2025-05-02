@@ -21,13 +21,14 @@
  */
 
 #ifndef lint
-static char rcs[] = "@(#) 112.1 $Id: can.c,v 1.3 2002/10/20 14:29:57 aida_s Exp $";
+static char rcs[] = "@(#) 112.1 $Id: can.c,v 1.4 2003/02/01 19:34:20 aida_s Exp $";
 #endif
 
 #ifdef ENGINE_SWITCH
 #include "RKrename.h"
 #endif
 #include "cannaconf.h"
+#define CANNA_NEW_WCHAR_AWARE
 
 #include <stdio.h>
 #include <signal.h>

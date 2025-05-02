@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: hex.c,v 1.1.1.1 2002/10/19 08:27:49 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: hex.c,v 1.2 2003/01/10 13:08:44 aida_s Exp $";
 #endif /* lint */
 
 #ifndef NO_EXTEND_MENU
@@ -29,6 +29,14 @@ static char rcs_id[] = "@(#) 102.1 $Id: hex.c,v 1.1.1.1 2002/10/19 08:27:49 aida
 
 #define HEXPROMPT "\245\263\241\274\245\311: "
 #define HEXPROMPTLEN  5 /* "コード: " の長さは5バイト */
+
+/*********************************************************************
+ *                      wchar_t replace begin                        *
+ *********************************************************************/
+#ifdef wchar_t
+# error "wchar_t is already defined"
+#endif
+#define wchar_t cannawc
 
 static int quitHex();
 
@@ -167,3 +175,11 @@ uiContext d;
 }
 
 #endif /* NO_EXTEND_MENU */
+
+#ifndef wchar_t
+# error "wchar_t is already undefined"
+#endif
+#undef wchar_t
+/*********************************************************************
+ *                       wchar_t replace end                         *
+ *********************************************************************/

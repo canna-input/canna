@@ -21,13 +21,14 @@
  */
 
 #ifndef lint
-static char rcsid[]="@(#) 112.1 $Id: wtoc.c,v 1.1.1.1 2002/10/19 08:27:34 aida_s Exp $";
+static char rcsid[]="@(#) 112.1 $Id: wtoc.c,v 1.2 2003/02/01 19:34:21 aida_s Exp $";
 #endif
 /* wtoi.c  テキスト形式の辞書をＷｎｎから「いろは」のものに変換する。
  *	wtoi [-f hinshifile] [wnndic] [irohadic]
  */
 #include	<stdio.h>
 #include        <ctype.h>
+#include "ccompat.h"
 
 #if defined(__STDC__) || defined(SVR4)
 #include <locale.h>
@@ -80,7 +81,7 @@ static struct hin table[] = {
 char *salloc(s)
      char *s;
 {
-  char *new,*malloc();
+  char *new;
   
   if (new = (char *)malloc(strlen( s ) + 1))
     strcpy(new, s);

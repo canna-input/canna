@@ -26,4 +26,4 @@ do
   cp $1/$i freewnn-uum
 done
 
-# $Id: impdir.sh,v 1.1.2.1 2003/01/11 17:53:57 aida_s Exp $
+# $Id: impdir.sh,v 1.1 2002/12/21 14:41:42 aida_s Exp $

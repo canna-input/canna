@@ -21,29 +21,21 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: uldefine.c,v 1.1.1.1.2.2 2003/09/12 13:18:05 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: uldefine.c,v 1.6 2003/09/17 08:50:53 aida_s Exp $";
 #endif
 
 #include	<errno.h>
 #include 	"canna.h"
 
-#ifdef WIN
-extern specialfunc pro((uiContext, int));
-
-dicTouroku(d)
-uiContext d;
-{
-  return specialfunc(d, CANNA_FN_DefineDicMode);
-}
-
-dicSakujo(d)
-uiContext d;
-{
-  return specialfunc(d, CANNA_FN_DeleteDicMode);
-}
+/*********************************************************************
+ *                      wchar_t replace begin                        *
+ *********************************************************************/
+#ifdef wchar_t
+# error "wchar_t is already defined"
 #endif
+#define wchar_t cannawc
 
-#if !defined(NO_EXTEND_MENU) && !defined(WIN)
+#if !defined(NO_EXTEND_MENU)
 #ifdef luna88k
 extern int errno;
 #endif
@@ -158,7 +150,7 @@ newTourokuContext()
 
   if ((tcxt = (tourokuContext)malloc(sizeof(tourokuContextRec)))
                                           == (tourokuContext)NULL) {
-#ifndef WIN
+#ifndef CODED_MESSAGE
     jrKanjiError = "malloc (newTourokuContext) できませんでした";
 #else
     jrKanjiError = "malloc (newTourokuContext) \244\307\244\255\244\336"
@@ -179,7 +171,7 @@ uiContext d;
 
   if (pushCallback(d, d->modec, NO_CALLBACK, NO_CALLBACK,
                                   NO_CALLBACK, NO_CALLBACK) == 0) {
-#ifndef WIN
+#ifndef CODED_MESSAGE
     jrKanjiError = "malloc (pushCallback) できませんでした";
 #else
     jrKanjiError = "malloc (pushCallback) \244\307\244\255\244\336\244\273"
@@ -226,8 +218,7 @@ mode_context env;
   tourokuContext tc = (tourokuContext)env;
   int len, echoLen, revPos;
   wchar_t tmpbuf[ROMEBUFSIZE];
-  /* I will leave this stack located array becase this will not be
-     compiled in case WIN is defined.  1996.6.5 kon */
+  /* BIGARRAY */
 
   retval = d->nbytes = 0;
 
@@ -277,13 +268,7 @@ mode_context env;
   d->kanji_status_return->length = 0;
 
   echostrClear(d);
-#ifdef WIN
-  if (checkGLineLen(d) < 0) {
-    echostrClear(d);
-  }
-#else
   checkGLineLen(d);
-#endif
 
   return retval;
 }
@@ -331,8 +316,7 @@ mode_context env;
   yomiContext nyc;
   int echoLen, pos, offset;
   wchar_t tmpbuf[ROMEBUFSIZE];
-  /* I will leave this stack located array becase this will not be
-     compiled in case WIN is defined.  1996.6.5 kon */
+  /* BIGARRAY */
 
   nyc = (yomiContext)env;
 
@@ -557,7 +541,7 @@ uiContext d;
   if ((tourokup = (wchar_t **)calloc(nmudic + 2, sizeof(wchar_t *)))
                                                   == (wchar_t **)NULL) {
     /* + 2 なのは 1 個増える可能性があるのと打ち止めマークをいれるため */
-#ifndef WIN
+#ifndef CODED_MESSAGE
     jrKanjiError = "malloc (getUserDicName) できませんでした";
 #else
     jrKanjiError = "malloc (getUserDicName) \244\307\244\255\244\336\244\273"
@@ -677,8 +661,7 @@ uiContext d;
   coreContext ync;
   struct dicname *u;
   wchar_t xxxx[512];
-  /* I will leave this stack located array becase this will not be
-     compiled in case WIN is defined.  1996.6.5 kon */
+  /* BIGARRAY */
 
   u = findUsrDic();
 
@@ -841,13 +824,7 @@ mode_context env;
   }
   d->kanji_status_return->info |= KanjiGLineInfo;
   echostrClear(d);
-#ifdef WIN
-  if (checkGLineLen(d) < 0) {
-    echostrClear(d);
-  }
-#else
   checkGLineLen(d);
-#endif
 
   return retval;
 }
@@ -1114,3 +1091,11 @@ canna_callback_t quitfunc;
   return(dicTourokuYomiDo(d, quitfunc));
 }
 #endif /* NO_EXTEND_MENU */
+
+#ifndef wchar_t
+# error "wchar_t is already undefined"
+#endif
+#undef wchar_t
+/*********************************************************************
+ *                       wchar_t replace end                         *
+ *********************************************************************/

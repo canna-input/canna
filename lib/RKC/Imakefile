@@ -1,5 +1,13 @@
-/* $Id: Imakefile,v 1.1.1.1 2002/10/19 08:27:46 aida_s Exp $ */
+/* $Id: Imakefile,v 1.6 2003/09/06 13:59:32 aida_s Exp $ */
 #include "../../Canna.conf"
+
+#ifdef NARROW
+# define CannaWCharDef -DCANNA_WCHAR16
+# define LibName RKC16
+#else
+# define CannaWCharDef
+# define LibName RKC
+#endif
 
 #if defined(engineSwitch) && DoNormalLib
 #undef DoNormalLib
@@ -11,21 +19,20 @@
          LINTLIBS = ../RK/llib-lRK.ln
          INCLUDES = -I$(CANNAROOT)/include
 
-           DEFINES = $(SIGNAL_DEFINES) $(RKC_DEFINES) $(ENGINE_DEFS)
+           DEFINES = $(SIGNAL_DEFINES) CannaWCharDef $(RKC_DEFINES) $(ENGINE_DEFS) -DNEED_RKINDEP_SUBST
 
-           HEADER = rkc.h rkcw.h
-             OBJS = rkc.o convert.o wconvert.o wutil.o
-             SRCS = rkc.c convert.c wconvert.c wutil.c $(HEADER)
+      RKINDEPOBJS = cfuncs.o file.o strops.o
+      RKINDEPSRCS = cfuncs.c file.c strops.c
+           HEADER = rkc.h rkcw.h conf.h confP.h
+             OBJS = rkc.o convert.o wconvert.o wutil.o conf.o $(RKINDEPOBJS)
+             SRCS = rkc.c convert.c wconvert.c wutil.c conf.c $(HEADER) $(RKINDEPSRCS)
              OPTS =
-
-          LIBRARY = libRKC.a
 
 #ifdef engineSwitch
   ENGINE_DEFS = -DENGINE_SWITCH -DDL
 #endif
 
 #if ProjectX > 5
-#define LibName RKC
 #define SoRev		cannaDsoRev
 #define SHLIBDIR	libCannaDir
 #define USRLIBDIR	libCannaDir
@@ -39,34 +46,26 @@
 
 LibraryObjectRule()
 
-#ifdef engineSwitch
-#if DoSharedLib
-#if DoNormalLib
-SharedLibraryTarget(RKC,$(cannaDsoRev),$(OBJS),shared,..)
-#else
-SharedLibraryTarget(RKC,$(cannaDsoRev),$(OBJS),.,.)
-#endif
-InstallSharedLibrary(RKC,$(cannaDsoRev),$(libCannaDir))
-
-install::
-	$(RM) $(libCannaDir)/libRKC.so
-	ln $(libCannaDir)/libRKC.so.$(cannaDsoRev) $(libCannaDir)/libRKC.so
-
-AllTarget(libRKC.so)
-
-libRKC.so: libRKC.so.$(cannaDsoRev)
-	$(RM) $@
-	ln $? $@
-
-#endif /* DoSharedLib */
-#else /* !engineSwitch */
-NormalLibraryTarget(RKC,$(OBJS))
-#endif /* !engineSwitch */
-
+NormalLibraryTarget(LibName,$(OBJS))
 NormalLintTarget($(SRCS))
 
-LintLibraryTarget(RKC,$(SRCS))
+LintLibraryTarget(LibName,$(SRCS))
 
 #endif /* X11R6 */
 
+depend:: $(SRCS)
+LinkSourceFile(cfuncs.c,../RKindep)
+LinkSourceFile(file.c,../RKindep)
+LinkSourceFile(strops.c,../RKindep)
+#ifdef NARROW
+LinkSourceFile(rkc.h,../RKC)
+LinkSourceFile(rkcw.h,../RKC)
+LinkSourceFile(rkc.c,../RKC)
+LinkSourceFile(convert.c,../RKC)
+LinkSourceFile(wconvert.c,../RKC)
+LinkSourceFile(wutil.c,../RKC)
+LinkSourceFile(conf.c,../RKC)
+LinkSourceFile(conf.h,../RKC)
+LinkSourceFile(confP.h,../RKC)
+#endif
 DependTarget()

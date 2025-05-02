@@ -1,4 +1,4 @@
-/* $Id: Imakefile,v 1.1.1.1 2002/10/19 08:27:32 aida_s Exp $ */
+/* $Id: Imakefile,v 1.2 2002/12/28 03:15:25 aida_s Exp $ */
 #include "../Canna.conf"
 #define IHaveSubdirs
 #define PassCDebugFlags 'CDEBUGFLAGS=$(CDEBUGFLAGS)'
@@ -7,7 +7,7 @@ RCMDDIRS = canlisp cannacheck cannastat cshost catdic
 
 SUBDIRS = crfreq crxdic crxgram ctow dpromdic dpxdic dicar\
           forcpp forsort kpdic mergewd splitwd wtoc \
-          mkromdic mkbindic dpbindic $(RCMDDIRS)
+          mkromdic mkbindic dpbindic chkconc $(RCMDDIRS)
 
 MakeSubdirs($(SUBDIRS))
 DependSubdirs($(SUBDIRS))

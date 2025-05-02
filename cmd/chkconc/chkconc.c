@@ -1,6 +1,7 @@
 #include "RKintern.h"
 #include <stdio.h>
 #include "ccompat.h"
+#include "RKindep/file.h"
 
 #if !defined( HYOUJUN_GRAM )
 #ifdef USE_OBSOLETE_STYLE_FILENAME
@@ -11,18 +12,6 @@
 #endif
 
 char	*program;
-
-static char *
-basename(name)
-     char	*name;
-{
-  char	*s = name + strlen(name);
-  
-  while (s-- > name)
-    if (*s == '/')
-      return(++s);
-  return(name);
-}
 
 static void
 usage()
@@ -40,7 +29,7 @@ main(ac, av)
   struct RkKxGram *gram;
   int i;
 
-  program = basename(av[0]);
+  program = RkiBasename(av[0]);
   if (!(++av, --ac))
     usage();
   if (!strcmp(av[0], "-d")) {
@@ -58,8 +47,8 @@ main(ac, av)
   }
 
   for (i = 0; i < ac; i++) {
+    struct RkGramIterator curr, end;
     int j, row;
-    char *cj;
 
     if (av[i][0] == '#')
       av[i]++;
@@ -68,22 +57,25 @@ main(ac, av)
       fprintf(stderr, "%s: unknown hinshi '%s'.\n", program, av[i]);
       return 1;
     }
+    RkEndGram(&end, gram);
 
     fprintf(stdout, "before %s:\n", av[i]); 
-    for (j = 0; j < gram->ng_rowcol; j++) { 
-	if (TestGram(GetGramRow(gram, j), row))
-	    fprintf(stdout, " %s", gram->ng_strtab[j]); 
+    for (RkFirstGram(&curr, gram);
+	curr.rowcol < end.rowcol; RkNextGram(&curr)) {
+	if (RkTestGram(gram, curr.rowcol, row))
+	    fprintf(stdout, " %s", RkGetGramName(gram, curr.rowcol));
     }
     fprintf(stdout, "\n");
 
     fprintf(stdout, "after %s:\n", av[i]); 
-    cj = GetGramRow(gram, row);
-    for (j = 0; j < gram->ng_rowcol; j++) { 
-	if (TestGram(cj, j))
-	    fprintf(stdout, " %s", gram->ng_strtab[j]); 
+    for (RkFirstGram(&curr, gram);
+	curr.rowcol < end.rowcol; RkNextGram(&curr)) {
+	if (RkTestGram(gram, row, curr.rowcol))
+	    fprintf(stdout, " %s", RkGetGramName(gram, curr.rowcol));
     }
     fprintf(stdout, "\n");
   }
 
   return 0;
 }
+/* vim: set sw=2: */

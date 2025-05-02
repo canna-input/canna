@@ -20,12 +20,13 @@
  * PERFORMANCE OF THIS SOFTWARE. 
  */
 
-/* $Id: lisp.h,v 1.1.1.1 2002/10/19 08:27:31 aida_s Exp $ */
+/* $Id: lisp.h,v 1.2 2003/09/17 10:15:09 aida_s Exp $ */
 
 /* #include "keydef.h"
 #include "mfdef.h"
 #include "canna.h"
 #include "symbolname.h" */
+#include "ccompat.h"
 
 #define	YES	1
 #define NO	0
@@ -76,14 +77,8 @@
 #define alreadycopied(x) (gcfield(x) & GC_MASK)
 #define newaddr(x)	((x) & ~GC_MASK)
 
-#ifdef BIGPOINTER
-#define POINTERINT long long
-#else
-#define POINTERINT long
-#endif
-
-typedef	POINTERINT	list;
-typedef POINTERINT	pointerint;
+typedef	canna_intptr_t	list;
+typedef canna_intptr_t	pointerint;
 
 /* cell area */
 

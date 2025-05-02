@@ -21,15 +21,14 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[]="@(#) $Id: misc.c,v 1.4.2.2 2003/09/12 14:11:09 aida_s Exp $";
+static char rcs_id[]="@(#) $Id: misc.c,v 1.16 2003/09/21 23:43:04 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */
 
-#include <stdio.h>
-#include <errno.h>
-#ifndef __EMX__
-#include <syslog.h>
+#include "server.h"
+#ifdef HAVE_SYSLOG /* !__EMX__ */
+# include <syslog.h>
 #endif
 
 #ifdef USE_VARARGS
@@ -40,20 +39,10 @@ static char rcs_id[]="@(#) $Id: misc.c,v 1.4.2.2 2003/09/12 14:11:09 aida_s Exp 
 #endif
 #endif
 
-#ifdef pcux
-#include <sys/fcntl.h>
-#else
 #include <fcntl.h>
-#endif
-#ifdef __EMX__
-#include <unistd.h>
-#endif
 #include <signal.h>
 #include <pwd.h>
 #include <sys/ioctl.h>
-#include <sys/types.h>
-#include "IR.h"
-#include "net.h"
 
 #ifndef DICHOME
 #define DICHOME     "/usr/lib/canna/dic"
@@ -70,12 +59,10 @@ static char rcs_id[]="@(#) $Id: misc.c,v 1.4.2.2 2003/09/12 14:11:09 aida_s Exp 
 #define ACCESS_FILE "/etc/hosts.canna"
 #endif
 
-extern void CheckConnections();
+static void FatalError pro((const char *f));
+static int CreateAccessControlList pro((void));
+static void FreeAccessControlList pro((void));
 
-void
-FatalError();
-
-extern int  errno;
 
 #ifdef DEBUG
 #define LOGFILE "/tmp/canna.log"
@@ -101,6 +88,9 @@ int UseInet = 0;
 /* if can use Unix Domain Socket, Use INET domain socket */
 int UseInet = 1;
 #endif
+#ifdef INET6
+int UseInet6 = 0;
+#endif /* INET6 */
 #endif
 
 #define MAX_PREMOUNTS 20
@@ -108,15 +98,19 @@ int UseInet = 1;
 char *PreMountTabl[MAX_PREMOUNTS];
 int npremounts = 0;
 static char *MyName ;
-static unsigned long MyAddr = 0;
 
 ACLPtr ACLHead = (ACLPtr)NULL;
 static int caught_signal = 0;
+static int openlog_done = 0;
+static int rkw_initialize_done = 0;
 
 static void Reset();
-static void parQUIT();
 
+#ifdef INET6
+#define USAGE "Usage: cannaserver [-p num] [-l num] [-u userid] [-syslog] [-inet] [-inet6] [-d] [dichome]"
+#else
 #define USAGE "Usage: cannaserver [-p num] [-l num] [-u userid] [-syslog] [-inet] [-d] [dichome]"
+#endif
 static void
 Usage()
 {
@@ -148,6 +142,10 @@ char *argv[];
 	if( !strcmp( argv[i], "-p") ) {
 	  if (++i < argc) {
 	    PortNumberPlus = atoi( argv[i] ) ;
+	    if (PortNumberPlus < 0 || PortNumberPlus >= 100) {
+		fprintf(stderr, "valid port number range is 0 <= num < 100\n");
+		exit(2);
+	    }
 	  }
 	  else {
 	    fprintf(stderr, "%s\n", USAGE);
@@ -169,13 +167,18 @@ char *argv[];
 	else if( !strcmp( argv[i], "-inet")) {
 	  UseInet = 1;
 	}
+#ifdef INET6
+	else if( !strcmp( argv[i], "-inet6") ) {
+	  UseInet6 = 1;
+	}
+#endif /* INET6 */
 #endif
 #ifdef RK_MMOUNT
 	else if( !strcmp( argv[i], "-m") ) {
 	  MMountFlag = RK_MMOUNT;
 	}
 #endif
-#ifndef __EMX__
+#ifdef HAVE_SYSLOG
  	else if (!strcmp( argv[i], "-syslog")) {
 	  Syslog = 1;
 	}
@@ -183,6 +186,7 @@ char *argv[];
 
     if (Syslog) {
       openlog("cannaserver", LOG_PID, LOG_DAEMON);
+      openlog_done = 1;
     } /* -syslog だったら、ログファイルを初期化する */
 #else
     }
@@ -211,7 +215,7 @@ char *argv[];
 	        FatalError("cannserver: couldn't init supplementary groups\n");
 	    }
 	    if (setuid(pwent->pw_uid)) {
-	        FatalError("cannaserver: couldn't set userid to %s user\n", userID);
+	        FatalError("cannaserver: couldn't set userid\n");
 	    }
 	} else if (userID != NULL) {
 	    FatalError("cannaserver: -u flag specified, but canna not run as root\n");
@@ -259,6 +263,7 @@ char *argv[];
 
     if ((context = RkwInitialize( (char *)ddname )) < 0)
 	FatalError("cannaserver:Initialize failed\n") ;
+    rkw_initialize_done = 1;
     free( (char *)ddname ) ;
     RkwCloseContext( context ) ;
 
@@ -288,18 +293,14 @@ BecomeDaemon ()
 
     parentid = getpid() ;
 
-    signal(SIGTERM, parQUIT);
 #ifndef __EMX__
     if ((parent = fork()) == -1) {
 	PrintMsg( "Fork faild\n" );
 	exit( 1 ) ;
     }
     if ( parent ) {
-	pause() ;
 	_exit( 0 ) ;
-	/* wait( (int *)0 ) ;	*/
-    } else
-	signal(SIGTERM, SIG_DFL);
+    }
     return parentid;
 #else
     return 0;
@@ -309,18 +310,18 @@ BecomeDaemon ()
 void
 CloseServer()
 {
-#ifndef __EMX__
-    if (Syslog) {
+#ifdef HAVE_SYSLOG
+    if (Syslog && openlog_done) {
       closelog();
     }
 #endif
-    RkwFinalize() ;
-    AllCloseDownClients() ;
+    if (rkw_initialize_done)
+	RkwFinalize() ;
 }
-
-void
+/* 初期化に失敗した場合に呼ぶ。EventMgr_run()まで来たら呼ばないこと。 */
+static void
 FatalError(f)
-    char *f;
+    const char *f;
 {
     fprintf(stderr,"%s\n", f);
     CloseServer();
@@ -335,10 +336,11 @@ FatalError(f)
 #ifndef USE_VARARGS
 
 /* VARARGS */
+void
 Dmsg( Pri, f, s0, s1, s2, s3, s4, s5, s6, s7, s8 )
 int Pri ;
-char *f;
-char *s0, *s1, *s2, *s3, *s4, *s5, *s6, *s7, *s8 ;
+const char *f;
+const char *s0, *s1, *s2, *s3, *s4, *s5, *s6, *s7, *s8 ;
 {
     if (!ServerLogFp)
 	ServerLogFp = stderr;
@@ -351,33 +353,38 @@ char *s0, *s1, *s2, *s3, *s4, *s5, *s6, *s7, *s8 ;
 #else /* USE_VARARGS */
 
 #ifdef __STDC__
-Dmsg(Pri, f, ...)
-int Pri;
-char *f;
-#else
-Dmsg(va_alist)
-va_dcl
-#endif
+void
+Dmsg(int Pri, const char *f, ...)
 {
   va_list ap;
-  char *args[MAXARGS];
-  int argno = 0;
 
-#ifndef __STDC__
-  int Pri;
-  char *f;
-#endif
+  va_start(ap, f);
+
+  if (!ServerLogFp) {
+    ServerLogFp = stderr;
+  }
+  if (LogLevel >= Pri) {
+    vfprintf(ServerLogFp, f, ap);
+    fflush(ServerLogFp);
+  }
+  va_end(ap);
+}
+#else
+void
+Dmsg(Pri, f, va_alist)
+int Pri;
+const char *f;
+va_dcl
+{
+  va_list ap;
+  const char *args[MAXARGS];
+  int argno = 0;
 
   va_start(ap);
 
-#ifndef __STDC__
-  Pri = va_arg(ap, int);
-  f = va_arg(ap, char *);
-#endif
-
-  while (++argno < MAXARGS && (args[argno] = va_arg(ap, char *)))
+  while (++argno < MAXARGS && (args[argno] = va_arg(ap, const char *)))
     ;
-  args[MAXARGS - 1] = (char *)0;
+  args[MAXARGS - 1] = (const char *)0;
   va_end(ap);
 
   if (!ServerLogFp) {
@@ -389,25 +396,26 @@ va_dcl
     fflush(ServerLogFp);
   }
 }
+#endif /* !__STDC__ */
 #endif /* USE_VARARGS */
 #endif
 
 #ifndef USE_VARARGS
+void
 PrintMsg( f, s0, s1, s2, s3, s4, s5, s6, s7, s8 )
-char *f;
-char *s0, *s1, *s2, *s3, *s4, *s5, *s6, *s7, *s8 ;
+const char *f;
+const char *s0, *s1, *s2, *s3, *s4, *s5, *s6, *s7, *s8 ;
 {
-    long    Time ;
+    ir_time_t Time ;
     char    *date ;
 
-#ifndef __EMX__
+#ifdef HAVE_SYSLOG
     if (Syslog) {
       syslog(LOG_WARNING, f, s0, s1, s2, s3, s4, s5, s6, s7, s8);
-    } else {
-#else
-    {
+    } else
 #endif
-      Time = time( (long *)0 ) ;
+    {
+      Time = time( NULL ) ;
       date = (char *)ctime( &Time ) ;
       date[24] = '\0' ;
       fprintf( stderr, "%s :", date ) ;
@@ -416,52 +424,76 @@ char *s0, *s1, *s2, *s3, *s4, *s5, *s6, *s7, *s8 ;
     }
 }
 #else /* USE_VARARGS */
+
+#if !defined(__STDC__) || (defined(HAVE_SYSLOG) && !defined(HAVE_VSYSLOG))
+# define READ_ALL_ARGS
+#endif
+
+void
 #ifdef __STDC__
-PrintMsg(f, ...)
-char *f;
+PrintMsg(const char *f, ...)
 #else
-PrintMsg(va_alist)
+PrintMsg(f, va_alist)
+const char *f;
 va_dcl
 #endif
 {
   va_list ap;
-  char *args[MAXARGS];
+#ifdef READ_ALL_ARGS
+  const char *args[MAXARGS];
   int argno = 0;
-  long    Time;
+#endif
+  ir_time_t Time;
   char    *date;
-#ifndef __STDC__
-  char *f;
-#endif
 
+#ifdef __STDC__
+  va_start(ap, f);
+#else
   va_start(ap);
-
-#ifndef __STDC__
-  f = va_arg(ap, char *);
 #endif
 
-  while (++argno < MAXARGS && (args[argno] = va_arg(ap, char *)))
+#ifdef READ_ALL_ARGS
+  while (++argno < MAXARGS && (args[argno] = va_arg(ap, const char *)))
     ;
-  args[MAXARGS - 1] = (char *)0;
-  va_end(ap);
+  args[MAXARGS - 1] = (const char *)0;
+#endif
 
-#ifndef __EMX__
+#ifdef HAVE_SYSLOG
   if (Syslog) {
+#ifdef HAVE_VSYSLOG
+    vsyslog(LOG_WARNING, f, ap);
+#else
     syslog(LOG_WARNING, f, args[0], args[1], args[2], args[3], args[4],
 	   args[5], args[6], args[7], args[8]);
-  } else {
-#else
-  {
 #endif
-    Time = time((long *)0);
+  } else
+#endif /* HAVE_SYSLOG */
+  {
+    Time = time(NULL);
     date = (char *)ctime(&Time);
     date[24] = '\0';
     fprintf(stderr, "%s :", date);
+#ifdef __STDC__
+    vfprintf(stderr, f, ap);
+#else
     fprintf(stderr, f, args[0], args[1], args[2], args[3], args[4],
 	    args[5], args[6], args[7], args[8]);
+#endif
     fflush( stderr ) ;
   }
+  va_end(ap);
 }
 #endif /* USE_VARARGS */
+
+void
+nomem_msg(where)
+const char *where;
+{
+  if (where)
+    PrintMsg("%s: out of memory\n", where);
+  else
+    PrintMsg("out of memory\n");
+}
 
 static void
 Reset(sig)
@@ -470,52 +502,169 @@ int	sig;
     caught_signal = sig;
 }
 
-void
+int
 CheckSignal()
 {
-#ifdef USE_UNIX_SOCKET
-  extern struct sockaddr_un unsock;
-#endif
     if( caught_signal == SIGTERM ) {
 	PrintMsg( "Cannaserver Terminated\n" ) ;
-	CloseServer() ;
+	return 1;
     } else if(caught_signal) {
 	PrintMsg( "Caught a signal(%d)\n", caught_signal ) ;
+	return 1;
     }
-#ifdef USE_UNIX_SOCKET
-  PrintMsg("remove [%s]\n" ,unsock.sun_path);
-  unlink(unsock.sun_path);   /* UNIXドメインで作ったファイルを消す。*/
+    return 0;
+}
+
+static int
+AddrAreEqual(x, y)
+const Address *x, *y;
+{
+    int res = 0;
+    if (x->family != y->family)
+      return 0;
+    switch (x->family) {
+      case AF_UNIX:
+	res = 1;
+	break;
+      case AF_INET:
+	res = IR_ADDR_IN(x)->s_addr == IR_ADDR_IN(y)->s_addr;
+	break;
+#ifdef INET6
+      case AF_INET6:
+	res = (IR_ADDR_IN6SCOPE(x) == 0 || IR_ADDR_IN6SCOPE(y) == 0
+	    || IR_ADDR_IN6SCOPE(x) == IR_ADDR_IN6SCOPE(y))
+	  && IN6_ARE_ADDR_EQUAL(IR_ADDR_IN6(x), IR_ADDR_IN6(y));
+	break;
 #endif
-  exit(2);
-}
-
-static void
-parQUIT(sig)
-int    sig;
-/* ARGSUSED */
-{
-    exit( 0 ) ;
-  /* 何もしない */
-}
-
-static
-ACLCheckHostName( currentptr )
-ACLPtr	currentptr ;
-{
-    char *hostname = currentptr->hostname ;
-    ACLPtr  wp ;
-
-    for( wp = ACLHead; wp != (ACLPtr)NULL; wp = wp->next ) {
-	if( (!strcmp( (char *)wp->hostname, (char *)hostname )) ||
-	   (wp->hostaddr == currentptr->hostaddr) ) {
-	    return( -1 ) ;
-	}
+      default:
+	abort();
+      /* NOTREACHED */
     }
-    return( 0 ) ;
+    return res;
 }
 
-extern void FreeAccessControlList pro((void));
+AddrList *
+GetAddrListFromName(hostname)
+const char   *hostname;
+{
+    AddrList *res = NULL;
+#ifdef INET6
+    struct addrinfo hints, *info;
+    struct addrinfo *infolists[2];
+    int i;
+#else
+    const struct hostent *hent;
+    const char *const *haddrp;
+    struct in_addr numaddr;
+#endif
 
+    if (!strcmp(hostname, "unix")) {
+      res = calloc(1, sizeof(AddrList));
+      if (!res)
+	return NULL;
+      res->addr.family = AF_UNIX;
+      res->addr.len = 0;
+      res->next = NULL;
+      return res;
+    }
+
+#ifdef INET6
+    bzero(&hints, sizeof(hints));
+    hints.ai_socktype = SOCK_STREAM;
+    infolists[0] = infolists[1] = NULL;
+    if (UseInet6) {
+	hints.ai_family = PF_INET6;
+	getaddrinfo(hostname, NULL, &hints, &infolists[0]);
+    }
+    if (UseInet) {
+	hints.ai_family = PF_INET;
+	getaddrinfo(hostname, NULL, &hints, &infolists[1]);
+    }
+
+    for (i = 0; i < 2; i++) {
+      for (info = infolists[i]; info; info = info->ai_next) {
+	AddrList *newnode;
+	if (info->ai_family == AF_INET6
+	    &&IN6_IS_ADDR_V4MAPPED(
+	      &((struct sockaddr_in6 *)info->ai_addr)->sin6_addr))
+	  continue;
+	newnode = calloc(1, sizeof(AddrList));
+	if (!newnode) {
+	  freeaddrinfo(infolists[i]);
+	  goto fail;
+	}
+	newnode->addr.family = info->ai_family;
+	newnode->addr.len = info->ai_addrlen;
+	memcpy(&newnode->addr.saddr, info->ai_addr, info->ai_addrlen);
+	newnode->next = res;
+	res = newnode;
+      }
+      if (infolists[i])
+	  freeaddrinfo(infolists[i]);
+    }
+#else /* !INET6 */
+    if (inet_aton(hostname, &numaddr)) {
+      res = calloc(1, sizeof(AddrList));
+      if (!res)
+	goto fail;
+      res->addr.family = AF_INET;
+      res->addr.len = sizeof(struct sockaddr_in);
+      res->addr.saddr.sin_addr = numaddr;
+      res->next = 0;
+      return res;
+    }
+    hent = gethostbyname(hostname);
+    if (hent == NULL || hent->h_addrtype != AF_INET)
+      return NULL;
+#ifndef HAVE_STRUCT_HOSTENT_H_ADDR_LIST
+    haddrp = &hent->h_addr;
+#else
+    for (haddrp = hent->h_addr_list; *haddrp; haddrp++)
+#endif
+    {
+      AddrList *newnode = calloc(1, sizeof(AddrList));
+      if (!newnode)
+	goto fail;
+      newnode->addr.family = AF_INET;
+      newnode->addr.len = sizeof(struct sockaddr_in);
+      newnode->addr.saddr.sin_addr = *(const struct in_addr *)*haddrp;
+      newnode->next = res;
+      res = newnode;
+    }
+#endif /* !INET6 */
+    return res;
+fail:
+    while(res) {
+      AddrList *next = res->next;
+      free(res);
+      res = next;
+    }
+    return NULL;
+}
+
+AddrList *
+SearchAddrList(list, addrp)
+const AddrList *list;
+const Address *addrp;
+{
+    for (; list; list = list->next)
+      if (AddrAreEqual(&list->addr, addrp))
+	break;
+    return (AddrList *)list;
+}
+
+void
+FreeAddrList(list)
+AddrList *list;
+{
+    while(list) {
+      AddrList *next = list->next;
+      free(list);
+      list = next;
+    };
+}
+
+static int
 CreateAccessControlList()
 {
     char   buf[BUFSIZE];
@@ -523,14 +672,7 @@ CreateAccessControlList()
     ACLPtr  current;
     ACLPtr  prev = (ACLPtr)NULL ;
     FILE    *fp ;
-    struct hostent *hp;
-    char *hostname, *name;
     int namelen;
-
-    hp = gethostbyname(MyName);
-    if (hp) {
-      MyAddr = *(unsigned long *)(hp->h_addr);
-    }
 
     if( (fp = fopen( ACCESS_FILE, "r" )) == (FILE *)NULL )
 	return( -1 ) ;
@@ -542,8 +684,37 @@ CreateAccessControlList()
     while( fgets( (char *)buf, BUFSIZE, fp ) != (char *)NULL ) {
 	buf[ strlen( (char *)buf )-1 ] = '\0' ;
 	wp = buf ;
+#ifdef INET6
+	if( *wp == '\0' )
+	    continue;
+	else if( *wp == '[' ) {
+	    size_t bodylen;
+	    wp++;
+	    p = strchr( wp, ']' );
+	    if( !p )
+		continue;
+	    *( p++ ) = '\0';
+	    if( *p == ':' )
+		p++;
+	    else if( *p != '\0' )
+		continue;
+	    /* ここでの形式チェックは厳密でなくてよい */
+	    bodylen = strspn( wp, "0123456789ABCDEFabcdef:." );
+	    if( !bodylen || !( wp[bodylen] == '\0' || wp[bodylen] == '%' )
+		    || strchr( wp, ':' ) == NULL )
+		continue;
+	} else {
+	    p = strchr( wp, ':' );
+	    if( p )
+		*( p++ ) = '\0';
+	    else
+		p = wp + strlen( wp );
+	}
+#else /* !INET6 */
 	if( !strtok( (char *)wp, ":" ) )
 	    continue ;
+	p = wp + strlen( (char *)wp ) + 1;
+#endif /* !INET6 */
 
 	if( !(current = (ACLPtr)malloc( sizeof( ACLRec ) )) ) {
 	    PrintMsg("Can't create access control list!!" ) ;	
@@ -554,48 +725,30 @@ CreateAccessControlList()
 
 	bzero( current, sizeof( ACLRec ) ) ;
 
-	if (!strcmp(wp, (char *)MyName)) {
-	  name = "unix";
-	  namelen = sizeof("unix") - 1;
-	}
-	else {
-	  name = wp;
-	  namelen = strlen(wp);
-	}
+	namelen = strlen(wp);
 	current->hostname = malloc(namelen + 1);
 	if (current->hostname) {
-	  strcpy(current->hostname, name);
+	  strcpy(current->hostname, wp);
 	}
 
 	/* AccessControlListをインターネットアドレスで管理する */
 	/* hosts.cannaからホスト名を求める */
-        if (strcmp((char *)current->hostname, "unix")) {
-	    hostname = (char *)current->hostname;
-	}
-	else {
-	    hostname = (char *)MyName;
-	}
 	/* ホスト名からインターネットアドレスを求めて ACLRecに登録する  */
-	if ((hp = gethostbyname(hostname)) == (struct hostent *)NULL) {
-	    /* インターネットアドレス表記が間違っているので無視する */
-	    /* hostsにエントリが無いことをメッセージにだした方が良いか */
-	    /* も知れない */
-	    if (current->hostname)
-		free((char *)current->hostname);
-	    free((char *)current);
-	    continue;
-	}
-	current->hostaddr = *(unsigned long *)(hp->h_addr);
-	/* 複数のアドレスが入っていることに対応していないなあ */
-
-	if (ACLCheckHostName(current) < 0) {
-	  free((char *)current->hostname);
+	current->hostaddrs = GetAddrListFromName(wp);
+	if (!current->hostaddrs) {
+	  /* アドレスが見つからない場合 */
+	  /* インターネットアドレス表記が間違っているので無視する */
+	  /* hostsにエントリが無いことをメッセージにだした方が良いか */
+	  /* も知れない */
+	  if (current->hostname)
+	    free((char *)current->hostname);
 	  free((char *)current);
 	  continue;
 	}
+	/* 今のところアドレスが重複していてもそのまま覚えておく */
 
-	wp += ( strlen( (char *)wp )+1 );
-	
+	wp = p;
+
 	if( strlen( (char *)wp ) ) {
 	    current->usernames = malloc(strlen(wp) + 1);
 	    if (current->usernames) {
@@ -624,7 +777,7 @@ CreateAccessControlList()
     return 0;
 }
 
-void
+static void
 FreeAccessControlList() 
 {
     ACLPtr  wp, tailp = (ACLPtr)NULL;
@@ -637,6 +790,7 @@ FreeAccessControlList()
 		free( wp->hostname ) ;
 	    if( wp->usernames )
 		free( wp->usernames ) ;
+	    FreeAddrList( wp->hostaddrs ) ;
 	    tailp = wp ;
     }
 
@@ -647,9 +801,10 @@ FreeAccessControlList()
     ACLHead = (ACLPtr)NULL ;
 }
 
-CheckAccessControlList(hostaddr, username)
-unsigned long hostaddr;
-char *username;
+int
+CheckAccessControlList(hostaddrp, username)
+Address *hostaddrp;
+const char *username;
 {
   int i;
   char *userp;
@@ -659,14 +814,10 @@ char *username;
 
   ir_debug(Dmsg(5, "My name is %s\n", MyName));
 
-  if (!hostaddr) { /* つまり、UNIX ドメインだったれば */
-    hostaddr = MyAddr;
-  }
-
   for (wp = ACLHead ; wp ; wp = wp->next) {
     /* AccessControlListで持っているインタネットアドレスと一致する
        ものをサーチする */
-    if (wp->hostaddr == hostaddr) {
+    if (SearchAddrList(wp->hostaddrs, hostaddrp)) {
       if (wp->usernames) {
 	for (i = 0, userp = wp->usernames ; i < wp->usercnt ; i++) {
 	  if (!strcmp(userp, username)) {
@@ -684,6 +835,7 @@ char *username;
   return -1;
 }
 
+int
 NumberAccessControlList()
 {
   ACLPtr wp;
@@ -695,6 +847,7 @@ NumberAccessControlList()
   return n;
 }
 
+int
 SetDicHome( client, cxnum )
 ClientPtr client ;
 int cxnum ;
@@ -735,43 +888,59 @@ int cxnum ;
     return( 1 ) ;
 }
 
-ConnectClientCount( client, buf, new_socks )
-ClientPtr   client ;
-ClientRec   *buf[] ;
-unsigned long new_socks ;
+ClientPtr *
+get_all_other_clients(self, count)
+ClientPtr self;
+size_t *count;
 {
-    extern ClientPtr	   *ConnectionTranslation ;
-    register ClientPtr	    who ;
-    int 		    i, count ;
+    EventMgrIterator curr, end;
+    ClientPtr *res, *p;
 
-    bzero((char *)buf, sizeof(ClientPtr) * new_socks);
-    for (i = 0, count = 0 ; i < new_socks ; i++) {
-	if( ((who = ConnectionTranslation[ i ]) != (ClientPtr)NULL)
-						&& ( who != client ) ) {
-	    *buf = who ;
-	    buf ++ ;
-	    count ++ ;
-	}
+    *count = 0;
+    EventMgr_clibuf_end(global_event_mgr, &end);
+
+    for (EventMgr_clibuf_first(global_event_mgr, &curr);
+	    curr.it_val != end.it_val;
+	    EventMgrIterator_next(&curr)) {
+	ClientPtr who = ClientBuf_getclient(curr.it_val);
+	if (who && who != self)
+	    ++*count;
     }
-    return( count ) ;
+
+    res = p = malloc(*count * sizeof(ClientPtr));
+    if (!res) {
+	*count = 0;
+	return res;
+    }
+
+    for (EventMgr_clibuf_first(global_event_mgr, &curr);
+	    curr.it_val != end.it_val;
+	    EventMgrIterator_next(&curr)) {
+	ClientPtr who = ClientBuf_getclient(curr.it_val);
+	if (who && who != self)
+	    *p++ = who;
+    }
+    return res;
 }
 
+void
 AllSync()
 {
-  extern ClientPtr *ConnectionTranslation;
-  extern unsigned long connow_socks;
-  ClientPtr client;
-  int i, j, *a;
-  
-  for (i = 0 ; i < connow_socks ; i++) {
-    client = ConnectionTranslation[ i ];
-    if( client != (ClientPtr)NULL) {
-      a = client->context_flag;
-      for (j = 0 ; j < client->ncon ; j++) {
-	RkwSync(*a++, NULL);
-      }
+    EventMgrIterator curr, end;
+
+    EventMgr_clibuf_first(global_event_mgr, &curr);
+    EventMgr_clibuf_end(global_event_mgr, &end);
+
+    for (EventMgr_clibuf_first(global_event_mgr, &curr);
+	    curr.it_val != end.it_val;
+	    EventMgrIterator_next(&curr)) {
+	ClientPtr client = ClientBuf_getclient(curr.it_val);
+	int i;
+	if (!client)
+	    continue;
+	for (i = 0; i < client->ncon; ++i)
+	    RkwSync(client->context_flag[i], NULL);
     }
-  }
 }
 
 void

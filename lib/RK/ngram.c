@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[]="$Id: ngram.c,v 1.3.2.1 2003/09/12 14:32:52 aida_s Exp $";
+static char rcsid[]="$Id: ngram.c,v 1.10 2003/09/24 14:50:40 aida_s Exp $";
 #endif
 
 #include	"RKintern.h"
@@ -35,11 +35,30 @@ static char rcsid[]="$Id: ngram.c,v 1.3.2.1 2003/09/12 14:32:52 aida_s Exp $";
 #include <fcntl.h> /* for O_BINARY */
 #endif
 
-#ifdef WIN 
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
+typedef struct {
+    short	mycol;
+    /* short	flags; */
+} conjcell;
+
+/* ngram
+ *	tango kan no setuzoku wo simesu gyouretu
+ *	SWD ga open sareruto douji ni yomikomareru
+ */
+
+struct RkKxGram {
+/* setuzoku jouhou */
+    int		ng_rowcol;	/* row no kazu */
+    int		ng_rowbyte;	/* row atari no byte suu */
+    char	*ng_conj;	/* source of setuzoku gyouretu/code table */
+    conjcell	*ng_conjcells;	/* packed setuzoku gyouretu */
+    conjcell	**ng_conjrows;
+    char	**ng_strtab;
+#ifdef LOGIC_HACK
+    int		ng_numneg;	/* the number of negative conunctions */
+    canna_uint32_t *ng_neg;	/* negative conjunctions */
 #endif
+};
+#define is_row_num(g, n)	((0 <= (n)) && ((n) < ((g)->ng_rowcol)))
 
 extern unsigned char *ustoeuc();
 
@@ -49,6 +68,10 @@ RkCloseGram(gram)
 {
   if (gram->ng_conj)
     (void)free((char *)gram->ng_conj);
+  if (gram->ng_conjcells)
+    (void)free((char *)gram->ng_conjcells);
+  if (gram->ng_conjrows)
+    (void)free((char *)gram->ng_conjrows);
   if (gram->ng_strtab)
     (void)free((char *)gram->ng_strtab);
 #ifdef LOGIC_HACK
@@ -79,6 +102,69 @@ gram_to_tab(gram)
   return top;
 }
 
+static int
+gram_fill_conjcells(gram)
+     struct RkKxGram	*gram;
+{
+  int row, colbyte;
+  const char *src;
+  size_t lastbits = (gram->ng_rowcol % 8) ? (gram->ng_rowcol % 8) : 8;
+  size_t ncells;
+  conjcell *dst;
+  
+  ncells = 0;
+  src = gram->ng_conj;
+  for (row = 0; row < gram->ng_rowcol; ++row) {
+    unsigned char mask;
+    for (colbyte = 0; colbyte < gram->ng_rowbyte; ++colbyte) {	
+      size_t nbits = (colbyte < gram->ng_rowbyte - 1) ? 8 : lastbits;
+      size_t bit;
+      for (bit = 0, mask = 0x80; bit < nbits; ++bit, mask >>= 1) {
+	if (*src & (char)mask)
+	  ++ncells;
+      }
+      ++src;
+    }
+  }
+
+  gram->ng_conjcells = (conjcell *) malloc(ncells * sizeof(conjcell));
+  gram->ng_conjrows = (conjcell **) malloc(
+	  (gram->ng_rowcol + 1) * sizeof(conjcell *));
+  if (!gram->ng_conjcells || !gram->ng_conjrows)
+    goto nomem;
+
+  src = gram->ng_conj;
+  dst = gram->ng_conjcells;
+  for (row = 0; row < gram->ng_rowcol; ++row) {
+    unsigned char mask;
+    gram->ng_conjrows[row] = dst;
+    for (colbyte = 0; colbyte < gram->ng_rowbyte; ++colbyte) {	
+      size_t nbits = (colbyte < gram->ng_rowbyte - 1) ? 8 : lastbits;
+      size_t bit;
+      for (bit = 0, mask = 0x80; bit < nbits; ++bit, mask >>= 1) {
+	if (*src & (char)mask) {
+	  dst->mycol = colbyte * 8 + bit;
+	  /* dst->flags = 0; */
+	  ++dst;
+	}
+      }
+      ++src;
+    }
+  }
+  gram->ng_conjrows[gram->ng_rowcol] = dst;
+
+  return 0;
+
+nomem:
+  free(gram->ng_conjcells);
+  free(gram->ng_conjrows);
+  gram->ng_conjcells = NULL;
+  gram->ng_conjrows = NULL;
+  RkSetErrno(RK_ERRNO_ENOMEM);
+  return -1;
+}
+
+#ifdef unused
 /* RkGetGramSize -- gram_conj に入れているメモリの大きさを返す */
 static int
 RkGetGramSize(gram)
@@ -93,77 +179,57 @@ struct RkKxGram *gram;
   }
   return str - gram->ng_conj;
 }
+#endif /* unused */
 
 struct RkKxGram *
-RkReadGram(fd)
-#ifndef WIN
+RkReadGram(fd, gramsz)
 int fd;
-#else
-HANDLE fd;
-#endif
+size_t gramsz;
 {
   struct RkKxGram	*gram = (struct RkKxGram *)0;
   unsigned char		l4[4];
-  unsigned long		sz, rc;
+  unsigned long		sz = 0xdeadbeefUL, rc = 0xdeadbeefUL;
   int errorres;
-#ifndef WIN
   unsigned long size;
-#else
-  DWORD size;
-#endif
     
+  if (!gramsz)
+    return NULL;
   RkSetErrno(RK_ERRNO_EACCES);
-#ifndef WIN
   errorres = (read(fd, (char *)l4, 4) < 4 || (sz = L4TOL(l4)) < 5
 	      || read(fd, (char *)l4, 4) < 4 || (rc =  L4TOL(l4)) < 1);
-#else
-  errorres = (!ReadFile(fd, (char *)l4, 4, &size, NULL) || size < 4 ||
-	      (sz = L4TOL(l4)) < 5 || 
-	      !ReadFile(fd, (char *)l4, 4, &size, NULL) || size < 4 ||
-	      (rc = L4TOL(l4)) < 1);
-#endif
   if (!errorres) {
     gram = (struct RkKxGram *)calloc(1, sizeof(struct RkKxGram));
     RkSetErrno(RK_ERRNO_ENOMEM);
     if (gram) {
       gram->ng_conj = (char *)malloc((size_t)(sz - 4));
       if (gram->ng_conj) {
-#ifndef WIN
         size = (unsigned long) read(fd, gram->ng_conj, (unsigned)(sz - 4));
-#else
-	if (!ReadFile(fd, gram->ng_conj, (unsigned)(sz - 4), &size, NULL)) {
-	  size = 0;
-	}
-#endif
         if (size == (sz - 4)) {
           gram->ng_rowcol = rc;
           gram->ng_rowbyte = (gram->ng_rowcol + 7) / 8;
+	  if (gram_fill_conjcells(gram))
+	    goto cellsfail;
           gram->ng_strtab = gram_to_tab(gram);
 	  if (gram->ng_strtab) {
 #ifndef LOGIC_HACK
 	    return gram;
 #else
 	    int negsz, i;
-	    unsigned long *dst;
+	    canna_uint32_t *dst;
 	    unsigned char *src;
-#ifndef WIN
+	    if (gramsz != (size_t)-1 && 4 + sz >= gramsz)
+	      goto error_case;
 	    size = read(fd, (char *)l4, 4);
-#else
-	    ReadFile(fd, (char *)l4, 4, &size, NULL) || size = 0;
-#endif
 	    if (size != 4)
 	      goto error_case;
 	    gram->ng_numneg = L4TOL(l4);
 	    negsz = 4 * gram->ng_numneg;
-	    gram->ng_neg =
-	      (unsigned long *)malloc(sizeof(unsigned long) * gram->ng_numneg);
+	    if (4 + sz + 4 + negsz > gramsz)
+	      goto error_case;
+	    gram->ng_neg = malloc(negsz);
 	    if (!gram->ng_neg)
 	      goto error_case;
-#ifndef WIN
 	    size = read(fd, gram->ng_neg, negsz);
-#else
-	    ReadFile(fd, gram->ng_neg, negsz, &size, NULL) || size = 0;
-#endif
 	    if (size != negsz) {
 	      free(gram->ng_neg);
 	      goto error_case;
@@ -171,11 +237,14 @@ HANDLE fd;
 	    src = (unsigned char *)gram->ng_neg + 4 * (gram->ng_numneg - 1);
 	    dst = gram->ng_neg + (gram->ng_numneg - 1);
 	    for (i = 0; i < gram->ng_numneg; i++, dst--, src -= 4)
-	      *dst = L4TOL(src);
+	      *dst = (canna_uint32_t)L4TOL(src);
 	    return gram;
 	  error_case:;
 #endif /* LOGIC_HACK */
 	  }
+	  free(gram->ng_conjcells);
+	  free(gram->ng_conjrows);
+cellsfail:;
 	}
 	else {
 	  /* EMPTY */
@@ -196,25 +265,15 @@ RkOpenGram(mydic)
   struct RkKxGram	*gram;
   struct HD		hd;
   off_t			off;
+  size_t		gramsz = (size_t)-1;
   int			lk;
   int tmpres;
-#ifdef WIN
-  HANDLE fd;
-
-  fd = CreateFile(mydic, GENERIC_READ, FILE_SHARE_READ, NULL,
-		  OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-
-  if (fd == INVALID_HANDLE_VALUE) {
-    return (struct RkKxGram *)0;
-  }
-#else
   int			fd;
  
   if ((fd = open(mydic, 0)) < 0)
     return (struct RkKxGram *)0;
 #ifdef __CYGWIN32__
   setmode(fd, O_BINARY);
-#endif
 #endif
 
   for (off = 0, lk = 1; lk && _RkReadHeader(fd, &hd, off) >= 0;) {
@@ -225,12 +284,13 @@ RkOpenGram(mydic)
 		 4)) {
       lk = 0;
 
-#ifndef WIN
+      if (HD_VERSION(&hd) >= 0x300702L) {
+	if (!hd.flag[HD_GRAM])
+	  continue;
+	off = off - hd.data[HD_SIZ].var + hd.data[HD_GRAM].var;
+	gramsz = hd.data[HD_GRSZ].var;
+      }
       tmpres = lseek(fd, off, 0);
-#else
-      tmpres = (SetFilePointer(fd, off, NULL, FILE_BEGIN) == 0xFFFFFFFF)
-	? -1 : 0;
-#endif
 
       if (tmpres < 0) {
 	lk = 1;
@@ -242,22 +302,15 @@ RkOpenGram(mydic)
   }
   _RkClearHeader(&hd);
   if (lk) {
-#ifndef WIN
     close(fd);
-#else
-    CloseHandle(fd);
-#endif
     return((struct RkKxGram *)0);
   }
-  gram = RkReadGram(fd);
-#ifndef WIN
+  gram = RkReadGram(fd, gramsz);
   (void)close(fd);
-#else
-  CloseHandle(fd);
-#endif
   return gram;
 }
 
+#ifdef unused
 struct RkKxGram	*
 RkDuplicateGram(ogram)
 struct RkKxGram *ogram;
@@ -272,6 +325,8 @@ struct RkKxGram *ogram;
     gram->ng_conj = (char *)malloc(siz);
     if (gram->ng_conj) {
       bcopy(ogram->ng_conj, gram->ng_conj, siz);
+      if (gram_fill_conjcells(gram))
+	goto cellsfail;
       gram->ng_strtab = gram_to_tab(gram);
       if (gram->ng_strtab) {
 #ifndef LOGIC_HACK
@@ -290,6 +345,9 @@ struct RkKxGram *ogram;
       error_case:;
 #endif /* LOGIC_HACK */
       }
+      free(gram->ng_conjcells);
+      free(gram->ng_conjrows);
+cellsfail:
       free(gram->ng_conj);
     }
     free((char *)gram);
@@ -297,6 +355,7 @@ struct RkKxGram *ogram;
   RkSetErrno(RK_ERRNO_ENOMEM);
   return (struct RkKxGram *)0;
 }
+#endif /* unused */
 
 int
 _RkWordLength(wrec)
@@ -848,7 +907,7 @@ struct TW *
 RkCopyWrec(src)
      struct TW	*src;
 {
-  struct TW	*dst;
+  struct TW	*dst = NULL;
   unsigned int	sz;
   
   sz = _RkWordLength(src->word);
@@ -1144,4 +1203,85 @@ RkUnionWrec(tw1, tw2)
   }
 }
 
+int
+RkTestGram(gram, row, col)
+  const struct RkKxGram *gram;
+  int row;
+  int col;
+{
+  const conjcell *start = gram->ng_conjrows[row];
+  const conjcell *end = gram->ng_conjrows[row + 1];
+  
+  switch (end - start) {
+  case 0:
+    return 0;
+    /* NOTREACHED */
+  case 1:
+    break;
+  default:
+    if (col < start->mycol || col > end[-1].mycol)
+      return 0;
+  }
 
+  while (end - start >= 2) {
+    const conjcell *mid = start + (end - start) / 2;
+    if (col >= mid->mycol)
+      start = mid;
+    else
+      end = mid;
+  }
+  return start->mycol == col;
+}
+
+#ifdef LOGIC_HACK
+/* RkCheckNegGram -- 打ち消す接続を検査する
+ * return value: 
+ *    0: 関係なし
+ *    1: 打ち消す
+ *    2: 優先度を下げる
+ */
+int
+RkCheckNegGram(gram, rc1, rc2, rc3)
+  const struct RkKxGram *gram;
+  int rc1;
+  int rc2;
+  int rc3;
+{
+  int m, l = 0, r = gram->ng_numneg;
+  canna_uint32_t *neg = gram->ng_neg;
+  canna_uint32_t rcvec = (rc1 << (NW_RCBITS * 2)) | (rc2 << NW_RCBITS) | rc3;
+
+  rcvec <<= 1;
+  while (l < r) {
+    m = (l + r) / 2;
+    if (neg[m] < rcvec) l = m + 1;
+    else r = m;
+  }
+  if (l >= gram->ng_numneg)
+    return 0;
+  switch ((int)(neg[l] ^ rcvec))
+  {
+  case 0: return 1;
+  case 1: return 2;
+  }
+  return 0;
+}
+#endif
+
+void
+RkFirstGram(iter, gram)
+  struct RkGramIterator *iter;
+  const struct RkKxGram *gram;
+{
+  iter->rowcol = 0;
+}
+
+void
+RkEndGram(iter, gram)
+  struct RkGramIterator *iter;
+  const struct RkKxGram *gram;
+{
+  iter->rowcol = gram->ng_rowcol;
+}
+
+/* vim: set sw=2: */

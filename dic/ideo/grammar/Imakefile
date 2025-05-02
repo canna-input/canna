@@ -1,4 +1,4 @@
-/* $Id: Imakefile,v 1.1.1.1.2.2 2003/09/12 05:48:43 aida_s Exp $ */
+/* $Id: Imakefile,v 1.6 2003/09/27 06:18:38 aida_s Exp $ */
 #include "../../../Canna.conf"
 
 #ifdef __EMX__
@@ -44,6 +44,9 @@
            OBJS = cpp.gram cnj.swd cnj.bits cnj.h cnj.mac fuzokugo.swd
 
         DEFINES = -USX /* for SX3 */
+#ifdef DIC_3_6_COMPAT
+     COMPATFLAG = -c 3.0
+#endif
 
 AllTarget($(ALLDIC))
 
@@ -62,12 +65,10 @@ fuzokugo.swd: cnj.swd
 		$(MERGE) > fuzokugo.swd
 
 fuzokugo.d: fuzokugo.swd cnj.bits
-	$(CRXDIC) -s -o fuzokugo.d -D cnj.bits -n fuzokugo fuzokugo.swd
-	cat cnj.bits >> fuzokugo.d
+	$(CRXDIC) $(COMPATFLAG) -g -s -o fuzokugo.d -D cnj.bits -n fuzokugo fuzokugo.swd
 
 fuzokugo.cbd: fuzokugo.swd cnj.bits
-	$(CRXDIC) -s -o fuzokugo.cbd -D cnj.bits -n fuzokugo fuzokugo.swd
-	cat cnj.bits >> fuzokugo.cbd
+	$(CRXDIC) $(COMPATFLAG) -g -s -o fuzokugo.cbd -D cnj.bits -n fuzokugo fuzokugo.swd
 
 clean::
 	$(RM) $(DICOBJS) $(OBJS)

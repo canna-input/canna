@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static char rcsid[]="@(#) 112.1 $Id: dpromdic.c,v 1.1.1.1.2.1 2003/09/12 13:36:48 aida_s Exp $";
+static char rcsid[]="@(#) 112.1 $Id: dpromdic.c,v 1.3 2003/06/28 19:36:48 aida_s Exp $";
 #endif
 
 /* # include       "RKintern.h"       */
@@ -30,6 +30,8 @@ static char rcsid[]="@(#) 112.1 $Id: dpromdic.c,v 1.1.1.1.2.1 2003/09/12 13:36:4
 #if defined(__STDC__) || defined(SVR4)
 # include       <locale.h>
 #endif
+#include "ccompat.h"
+#define CANNA_NEW_WCHAR_AWARE
 
 #ifdef SVR4
 extern char *gettxt();

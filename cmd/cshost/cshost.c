@@ -22,7 +22,7 @@
 
 #ifndef lint
 static char sccs_id[]="@(#) NEC UNIX( PC-UX/EWS-UX ) cshost.c 2.1 91/11/11 11:17:51";
-static char rcs_id[] = "$Id: cshost.c,v 1.1.1.1 2002/10/19 08:27:33 aida_s Exp $";
+static char rcs_id[] = "$Id: cshost.c,v 1.3 2003/09/23 09:10:14 aida_s Exp $";
 #endif
 
 /*
@@ -44,53 +44,44 @@ static char rcs_id[] = "$Id: cshost.c,v 1.1.1.1 2002/10/19 08:27:33 aida_s Exp $
 #endif
 
 #include    <stdio.h>
-#include    <time.h>
-#include    <errno.h>
 #include    <sys/types.h>
-#ifdef __STDC__
-#include    <stdlib.h>
-#endif
 
-#include    "sglobal.h"
 #include    "IR.h"
 #include    "net.h"
+#include    "rkcapi.h"
+#include    "RKindep/ecfuncs.h"
+#include    <assert.h>
 
-#ifdef NTOHS
-#undef NTOHS
-#endif
+#define EXTPROTO 1
 
-#define NTOHS( data, len ) { \
-	short work ; \
-	bcopy( (char *)(data), (char *)&work, sizeof( short ) ) ; \
-	len = ntohs( (short)work ) ; \
-}
+#define SIZEOFCHAR 1
+#define SIZEOFSHORT 2
+#define SIZEOFINT 4
+#define SIZEOFLONG 4
 
-static IRwReq cRreq ;
-static IRReq iRreq ;
-static int ServerFD ;
-static int ProtocolVersion ;
+#define HEADER_SIZE (SIZEOFCHAR * 2 + SIZEOFSHORT)
 
-extern int errno;
+static int CannaDispControlList pro((void));
+static void usage pro((void));
 
+int
 main(argc, argv)
 int argc ;
 char **argv ;
 {
-    wReq1		*creq ;
-    Req0		*ireq ;
     char		*hostname = (char *)NULL ;
-    char		cannahostname[256], *RkwGetServerName();
-    int 		i, ResevInt ;
+    char		cannahostname[256];
+    int 		i ;
     int 		ServerVersion ; 
     int proto_major, proto_minor, cx;				/* S000 */
+    int status;
 
     cannahostname[0] = '\0';					/* S002 */
     for( i = 1; i < argc; i++ ) {
-	if((!strcmp( argv[ i ], "-cs" ) || !strcmp( argv[ i ], "-cannaserver" )
-	    || !strcmp( argv[ i ], "-is" )
-	    || !strcmp( argv[ i ], "-irohaserver"))) {
+	if(!strcmp( argv[ i ], "-cs" )
+		    || !strcmp( argv[ i ], "-cannaserver" )) {
 	  if (++i < argc) {
-	    strcpy( cannahostname, argv[i] ) ;
+	    RkiStrlcpy( cannahostname, argv[i], sizeof cannahostname ) ;
 	  } else						/* S002 */
 	      usage();						/* S002 */
 	} else
@@ -101,53 +92,68 @@ char **argv ;
 	fprintf( stderr,"Error Disconnected %s\n", cannahostname );
 	exit(2);
     }
-    ServerFD = RkcGetServerFD();
-    strcpy(cannahostname, RkwGetServerName());
+    RkiStrlcpy(cannahostname, RkwGetServerName(), sizeof cannahostname );
 							/* end:S000 */
     printf("Connected to %s\n", cannahostname ) ;
 							/* begin:S000 */
     RkwGetProtocolVersion(&proto_major, &proto_minor);
-    if( proto_major < 2 )
-	ProtocolVersion = 1;
-    else
-	ProtocolVersion = 0;
-							/* end:S000 */
-    /*	パケット組み立て */
-    if( !ProtocolVersion ) {
-	creq = &cRreq.type1 ;
-	creq->type = wGetAccessControlList ;
-	creq->none = 0x01 ;
-	creq->datalen = htons( 0 ) ;
-	WriteToServer( cRreq.Buffer, sizeof( wReq1 )) ;
-
-	CannaDispControlList() ;
-
-	RkwFinalize();						/* S000 */
-    } else {
-	ireq = &iRreq.Request0 ;
-	ireq->Type = htonl( IR_HOST_CTL ) ;
-	WriteToServer( iRreq.Buffer, sizeof( Req0 )) ;
-
-	IrohaDispControlList() ;
+    if( proto_major < 2 ) {
+	printf("Too old cannaserver\n");
+	status = 2;
+	goto last;
     }
+							/* end:S000 */
+    status = CannaDispControlList() ;
+last:
+    RkwFinalize();						/* S000 */
+    return status;
 }
 
+static int
 CannaDispControlList()
 {
-    char    ResevBuf[ BUFSIZE ], *wp ;
-    int     ResevInt, UserNum, HostNum, NameLen ;
-    int     i, j ;
-    short   ResevShort ;
+    int     UserNum, HostNum, NameLen ;
+    int     i ;
+    BYTE reqbuf[HEADER_SIZE], replybuf[128], *replyp = replybuf;
+    BYTE *wp, *endp;
+    int replylen, status;
+    int requiredlen;
 
-    wp = ResevBuf ;
-    ReadServer( (char *)&ResevShort, sizeof( short ) ) ;
-    ReadServer( (char *)&ResevShort, sizeof( short ) ) ;
-    ResevShort = ntohs( ResevShort ) ;
-    ReadServer( ResevBuf, ResevShort ) ;
-    NTOHS( wp, HostNum ) ;
-    wp += sizeof( short ) ;
+    /*	パケット組み立て */
+    wp = reqbuf;
+    *wp++ = wGetAccessControlList;
+    *wp++ = EXTPROTO;
+    STOS2(0, wp); wp += SIZEOFSHORT;
+    if (RkcSendWRequest(reqbuf, HEADER_SIZE)) {
+	fprintf(stderr, "Cannot send request to server\n");
+	goto fail;
+    }
+    if (RkcRecvWReply(replybuf, sizeof replybuf, &replylen, &replyp)) {
+	fprintf(stderr, "Cannot receive reply from server\n");
+	goto fail;
+    }
+
+    wp = replyp;
+    if (*wp++ != wGetAccessControlList
+	    || *wp++ != EXTPROTO)
+	goto protoerr;
+    assert(S2TOS(wp) == replylen); wp += SIZEOFSHORT;
+    
+    endp = wp + replylen;
+    if (endp < wp + SIZEOFSHORT)
+	goto protoerr;
+    HostNum = S2TOS(wp); wp += SIZEOFSHORT;
     printf("access control enabled\n" ) ;
+    if (HostNum) {
+	if ((endp < wp + 2)
+		|| *(endp - 1) != '\0'
+		|| *(endp - 2) != '\0')
+	    goto protoerr;
+    }
     for( i = 0; i < HostNum; i++ ) {
+	if (wp == endp)
+	    goto protoerr;
+	assert(wp + 2 <= endp);
 	printf("HOST NAME:%s\n", wp ) ;
 	wp += strlen( wp ) + 1 ;
 	if( *wp ) {
@@ -161,109 +167,22 @@ CannaDispControlList()
 	printf("\n\n") ;
 	wp++;
     }
+    status = 0;
+    goto last;
+protoerr:
+    fprintf(stderr, "Protocol error\n");
+fail:
+    status = 2;
+last:
+    return status;
 }
 
-IrohaDispControlList()
-{
-    char    ResevBuf[ BUFSIZE ], *wp ;
-    int     ResevInt, UserNum, HostNum, NameLen ;
-    int     i, j ;
-
-    wp = ResevBuf ;
-    ReadServer( (char *)&ResevInt, sizeof( int ) ) ;
-    HostNum = ntohl( ResevInt ) ;
-    ReadServer( (char *)&ResevInt, sizeof( int ) ) ;
-    ResevInt = ntohl( ResevInt ) ;
-    ReadServer( ResevBuf, ResevInt ) ;
-    printf("access control enabled\n" ) ;
-    for( i = 0; i < HostNum; i++ ) {
-	DATATOLEN( wp, NameLen )	; wp += sizeof( int ) ;
-	printf("HOST NAME:%s\n", wp )	; wp += NameLen ;
-	DATATOLEN( wp, UserNum )	; wp += sizeof( int ) ;
-	if( UserNum )
-	    printf("USER NAME:" ) ;
-	else
-	    printf("ALL USER" ) ;
-	for( j = 0; j < UserNum; j++ ) {
-	    DATATOLEN( wp, NameLen ) ;
-	    wp += sizeof( int ) ;
-	    printf("%s ", wp ) ;
-	    wp += NameLen ;
-	}
-	printf("\n\n") ;
-    }
-    RkwFinalize();						/* S000 */
-}
-int
-WriteToServer( Buffer, size )
-char *Buffer ;
-int size ;
-{
-    register int todo;
-    register int write_stat;
-    register char *bufindex;
-    int cnt ;
-
-    errno = 0 ;
-    bufindex = Buffer ;
-    todo = size ;
-    while (size) {
-	errno = 0;
-	write_stat = write(ServerFD, bufindex, (unsigned int) todo);
-	if (write_stat >= 0) {
-	    size -= write_stat;
-	    todo = size;
-	    bufindex += write_stat;
-	} else if (errno == EWOULDBLOCK) {   /* pc98 */
-	    continue ;
-#ifdef EMSGSIZE
-	} else if (errno == EMSGSIZE) {
-	    if (todo > 1)
-		todo >>= 1;
-	    else
-		continue ;
-#endif
-	} else {
-	    /* errno set by write system call. */
-	    errno = EPIPE ;
-	    perror( "write faild" ) ;
-	    exit( 2 ) ;
-	}
-    }
-}
-
-int
-ReadServer( Buffer, size )
-char *Buffer ;
-int size ;
-{
-    register long bytes_read;
-
-    if (size == 0) return 0;
-    errno = 0;
-    while ((bytes_read = read(ServerFD, Buffer, (unsigned int)size)) != size) {	
-	if (bytes_read > 0) {
-	    if( bytes_read == sizeof( int ) ){
-		if( ntohl( *((int *)Buffer) ) == -1 ){
-		    perror("ReadToServer") ;
-		    exit( 1 ) ;
-		}
-	    }
-	    size -= bytes_read;
-	    Buffer += bytes_read;
-	} else if (errno == EWOULDBLOCK) { /* pc98 */
-	    continue ;
-	} else {
-	    perror("ReadToServer") ;
-	    exit( 1 ) ;
-	}
-    }
-    return( 0 ) ;
-}
-
+static void
 usage()
 {
     fprintf( stderr, "usage: cshost [-cs | -cannaserver hostname]\n" ) ;
     fflush( stderr ) ;
     exit( 0 ) ;
 }
+
+/* vim: set sw=4: */

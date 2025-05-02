@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: kctrl.c,v 1.1.1.1.2.1 2003/09/12 13:18:05 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: kctrl.c,v 1.10 2003/09/21 09:08:17 aida_s Exp $";
 #endif /* lint */
 
 #include "canna.h"
@@ -29,6 +29,14 @@ static char rcs_id[] = "@(#) 102.1 $Id: kctrl.c,v 1.1.1.1.2.1 2003/09/12 13:18:0
 #include <errno.h>
 #include <sys/types.h>
 #include <canna/mfdef.h>
+
+/*********************************************************************
+ *                      wchar_t replace begin                        *
+ *********************************************************************/
+#ifdef wchar_t
+# error "wchar_t is already defined"
+#endif
+#define wchar_t cannawc
 
 #define DEFAULT_COLUMN_WIDTH	70
 
@@ -40,6 +48,7 @@ static int callCallback pro((uiContext, int));
 static void freeKeysup pro((void));
 static void freeBuffer pro((void));
 static void freeExtra pro((void));
+extern int ckverbose;
 
 static
 doInitializeFunctions(d)
@@ -271,7 +280,7 @@ countContext()
       c++;
     }
   }
-#if defined(DEBUG) && !defined(WIN)
+#if defined(DEBUG)
   fprintf(stderr, "合計=%d\n", c);
 #endif
   if(c) {
@@ -500,14 +509,6 @@ KC_initialize(d, arg)
 
     InitCannaConfig(&cannaconf);
 
-    if (WCinit() < 0) {
-      /* locale 環境が不十分で日本語入力ができない */
-      jrKanjiError =
-	"The locale database is insufficient for Japanese input system.";
-      if (arg) *(char ***)arg = (char **)0;
-      return -1;
-    }
-
     debug_message("KC_INITIALIZE \244\362\313\334\305\366\244\313\244\271\244\353\244\276\n",0,0,0);
                                  /* を本当にするぞ */
 
@@ -559,14 +560,10 @@ KC_initialize(d, arg)
                       RomkanaInit();
 
                       /* カナ漢字変換の初期化 */
-                      KanjiInit();
+                      if (ckverbose || !cannaconf.DelayConnect)
+			KanjiInit();
                       /* ここでもエラーは無視します。
                          漢字にならなくてもいいし。 */
-
-		      {
-			extern standalone;
-			standalone = RkwGetServerName() ? 0 : 1;
-		      }
 
                       if (arg) {
                       *(char ***)arg = nWarningMesg ? WarningMesg : (char **)0;
@@ -1050,14 +1047,12 @@ wcKanjiStatusWithValue *arg;
 #ifdef NO_EXTEND_MENU
   return 0;
 #else
-  /* I will leave the arrays on stack because the code below will not
-     be used in case WIN is defined. 1996.6.5 kon */
   d->buffer_return = arg->buffer;
   d->n_buffer = arg->n_buffer;
   d->kanji_status_return = arg->ks;
 
   if(arg->ks->length > 0 && arg->ks->echoStr && arg->ks->echoStr[0]) {
-    wchar_t xxxx[ROMEBUFSIZE];
+    wchar_t xxxx[ROMEBUFSIZE]; /* BIGARRAY */
 
     WStrncpy(xxxx, arg->ks->echoStr, arg->ks->length);
     xxxx[arg->ks->length] = (wchar_t)0;
@@ -1293,7 +1288,7 @@ wcKanjiStatusWithValue *arg;
   coreContext cc;
   wchar_t *p, *q;
   int len = 0;
-#ifndef WIN
+#ifndef USE_MALLOC_FOR_BIG_ARRAY
   wchar_t buf[2048];
 #else
   wchar_t *buf = (wchar_t *)malloc(sizeof(wchar_t) * 2048);
@@ -1332,7 +1327,7 @@ wcKanjiStatusWithValue *arg;
   }
   makeYomiReturnStruct(d);
   arg->val = 0;
-#ifdef WIN
+#ifdef USE_MALLOC_FOR_BIG_ARRAY
   (void)free((char *)buf);
 #endif
   return 0;
@@ -1411,7 +1406,7 @@ KanjiMode c_mode;
   BYTE inhback;
   int retval;
   yomiContext yc = (yomiContext)0;
-#ifndef WIN
+#ifndef USE_MALLOC_FOR_BIG_ARRAY
   uiContextRec f, *e = &f;
 #else
   uiContext e = (uiContext)malloc(sizeof(uiContextRec));
@@ -1447,7 +1442,7 @@ KanjiMode c_mode;
     yc->generalFlags = gfback;
     yc->henkanInhibition = inhback;
   }
-#ifdef WIN
+#ifdef USE_MALLOC_FOR_BIG_ARRAY
     (void)free((char *)e);
   }
 #endif
@@ -1667,7 +1662,7 @@ wcKanjiStatusWithValue *arg;
   freeRomeStruct(d);
 
   ret = countContext();
-#if defined(DEBUG) && !defined(WIN)
+#if defined(DEBUG)
   fprintf(stderr, "ret=%d\n", ret);
 #endif
   return ret;
@@ -1796,8 +1791,18 @@ jrListCallbackStruct *arg;
     return -1;
   }
   if (arg->callback_func) {
-    d->client_data = arg->client_data;
     d->list_func = arg->callback_func;
+    if (arg->callback_func == &EUCListCallback
+#if SUPPORT_OLD_WCHAR
+	|| arg->callback_func == &owcListCallback
+#endif
+	) {
+      /* arg->client_dataはスタック上にあるのでuiContextに引っ越し */
+      d->elistcb = *((const jrEUCListCallbackStruct *)arg->client_data);
+      d->client_data = (char *)&d->elistcb;
+    } else {
+      d->client_data = arg->client_data;
+    }
   }
   else {
     d->client_data = (char *)0;
@@ -1838,7 +1843,7 @@ char ***mes;
 
 /* createKanjiContext コンテクストを作成するものである。 */
 
-static unsigned char context_table[100] = "";
+unsigned char context_table[100] = "";
 
 exp(int)
 createKanjiContext()
@@ -1931,7 +1936,7 @@ int arg;
 /* ARGSUSED */
 {
 
-#if defined(DEBUG) && !defined(WIN)
+#if defined(DEBUG)
   fprintf(stderr,"サーバとの接続を切る\n");
 #endif
   jrKanjiPipeError();
@@ -1975,7 +1980,7 @@ debug_yomibuf(yc)
 yomiContext yc;
 /* ARGSUSED */
 {
-#if defined(DEBUG) && !defined(WIN)
+#if defined(DEBUG)
   char kana[1024], roma[1024], ka[1024], ya[1024], *kanap, *romap, *kap, *yap;
   int len, i, j, k, maxcol, columns, tmp;
   wchar_t xxx[1024];
@@ -2119,7 +2124,7 @@ char *arg;
 
   jrKanjiPipeError();
   if (RkSetServerName((char *)arg) && (p = index((char *)arg, '@'))) {
-#ifndef WIN
+#ifndef USE_MALLOC_FOR_BIG_ARRAY
     char xxxx[512];
 #else
     char *xxxx = malloc(512);
@@ -2129,7 +2134,7 @@ char *arg;
 #endif
 
     *p = '\0';
-#ifndef WIN
+#ifndef CODED_MESSAGE
     sprintf(xxxx, "かな漢字変換エンジン %s は利用できません", (char *)arg);
 #else
     sprintf(xxxx, "\244\253\244\312\264\301\273\372\312\321\264\271\245\250\245\363\245\270\245\363 %s \244\317\315\370\315\321\244\307\244\255\244\336\244\273\244\363\n",
@@ -2138,7 +2143,7 @@ char *arg;
     makeGLineMessageFromString(d, xxxx);
 
     RkSetServerName((char *)0);
-#ifdef WIN
+#ifdef USE_MALLOC_FOR_BIG_ARRAY
     (void)free(xxxx);
 #endif
     return 0;
@@ -2146,7 +2151,7 @@ char *arg;
 
   if (defaultContext == -1) {
     if ((KanjiInit() != 0) || (defaultContext == -1)) {
-#ifndef WIN
+#ifndef CODED_MESSAGE
       jrKanjiError = "かな漢字変換サーバと通信できません";
 #else
       jrKanjiError = "\244\253\244\312\264\301\273\372\312\321\264\271"
@@ -2168,7 +2173,7 @@ jrUserInfoStruct *arg;
   extern jrUserInfoStruct *uinfo;
   int ret = -1;
   char *uname, *gname, *srvname, *topdir, *cannafile, *romkanatable;
-#ifndef WIN
+#ifndef USE_MALLOC_FOR_BIG_ARRAY
   char buf[256];
 #else
   char *buf = malloc(256);
@@ -2239,7 +2244,7 @@ jrUserInfoStruct *arg;
       }
       if (uname) (void)free(uname);
     }
-#ifndef WIN
+#ifndef CODED_MESSAGE
     jrKanjiError = "malloc (SetUserinfo) できませんでした";
 #else
     jrKanjiError = "malloc (SetUserinfo) \244\307\244\255\244\336\244\273\244\363\244\307\244\267\244\277";
@@ -2248,7 +2253,7 @@ jrUserInfoStruct *arg;
   ret = -1;
 
  return_ret:
-#ifdef WIN
+#ifdef USE_MALLOC_FOR_BIG_ARRAY
   (void)free(buf);
 #endif
   return ret;
@@ -2375,3 +2380,11 @@ caddr_t arg;
 {
   return kctlfunc[request](d, arg);
 }
+
+#ifndef wchar_t
+# error "wchar_t is already undefined"
+#endif
+#undef wchar_t
+/*********************************************************************
+ *                       wchar_t replace end                         *
+ *********************************************************************/

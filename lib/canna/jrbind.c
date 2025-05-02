@@ -21,12 +21,20 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: jrbind.c,v 1.1.1.1 2002/10/19 08:27:49 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: jrbind.c,v 1.4 2003/09/17 08:50:53 aida_s Exp $";
 #endif /* lint */
 
 #include "canna.h"
 #include <canna/mfdef.h>
 #include <sys/types.h>
+
+/*********************************************************************
+ *                      wchar_t replace begin                        *
+ *********************************************************************/
+#ifdef wchar_t
+# error "wchar_t is already defined"
+#endif
+#define wchar_t cannawc
 
 #define ACTHASHTABLESIZE 64
 #define KEYHASHTABLESIZE 16
@@ -112,23 +120,6 @@ wcKanjiStatus *kanji_status_return;
 {
   uiContext d, keyToContext();
   int retval;
-  extern int locale_insufficient;
-
-  /* locale データベースが不十分で wchar_t との変換処理ができない場合は
-     『かんな』にとって大打撃。もう変換はできない！ */
-  if (locale_insufficient) {
-    kanji_status_return->info = KanjiEmptyInfo | KanjiThroughInfo;
-    if (nbytes) { /* キャラクタコードがとれた場合 */
-      kanji_status_return->length =
-	kanji_status_return->revPos =
-	  kanji_status_return->revLen = 0;
-      return nbytes;
-    }
-    else { /* キャラクタコードがとれなかった場合（シフトキーなど）... */
-      kanji_status_return->length = -1;
-      return 0;
-    }
-  }
 
   /* 初めて XLookupKanjiString が呼ばれた時は辞書の初期化などの処理が
      行われる。 */
@@ -278,129 +269,10 @@ uiContext d;
   free(oldCB);
 }
 
-#if defined(WIN) && defined(_RK_h)
-
-extern RkwGetProtocolVersion pro((int *, int *));
-extern char *RkwGetServerName pro((void));
-
-exp(struct cannafn) CannaFuncs = {
-  {
-    RkwGetProtocolVersion,
-    RkwGetServerName,
-    RkwGetServerVersion,
-    RkwInitialize,
-    RkwFinalize,
-    RkwCreateContext,
-    RkwDuplicateContext,
-    RkwCloseContext,
-    RkwSetDicPath,
-    RkwCreateDic,
-    RkwSync,
-    RkwGetDicList,
-    RkwGetMountList,
-    RkwMountDic,
-    RkwRemountDic,
-    RkwUnmountDic,
-    RkwDefineDic,
-    RkwDeleteDic,
-    RkwGetHinshi,
-    RkwGetKanji,
-    RkwGetYomi,
-    RkwGetLex,
-    RkwGetStat,
-    RkwGetKanjiList,
-    RkwFlushYomi,
-    RkwGetLastYomi,
-    RkwRemoveBun,
-    RkwSubstYomi,
-    RkwBgnBun,
-    RkwEndBun,
-    RkwGoTo,
-    RkwLeft,
-    RkwRight,
-    RkwNext,
-    RkwPrev,
-    RkwNfer,
-    RkwXfer,
-    RkwResize,
-    RkwEnlarge,
-    RkwShorten,
-    RkwStoreYomi,
-    RkwSetAppName,
-    RkwSetUserInfo,
-    RkwQueryDic,
-    RkwCopyDic,
-    RkwListDic,
-    RkwRemoveDic,
-    RkwRenameDic,
-    RkwChmodDic,
-    RkwGetWordTextDic,
-    RkwGetSimpleKanji,
-  },
-  wcKanjiControl,
-  wcKanjiString,
-};
+#ifndef wchar_t
+# error "wchar_t is already undefined"
 #endif
-
-#ifdef WIN
-#include "cannacnf.h"
-
-/* Interfaces for CannaGetConfigure/CannaSetConfigure */
-
-#define CANNA_MODE_AllModes 255
-#define MAX_KEYS_IN_A_MODE 256
-
-typedef int (*keycallback)(unsigned, unsigned char *, int,
-			   unsigned char *, int, char *);
-
-static void
-GetCannaKeyOnAMode(unsigned modeid, unsigned char *mode, 
-		   keycallback keyfn, char *con)
-{
-  unsigned char key;
-  int i;
-
-  for (i = 0 ; i < MAX_KEYS_IN_A_MODE ; i++) {
-    if (mode[i] != CANNA_FN_Undefined) { /* is this required? */
-      key = i;
-      (*keyfn)(modeid, &key, 1, mode + i, 1, con);
-    }
-  }
-}
-
-static void
-GetCannaKeyfunc(keycallback keyfn, char *con)
-{
-  extern unsigned char default_kmap[], alpha_kmap[], empty_kmap[];
-
-  GetCannaKeyOnAMode(CANNA_MODE_AllModes, default_kmap, keyfn, con);
-  GetCannaKeyOnAMode(CANNA_MODE_AlphaMode, alpha_kmap, keyfn, con);
-  GetCannaKeyOnAMode(CANNA_MODE_EmptyMode, empty_kmap, keyfn, con);
-}
-
-__declspec(dllexport) int
-GetConfigure(char *name, struct libconf *conf,
-	     struct RegInfo *rinfo, struct metaconf *mconf, char *con)
-{
-  if (conf) {
-    if (conf->cf) {
-      InitCannaConfig(conf->cf);
-    }
-    if (conf->romfn) {
-      (*conf->romfn)("", con);
-    }
-    if (conf->keyfn) {
-      GetCannaKeyfunc(conf->keyfn, con);
-    }
-  }
-  return 1;
-}
-
-__declspec(dllexport) int
-SetConfigure(char *name, struct libconfwrite *conf,
-	     struct RegInfo *rinfo, struct metaconf *mconf, char *con)
-{
-  return 0;
-}
-
-#endif
+#undef wchar_t
+/*********************************************************************
+ *                       wchar_t replace end                         *
+ *********************************************************************/

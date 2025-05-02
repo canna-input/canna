@@ -21,31 +21,18 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[] = "$Id: lisp.c,v 1.1.1.1.2.1 2003/09/12 13:18:05 aida_s Exp $";
+static char rcsid[] = "$Id: lisp.c,v 1.11 2003/09/24 14:50:40 aida_s Exp $";
 #endif
 
 /* 
 ** main program of lisp 
 */
-#if (defined(_WINDOWS) || defined(WIN32)) && !defined(WIN)
-#define WIN
-#endif
-
-#ifdef WIN
-#define WIN_CANLISP
-#endif
-
 #include "lisp.h"
 #include "patchlevel.h"
 
 #include <signal.h>
 
 static FILE *outstream = (FILE *)0;
-
-#ifdef WIN
-extern exp(int) RkwGetProtocolVersion pro((int *, int *));
-extern exp(int) RkwGetServerVersion pro((int *, int *));
-#endif
 
 static char *celltop, *cellbtm, *freecell;
 static char *memtop;
@@ -123,22 +110,6 @@ static int  jmpenvp = MAX_DEPTH;
 
 static jmp_buf fatal_env;
 
-#ifdef WIN_CANLISP
-#include "cannacnf.h"
-
-struct winstruct {
-  struct libconf *conf;
-  struct libconfwrite *confwrite;
-  struct RegInfo *rinfo;
-  char *context;
-} wins;
-#endif
-
-#ifdef WIN_CANLISP
-char *RemoteGroup = (char *)NULL;
-char *LocalGroup = (char *)NULL;
-#endif
-
 /* external functions
 
    外部関数は以下の３つ
@@ -165,162 +136,19 @@ static list getatmz(char *);
 static list getatmz();
 #endif
 
-#ifdef WIN_CANLISP
-/*
- * ワイドキャラクタオペレーション (from util.c)
- *
- */
+/*********************************************************************
+ *                      wchar_t replace begin                        *
+ *********************************************************************/
+#ifdef wchar_t
+# error "wchar_t is already defined"
+#endif
+#define wchar_t cannawc
 
-static int wchar_type; /* ワイドキャラクタのタイプ(下を見よ) */
-
-#define CANNA_WCTYPE_16 0  /* 16ビット表現 */
-#define CANNA_WCTYPE_32 1  /* 32ビット表現 */
-#define CANNA_WCTYPE_OT 99 /* その他の表現 */
-
-/*
- WCinit() -- ワイドキャラクタとしてどれが使われているかを確認する
-
-        この関数が呼び出されるまえに setlocale がなされていなければならない
- */
-
-#define TYPE16A 0x0000a4a2
-#define TYPE32A 0x30001222
-
-int
-WCinit()
-{
-#if defined(HAVE_WCHAR_OPERATION) && !defined(WIN)
-  extern int locale_insufficient;
-  wchar_t wc[24];
-  char *a = "\244\242"; /* あ */ /* 0xa4a2 */
-
-  locale_insufficient = 0;
-  if (mbstowcs(wc, a, sizeof(wc) / sizeof(wchar_t)) != 1) {
-    /* 多分 setlocale がなされていない */
-    setlocale(LC_CTYPE, "");
-    if (mbstowcs(wc, a, sizeof(wc) / sizeof(wchar_t)) != 1) {
-      setlocale(LC_CTYPE, JAPANESE_LOCALE);
-      if (mbstowcs(wc, a, sizeof(wc) / sizeof(wchar_t)) != 1) {
-	locale_insufficient = 1;
-	return -1;
-      }
-    }
-  }
-  switch (wc[0]) {
-  case TYPE16A:
-    wchar_type = CANNA_WCTYPE_16;
-    break;
-  case TYPE32A:
-    wchar_type = CANNA_WCTYPE_32;
-    break;
-  default:
-    wchar_type = CANNA_WCTYPE_OT;
-    break;
-  }
-#else /* !HAVE_WCHAR_OPERATION || WIN */
-# ifdef WCHAR16
-
-  wchar_type = CANNA_WCTYPE_16;
-
-# else /* !WCHAR16 */
-
-  if (sizeof(wchar_t) == 2) {
-    /* NOTREACHED */
-    wchar_type = CANNA_WCTYPE_16;
-  }
-  else {
-    /* NOTREACHED */
-    wchar_type = CANNA_WCTYPE_32;
-  }
-
-# endif /* !WCHAR16 */
-#endif /* !HAVE_WCHAR_OPERATION || WIN */
-
-  return 0;
-}
-
-static int
-CANNA_mbstowcs(dest, src, destlen)
-wchar_t *dest;
-char *src;
-int destlen;
-{
-  register int i, j;
-  register unsigned ec;
-
-  if (wchar_type == CANNA_WCTYPE_16) {
-    for (i = 0, j = 0 ;
-	 (ec = (unsigned)(unsigned char)src[i]) != 0 && j < destlen ; i++) {
-      if (ec & 0x80) {
-	switch (ec) {
-	case 0x8e: /* SS2 */
-	  dest[j++] = (wchar_t)(0x80 | ((unsigned)src[++i] & 0x7f));
-	  break;
-	case 0x8f: /* SS3 */
-	  dest[j++] = (wchar_t)(0x8000
-				| (((unsigned)src[i + 1] & 0x7f) << 8)
-				| ((unsigned)src[i + 2] & 0x7f));
-	  i += 2;
-	  break;
-	default:
-	  dest[j++] = (wchar_t)(0x8080 | (((unsigned)src[i] & 0x7f) << 8)
-				| ((unsigned)src[i + 1] & 0x7f));
-	  i++;
-	  break;
-	}
-      }
-      else {
-	dest[j++] = (wchar_t)ec;
-      }
-    }
-    if (j < destlen)
-      dest[j] = (wchar_t)0;
-    return j;
-  }
-  else if (wchar_type == CANNA_WCTYPE_32) {
-    for (i = 0, j = 0 ;
-	 (ec = (unsigned)(unsigned char)src[i]) != 0 && j < destlen ; i++) {
-      if (ec & 0x80) {
-	switch (ec) {
-	case 0x8e: /* SS2 */
-	  dest[j++] = (wchar_t)(0x10000000L | ((unsigned)src[++i] & 0x7f));
-	  break;
-	case 0x8f: /* SS3 */
-	  dest[j++] = (wchar_t)(0x20000000L
-				| (((unsigned)src[i + 1] & 0x7f) << 7)
-				| ((unsigned)src[i + 2] & 0x7f));
-	  i += 2;
-	  break;
-	default:
-	  dest[j++] = (wchar_t)(0x30000000L | (((unsigned)src[i] & 0x7f) << 7)
-				| ((unsigned)src[i + 1] & 0x7f));
-	  i++;
-	  break;
-	}
-      }
-      else {
-	dest[j++] = (wchar_t)ec;
-      }
-    }
-    if (j < destlen)
-      dest[j] = (wchar_t)0;
-    return j;
-  }
-  else {
-    return 0;
-  }
-}
-
-#endif /* WIN */
 
 int
 clisp_init()
 {
   int  i;
-
-#ifdef WIN_CANLISP
-  WCinit();
-#endif
 
   if ( !allocarea() ) {
     return 0;
@@ -444,17 +272,13 @@ char *s;
 
   if (ckverbose >= CANNA_HALF_VERBOSE) {
     saved_outstream = outstream;
-#ifndef WIN  /* what ? */
     outstream = stdout;
-#endif
   }
 
   f = fopen(s, "r");
   if (f) {
     if (ckverbose == CANNA_FULL_VERBOSE) {
-#ifndef WIN
       printf("カスタマイズファイルとして \"%s\" を用います。\n", s);
-#endif
     }
     files[++filep].f = f;
     files[filep].name = malloc(strlen(s) + 1);
@@ -565,9 +389,7 @@ clisp_main()
 {
   if (clisp_init() == 0) {	/* initialize data area	& etc..	*/
     fprintf(stderr, "CannaLisp: initialization failed.\n");
-#ifndef WIN
     exit(1);
-#endif
   }
 
   if (setjmp(fatal_env)) {
@@ -589,9 +411,7 @@ clisp_main()
   env[jmpenvp].base_stack = sp - stack;
   env[jmpenvp].base_estack = esp - estack;
 
-#ifndef WIN
   signal(SIGINT, intr);
-#endif
   for (;;) {
     prins("-> ");		/* prompt	*/
     push(Lread(0));
@@ -1393,7 +1213,7 @@ rstring()
     if (strp < BUFSIZE) {
       if (c == '\\') {
 	untyi(c);
-	c = (char)(((unsigned POINTERINT)rcharacter()) & 0xff);
+	c = (char)(((canna_uintptr_t)rcharacter()) & 0xff);
       }
       strb[strp++] = (char)c;
     }
@@ -1710,7 +1530,7 @@ list atm;
 
   if (constp(atm)) {
     if (numberp(atm)) {
-      (void)sprintf(namebuf,"%d",xnum(atm));
+      (void)sprintf(namebuf,"%d",(int)xnum(atm));
       prins(namebuf);
     }
     else {		/* this is a string */
@@ -2710,14 +2530,12 @@ int n;
   int i;
   list retval = NIL, temp;
   int dictype;
-#ifndef WIN_CANLISP
   extern struct dicname *kanjidicnames;
   struct dicname *kanjidicname;
   extern int auto_define;
   extern char *kataautodic;
 #ifdef HIRAGANAAUTO
   extern char *hiraautodic;
-#endif
 #endif
 
   for (i = n ; i ; i--) {
@@ -2738,20 +2556,14 @@ int n;
       }
       else if (temp == KATAKANA) {
 	dictype = DIC_KATAKANA;
-#ifndef WIN_CANLISP
         auto_define = 1;
-#endif
       }
       else if (temp == HIRAGANA) {
 	dictype = DIC_HIRAGANA;
-#if defined(HIRAGANAAUTO) && defined(WIN_CANLISP)
-        auto_define = 1;
-#endif
       }
       i--; temp = sp[i - 1];
     }
     if (stringp(temp)) {
-#ifndef WIN_CANLISP
       kanjidicname  = (struct dicname *)malloc(sizeof(struct dicname));
       if (kanjidicname) {
 	kanjidicname->name = malloc(strlen(xstring(temp)) + 1);
@@ -2778,11 +2590,6 @@ int n;
 	}
 	free((char *)kanjidicname);
       }
-#else /* if WIN_CANLISP */
-      if (wins.conf && wins.conf->dicfn) {
-	(*wins.conf->dicfn)(xstring(temp), dictype, wins.context);
-      }
-#endif /* WIN_CANLISP */
     }
   }
   pop(n);
@@ -2896,9 +2703,7 @@ int n;
     error("Illegal mode ", sp[1]);
     /* NOTREACHED */
   }
-#ifndef WIN_CANLISP
   changeModeName(mode, null(p) ? 0 : xstring(p));
-#endif
   pop(2);
   return p;
 }
@@ -2950,9 +2755,7 @@ int n;
   int mode, slen;
   unsigned char fseq[256];
   unsigned char keyseq[256];
-#ifndef WIN_CANLISP
   int retval;
-#endif
 
   argnchk(S_SetKey, 3);
   if ( !stringp(p = sp[1]) ) {
@@ -2970,7 +2773,6 @@ int n;
     slen = xstrlen(p);
     Strncpy((char *)keyseq, xstring(p), slen);
     keyseq[slen] = 255;
-#ifndef WIN_CANLISP
     retval = changeKeyfunc(mode, (unsigned)keyseq[0],
 		           slen > 1 ? CANNA_FN_UseOtherKeymap :
                            (fseq[1] != 0 ? CANNA_FN_FuncSequence : fseq[0]),
@@ -2979,12 +2781,6 @@ int n;
       error("Insufficient memory.", NON);
       /* NOTREACHED */
     }
-#else
-    if (wins.conf && wins.conf->keyfn) {
-      (*wins.conf->keyfn)(mode, keyseq, slen, fseq, strlen(fseq),
-			  wins.context);
-    }
-#endif
   }
   pop(3);
   return p;
@@ -2998,9 +2794,7 @@ int n;
   int slen;
   unsigned char fseq[256];
   unsigned char keyseq[256];
-#ifndef WIN_CANLISP
   int retval;
-#endif
 
   argnchk(S_GSetKey, 2);
   if ( !stringp(p = sp[1]) ) {
@@ -3011,7 +2805,6 @@ int n;
     slen = xstrlen(p);
     Strncpy((char *)keyseq, xstring(p), slen);
     keyseq[slen] = 255;
-#ifndef WIN_CANLISP
     retval = changeKeyfuncOfAll((unsigned)keyseq[0],
                slen > 1 ? CANNA_FN_UseOtherKeymap :
                (fseq[1] != 0 ? CANNA_FN_FuncSequence : fseq[0]),
@@ -3020,11 +2813,6 @@ int n;
       error("Insufficient memory.", NON);
       /* NOTREACHED */
     }
-#else /* if WIN_CANLISP */
-    if (wins.conf && wins.conf->keyfn) {
-      (*wins.conf->keyfn)(255, keyseq, slen, fseq, strlen(fseq), wins.context);
-    }
-#endif /* WIN_CANLISP */
     pop(2);
     return p;
   }
@@ -3255,7 +3043,6 @@ int n;
     /* NOTREACHED */
   }
   if (xfseq(S_UnbindKey, sp[0], fseq, 2)) {
-#ifndef WIN_CANLISP
     int ret;
     ret = changeKeyfunc(mode, CANNA_KEY_Undefine,
                         fseq[1] != 0 ? CANNA_FN_FuncSequence : fseq[0],
@@ -3264,11 +3051,6 @@ int n;
       error("Insufficient memory.", NON);
       /* NOTREACHED */
     }
-#else /* if WIN_CANLISP */
-    if (wins.conf && wins.conf->keyfn) {
-      (*wins.conf->keyfn)(mode, keyseq, 1, fseq, 1, wins.context);
-    }
-#endif /* WIN_CANLISP */
     retval = T;
   }
   else {
@@ -3289,7 +3071,6 @@ int n;
 
   argnchk(S_GUnbindKey, 1);
   if (xfseq(S_GUnbindKey, sp[0], fseq, 2)) {
-#ifndef WIN_CANLISP
     int ret;
     ret = changeKeyfuncOfAll(CANNA_KEY_Undefine,
 		       fseq[1] != 0 ? CANNA_FN_FuncSequence : fseq[0],
@@ -3298,11 +3079,6 @@ int n;
       error("Insufficient memory.", NON);
       /* NOTREACHED */
     }
-#else /* if WIN_CANLISP */
-    if (wins.conf && wins.conf->keyfn) {
-      (*wins.conf->keyfn)(255, keyseq, 1, fseq, 1, wins.context);
-    }
-#endif /* WIN_CANLISP */
     retval = T;
   }
   else {
@@ -3324,10 +3100,8 @@ Ldefmode()
   extern int nothermodes;
   extraFunc *extrafunc = (extraFunc *)0;
   int i, j;
-#ifndef WIN_CANLISP
   int ecode;
   list l, edata;
-#endif
 
   form = pop1();
   if (atom(form)) {
@@ -3367,7 +3141,6 @@ Ldefmode()
   md = pop1();
   pop(4);
 
-#ifndef WIN_CANLISP
   ecode = DEFMODE_MEMORY;
   extrafunc = (extraFunc *)malloc(sizeof(extraFunc));
   if (extrafunc) {
@@ -3510,13 +3283,6 @@ Ldefmode()
     error("defmode: illegal subfunction ", edata);
   }
   /* NOTREACHED */
-#else /* if WIN_CANLISP */
-  /* シンボルの関数値としての定義 */
-  symbolpointer(*sym)->mid = CANNA_MODE_MAX_IMAGINARY_MODE + nothermodes;
-  symbolpointer(*sym)->fid = CANNA_FN_MAX_FUNC + nothermodes;
-  nothermodes++;
-  return pop1();
-#endif /* WIN_CANLISP */
 }
 
 static list
@@ -3622,54 +3388,8 @@ Ldefsym()
     keysup[nkeysup].ncand = ncand;
     keysup[nkeysup].cand = acand;
     keysup[nkeysup].fullword = mcand;
-#ifdef WIN_CANLISP
-    keysup[nkeysup].fullwordsize = mcandsize - 1; /* exclude the extra EOS */
-#endif
     nkeysup++;
   }
-#ifdef WIN_CANLISP
-  if (wins.conf && wins.conf->symfn) {
-    unsigned char *keys, *xkeys;
-    wchar_t *words;
-    int ngroups = nkeysup - group, fullwordlen, i;
-
-    for (fullwordlen = 0, i = group ; i < nkeysup ; i++) {
-      fullwordlen += keysup[i].fullwordsize;
-    }
-
-    keys = malloc(ngroups + 1);
-    if (keys) {
-      xkeys = malloc(ngroups + 1);
-      if (xkeys) {
-	words = (wchar_t *)malloc(fullwordlen * sizeof(wchar_t));
-	if (words) {
-	  unsigned char *pk = keys, *px = xkeys;
-	  wchar_t *pw = words, *ps;
-	  int j, len;
-
-	  for (i = group ; i < nkeysup ; i++) {
-	    *pk++ = (unsigned char)keysup[i].key;
-	    *px++ = (unsigned char)keysup[i].xkey;
-	    len = keysup[i].fullwordsize;
-	    ps = keysup[i].fullword;
-	    for (j = 0 ; j < len ; j++) {
-	      *pw++ = *ps++;
-	    }
-	  }
-	  *pk = (unsigned char)0;
-	  *px = (unsigned char)0;
-
-	  (*wins.conf->symfn)(keysup[group].ncand, nkeysup - group,
-			      pw - words, keys, xkeys, words, wins.context);
-
-	  free((char *)words);
-	}
-	free(xkeys);
-      }
-      free(keys);
-    }
-  }
-#endif
   res = car(pop1());
   return (res);
 }
@@ -4427,10 +4147,6 @@ list arg;
   return (list)mknum(*var);
 }
 
-#ifdef WIN_CANLISP
-static struct RegInfo reginfo;
-#endif
-
 /* ここから下がカスタマイズの追加等で良くいじる部分 */
 
 /* 実際のアクセス関数 */
@@ -4599,16 +4315,7 @@ DEFVAREX(VRomajiYuusen  ,VTorNIL         ,cannaconf.romaji_yuusen)
 DEFVAREX(VAutoSync      ,VTorNIL         ,cannaconf.auto_sync)
 DEFVAREX(VQuicklyEscape ,VTorNIL         ,cannaconf.quickly_escape)
 DEFVAREX(VInhibitHankana,VTorNIL         ,cannaconf.InhibitHankakuKana)
-#ifdef WIN_CANLISP
-DEFVAR(VremoteGroup	,StrAcc  ,char * ,RemoteGroup)
-DEFVAR(VlocalGroup	,StrAcc  ,char * ,LocalGroup)
-
-DEFVAREX(VcandInitWidth   ,NumAcc  ,reginfo.cand_init_width)
-DEFVAREX(VcandInitHeight  ,NumAcc  ,reginfo.cand_init_height)
-DEFVAREX(VcandMaxWidth    ,NumAcc  ,reginfo.cand_max_width)
-DEFVAREX(VcandMaxHeight   ,NumAcc  ,reginfo.cand_max_height)
-DEFVAREX(VstatusSize      ,NumAcc  ,reginfo.status_size)
-#endif
+DEFVAREX(VDelayConnect  ,VTorNIL         ,cannaconf.DelayConnect)
 
 #ifdef DEFINE_SOMETHING
 DEFVAR(Vchikuji_debug, VTorNIL, int, chikuji_debug)
@@ -4744,15 +4451,7 @@ static struct cannavardefs cannavars[] = {
   {S_VA_QuicklyEscape		,VQuicklyEscape},
   {S_VA_InhibitHanKana		,VInhibitHankana},
   {S_VA_CodeInput		,VCodeInput},
-#ifdef WIN_CANLISP
-  {"remote-group"		,VremoteGroup},
-  {"local-group"		,VlocalGroup},
-  {"candlist-initial-width"     ,VcandInitWidth},
-  {"candlist-initial-height"    ,VcandInitHeight},
-  {"candlist-max-width"         ,VcandMaxWidth},
-  {"candlist-max-height"        ,VcandMaxHeight},
-  {"toolbar-icon-size"          ,VstatusSize},
-#endif
+  {S_VA_DelayConnect		,VDelayConnect},
   {0				,0},
 };
 
@@ -4954,80 +4653,11 @@ defatms()
   symbolpointer(T)->value = T;
 }
 
-#ifdef WIN_CANLISP
-
-static void
-restoreLocalVariables(void)
-{
-  if (RemoteGroup) {
-    free(RemoteGroup);
-    RemoteGroup = (char *)NULL;
-  }
-  if (LocalGroup) {
-    free(LocalGroup);
-    LocalGroup = (char *)NULL;
-  }
-}
-
-__declspec(dllexport) int
-GetConfigure(char *name, struct libconf *conf,
-	     struct RegInfo *rinfo, struct metainfo *minfo, char *context)
-{
-  int res = 0;
-  extern void restoreBindings(void);
-
-  if (name) {
-    if (clisp_init() == 0) {	/* initialize data area	& etc..	*/
-      return 0;
-    }
-
-    if (setjmp(fatal_env)) {
-      goto quit_clisp_main;
-    }
-
-    if (jmpenvp <= 0) { /* 再帰が深すぎる場合 */
-      return 0;
-    }
-    jmpenvp--;
-
-    outstream = (FILE *)0;
-
-    setjmp(env[jmpenvp].jmp_env);
-    env[jmpenvp].base_stack = sp - stack;
-    env[jmpenvp].base_estack = esp - estack;
-
-    wins.conf = conf;
-    wins.rinfo = rinfo;
-    wins.confwrite = (struct libconfwrite *)0;
-    wins.context = context;
-
-    res = YYparse_by_rcfilename(name);
-
-    jmpenvp++;
-  quit_clisp_main:
-    clisp_fin();
-
-    if (conf) {
-      if (conf->cf) {
-	extern struct CannaConfig cannaconf;
-	*conf->cf = cannaconf;
-      }
-      if (conf->romfn) {
-	extern char *RomkanaTable;
-	(*conf->romfn)(RomkanaTable, wins.context);
-      }
-    }
-    restoreLocalVariables();
-    restoreBindings();
-  }
-  return res;
-}
-
-__declspec(dllexport) int
-SetConfigure(char *name, struct libconfwrite *conf,
-	     struct RegInfo *rinfo, struct metainfo *minfo, char *context)
-{
-  return 0;
-}
-
+#ifndef wchar_t
+# error "wchar_t is already undefined"
 #endif
+#undef wchar_t
+/*********************************************************************
+ *                       wchar_t replace end                         *
+ *********************************************************************/
+/* vim: set sw=2: */

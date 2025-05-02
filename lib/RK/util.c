@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[]="@(#)$Id: util.c,v 1.2.2.1 2003/09/12 14:32:52 aida_s Exp $ $Author: aida_s $ $Revision: 1.2.2.1 $ $Data$";
+static char rcsid[]="@(#)$Id: util.c,v 1.8 2003/09/17 08:50:52 aida_s Exp $ $Author: aida_s $ $Revision: 1.8 $ $Data$";
 #endif
 
 #include "RKintern.h"
@@ -30,8 +30,42 @@ static char rcsid[]="@(#)$Id: util.c,v 1.2.2.1 2003/09/12 14:32:52 aida_s Exp $ 
 #include <stdarg.h>
 #endif
 
+#define	isEndTag(s)	(s[0] == 0 && s[1] == 0 && s[2] == 0 && s[3] == 0)
+
+#define HD_TAG_MAG	"MAG#"
+#define HD_TAG_CURV	"CURV"
+#define HD_TAG_CMPV	"CMPV"
+#define HD_TAG_SIZ	"#SIZ"
+#define HD_TAG_HSZ	"#HSZ"
+#define HD_TAG_VER	"VER#"
+#define HD_TAG_TIME	"TIME"
+#define HD_TAG_REC	"#REC"
+#define HD_TAG_CAN	"#CAN"
+#define HD_TAG_L2P	"L2P#"
+#define HD_TAG_L2C	"L2C#"
+#define HD_TAG_PAG	"#PAG"
+#define HD_TAG_LND	"#LND"
+#define HD_TAG_SND	"#SND"
+#define HD_TAG_DROF	"DROF"
+#define HD_TAG_PGOF	"PGOF"
+#define HD_TAG_DMNM	"DMNM"
+#define HD_TAG_CODM	"CODM"
+#define HD_TAG_LANG	"LANG"
+#define HD_TAG_WWID	"WWID"
+#define HD_TAG_WTYP	"WTYP"
+#define HD_TAG_COPY	"(C) "
+#define HD_TAG_NOTE	"NOTE"
+#define HD_TAG_TYPE	"TYPE"
+#define HD_TAG_CRC	"#CRC"
+#define HD_TAG_GRAM	"GRAM"
+#define HD_TAG_GRSZ	"GRSZ"
+
 static char	*Hdrtag[] = {
   HD_TAG_MAG,
+  HD_TAG_SIZ,
+  HD_TAG_HSZ,
+  HD_TAG_CURV,
+  HD_TAG_CMPV,
   HD_TAG_VER,
   HD_TAG_TIME,
   HD_TAG_REC,
@@ -41,8 +75,6 @@ static char	*Hdrtag[] = {
   HD_TAG_PAG,
   HD_TAG_LND,
   HD_TAG_SND,
-  HD_TAG_SIZ,
-  HD_TAG_HSZ,
   HD_TAG_DROF,
   HD_TAG_PGOF,
   HD_TAG_DMNM,
@@ -53,19 +85,11 @@ static char	*Hdrtag[] = {
   HD_TAG_COPY,
   HD_TAG_NOTE,
   HD_TAG_TYPE,
+  HD_TAG_CRC,
+  HD_TAG_GRAM,
+  HD_TAG_GRSZ,
   0,
 };
-
-static char	essential_tag[] = {
-    HD_TIME,
-    HD_DMNM,
-    HD_LANG,
-    HD_WWID,
-    HD_WTYP,
-    HD_TYPE,
-};
-
-static	unsigned char	localbuffer[RK_MAX_HDRSIZ];
 
 int
 uslen(us)
@@ -150,9 +174,7 @@ euctous(src, srclen, dest, destlen)
   return dest;
 }
 
-#ifndef WIN
 static FILE	*log = (FILE *)0;
-#endif
 
 void
 _Rkpanic(
@@ -167,7 +189,6 @@ _Rkpanic(
 /* VARARGS2 */
 #endif
 {
-#ifndef WIN
   FILE *target = log ? log : stderr;
 #ifdef __STDC__
   va_list va;
@@ -182,7 +203,6 @@ _Rkpanic(
   fflush(target);
   if (log)
     fclose(log);
-#endif
   abort();
 }
 
@@ -237,109 +257,125 @@ _RkClearHeader(hd)
   }
 }
 
-int
-_RkReadHeader(fd, hd, off_from_top)
-#ifndef WIN
-     int	fd;
-#else
-     HANDLE fd;
-#endif
+static int
+read_tags(hd, srctop, srcend, pass)
      struct HD	*hd;
-     off_t	off_from_top;
+     const unsigned char *srctop;
+     const unsigned char *srcend;
+     int	pass;
 {
-  unsigned char	*src;
   unsigned long	len, off;
-  int		i, tmpres;
-  long hdrsize;
-#ifdef WIN
-  DWORD readsize;
-#endif
+  const unsigned char *src = srctop;
+  unsigned int i;
 
-  for (i = 0; i < HD_MAXTAG; i++) {
-    hd->data[i].var = 0;
-    hd->flag[i] = 0;
-  }
-  /* 次の off_from_top の計算がうさんくさいぞ */
-#ifndef WIN
-  tmpres = lseek(fd, off_from_top, 0);
-#else
-  tmpres = (SetFilePointer(fd, off_from_top, NULL, FILE_BEGIN) == 0xFFFFFFFF)
-    ? -1 : 0;
-#endif
-  if (tmpres < 0) {
-    RkSetErrno(RK_ERRNO_EACCES);
-    goto read_err;
-  }
-
-#ifndef WIN
-  hdrsize = read(fd, (char *)localbuffer, RK_MAX_HDRSIZ);
-#else
-  hdrsize = ReadFile(fd, (char *)localbuffer, RK_MAX_HDRSIZ, &readsize, NULL)
-    ? readsize : -1;
-#endif
-  if (hdrsize <= ((long) 0)) {
-    RkSetErrno(RK_ERRNO_EACCES);
-    goto read_err;
-  }
-  for (src = localbuffer; src < (localbuffer + hdrsize);) {
+  while (src + HD_TAGSIZ <= srcend) {
     if (isEndTag(src))
+      return 0;
+    if (src + HD_MIN_TAGSIZ > srcend)
       break;
     for (i = 0; i < HD_MAXTAG; i++) {
-      if (!strncmp((char *)src, Hdrtag[i],  HD_TAGSIZ))
+      if (!strncmp((const char *)src, Hdrtag[i],  HD_TAGSIZ))
 	break;
     }
-    if (i == HD_MAXTAG)
-      goto read_err;
+    if (i == HD_MAXTAG) {
+      src += HD_MIN_TAGSIZ; /* simply skip */
+      continue;
+    }
     src += HD_TAGSIZ;
     len = bst4_to_l(src);
     src += HD_TAGSIZ;
     off = bst4_to_l(src);
     src += HD_TAGSIZ;
     if (hd->flag[i] != 0)
-      goto read_err;
+      return -1;
     if (len == 0) {
       hd->flag[i] = -1;
       hd->data[i].var = off;
     } else {
-      hd->flag[i] = len;
-      if (!(hd->data[i].ptr = (unsigned char *)malloc((size_t) (len + 1)))) {
-	RkSetErrno(RK_ERRNO_NOMEM);
-	goto read_err;
+      if (pass == 2) {
+	if (srctop + off + len > srcend)
+	  return -1;
+	hd->flag[i] = len;
+	if (!(hd->data[i].ptr = (unsigned char *)malloc((size_t) (len + 1))))
+	  return -1;
+	(void)memcpy(hd->data[i].ptr, srctop + off, (size_t) len);
+	hd->data[i].ptr[len] = 0;
       }
-      if (off < (unsigned long)hdrsize) {
-	(void)memcpy(hd->data[i].ptr, localbuffer + off, (size_t) len);
-      } else {
-#ifndef WIN
-	tmpres = lseek(fd, off_from_top + off, 0);
-#else
-	tmpres = (SetFilePointer(fd, off_from_top + off, NULL, FILE_BEGIN)
-		  == 0xFFFFFFFF) ? -1 : 0;
-#endif
-	if (tmpres < 0) {
-	  RkSetErrno(RK_ERRNO_EACCES);
-	  goto read_err;
-	}
-
-#ifndef WIN
-	tmpres = read(fd, (char *)hd->data[i].ptr, (unsigned)len);
-#else
-	if (!ReadFile(fd, (char *)hd->data[i].ptr, (unsigned)len,
-		      &tmpres, NULL)) {
-	  tmpres = -1;
-	}
-#endif
-	if (tmpres != (int)len) {
-	  RkSetErrno(RK_ERRNO_EACCES);
-	  goto read_err;
-	}
-      }
-      hd->data[i].ptr[len] = 0;
     }
   }
-  if (hd->data[HD_MAG].var != (long)bst4_to_l("CDIC")) {
-    goto read_err;
+  return (pass == 2);
+}
+
+int
+_RkReadHeader(fd, hd, off_from_top)
+     int	fd;
+     struct HD	*hd;
+     off_t	off_from_top;
+{
+  off_t tmpres;
+  ssize_t pass1size;
+  unsigned char pass1buf[RK_OLD_MAX_HDRSIZ];
+  unsigned char	*pass2buf = NULL;
+  long curr_ver = 0, compat_ver = 0;
+  unsigned int i;
+  size_t hdrsiz;
+
+  for (i = 0; i < HD_MAXTAG; i++) {
+    hd->data[i].var = 0;
+    hd->flag[i] = 0;
   }
+  tmpres = lseek(fd, off_from_top, 0);
+  if (tmpres < 0)
+    return -1;
+  pass1size = read(fd, (char *)pass1buf, RK_OLD_MAX_HDRSIZ);
+  if (pass1size <= 0)
+    return -1;
+
+  /* Pass 1 */
+  if (read_tags(hd, pass1buf, pass1buf + pass1size, 1))
+    goto read_err;
+
+  if (hd->flag[HD_MAG] != -1
+      || hd->data[HD_MAG].var != (long)bst4_to_l("CDIC"))
+    goto read_err;
+  if (hd->flag[HD_CURV] == -1 && hd->flag[HD_CMPV] == -1) {
+    curr_ver = hd->data[HD_CURV].var;
+    compat_ver = hd->data[HD_CMPV].var;
+  } else if (hd->flag[HD_VER] == -1
+      && hd->data[HD_VER].var == (long)bst4_to_l("R3.0")) {
+    curr_ver = 0x300000L;
+    compat_ver = 0x300000L;
+  }
+  if (curr_ver < compat_ver || compat_ver < 0x300000L || compat_ver > 0x300702L)
+    goto read_err;
+
+  if (hd->flag[HD_HSZ] != -1 || hd->flag[HD_SIZ] != -1)
+    goto read_err;
+  hdrsiz = (size_t)hd->data[HD_HSZ].var;
+
+  /* Pass 2 */
+  pass2buf = malloc(hdrsiz);
+  if (!pass2buf)
+    goto read_err;
+  if (pass1size < hdrsiz) {
+    size_t rest = hdrsiz - pass1size;
+    ssize_t r = read(fd, (char *)pass2buf + pass1size, rest);
+    if (r < rest)
+      goto read_err;
+    memcpy(pass2buf, pass1buf, pass1size);
+  } else {
+    memcpy(pass2buf, pass1buf, hdrsiz);
+  }
+
+  for (i = 0; i < HD_MAXTAG; i++) {
+    hd->data[i].var = 0;
+    hd->flag[i] = 0;
+  }
+  if (read_tags(hd, pass2buf, pass2buf + hdrsiz, 2))
+    goto read_err;
+
   return 0;
+
  read_err:
   for (i = 0; i < HD_MAXTAG; i++) {
     if (hd->flag[i] > 0)
@@ -347,52 +383,66 @@ _RkReadHeader(fd, hd, off_from_top)
     hd->flag[i] = 0;
     hd->data[i].var = 0;
   }
+  free(pass2buf);
   return -1;
 }
 
 unsigned char *
 _RkCreateHeader(hd, size)
      struct HD	*hd;
-     unsigned	*size;
+     size_t *size;
 {
   unsigned char	*tagdst, *datadst, *ptr;
-  int		i, j;
-  unsigned long	len, off;
+  unsigned int i;
+  unsigned long len, off;
+  size_t tagsz = 0, datasz = 0;
+  long curr_ver = 0, compat_ver = 0;
 
-  if (!hd)
-    return 0;
-  tagdst = localbuffer;
-  datadst = localbuffer + HD_MAXTAG * HD_MIN_TAGSIZ;
-  datadst += sizeof(long);
+  if (hd->flag[HD_CURV] == -1 && hd->flag[HD_CMPV] == -1) {
+    curr_ver = hd->data[HD_CURV].var;
+    compat_ver = hd->data[HD_CMPV].var;
+  } else if (hd->flag[HD_VER] == -1
+      && hd->data[HD_VER].var == (long)bst4_to_l("R3.0")) {
+    curr_ver = 0x300000L;
+    compat_ver = 0x300000L;
+  }
+  if (curr_ver < compat_ver || compat_ver < 0x300000L || compat_ver > 0x300702L)
+    return NULL;
+
   for (i = 0; i < HD_MAXTAG; i++) {
-    for (j = 0; j < sizeof(essential_tag); j++) {
-      if (essential_tag[j] == i) {
-	break;
-      }
-    }
+    if (hd->flag[i])
+      tagsz += HD_MIN_TAGSIZ;
+    if (hd->flag[i] > 0)
+      datasz += hd->flag[i];
+  }
+
+  if (!(ptr = malloc(tagsz + HD_TAGSIZ + datasz)))
+    return NULL;
+
+  tagdst = ptr;
+  datadst = ptr + tagsz + HD_TAGSIZ;
+  for (i = 0; i < HD_MAXTAG; i++) {
+    if (!hd->flag[i])
+      continue;
+
     (void)memcpy(tagdst, Hdrtag[i], HD_TAGSIZ);
     tagdst += HD_TAGSIZ;
     if (hd->flag[i] == -1) {
       len = 0;
       off = hd->data[i].var;
-    } else if (hd->flag[i] > 0) {
+    } else {
       len = hd->flag[i];
-      off = datadst - localbuffer;
+      off = datadst - ptr;
       (void)memcpy(datadst, hd->data[i].ptr, (size_t) len);
       datadst += len;
-    } else {
-      len = 0;
-      off = 0;
     }
     l_to_bst4(len, tagdst); tagdst += HD_TAGSIZ;
     l_to_bst4(off, tagdst); tagdst += HD_TAGSIZ;
   }
+  RK_ASSERT(tagdst == ptr + tagsz);
+  RK_ASSERT(datadst == ptr + tagsz + HD_TAGSIZ + datasz);
   *tagdst++ = 0; *tagdst++ = 0; *tagdst++ = 0; *tagdst++ = 0;
-  *size = datadst - localbuffer;
-  if (!(ptr = (unsigned char *)malloc(*size))) {
-    return 0;
-  }
-  (void)memcpy(ptr, localbuffer, *size);
+  *size = tagsz + HD_TAGSIZ + datasz;
   return ptr;
 }
 
@@ -550,3 +600,4 @@ struct nword *w;
 }
 
 #endif /* TEST */
+/* vim: set sw=2: */

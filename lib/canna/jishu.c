@@ -21,11 +21,19 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: jishu.c,v 1.1.1.1 2002/10/19 08:27:49 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: jishu.c,v 1.3 2003/09/17 08:50:53 aida_s Exp $";
 #endif /* lint */
 
 #include "canna.h"
 #include <ctype.h>
+
+/*********************************************************************
+ *                      wchar_t replace begin                        *
+ *********************************************************************/
+#ifdef wchar_t
+# error "wchar_t is already defined"
+#endif
+#define wchar_t cannawc
 
 extern int WToupper pro((wchar_t));
 static void setInhibitInformation pro((yomiContext));
@@ -144,7 +152,7 @@ wchar_t *s, *e, **sr, **er;
 {
   wchar_t *ss = s;
   int jishulen, len, revlen;
-#ifndef WIN
+#ifndef USE_MALLOC_FOR_BIG_ARRAY
   wchar_t xxxx[1024], yyyy[1024];
 #else
   wchar_t *xxxx, *yyyy;
@@ -342,7 +350,7 @@ wchar_t *s, *e, **sr, **er;
   if (s < e) {
     *s = (wchar_t)0;
   }
-#ifdef WIN
+#ifdef USE_MALLOC_FOR_BIG_ARRAY
   (void)free((char *)xxxx);
   (void)free((char *)yyyy);
 #endif
@@ -966,5 +974,13 @@ uiContext	d;
 {
   return exitJishuAndDoSomething(d, CANNA_FN_HenkanOrNothing);
 }
+
+#ifndef wchar_t
+# error "wchar_t is already undefined"
+#endif
+#undef wchar_t
+/*********************************************************************
+ *                       wchar_t replace end                         *
+ *********************************************************************/
 
 #include "jishumap.h"

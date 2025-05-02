@@ -11,16 +11,11 @@ imake on X11R6 to compile Canna.
   default environment for installation, then you run as follows.
   Canna will be installed in /usr/local/canna.
 
-  (1) When your machine is SONY NEWS, HP-UX, FreeBSD, EWS-UX/V(CISC),
-     FT-UX, SunOS without JLE or OS/2, first, see Appendix A.
+  (1) When your machine is OS/2, first, see Appendix A.
 
-  (2)  When you define X_WCHAR in X11/Xosdefs.h or when you compile
-     with the option -DNOTSTDHDRS, see Appendix A.8.
-
-  (3)  Run as follows:
+  (2)  Run as follows:
 
 	 % xmkmf
-	 % make Makefile
 	 % make canna
 	 % su
 	 # make install
@@ -82,26 +77,11 @@ imake on X11R6 to compile Canna.
 
     ErrDir             Directory to put log file.
 
-    wcharDefinition    Use the system definition of wchar_t, or not.
-
-    Wlib               Libraries which include the functions related
-                       wchar_t.  If the functions is in libc, then
-                       here is a blank.  On System V, generally,
-                       here is -lw.
-
-    JapaneseLocale     Set the environment variable LANG to use
-                       Japanese.
-
     cannaOwner         Owner of dictionaries and kana-to-kanji
                        server.  See 4.1.
 
     cannaGroup         Group of dictionaries and kana-to-kanji
                        server.  See 4.1.
-
-    pointerIntegerDef  Define -DBIGPOINTER here when pointer size is
-                       bigger than long size and there is a type long
-                       long. (For example, case on SX3 with
-                       SUPER-UX.)
 
     cannaDsoRev        Revision of shared library.  Here is 1 when
                        *.so.1.
@@ -122,13 +102,6 @@ imake on X11R6 to compile Canna.
                        result of make is different.  Sorry, but
                        English documents are not complete.
 
-    cannaLight         Specify whether you use new protocol only or
-                       not.  If this parameter is 1, then you use new
-                       protocol only.  If this parameter is not 1, you
-                       can use new and old protocols (the old protocol
-                       is the protocol of Canna version 1).  The
-                       default is 1.
-
     USE_OBSOLETE_STYLE_FILENAME
 
                        If you want to use the obsolete styles of
@@ -143,11 +116,27 @@ imake on X11R6 to compile Canna.
                          Text dictionary         *.t        *.ctd
                          Leaning dictionary      *.fq       *.cld
 
+    SupportOldWchar    If you got compile errors related to wchar_t
+                       define this to 0. Otherwise, leave this 1.
+		       Read INSTALL.jp for detail.
+
+    UseInet6	       Support IPv6 or not. Your operating system
+		       needs newer IPv6 implementation.
+
+    DIC_3_6_COMPAT     Create dictionaries which are compatible with
+		       Canna 3.6 or earlier. You can create old
+		       dictionary by "mkbindic -c 3.0" whether you
+		       specify DIC_3_6_COMPAT or not.
+    
+    ModernElfLink      This is an experimental option. Leave it NO unless
+		       you know what you are doing. Read INSTALL.jp for
+		       detail.
+
 
        For example, the default setting is:
 
                 /* #define InstallAsUser */
-		#define ObsoleteInstallDir
+		/* #define ObsoleteInstallDir */
 		cannaPrefix = DefCannaPrefix
 		cannaExecPrefix = $(cannaPrefix)
 		cannaBinDir = $(cannaExecPrefix)/bin
@@ -161,56 +150,16 @@ imake on X11R6 to compile Canna.
 
 		libCannaDir = DefLibCannaDir
 		ErrDir  = DefErrDir
-                wcharDefinition = -DCANNA_WCHAR
-                Wlib =
-                JapaneseLocale = japan
+		#define SupportOldWchar 1
+		#define UseInet6 0
+		/* #define DIC_3_6_COMPAT */
+		#define ModernElfLink NO
                 cannaOwner = bin
                 cannaGroup = bin
-                pointerIntegerDef =
                 DicDir = $(cannaLibDir)/dic
                 #define JAPANESEMAN
                 pubdicDir = $(CANNAROOT)/dic/ideo/pubdic
-                cannaLight = 1
 
-       At most cases, you should define -DCANNA_WCHAR to
-  wcharDefinition.
-
-       Without definition of wcharDefinition, you must configure the
-  parameter JapaneseLocale.  Here is the locale name which defined on
-  your OS and recognize the EUC.  The locale name is as follows:
-
-      japanese	 SUN Solaris JLE
-      japan	 NEC UX/4800
-      ja_JP.EUC	 SONY NEWS-OS
-
-1.2 Configure Environment in widedef.h
-
-       In this version, wcharDefinition is -DCANNA_WCHAR in default
-  and wchar_t define 4 byte width and 32 bits.
-
-       If you use your system definition of wcahr_t, read following
-  and specify a blank to wcharDefinition.
-
-       Without -DCANNA_WCHAR, you should rewrite the file
-  canna/widedef.h to use the system definition correctly.  Especially,
-  when you compile with GCC, take care that which definition in which
-  header file is used.
-
-       Change the following line in widedef.h according to your OS.
-
-    /* replace widec.h instead, if SunOS 4.0 */
-    #include <stddef.h>
-
-       On SunOS without JLE or EWS-UX/V etc, sometimes wchat_t type is
-  defined twice, because _WCHAR_T macro isn't defined though wchar_t
-  type is defined.  Confirm that _WCHAR_T is defined with wchar_t type
-  definition.  For details, see the last part of this file.  The
-  typical definition of wchar_t type is as follows:
-
-      #ifndef _WCHAR_T
-      #define _WCHAR_T
-      typedef unsigned long wchar_t;
-      #endif
 
 2. Compile Canna
 
@@ -225,7 +174,7 @@ imake on X11R6 to compile Canna.
 
        When you have the environment for imake, enter the following.
 
-    xmkmf; make Makefile
+    xmkmf
     make canna
 
        In the first line, you will have new Makefile which based on
@@ -243,23 +192,31 @@ imake on X11R6 to compile Canna.
 
     (3) make includes
 
-          Link each header files in the directory include.  And
-          configure the class of directories.  This needs the program
-          mkdirhier.  If you cannot find mkdirhier in /usr/bin/X11,
-          then install it in $(BINDIR).  It is in xc/util on
-          distribution of X11.
+          Link each header files in the directory include, generate
+	  header files such as accanna.h, and construct the directory
+	  hierarchy.  Especially "configure" script runs to create
+	  "accanna.h".
+	  To onstruct directory hierarchy you need a program
+          "mkdirhier".  If you cannot find mkdirhier in $(BINDIR)
+	  (normally points to /usr/X11R6/bin), then install it in
+	  $(BINDIR).  It is found in xc/config/util (or xc/util) on
+	  distribution of X11.
 
     (4) make depend
 
           Reflect the relationship of files in each directories to
           Makefile.  Additionally, run yacc and lex, and make symbolic
           link files.  Here, you need the program makedepend.  If you
-          don't have makedepend, then install it.  It is in xc/util,
-          too.
+          don't have makedepend, then install it.  It is found in
+	  xc/config (or xc/util) on distribution of X11.
 
     (5) make
 
           Compile programs.
+
+       If configure fails in some reason, you can rerun it by "make
+    reconfig".
+
 
 3. Install Canna
 
@@ -306,6 +263,10 @@ imake on X11R6 to compile Canna.
           Install the libraries, the header files and so on to compile
           Canna.
 
+    (6) make instmost
+
+          Install everything except dictionaries.
+
           Install in each directories specified in Canna.conf.
 
 3.3 Configuration of Directories
@@ -316,6 +277,8 @@ imake on X11R6 to compile Canna.
     -+ lib ----+- RK       Library of kana-to-kanji conversion engine
      |         +- RKC      Library to communicate with kana-to-kanji 
      |         |           conversion server
+     |         +- RKindep  Internal library which does not depend on
+     |         |           RK layer
      |         +- canna    Library for clients
      |         |
      |         +- RKC16  -+
@@ -339,7 +302,7 @@ imake on X11R6 to compile Canna.
      |
      |                  These are installed in $(DicDir).
      |
-     + canuum           A patch and files for uum of Canna version
+     + canuum           Uum (Japanese input front-end processor) for Canna
      |
      + misc             Other files
      |
@@ -353,27 +316,8 @@ imake on X11R6 to compile Canna.
   log file.  You can find the log file in directory which specified as
   $(ErrDir), and it will be named "CANNA0msgs".  The default file is:
 
-        /usr/spool/canna/CANNA0msgs
+        /var/log/CANNA0msgs
 
-3.5 Messaging
-
-       In Canna, the messages of some commands to maintenance
-  kana-to-kanji conversion dictionaries are internationalized.
-  Therefore, on systems based on System V Release 4, such as Solaris
-  2.1 or EWS-UX/V(Rel4.0), you specify the character which means
-  Japanese (for example, japanese, japan, ja_JP.EUC, etc.) to
-  environment variable LANG for using Japanese messages.
-
-       Japanese messages file for respective command is
-  cmd/catdic/cannacmd.jpn.  For example, on EWS-UX/V(Rel4.0), enter
-  the following command to install the file in message directory of
-  your system.
-
-    # mkmsgs -i japan cannacmd.jpn cannacmd
-
-       On each system, the command to install message file may be
-  different.  For detail, see the part of messaging of the document
-  for your system.
 
 4. How to Use Canna
 
@@ -387,11 +331,10 @@ imake on X11R6 to compile Canna.
        At this time, for the cannaserver can read, write the
   dictionaries, allow read, write by owner and group to the respective
   directories and files of dictionaries.  Next, take away others'
-  permissions.  And, set owner and group of cannaserver to canna, then
-  set user ID and group ID on execution.
+  permissions.  Then start cannaserver with root privilege and have
+  it run as "canna" user by specifying "-u canna".
 
-       On System V, you may set owner and group of cannaserver to bin
-  in place of canna.
+       By default, owner and group of Canna's dictionaries are "bin".
 
        Set owner and group of your dictionaries or cannaserver to the
   parameter $(cannaOwner) and $(cannaGroup) in Canna.conf.
@@ -401,9 +344,9 @@ imake on X11R6 to compile Canna.
 4.2 Start Kana-to-kanji Conversion Server
 
        Enter the following command to start kana-to-kanji conversion
-  server.
+  server as super user.
 
-    # cannaserver
+    # cannaserver -u bin
 
        If you want to start it automatically each time the UNIX system
   is started, set to start cannaserver in the starting script(ex. 
@@ -439,9 +382,9 @@ imake on X11R6 to compile Canna.
        specified as $(DicDir) or specified in command line as follow:
 
          ex.) In case you specify "dic home directory" to
-              /usr/lib/canna/dic
+              /var/lib/canna/dic
 
-                # cannaserver /usr/lib/canna/dic
+                # cannaserver /var/lib/canna/dic
 
        Below, we show the configuration of "dic home directory".
 
@@ -459,7 +402,7 @@ imake on X11R6 to compile Canna.
   (2) Romaji-to-kana conversion rules
 
        In default, cannaserver searches romaji-to-kana conversion
-       rules in /usr/local/canna/lib/dic.  If you want to use another
+       rules in /usr/local/canna/share/dic.  If you want to use another
        file as romaji-to-kana conversion rules, you should specify the
        file in your own customization file "$HOME/.canna", the full
        path must be given.
@@ -483,31 +426,11 @@ imake on X11R6 to compile Canna.
   dictionaries to your own directories.  And, specify owner and group
   of cannaserver to your own.  For example, as follows:
 
-                cannaBinDir = /home/kon/canna/bin
-                cannaSrvDir = /home/kon/canna/bin
-                cannaManDir = /home/kon/canna/man
-                cannaLibDir = /home/kon/canna/lib
-                cannaIncDir = /home/kon/canna/include/canna
-                libCannaDir = /home/kon/canna/lib
-                DicDir = $(cannaLibDir)/dic
-                ErrDir = /home/kon/spool/canna
-                wcharDefinition = -DCANNA_WCHAR
-                Wlib =
-                JapaneseLocale = japanese
-                sharedLibExtension = so.1
+                #define InstallAsUser
+                cannaPrefix = /home/kon/canna
+		...
                 cannaOwner = kon
                 cannaGroup = user
-
-       Add a following line in Canna.conf
-
-                INCROOT = /home/kon/canna/include
-
-       Rewrite the commands, that is chown, chgrp, chmod, etc., in
-  Canna.conf as below:
-
-                CHOWN = echo
-                CHGRP = echo
-                CHMOD = echo
 
 5.2 Compilation and Installation
 
@@ -515,12 +438,11 @@ imake on X11R6 to compile Canna.
   following commands to compile and install Canna.
 
     xmkmf
-    make Makefile
     make canna
     make install
     make install.man
 
-       In case you are able to get the sources of X11R6, although
+       If you are able to get the sources of X11R6, although
   X11R6 was not installed on your machine, you should get xc/config of
   the source from X11R6, and run make in config.
 
@@ -560,214 +482,8 @@ imake on X11R6 to compile Canna.
 
 Appendix A. Notes on Each OS
 
-A.1 EWS-UX/V(CISC)
-
-       Wchar_t type is defined in stdio.h, but, in some versions,
-  WCHAR_T is not defined.  In this occasion, rewrite stdio.h as
-  following:
-
-    #ifndef _WCHAR_T
-    #define _WCHAR_T
-    typedef unsigned short  wchar;
-    typedef unsigned short  wchar_t;
-    #endif
-
-       If you hesitate to rewrite /usr/include/stdio.h, first, run
-  from 1. to 2. (3).  Next, copy the file in top directory of Canna,
-  rewrite the file and continue compilation from 2. (4).
-
-A.2 FT-UX/V
-
-       There will be some warning messages to compile with -Xc.  It
-  occur in stdio.h and sys/byteorder.h.  If you want to suppress the
-  warning message, you may rewrite the header file.
-
-A.3 SunOS
-
-  * Without JLE
-
-      Rewrite the definition of wchar_t in /usr/include/sys/stdtypes.h
-      as following.
-
-        #ifndef _WCHAR_T
-        #define _WCHAR_T
-        typedef	unsigned short	wchar_t; /* big enough for biggest char set */
-        #endif
-
-      wcharDefinition directive should be assigned as -DCANNA_WCHAR in
-      Canna.conf.
-
-      If you hesitate to rewrite /usr/include/stdtypes.h, first, run
-      from 1. to 2. (3).  Next, copy the file in top directory of
-      Canna, rewrite the file and continue compilation from 2. (4).
-
-  * In case using shared object
-
-      In this case, specify two revisions, major revision and minor
-      revision, to $(cannaDsoRev) in Canna.conf as following.
-
-        cannaDsoRev=1.1
-
-A.4 SONY NEWS
-
-       In locale of Japanese, you can change code from SJIS to EUC or
-  the other way around.  Canna have some character of EUC in sources,
-  so enter the following lines (that is in case of csh) when compile
-  Canna on NEWS, and then compile Canna.
-
-    % setenv LANG ja_JP.EUC
-    % stty euc sys
- 
-A.5 HP-UX (This discription is originally written by Takashi Matsuzawa.)
-
-       When you use shared libraries, the libraries are searched by
-  the path name which specified at time linked objects.  For example,
-  you want to search libcanna.sl as /usr/local/lib/libcanna.so, put
-  libcanna.sl in /usr/local/lib and link it.  Because of this, we
-  recommend to install Canna as follows:
-
-    (1) Specify UseInstalledLibCanna NO in Canna.conf
-    (2) % make canna
-    (3) % make install
-    (4) Specify UseInstalledLibCanna YES in Canna.conf
-    (5) % make canna
-    (6) % make install
-
-       Now, imake is not installed on HP-UX.  The configuration file
-  to make shared library for HP-UX is not included on X11R5 which
-  distributed by MIT.  For these, see below ftp site.
-
-    hpcvaaz.cv.hp.com [15.255.72.15] ~ftp/pub/MitX11R5
-
-A.6 OS Based on FreeBSD
-
-       Currently, wchar_t is defined as below in stddef.h and stdlib.h
-  on FreeBSD 2.1.5R.
-
-     #ifdef	_BSD_WCHAR_T_
-     #ifndef _ANSI_SOURCE
-     typedef	_BSD_WCHAR_T_	rune_t;
-     #endif
-     typedef	_BSD_WCHAR_T_	wchar_t;
-     #undef	_BSD_WCHAR_T_
-     #endif
-
-       Change the above definition as following in stddef.h and
-  stdlib.h
-
-     #ifdef	_BSD_WCHAR_T_
-     #ifndef _ANSI_SOURCE
-     typedef	_BSD_WCHAR_T_	rune_t;
-     #endif
-     #ifndef    _WCHAR_T
-     #define    _WCHAR_T
-     typedef	_BSD_WCHAR_T_	wchar_t;
-     #endif
-     #undef	_BSD_WCHAR_T_
-     #endif
-
-       If you hesitate to rewrite /usr/include/stddef.h, first, run
-  from 1. to 2. (3).  Next, copy the file in top directory of Canna,
-  rewrite the file and continue compilation from 2. (4).
-
-       When you use ccustom on OS based on 386BSD, see
-  ccustom/README.386. (Sorry, README.386 is in Japanese.)
-
-A.7 Definition of wcharDefinition on Next(This discription is
-  originally written by Hironobu.)
-
-  1) NeXTSTEP 3.x(J)
-
-     Define wcharDefinition in Canna.conf as following:
-
-       wcharDefinition = -DCANNA_WCHAR -DWCHAR16
-
-
-  2) NeXTSTEP 3.0J
-
-       In this case, the definition of wchar_t conflict with the
-  definition in stddef.h.  Because of this reason, apply the next
-  patch for /NextDeveloper/Headers/ansi/m68k/stddef.h on NeXTSTEP
-  3.0J.
-
-------------( cut here )----------------
-14a15,16
-> #ifndef _WCHAR_T
-> #define _WCHAR_T
-15a18
-> #endif
--------------( end )----------------
-
-     # cd /NextDeveloper/Headers/ansi/m68k
-     # patch stddef.h < /tmp/stddef.h.patch
-
-  3) Specification of /lib/cpp
-
-       You cannot install the following commands correctly, because of
-  the specification of lib/cpp on NeXTSTEP.
-
-	cannakill
-	dpbindic
-	mkromdic 
-	mkbindic
-
-       You try one of following ways:
-
-         - Get the cpp command from C Compiler source code of gnu.
-         - Copy the cpp command from another machine.
-         - Use the cpp command on another machine by rsh.
-         
-       Ex.) In case cannakill --- Use cccp on GNU Emacs(Notice1)
-
-         NeXT> cd cmd
-         NeXT> make clean
-         NeXT> make CPP="/usr/local/bin/cccp"
-
-   (Notice1) When you use cccp on Emacs, the following string is
-             remained in the top of each files.
-
-               /**/ 
-
-             Please delete this string by using an editor.
-
-A.8 AIX (This discription is originally written by Tomotake Furuhata.)
-
-       Imake is included in X11dev.src of the installation tape for
-  operation system.  You need which imake included this tape or MIT of
-  R5 or R6.
-
-A.9 In case you specify "#define X_WCHAR" in X11/Xosdf.h or run cc
-  with -DNOSTDHDRS
-
-       In these case, when you include Xlib.h, wchar_t type is defined
-  in Xlib.h.  Wchar_t type is defined as following in the original
-  Xlib.h on X11R6. 
-
-    #ifndef X_WCHAR
-    #include <stddef.h>
-    #else
-    /* replace this with #include or typedef appropriate for your system */
-    typedef unsigned long wchar_t;
-    #endif
-
-       Replace typedef appropriate for your system according to above
-  comment line, or rewrite as following in Xlib.h.
-
-    #ifndef X_WCHAR
-    #include <stddef.h>
-    #else
-    #ifndef _WCHAR_T
-    #define _WCHAR_T
-    typedef unsigned long wchar_t;
-    #endif
-    #endif
-
-       If you hesitate to rewrite /usr/include/X11/Xlib.h on your
-  system, first, run from 1. to 2. (3).  Next, copy the file in top
-  directory of Canna, rewrite the file and continue compilation from
-  2. (4).
-
-A.10 OS/2 (This discription is originally written by Hiroshi Ueno.)
+A.1 OS/2 (This discription is originally written by Hiroshi Ueno.)
+    (This may be out-of-date.)
 
    1) You need emx 0.9c or later to compile Canna.  For emx 0.9c, see
       the following ftp site.
@@ -854,4 +570,4 @@ That's all.
  * PERFORMANCE OF THIS SOFTWARE. 
  */
 
-($Id: INSTALL,v 1.3.2.4 2003/09/12 05:00:46 aida_s Exp $)
+($Id: INSTALL,v 1.8 2003/09/25 15:24:31 aida_s Exp $)

@@ -21,19 +21,21 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: parse.c,v 1.1.1.1.2.1 2003/01/15 13:42:37 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: parse.c,v 1.4 2003/09/17 08:50:53 aida_s Exp $";
 #endif /* lint */
 
 #include "canna.h"
 
-#ifndef WIN
-#define CANNA_USE_LISP_CUSTOMIZE_FILE
-#endif
-
-#ifdef CANNA_USE_LISP_CUSTOMIZE_FILE /* Continues far away to almost bottom */
-
 #include <stdio.h>
 #include <fcntl.h>
+
+/*********************************************************************
+ *                      wchar_t replace begin                        *
+ *********************************************************************/
+#ifdef wchar_t
+# error "wchar_t is already defined"
+#endif
+#define wchar_t cannawc
 
 extern char *CANNA_initfilename;
 
@@ -67,21 +69,10 @@ extern YYparse_by_rcfilename();
   */
 
 #define NAMEBUFSIZE 1024
-#ifdef WIN
-#define RCFILENAME  ".can"
-#else
 #define RCFILENAME  ".canna"
-#endif
 #define FILEENVNAME "CANNAFILE"
 #define HOSTENVNAME "CANNAHOST"
 
-#if 0
-#ifdef WIN
-#define OBSOLETE_RCFILENAME  ".irh"
-#else
-#define OBSOLETE_RCFILENAME  ".iroha"
-#endif
-#endif
 #define OBSOLETE_FILEENVNAME "IROHAFILE"
 #define OBSOLETE_HOSTENVNAME "IROHAHOST"
 
@@ -125,7 +116,7 @@ parse()
   int home_canna_exist = 0;
   extern char *initFileSpecified;
   extern int auto_define;
-#ifndef WIN
+#ifndef USE_MALLOC_FOR_BIG_ARRAY
   char buf[256];
 #else
   char *buf = malloc(256);
@@ -136,11 +127,9 @@ parse()
 
   if (clisp_init() == 0) {
 
-#ifndef WIN
     if (ckverbose) {
       printf("カスタマイズファイルは読み込みません。\n");
     }
-#endif
 
     addWarningMesg("\245\341\245\342\245\352\244\254\302\255\244\352\244\336"
 	"\244\273\244\363\241\243\245\253\245\271\245\277\245\336\245\244"
@@ -157,11 +146,9 @@ parse()
       goto quitparse;
     }
     else {
-#ifndef WIN
       if (ckverbose) {
 	printf("カスタマイズファイルは読み込みません。\n");
       }
-#endif
 
       sprintf(buf, "\273\330\304\352\244\265\244\354\244\277\245\253\245\271"
 	"\245\277\245\336\245\244\245\272\245\325\245\241\245\244\245\353"
@@ -227,7 +214,6 @@ parse()
 
       /* $HOME/.canna-DISPLAY */
 
-#ifndef WIN
       p = getenv("DISPLAY");
       if (p) {
 	char display[NAMEBUFSIZE];
@@ -252,7 +238,6 @@ parse()
 	  make_initfilename();
 	}	  
       }
-#endif
     }
 #ifdef OBSOLETE_RCFILENAME
     else { /* .canna が存在していない */
@@ -304,7 +289,6 @@ parse()
     strcat(CANNA_rcfilename + n, RCFILENAME);
     if (YYparse_by_rcfilename(CANNA_rcfilename)) {
       make_initfilename();
-#ifndef WIN
       p = getenv("DISPLAY");
       if (p) {
 	char display[NAMEBUFSIZE];
@@ -328,16 +312,13 @@ parse()
 	  make_initfilename();
 	}
       }
-#endif
     }
     else {
-#ifndef WIN
       if (ckverbose) {
 	printf("カスタマイズファイルは読み込みません。\n");
       }
-#endif
       sprintf(buf, 
-#ifndef WIN
+#ifndef CODED_MESSAGE
       "システムのカスタマイズファイル %s が存在しません。",
 #else
       "\245\267\245\271\245\306\245\340\244\316\245\253\245\271"
@@ -356,13 +337,12 @@ parse()
   fit_initfilename();
   clisp_fin();
 
-#ifdef WIN
+#ifdef USE_MALLOC_FOR_BIG_ARRAY
   (void)free(buf);
 #endif
 }
 
 
-#ifndef WIN
 static
 DISPLAY_to_hostname(name, buf, bufsize)
 char *name, *buf;
@@ -386,323 +366,11 @@ int bufsize;
     }
   }
 }
+
+#ifndef wchar_t
+# error "wchar_t is already undefined"
 #endif
-
-#else /* !CANNA_USE_LISP_CUSTOMIZE_FILE */
-
-/*
-
-   Providing three functions to parse user configurations from the
-   registry of Windows 95
-
-  parse:
-    Parse the registration to get the configuration.
-
-  parse_string:
-    This should be a void function in Windows 95.  This function originally
-    reads a string to configure some kind of customization even after
-    initialization process has finished.
-
-  clisp_main:
-    This should be a void function in Windows 95.  This function originally
-    provides an configuration interpreter to user.
-
- */
-
-#include "cannacnf.h"
-
-static void adddic pro((char *, int, char *));
-
-static void
-adddic(char *str, int dictype, char *con)
-{
-  extern struct dicname *kanjidicnames;
-  struct dicname *kanjidicname;
-  extern char *kataautodic;
-  extern auto_define;
-#ifdef HIRAGANAAUTO
-  extern char *hiraautodic;
-#endif
-
-  kanjidicname  = (struct dicname *)malloc(sizeof(struct dicname));
-  if (kanjidicname) {
-    kanjidicname->name = malloc(strlen(str) + 1);
-    if (kanjidicname->name) {
-      strcpy(kanjidicname->name , str);
-      kanjidicname->dictype = dictype;
-      kanjidicname->dicflag = DIC_NOT_MOUNTED;
-      kanjidicname->next = kanjidicnames;
-      kanjidicnames = kanjidicname;
-
-      if (kanjidicname->dictype == DIC_KATAKANA) {
-	auto_define = 1;
-	if (!kataautodic) { /* only the first one is valid */
-	  kataautodic = kanjidicname->name;
-	}
-      }
-#ifdef HIRAGANAAUTO
-      else if (kanjidicname->dictype == DIC_HIRAGANA) {
-	auto_define = 1;
-	if (!hiraautodic) { /* only the first one is valid */
-	  hiraautodic = kanjidicname->name;
-	}
-      }
-#endif
-      return;
-    }
-    free((char *)kanjidicname);
-  }
-}
-
-static void
-addphonodic(char *dic, char *con)
-{
-  extern char *RomkanaTable;
-
-  RomkanaTable = strdup(dic);
-}
-
-/* strncpy which does not terminate at NULL */
-
-static char *
-Strncpy(x, y, len)
-char *x, *y;
-int len;
-{
-  int i;
-
-  for (i = 0 ; i < len ; i++) {
-    x[i] = y[i];
-  }
-  return x;
-}
-
-extern changeKeyfunc(int, int, int, unsigned char *, unsigned char *);
-extern changeKeyfuncOfAll(int, int, unsigned char *, unsigned char *);
-
-static int
-  setkey pro((unsigned mode,
-	      unsigned char *keys, int keylen,
-	      unsigned char *funcs, int funclen,
-	      char *con));
-
-static int
-setkey(mode, keys, keylen, funcs, funclen, con)
-unsigned mode;
-unsigned char *keys;
-int keylen;
-unsigned char *funcs;
-int funclen;
-char *con;
-{
-  int func;
-  unsigned char *buf;
-  int retval = -1;
-
-  buf = (unsigned char *)malloc(256);
-  if (buf) {
-    Strncpy((char *)buf, funcs, funclen);
-    funcs[funclen] = 255;
-    if (keylen > 1) {
-      func = CANNA_FN_UseOtherKeymap;
-    }
-    else if (funclen > 1) {
-      func = CANNA_FN_FuncSequence;
-    }
-    else {
-      func = funcs[0];
-    }
-    if (mode == 255) { /* global */
-      retval = changeKeyfuncOfAll((int)keys[0], func, funcs, keys);
-    }
-    else {
-      retval = changeKeyfunc(mode, (int)keys[0], func, funcs, keys);
-    }
-    free((char *)buf);
-  }
-  return retval;
-}
-
-static void
-defsymbol(int ncols, int nrows, int total,
-	  unsigned char *keys, unsigned char *xkeys,
-	  wchar_t *cands, char *con)
-{
-  wchar_t *pc = cands, *ps, *mcand, **acand, *pt;
-  unsigned char *pk = keys, *px = xkeys;
-  int i, j, k, group;
-  extern int nkeysup;
-  extern keySupplement keysup[];
-
-  if (nkeysup < MAX_KEY_SUP) {
-    group = nkeysup;
-    for (i = 0 ; i < nrows ; i++, pk++) {
-      for (ps = pc, j = 0 ; j < ncols ; j++) {
-	while (*pc++);
-      }
-      mcand = (wchar_t *)malloc(sizeof(wchar_t) * ((pc - ps) + 1));
-      if (mcand) {
-	acand = (wchar_t **)malloc(sizeof(wchar_t *) * (ncols + 1));
-	if (acand) {
-	  wchar_t *psrc, *epp, *pdst;
-	  for (psrc = ps, pdst = mcand, epp = pdst + (pc - ps); pdst < epp ;) {
-	    *pdst++ = *psrc++;
-	  }
-	  *pdst = (wchar_t)0;
-	  for (k = 0, pt = mcand ; k < ncols ; k++) {
-	    acand[k] = pt;
-	    while (*pt++);
-	  }
-	  acand[k] = 0;
-
-	  keysup[nkeysup].key = *pk;
-	  keysup[nkeysup].xkey = xkeys ? *px++ : *pk;
-	  keysup[nkeysup].groupid = group;
-	  keysup[nkeysup].ncand = ncols;
-	  keysup[nkeysup].cand = acand;
-	  keysup[nkeysup].fullword = mcand;
-	  nkeysup++;
-	  continue;
-	}
-	free((char *)mcand);
-      }
-    }
-  }
-}  
-
-static void
-defmode(int mode, char *display, char *romdic,
-	unsigned char *funcs, int nfuncs, int sym)
-{
-  extraFunc *extrafunc = (extraFunc *)0;
-  unsigned char *p, *ep;
-
-  extrafunc = (extraFunc *)malloc(sizeof(extraFunc));
-  if (extrafunc) {
-    extrafunc->fnum = mode;
-    extrafunc->display_name = (wchar_t *)NULL;
-    extrafunc->u.modeptr = (newmode *)malloc(sizeof(newmode));
-    if (extrafunc->u.modeptr) {
-      KanjiMode kanjimode;
-
-      extrafunc->u.modeptr->romaji_table = (char *)0;
-      extrafunc->u.modeptr->romdic = (struct RkRxDic *)0;
-      extrafunc->u.modeptr->romdic_owner = 0;
-      extrafunc->u.modeptr->flags = CANNA_YOMI_IGNORE_USERSYMBOLS;
-      extrafunc->u.modeptr->emode = (KanjiMode)0;
-      kanjimode = (KanjiMode)malloc(sizeof(KanjiModeRec));
-      if (kanjimode) {
-	int searchfunc();
-	extern KanjiModeRec empty_mode;
-	extern BYTE *emptymap;
-	long f;
-
-	kanjimode->func = searchfunc;
-	kanjimode->keytbl = emptymap;
-	kanjimode->flags = 
-	  CANNA_KANJIMODE_TABLE_SHARED | CANNA_KANJIMODE_EMPTY_MODE;
-	kanjimode->ftbl = empty_mode.ftbl;
-	extrafunc->u.modeptr->emode = kanjimode;
-
-	if (sym) {
-	  extrafunc->u.modeptr->flags &= ~CANNA_YOMI_IGNORE_USERSYMBOLS;
-	}
-
-	if (display) {
-	  extrafunc->display_name = WString(display);
-	  if (!extrafunc->display_name) {
-	    goto defmode_error;
-	  }
-	}
-
-	f = extrafunc->u.modeptr->flags;
-
-	for (p = funcs, ep = funcs + nfuncs ; p < ep ; p++) {
-	  switch (*p) {
-	  case CANNA_FN_Kakutei:
-	    f |= CANNA_YOMI_KAKUTEI;
-	    break;
-	  case CANNA_FN_Henkan:
-	    f |= CANNA_YOMI_HENKAN;
-	    break;
-	  case CANNA_FN_Zenkaku:
-	    f |= CANNA_YOMI_ZENKAKU;
-	    break;
-	  case CANNA_FN_Hankaku:
-	    f |= CANNA_YOMI_HANKAKU;
-	    break;
-	  case CANNA_FN_Hiragana:
-	    f |= CANNA_YOMI_HIRAGANA;
-	    break;
-	  case CANNA_FN_Katakana:
-	    f |= CANNA_YOMI_KATAKANA;
-	    break;
-	  case CANNA_FN_Romaji:
-	    f |= CANNA_YOMI_ROMAJI;
-	    break;
-	    /* 以下はそのうちやろう */
-	  case CANNA_FN_ToUpper:
-	    break;
-	  case CANNA_FN_Capitalize:
-	    break;
-	  case CANNA_FN_ToLower:
-	    break;
-	  default:
-	    goto defmode_error;
-	  }
-	}
-	return;
-
-      defmode_error:
-	(void)free((char *)kanjimode);
-      }
-      (void)free((char *)extrafunc->u.modeptr);
-    }
-    (void)free((char *)extrafunc);
-  }
-}
-
-#define CONFIGLIB "cannacnf.dll"
-#define DLLDIR "/bin/"
-
-void parse(void)
-{
-  extern jrUserInfoStruct *uinfo;
-  struct libconf conf;
-  extern struct CannaConfig cannaconf;
-  char *buf;
-
-  buf = malloc(256); /* 256は汚いなあ */
-  if (buf) {
-    if (uinfo) {
-      strcpy(buf, uinfo->topdir);
-      strcat(buf, DLLDIR);
-    }
-    else {
-      buf[0] = '\0';
-    }
-    strcat(buf, CONFIGLIB);
-
-    conf.cf = &cannaconf;
-    conf.dicfn = adddic;
-    conf.romfn = addphonodic;
-    conf.keyfn = setkey;
-    conf.symfn = defsymbol;
-
-    CannaGetConfigure(buf, (char *)0, &conf, NULL, NULL, NULL);
-    free(buf);
-  }
-}
-
-int parse_string(char *str)
-/* ARGSUSED */
-{
-  return 0;
-}
-
-void clisp_main(void)
-{
-  /* Nothing to do for Microsoft Windows */
-}
-
-#endif /* !CANNA_USE_LISP_CUSTOMIZE_FILE */
+#undef wchar_t
+/*********************************************************************
+ *                       wchar_t replace end                         *
+ *********************************************************************/

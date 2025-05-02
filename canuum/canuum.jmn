@@ -1,4 +1,4 @@
-.\" $Id: canuum.jmn,v 1.1.1.1.2.1 2003/01/11 17:53:57 aida_s Exp $
+.\" $Id: canuum.jmn,v 1.2 2002/12/21 14:41:42 aida_s Exp $
 .nr X 0
 .if \nX=0 .ds X} canuum 1 "日本語機能ユーティリティ" "\&"
 .TH \*(X}

@@ -44,4 +44,4 @@ standard output.
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 .\" PERFORMANCE OF THIS SOFTWARE. 
 .\"
-.\" $Id: splitwd.man,v 1.1.1.1.2.1 2003/01/15 13:42:37 aida_s Exp $
+.\" $Id: splitwd.man,v 1.2 2003/01/15 13:41:02 aida_s Exp $

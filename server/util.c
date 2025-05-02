@@ -21,19 +21,21 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "$Id: util.c,v 1.3.2.2 2002/12/02 00:35:39 aida_s Exp $";
+static char rcs_id[] = "$Id: util.c,v 1.8 2003/09/21 12:56:29 aida_s Exp $";
 #endif
 
+#include "server.h"
+#if 1 /* unused */
 #include "widedef.h"
-#include "IR.h"
+#endif
 
-int
+size_t
 ushort2euc(src, srclen, dest, destlen)
-Ushort *src;
+const Ushort *src;
 char *dest;
-int srclen, destlen;
+size_t srclen, destlen;
 {
-  register int i, j;
+  register size_t i, j;
   register Ushort wc;
 
   for (i = 0, j = 0 ; i < srclen && j + 2 < destlen ; i++) {
@@ -65,13 +67,13 @@ int srclen, destlen;
   return j;
 }
 
-int
+size_t
 euc2ushort(src, srclen, dest, destlen)
-char *src;
+const char *src;
 Ushort *dest;
-int srclen, destlen;
+size_t srclen, destlen;
 {
-  register int i, j;
+  register size_t i, j;
   register unsigned ec;
 
   for (i = 0, j = 0 ; i < srclen && j + 1 < destlen ; i++) {
@@ -98,17 +100,18 @@ int srclen, destlen;
       dest[j++] = (Ushort)ec;
     }
   }
-  dest[j] = (wchar_t)0;
+  dest[j] = (Ushort)0;
   return j;
 }
 
-int
+#if 1 /* unused */
+size_t
 wchar2ushort32(src, srclen, dest, destlen)
-register wchar_t *src;
+register const wchar_t *src;
 register Ushort *dest;
-int srclen, destlen;
+size_t srclen, destlen;
 {
-  register int i;
+  register size_t i;
 
   for (i = 0 ; i < srclen && i + 1 < destlen ; i++) {
     switch ((unsigned)(*src & 0xf0000000) >> 28) {
@@ -140,13 +143,13 @@ int srclen, destlen;
   return i;
 }
 
-int
+size_t
 ushort2wchar32(src, srclen, dest, destlen)
-register Ushort *src;
+register const Ushort *src;
 register wchar_t *dest;
-int srclen, destlen;
+size_t srclen, destlen;
 {
-  register int i;
+  register size_t i;
 
   for (i = 0 ; i < srclen && i + 1 < destlen ; i++) {
     switch (*src & 0x8080) {
@@ -176,13 +179,13 @@ int srclen, destlen;
   return i;
 }
 
-int
+size_t
 wchar2ushort16(src, srclen, dest, destlen)
-register wchar_t *src;
+register const wchar_t *src;
 register Ushort *dest;
-int srclen, destlen;
+size_t srclen, destlen;
 {
-  register int i;
+  register size_t i;
 
   for (i = 0 ; i < srclen && i + 1 < destlen ; i++)
       *dest++ = (Ushort)*src++;
@@ -191,13 +194,13 @@ int srclen, destlen;
   return i;
 }
 
-int
+size_t
 ushort2wchar16(src, srclen, dest, destlen)
-register Ushort *src;
+register const Ushort *src;
 register wchar_t *dest;
-int srclen, destlen;
+size_t srclen, destlen;
 {
-  register int i;
+  register size_t i;
 
   for (i = 0 ; i < srclen && i + 1 < destlen ; i++)
       *dest++ = (wchar_t)*src++;
@@ -205,19 +208,20 @@ int srclen, destlen;
   *dest = (wchar_t)0;
   return i;
 }
+#endif /* unused */
 
-int
+size_t
 ushortstrlen(ws)
-Ushort *ws;
+const Ushort *ws;
 {
-  int res = 0;
+  size_t res = 0;
   while (*ws++) {
     res++;
   }
   return res;
 }
 
-const Ushort *
+Ushort *
 ushortmemchr(ws, ch, len)
 const Ushort *ws;
 int ch;
@@ -226,27 +230,29 @@ size_t len;
   const Ushort *p, *end;
   for (p = ws, end = ws + len; p < end; ++p)
       if (*p == (Ushort)ch)
-	  return p;
+	  return (Ushort *)p;
   return NULL;
 }
 
-int
+size_t
 ushortstrcpy(wd, ws)
-Ushort *wd, *ws;
+Ushort *wd;
+const Ushort *ws;
 {
-  register int res = 0;
+  register size_t res = 0;
   while ((*wd++ = *ws++) != (Ushort)0) {
     res++;
   }
   return res;
 }
 
-int
+size_t
 ushortstrncpy(wd, ws, n)
-Ushort *wd, *ws;
-int n;
+Ushort *wd;
+const Ushort *ws;
+size_t n;
 {
-  register int res = 0;
+  register size_t res = 0;
 
   while (res < n && (*wd = *ws) != (Ushort)0) {
     wd++; ws++; res++;
@@ -269,9 +275,10 @@ int n;
 
  */
 
+int
 WidenClientContext(cl, n)
 ClientPtr cl;
-int n;
+size_t n;
 {
   int *new, *old, i;
 
@@ -298,6 +305,7 @@ int n;
     0 -- ¼ºÇÔ
  */
 
+#define N_ADD_CONTEXTS	    4
 int
 set_cxt(cl, n)
 ClientPtr cl;

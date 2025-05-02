@@ -1,4 +1,4 @@
-XCOMM $Id: Imakefile,v 1.2 2002/10/20 14:29:58 aida_s Exp $
+XCOMM $Id: Imakefile,v 1.4 2003/09/27 06:18:39 aida_s Exp $
 
 #ifdef __EMX__
       CANNAROOT = ..\\..\\..
@@ -19,7 +19,7 @@ SingleProgramTarget(pod,pod.o,,)
 DependTarget()
 LintTarget()
 
-iroha.t: $(PUBDICS) pod
+iroha.t: $(PUBDICS) ProgramTargetName(pod)
 	cat $(PUBDICS) | ./pod - -p -i -2 > iroha.spl
 	$(MERGE) < iroha.spl > iroha.t
 	$(RM) iroha.spl

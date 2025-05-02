@@ -1,30 +1,6 @@
-/* $Id: Imakefile,v 1.2.2.4 2003/09/17 01:47:02 aida_s Exp $ */
+/* $Id: Imakefile,v 1.8 2003/09/25 06:30:21 aida_s Exp $ */
 #include "../../Canna.conf"
-
-       CANNAROOT = ../..
-        CANNASRC = $(CANNAROOT)/lib/canna
-          RKCSRC = $(CANNAROOT)/lib/RKC
-
-#ifdef engineSwitch
-     ENGINE_DEFS = -DENGINE_SWITCH
-#endif
-
-#if defined(engineSwitch)
-       DEPRKCLIB = $(RKCSRC)/libRKC.so.$(cannaDsoRev)
-          RKCLIB = -L$(RKCSRC) -lRKC
-#else /* !defined(engineSwitch) */
-#if DoSharedLib
-       DEPRKCLIB = $(DEPCANNALIB)
-          RKCLIB = $(CANNALIB)
-#else /* !HasSharedLibraries */
-#ifdef __EMX__
-       DEPRKCLIB = $(RKCSRC)/RKC.a
-#else
-       DEPRKCLIB = $(RKCSRC)/libRKC.a
-#endif
-          RKCLIB = -L$(RKCSRC) -lRKC
-#endif /* !HasSharedLibraries */
-#endif /* !defined(engineSwitch) */
+#include "../cmd.tmpl"
 
           DEFINES = $(SIGNAL_DEFINES) $(ENGINE_DEFS)
          INCLUDES = -I$(CANNAROOT)/include
@@ -32,12 +8,8 @@
              OBJS = can.o rutil.o RKdelline.o
            TARGET = catdic
 
-#if defined(__EMX__) || defined(__CYGWIN32__)
-AllTarget($(TARGET).exe)
-#else
-AllTarget($(TARGET))
-#endif
-NormalProgramTarget($(TARGET),$(OBJS),$(DEPRKCLIB),$(RKCLIB),)
+AllTarget(ProgramTargetName($(TARGET)))
+NormalProgramTarget($(TARGET),$(OBJS),$(DEPRKCLIB) $(DEPRKINDEPLIB),$(RKCLIB) $(RKINDEPLIB),)
 InstallProgram($(TARGET),$(cannaBinDir))
 InstallManPage(catdic,$(cannaManDir))
 InstallManPage(chmoddic,$(cannaManDir))
@@ -60,48 +32,20 @@ LintTarget()
 # define cannakillLink(base) $(cannaBinDir)/base
 #endif
 
-#if defined(__EMX__) || defined(__CYGWIN32__)
+#define CannaInstalledProgram(prog) $(DESTDIR)$(cannaBinDir)/ProgramTargetName(prog)
+
+INSTALLED_CATDIC_ALIASES = \
+	CannaInstalledProgram(cpdic) \
+	CannaInstalledProgram(lsdic) \
+	CannaInstalledProgram(mkdic) \
+	CannaInstalledProgram(mvdic) \
+	CannaInstalledProgram(rmdic) \
+	CannaInstalledProgram(syncdic) \
+	CannaInstalledProgram(chmoddic) \
+	CannaInstalledProgram(addwords) \
+	CannaInstalledProgram(delwords) \
+	$(DESTDIR)cannakillDir/ProgramTargetName(cannakill)
+
 install::
-	$(RM) $(DESTDIR)$(cannaBinDir)/cpdic.exe
-	$(RM) $(DESTDIR)$(cannaBinDir)/lsdic.exe
-	$(RM) $(DESTDIR)$(cannaBinDir)/mkdic.exe
-	$(RM) $(DESTDIR)$(cannaBinDir)/mvdic.exe
-	$(RM) $(DESTDIR)$(cannaBinDir)/rmdic.exe
-	$(RM) $(DESTDIR)$(cannaBinDir)/syncdic.exe
-	$(RM) $(DESTDIR)$(cannaBinDir)/chmoddic.exe
-	$(RM) $(DESTDIR)$(cannaBinDir)/addwords.exe
-	$(RM) $(DESTDIR)$(cannaBinDir)/delwords.exe
-	$(RM) $(DESTDIR)cannakillDir/cannakill.exe
-	$(LN) catdic.exe $(DESTDIR)$(cannaBinDir)/cpdic.exe
-	$(LN) catdic.exe $(DESTDIR)$(cannaBinDir)/lsdic.exe
-	$(LN) catdic.exe $(DESTDIR)$(cannaBinDir)/mkdic.exe
-	$(LN) catdic.exe $(DESTDIR)$(cannaBinDir)/mvdic.exe
-	$(LN) catdic.exe $(DESTDIR)$(cannaBinDir)/rmdic.exe
-	$(LN) catdic.exe $(DESTDIR)$(cannaBinDir)/syncdic.exe
-	$(LN) catdic.exe $(DESTDIR)$(cannaBinDir)/chmoddic.exe
-	$(LN) catdic.exe $(DESTDIR)$(cannaBinDir)/addwords.exe
-	$(LN) catdic.exe $(DESTDIR)$(cannaBinDir)/delwords.exe
-	$(LN) cannakillLink(catdic.exe) $(DESTDIR)cannakillDir/cannakill.exe
-#else
-install::
-	$(RM) $(DESTDIR)$(cannaBinDir)/cpdic
-	$(RM) $(DESTDIR)$(cannaBinDir)/lsdic
-	$(RM) $(DESTDIR)$(cannaBinDir)/mkdic
-	$(RM) $(DESTDIR)$(cannaBinDir)/mvdic
-	$(RM) $(DESTDIR)$(cannaBinDir)/rmdic
-	$(RM) $(DESTDIR)$(cannaBinDir)/syncdic
-	$(RM) $(DESTDIR)$(cannaBinDir)/chmoddic
-	$(RM) $(DESTDIR)$(cannaBinDir)/addwords
-	$(RM) $(DESTDIR)$(cannaBinDir)/delwords
-	$(RM) $(DESTDIR)cannakillDir/cannakill
-	$(LN) catdic $(DESTDIR)$(cannaBinDir)/cpdic
-	$(LN) catdic $(DESTDIR)$(cannaBinDir)/lsdic
-	$(LN) catdic $(DESTDIR)$(cannaBinDir)/mkdic
-	$(LN) catdic $(DESTDIR)$(cannaBinDir)/mvdic
-	$(LN) catdic $(DESTDIR)$(cannaBinDir)/rmdic
-	$(LN) catdic $(DESTDIR)$(cannaBinDir)/syncdic
-	$(LN) catdic $(DESTDIR)$(cannaBinDir)/chmoddic
-	$(LN) catdic $(DESTDIR)$(cannaBinDir)/addwords
-	$(LN) catdic $(DESTDIR)$(cannaBinDir)/delwords
-	$(LN) cannakillLink(catdic) $(DESTDIR)cannakillDir/cannakill
-#endif
+	$(RM) $(INSTALLED_CATDIC_ALIASES)
+	for p in $(INSTALLED_CATDIC_ALIASES); do $(LN) catdic $$p; done

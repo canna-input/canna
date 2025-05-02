@@ -1,0 +1,42 @@
+/* $Id: cmd.tmpl,v 1.4 2003/09/25 06:30:21 aida_s Exp $ */
+
+       CANNAROOT = ../..
+        CANNASRC = $(CANNAROOT)/lib/canna
+          RKCSRC = $(CANNAROOT)/lib/RKC
+
+#ifdef engineSwitch
+     ENGINE_DEFS = -DENGINE_SWITCH
+#endif
+
+          DEFINES = $(CMDSUBDEFINES) $(SIGNAL_DEFINES) $(ENGINE_DEFS) $(CANNA_DEFINES)
+#ifdef WantRKLib
+         INCLUDES = -I$(CANNAROOT)/include -I$(CANNAROOT)/lib/RK
+#else
+         INCLUDES = -I$(CANNAROOT)/include
+#endif
+
+#ifdef SimpleCommand
+# ifndef SrcName
+#  define SrcName TargetName
+# endif
+             SRCS = SrcName.c
+             OBJS = SrcName.o
+           TARGET = TargetName
+
+AllTarget(ProgramTargetName($(TARGET)))
+# if defined(WantRKLib)
+NormalProgramTarget($(TARGET),$(OBJS),$(DEPRKLIB) $(DEPRKINDEPLIB),$(RKLIB) $(RKINDEPLIB),)
+# elif defined(WantRKCLib)
+NormalProgramTarget($(TARGET),$(OBJS),$(DEPRKCLIB) $(DEPRKINDEPLIB),$(RKCLIB) $(RKINDEPLIB),)
+# elif defined(WantCannaLib)
+NormalProgramTarget($(TARGET),$(OBJS),$(DEPCANNALIB) $(DEPRKINDEPLIB),$(CANNALIB) $(RKINDEPLIB),)
+# else
+NormalProgramTarget($(TARGET),$(OBJS),$(DEPRKINDEPLIB),$(RKINDEPLIB),)
+# endif
+InstallProgram($(TARGET),$(cannaBinDir))
+# ifdef ManSrcName
+InstallManPageLong(ManSrcName,$(cannaManDir),$(TARGET))
+# endif
+DependTarget()
+LintTarget()
+#endif /* SimpleCommand */

@@ -77,7 +77,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: util.c,v 1.1.1.1 2002/10/19 08:27:52 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: util.c,v 1.6 2003/09/17 08:50:53 aida_s Exp $";
 #endif	/* lint */
 
 #include "canna.h"
@@ -87,16 +87,13 @@ static char rcs_id[] = "@(#) 102.1 $Id: util.c,v 1.1.1.1 2002/10/19 08:27:52 aid
 extern int errno;
 #endif
 
-#ifdef HAVE_WCHAR_OPERATION
-#include <locale.h>
-#if defined(__STDC__) || defined(SVR4)
-#include <limits.h>
+/*********************************************************************
+ *                      wchar_t replace begin                        *
+ *********************************************************************/
+#ifdef wchar_t
+# error "wchar_t is already defined"
 #endif
-#endif
-
-#ifndef MB_LEN_MAX
-#define MB_LEN_MAX 5 /* 5 も行かないだろうとは思う */
-#endif
+#define wchar_t cannawc
 
 /* arraydef
 
@@ -680,11 +677,7 @@ yomiContext yc;
   }
 }
 
-#ifdef WIN
-#define MESSBUFSIZE 128
-#else
 #define MESSBUFSIZE 256
-#endif
 
 /*
  * リバースなしのメッセージをガイドラインに表示する
@@ -894,23 +887,6 @@ uiContext d;
   return(0);
 }
 
-#ifdef WIN
-
-specialfunc(d, fn)
-uiContext d;
-int fn;
-{
-  static wchar_t fnbuf[2];
-
-  fnbuf[0] = fn;
-  d->kanji_status_return->echoStr = fnbuf;
-  d->kanji_status_return->length = 0;
-  d->kanji_status_return->info = KanjiSpecialFuncInfo | KanjiEmptyInfo;
-  return 0;
-}
-
-#endif /* WIN */
-
 #ifndef NO_EXTEND_MENU
 
 GLineNGReturnTK(d)
@@ -966,75 +942,6 @@ int n;
  * ワイドキャラクタオペレーション
  *
  */
-
-static int wchar_type; /* ワイドキャラクタのタイプ(下を見よ) */
-
-#define CANNA_WCTYPE_16 0  /* 16ビット表現 */
-#define CANNA_WCTYPE_32 1  /* 32ビット表現 */
-#define CANNA_WCTYPE_OT 99 /* その他の表現 */
-
-/*
- WCinit() -- ワイドキャラクタとしてどれが使われているかを確認する
-
-        この関数が呼び出されるまえに setlocale がなされていなければならない
- */
-
-#define TYPE16A 0x0000a4a2
-#define TYPE32A 0x30001222
-
-int
-WCinit()
-{
-#if defined(HAVE_WCHAR_OPERATION) && !defined(WIN)
-  extern int locale_insufficient;
-  wchar_t wc[24];
-  char *a = "\244\242"; /* あ */ /* 0xa4a2 */
-
-  locale_insufficient = 0;
-  if (mbstowcs(wc, a, sizeof(wc) / sizeof(wchar_t)) != 1) {
-    /* 多分 setlocale がなされていない */
-    setlocale(LC_CTYPE, "");
-    if (mbstowcs(wc, a, sizeof(wc) / sizeof(wchar_t)) != 1) {
-      setlocale(LC_CTYPE, JAPANESE_LOCALE);
-      if (mbstowcs(wc, a, sizeof(wc) / sizeof(wchar_t)) != 1) {
-	locale_insufficient = 1;
-	return -1;
-      }
-    }
-  }
-  switch (wc[0]) {
-  case TYPE16A:
-    wchar_type = CANNA_WCTYPE_16;
-    break;
-  case TYPE32A:
-    wchar_type = CANNA_WCTYPE_32;
-    break;
-  default:
-    wchar_type = CANNA_WCTYPE_OT;
-    break;
-  }
-#else /* !HAVE_WCHAR_OPERATION || WIN */
-# ifdef WCHAR16
-
-  wchar_type = CANNA_WCTYPE_16;
-
-# else /* !WCHAR16 */
-
-  if (sizeof(wchar_t) == 2) {
-    /* NOTREACHED */
-    wchar_type = CANNA_WCTYPE_16;
-  }
-  else {
-    /* NOTREACHED */
-    wchar_type = CANNA_WCTYPE_32;
-  }
-
-# endif /* !WCHAR16 */
-#endif /* !HAVE_WCHAR_OPERATION || WIN */
-
-  return 0;
-}
-
 
 int
 WStrlen(ws)
@@ -1174,25 +1081,21 @@ wchar_t wc;
 {
   static char plain[4] = {0, 2, 3, 1};
 
-  switch (wchar_type) {
-  case CANNA_WCTYPE_16:
-    switch (((unsigned long)wc) & 0x8080) {
-    case 0x0000:
-      return 0;
-    case 0x8080:
-      return 1;
-    case 0x0080:
-      return 2;
-    case 0x8000:
-      return 3;
-    }
-    break;
-  case CANNA_WCTYPE_32:
-    return plain[(((unsigned long)wc) >> 28) & 3];
-  default:
-    return 0; /* どうしよう */
+#ifdef CANNA_WCHAR16
+  switch (((unsigned long)wc) & 0x8080) {
+  case 0x0000:
+    return 0;
+  case 0x8080:
+    return 1;
+  case 0x0080:
+    return 2;
+  case 0x8000:
+    return 3;
   }
   /* NOTREACHED */
+#else /* !CANNA_WCHAR16 */
+  return plain[(((unsigned long)wc) >> 28) & 3];
+#endif /* !CANNA_WCHAR16 */
 }
 
 int
@@ -1239,7 +1142,6 @@ wchar_t wc;
   return (WWhatGPlain(wc) == 3);
 }
 
-#ifndef HAVE_WCHAR_OPERATION
 int
 CANNA_mbstowcs(dest, src, destlen)
 wchar_t *dest;
@@ -1249,7 +1151,7 @@ int destlen;
   register int i, j;
   register unsigned ec;
 
-  if (wchar_type == CANNA_WCTYPE_16) {
+#ifdef CANNA_WCHAR16
     for (i = 0, j = 0 ;
 	 (ec = (unsigned)(unsigned char)src[i]) != 0 && j < destlen ; i++) {
       if (ec & 0x80) {
@@ -1277,8 +1179,7 @@ int destlen;
     if (j < destlen)
       dest[j] = (wchar_t)0;
     return j;
-  }
-  else if (wchar_type == CANNA_WCTYPE_32) {
+#else /* !CANNA_WCHAR16 */
     for (i = 0, j = 0 ;
 	 (ec = (unsigned)(unsigned char)src[i]) != 0 && j < destlen ; i++) {
       if (ec & 0x80) {
@@ -1306,13 +1207,8 @@ int destlen;
     if (j < destlen)
       dest[j] = (wchar_t)0;
     return j;
-  }
-  else {
-    return 0;
-  }
+#endif /* !CANNA_WCHAR16 */
 }
-
-#endif /* HAVE_WCHAR_OPERATION */
 
 int
 CNvW2E(src, srclen, dest, destlen)
@@ -1322,24 +1218,7 @@ int srclen, destlen;
 {
   register int i, j;
 
-#ifdef HAVE_WCHAR_OPERATION
-  register char *p, *ep;
-
-  for (p = dest, ep = dest + destlen, i = 0 ;
-       i < srclen && p + MB_LEN_MAX < ep ; i++) {
-    j = wctomb(p, src[i]);
-    if (j < 0) {
-      return 0; /* 昔は -1 だったが、誰もチェックないので安全のため 0 にした */
-    }
-    p += j;
-  }
-  if (p < ep) {
-    *p = (unsigned char)'\0';
-  }
-  return p - dest;
-#else /* !HAVE_WCHAR_OPERATION */
-  switch (wchar_type) {
-  case CANNA_WCTYPE_16:
+#ifdef CANNA_WCHAR16
     for (i = 0, j = 0 ; i < srclen && j + 2 < destlen ; i++) {
       wchar_t wc = src[i];
       switch (wc & 0x8080) {
@@ -1367,9 +1246,7 @@ int srclen, destlen;
     }
     dest[j] = (char)0;
     return j;
-#ifndef WCHAR16
-  case CANNA_WCTYPE_32:
-  default:
+#else /* !CANNA_WCHAR16 */
     for (i = 0, j = 0 ; i < srclen && j + 2 < destlen ; i++) {
       wchar_t wc = src[i];
       switch (wc >> 28) {
@@ -1397,12 +1274,9 @@ int srclen, destlen;
     }
     dest[j] = (char)0;
     return j;
-#endif /* WCHAR16 */
-  }
-#endif /* !HAVE_WCHAR_OPERATION */
+#endif /* !CANNA_WCHAR16 */
 }
 
-#ifndef HAVE_WCHAR_OPERATION
 int
 CANNA_wcstombs(dest, src, destlen)
 char *dest;
@@ -1411,9 +1285,6 @@ int destlen;
 {
   return CNvW2E(src, WStrlen(src), dest, destlen);
 }
-
-#endif /* HAVE_WCHAR_OPERATION */
-
 
 /* cfuncdef
 
@@ -1841,227 +1712,19 @@ canna_callback_t cnt;
   return 0;
 }
 
-#ifdef WIN
-void
-EWStrcat(buf, xxxx)
-wchar_t *buf;
-char *xxxx;
-{
-  wchar_t *x = (wchar_t *)malloc(sizeof(wchar_t) * 1024);
-  if (x) {
-    MBstowcs(x, xxxx, 1024);
-    WStrcat(buf, x);
-    (void)free((char *)x);
-  }
-}
-#endif
-
 char *
 KanjiInitError()
 {
-  extern standalone;
-
-  if (standalone) {
-    return "\244\253\244\312\264\301\273\372\312\321\264\271\244\307\244\255\244\336\244\273\244\363";
-    /* "かな漢字変換できません" */
-  }
-  else {
-    return "\244\253\244\312\264\301\273\372\312\321\264\271\245\265"
-      "\241\274\245\320\244\310\304\314\277\256\244\307\244\255\244\336"
-	"\244\273\244\363";              
-    /* "かな漢字変換サーバと通信できません" */
-  }
+  return "\244\253\244\312\264\301\273\372\312\321\264\271\245\265"
+    "\241\274\245\320\244\310\304\314\277\256\244\307\244\255\244\336"
+      "\244\273\244\363";              
+  /* "かな漢字変換サーバと通信できません" */
 }
 
-#ifdef WIN
-
-typedef unsigned short Ushort;
-
-static int
-wchar2ushort16(src, srclen, dest, destlen)
-wchar_t *src;
-Ushort *dest;
-int srclen, destlen;
-{
-  register int i;
-
-  for (i = 0 ; (i < srclen) && ((i + 1) < destlen) ; i++)
-      *dest++ = (Ushort)*src++;
-
-  *dest = (Ushort)0;
-  return i;
-}
-
-static int
-wchar2ushort32(src, srclen, dest, destlen)
-register wchar_t *src;
-register Ushort *dest;
-int srclen, destlen;
-{
-  register int i;
-
-  for (i = 0 ; i < srclen && i + 1 < destlen ; i++) {
-    switch (((unsigned long)*src & 0xf0000000) >> 28) {
-    case 0:
-      /* ASCII */
-      *dest = (Ushort)((unsigned)*src & 0x7f);
-      break;
-    case 1:
-      /* 半角カナ */
-      *dest = (Ushort)(0x80 | ((unsigned)*src & 0x7f));
-      break;
-    case 2:
-      /* 外字 */
-      *dest = (Ushort)(0x8000
-			     | (((unsigned)*src & 0x3f80) << 1)
-			     | ((unsigned)*src & 0x7f));
-      break;
-    case 3:
-      /* 漢字 */
-      *dest = (Ushort)(0x8080 
-			     | (((unsigned)*src & 0x3f80) << 1)
-			     | ((unsigned)*src & 0x7f));
-      break;
-    }
-    src++;
-    dest++;
-  }
-  *dest = (Ushort)0;
-  return i;
-}
-
-int
-wchar2ushort(src, slen, dst, dlen)
-wchar_t *src;
-Ushort *dst;
-int slen, dlen;
-{
-    if (wchar_type == CANNA_WCTYPE_16)
-	return wchar2ushort16(src, slen, dst, dlen);
-    else
-	return wchar2ushort32(src, slen, dst, dlen);
-}
-
-static int
-ushort2wchar32(src, srclen, dest, destlen)
-register Ushort *src;
-register wchar_t *dest;
-int srclen, destlen;
-{
-  register int i;
-
-  for (i = 0 ; i < srclen && i + 1 < destlen ; i++) {
-    switch (*src & 0x8080) {
-    case 0:
-      /* ASCII */
-      *dest = (wchar_t)(*src & 0x7f);
-      break;
-    case 0x0080:
-      /* 半角カナ */
-     *dest = (wchar_t)((((unsigned long) 0x1) << 28) | (*src & 0x7f));
-      break;
-    case 0x8000:
-      /* 外字 */
-      *dest = (wchar_t)((((unsigned long) 0x2) << 28)
-			| (((unsigned long)*src & 0x7f00) >> 1)
-			| ((unsigned long)*src & 0x7f));
-
-      break;
-    case 0x8080:
-      /* 漢字 */
-      *dest = (wchar_t)((((unsigned long) 0x3) << 28)
-			| (((unsigned long)*src & 0x7f00) >> 1)
-			| ((unsigned long)*src & 0x7f));
-
-      break;
-    }
-    src++;
-    dest++;
-  }
-  *dest = (wchar_t)0;
-  return i;
-}
-
-static int
-ushort2wchar16(src, srclen, dest, destlen)
-Ushort *src;
-wchar_t *dest;
-int srclen, destlen;
-{
-  register int i;
-
-  for (i = 0 ; (i < srclen) && ((i + 1) < destlen) ; i++)
-      *dest++ = (wchar_t)*src++;
-
-  *dest = (wchar_t)0;
-  return i;
-}
-
-int
-ushort2wchar(src, slen, dst, dlen)
-Ushort *src;
-wchar_t *dst;
-int slen, dlen;
-{
-    if( wchar_type == CANNA_WCTYPE_16)
-	return( ushort2wchar16( src, slen, dst, dlen ) );
-    else
-	return( ushort2wchar32( src, slen, dst, dlen ) );
-
-}
-
-exp(int)
-Winushort2wchar(src, slen, dst, dlen)
-Ushort *src;
-wchar_t *dst;
-int slen, dlen;
-{
-  return ushort2wchar(src, slen, dst, dlen);
-}
-
-int
-euc2ushort(src, srclen, dest, destlen)
-char *src;
-Ushort *dest;
-int srclen, destlen;
-{
-  register int i, j;
-  register unsigned ec;
-
-  for (i = 0, j = 0 ; i < srclen && j + 1 < destlen ; i++) {
-    ec = (unsigned)(unsigned char)src[i];
-    if (ec & 0x80) {
-      switch (ec) {
-      case 0x8e: /* SS2 */
-	dest[j++] = (Ushort)(0x80 | ((unsigned)src[++i] & 0x7f));
-	break;
-      case 0x8f: /* SS3 */
-	dest[j++] = (Ushort)(0x8000
-			      | (((unsigned)src[i + 1] & 0x7f) << 8)
-			      | ((unsigned)src[i + 2] & 0x7f));
-	i += 2;
-	break;
-      default:
-	dest[j++] = (Ushort)(0x8080 | (((unsigned)src[i] & 0x7f) << 8)
-			      | ((unsigned)src[i + 1] & 0x7f));
-	i++;
-	break;
-      }
-    }
-    else {
-      dest[j++] = (Ushort)ec;
-    }
-  }
-  dest[j] = (wchar_t)0;
-  return j;
-}
-
-exp(int)
-Wineuc2ushort(src, srclen, dest, destlen)
-char *src;
-Ushort *dest;
-int srclen, destlen;
-{
-  return euc2ushort(src, srclen, dest, destlen);
-}
-#endif /* WIN */
+#ifndef wchar_t
+# error "wchar_t is already undefined"
+#endif
+#undef wchar_t
+/*********************************************************************
+ *                       wchar_t replace end                         *
+ *********************************************************************/

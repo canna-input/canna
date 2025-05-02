@@ -21,7 +21,7 @@
  */
 
 /* sccs_id[]="%Z% NEC UNIX( PC-UX/EWS-UX ) %M% %R%.%L% %E% %U%"; */
-/* $Id: IRwproto.h,v 1.1.1.1.2.1 2003/09/12 14:11:09 aida_s Exp $ */
+/* $Id: IRwproto.h,v 1.2 2003/02/02 16:40:05 aida_s Exp $ */
 
 typedef struct _wReq0{		
     int Type ;

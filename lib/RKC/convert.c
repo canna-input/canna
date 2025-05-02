@@ -21,20 +21,18 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "$Id: convert.c,v 1.2.2.1 2002/12/18 09:13:05 aida_s Exp $";
+static char rcs_id[] = "$Id: convert.c,v 1.9 2003/09/23 07:11:31 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */
 
+#include "sglobal.h"
 #include "rkcw.h"
 #include "canna/RK.h"
 #include "rkc.h"
-#ifndef WIN
-#include "sglobal.h"
-#endif
 #include "IRproto.h"
+#include "RKindep/file.h"
 
-#include <errno.h>
 #include <sys/types.h>
 #include <signal.h>
 
@@ -48,15 +46,8 @@ static char rcs_id[] = "$Id: convert.c,v 1.2.2.1 2002/12/18 09:13:05 aida_s Exp 
 
 #ifdef USE_EUC_PROTOCOL
 
-#ifdef luna88k
-extern int   errno ;
-#endif
-
-#ifdef WIN
-extern SOCKET ServerFD;
-#else
 extern int ServerFD ;
-#endif
+extern unsigned int ServerTimeout ;
 
 #define SENDBUFSIZE 1024
 #define RECVBUFSIZE 1024
@@ -64,8 +55,6 @@ extern int ServerFD ;
 #define PROTOBUF (16 * 8)
 
 #define TRY_COUNT	    10
-
-#define RkcFree( p )	{ if( (p) ) (void)free( (char *)(p) ) ; }
 
 #ifdef LESS_SPACE_IS_IMPORTANT
 #undef LTOL4
@@ -120,37 +109,53 @@ int n;
 
 /*
 
-  ReadServer()
+  RkcRecvEReply()
 
    1: Succeed;
    0: Error;
 
-  len_return: データの長さ。0 を与えれば 格納しない。
-
-  buf は 4 Byte 以上あり、bufsize >= 4 であることを仮定している
+  len_return: データの長さ。NULL を与えれば 格納しない。
 
   bufsize < requiredsize なら空読みする。
 
  */
 
-static
-ReadServer(buf, bufsize, requiredsize, len_return)
+#define ReadServer RkcRecvEReply
+
+int
+RkcRecvEReply(buf, bufsize, requiredsize, len_return)
 BYTE *buf;
 int bufsize, requiredsize, *len_return;
 {
   int empty_count = 0, bufcnt = 0, readlen;
   unsigned rest = (unsigned)bufsize;
   BYTE *bufptr = buf;
+  struct timeval timeout, timeout2;
+  rki_fd_set rfds, rfds2;
+
+  timeout.tv_sec = ServerTimeout / 1000;
+  timeout.tv_usec = (ServerTimeout % 1000) * 1000;
+  RKI_FD_ZERO(&rfds);
+  RKI_FD_SET(ServerFD, &rfds);
 
   errno = 0;
 
   empty_count = 0;
   do {
-#ifdef WIN 
-    readlen = recv(ServerFD, (char *)bufptr, rest, 0);
-#else
+    timeout2 = timeout;
+    rfds2 = rfds;
+    if (ServerTimeout) {
+      int r = select(ServerFD + 1, &rfds2, NULL, NULL, &timeout2);
+      if (r == 0) {
+	break;
+      } else if (r == -1) {
+	if (errno == EINTR)
+	  continue;
+	else
+	  break;
+      }
+    }
     readlen = read(ServerFD, (char *)bufptr, rest);
-#endif
     if (readlen < 0) {
       if (errno == EINTR) {
 	continue;
@@ -174,21 +179,7 @@ int bufsize, requiredsize, *len_return;
 
   if (bufcnt == 0 || (requiredsize && bufcnt < requiredsize)) {
     errno = EPIPE;
-#ifdef WIN
-    closesocket(ServerFD);
-#else
     close(ServerFD);
-#endif
-    return NO;
-  }
- 
-  if (bufcnt == 0 || (requiredsize && bufcnt < requiredsize)) {
-    errno = EPIPE;
-#ifdef WIN
-    closesocket(ServerFD);
-#else
-    close(ServerFD);
-#endif
     return NO;
   }
   else {
@@ -207,49 +198,62 @@ int sig;
 /* ARGSUSED */
 {
     errno = EPIPE;
-#ifndef WIN
     signal(SIGPIPE, DoSomething);
-#endif
 }
 
-static int
-WriteServer( Buffer, size )
-unsigned char *Buffer ;
+#define WriteServer RkcSendERequest
+
+int
+RkcSendERequest( Buffer, size )
+const BYTE *Buffer ;
 int size ;
 {
     register int todo, retval = YES;
     register int write_stat;
-    register unsigned char *bufindex;
+    register const BYTE *bufindex;
 #ifdef SIGNALRETURNSINT
     static int (*Sig)();
 #else /* !SIGNALRETURNSINT */
     static void (*Sig)();
 #endif /* !SIGNALRETURNSINT */
+    struct timeval timeout, timeout2;
+    rki_fd_set wfds, wfds2;
+
+    timeout.tv_sec = ServerTimeout / 1000;
+    timeout.tv_usec = (ServerTimeout % 1000) * 1000;
+    RKI_FD_ZERO(&wfds);
+    RKI_FD_SET(ServerFD, &wfds);
 
     errno = 0 ;
     bufindex = Buffer ;
     todo = size ;
-#ifndef WIN
     Sig = signal(SIGPIPE, DoSomething);
-#endif
     while (size) {
+	timeout2 = timeout;
+	wfds2 = wfds;
 	errno = 0;
 	probe("Write: %d\n", todo, (char *)bufindex);
-#ifdef WIN 
-        write_stat = send(ServerFD, (char *)bufindex, (unsigned)todo, 0);
-#else
-	write_stat = write(ServerFD, (char *)bufindex, (unsigned)todo);
-#endif
+	if (ServerTimeout) {
+	  int r = select(ServerFD + 1, NULL, &wfds, NULL, &timeout2);
+	  if (r == 0) {
+	    break;
+	  } else if (r == -1) {
+	    if (errno == EINTR)
+	      continue;
+	    else
+	      break;
+	  }
+	}
+      }
+        write_stat = write(ServerFD, (char *)bufindex, (unsigned)todo);
 	if (write_stat >= 0) {
 	    size -= write_stat;
 	    todo = size;
 	    bufindex += write_stat;
         }
-#ifndef WIN32
         else if (errno == EWOULDBLOCK) {   /* pc98 */
 	    continue ;
 	}
-#endif
 	else if (errno == EINTR) {
 	    continue;
 	}
@@ -263,19 +267,13 @@ int size ;
 #endif
 	else {
 	    /* errno set by write system call. */
-#ifdef WIN
-            closesocket(ServerFD);
-#else
 	    close( ServerFD ) ;
-#endif
 	    retval = NO;
 	    errno = EPIPE ;
 	    break;
 	}
     }
-#ifndef WIN
     signal(SIGPIPE, Sig);
-#endif
     return retval;
 }
 
@@ -546,7 +544,7 @@ BYTE *addr;
     readlen = 0;
     if (readcnt < 2 * SIZEOFLONG) {
       if (!ReadServer(lbuf + readcnt, RECVBUFSIZE - readcnt,
-		      (int)SIZEOFLONG - readcnt, &readlen)) {
+		      2 * SIZEOFLONG - readcnt, &readlen)) {
         return NO;
       }
       readcnt += readlen;
@@ -657,7 +655,7 @@ BYTE *data;
 
 /*    *(++wp) = (Ushort)0 ; 下のほうが正しいと思う。 */
       *wp = (Ushort)0 ;
-      RkcFree((char *)cx->Fkouho);
+      free((char *)cx->Fkouho);
       cx->Fkouho = return_kouho ;
     }
     return res;
@@ -673,11 +671,7 @@ char *username ;
   if (SendType0Request((long) IR_INIT, len, (BYTE *)username) &&
       RecvType0Reply(&reply)) {
     if (reply < 0) {
-#ifdef WIN
-      closesocket(ServerFD);
-#else
       close(ServerFD);
-#endif
     }
     return reply;
   }
@@ -701,11 +695,7 @@ static
 rkc_finalize()
 {
   int retval = Fin_Create(IR_FIN);
-#ifdef WIN
-  closesocket(ServerFD);
-#else
   (void)close(ServerFD);
-#endif
   return retval;
 }
 

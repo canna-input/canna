@@ -21,7 +21,7 @@
  */
 
 /* LINTLIBRARY */
-/* $Id: RKintern.h,v 1.3.2.1 2003/09/12 14:32:52 aida_s Exp $ */
+/* $Id: RKintern.h,v 1.15 2003/09/24 14:50:40 aida_s Exp $ */
 #ifndef		_RKintern_h
 #define		_RKintern_h
 
@@ -41,52 +41,27 @@
 
 #include "cannaconf.h"
 
-#if !defined(WIN) && (defined(_WINDOWS) || defined(WIN32))
-#define WIN
-#define WINDOWS_STYLE_FILENAME
-#endif
-
 #if !defined(WINDOWS_STYLE_FILENAME) && !defined(USE_OBSOLETE_STYLE_FILENAME)
 #define WINDOWS_STYLE_FILENAME
-#endif
-
-#ifdef WIN 
-#include <windows.h>
-#include <io.h>
-#define ENGINE_SWITCH
-#define USE_MALLOC_FOR_BIG_ARRAY
-#define USE_SJIS_TEXT_DIC
 #endif
 
 #ifdef __CYGWIN32__
 #define USE_MALLOC_FOR_BIG_ARRAY
 #endif
 
-#if defined(__STDC__) || !DONT_HAVE_RENAME
-#define HAVE_RENAME
-#endif
-
 typedef unsigned short Wchar;
 
-#define _WCHAR_T
-#define wchar_t Wchar
 #define RK_INTERNAL
+typedef Wchar cannawc;
+#define CANNAWC_DEFINED
+#define CANNA_NEW_WCHAR_AWARE
 #include "canna/RK.h"
-#undef wchar_t
-#undef _WCHAR_T
-
-#if defined(_WINDOWS) && !defined(WIN32)
-#define exp(x)	x __export CALLBACK
-#elif defined(WIN32)
-#define exp(x)	__declspec(dllexport) x
-#else
-#define exp(x)	x
-#endif
 
 #include "ccompat.h"
 
-#ifdef WIN
-#include <sys/stat.h>
+#include <unistd.h>
+#ifdef HAVE_FCNTL_H
+# include <fcntl.h>
 #endif
 
 #ifndef AIXV3
@@ -122,12 +97,7 @@ int	Rk_errno;
 #endif /* NDEBUG */
 
 #define	MKDIR_MODE	0775
-#ifdef WIN
-#define CREAT_MODE  (_O_CREAT | _O_RDWR | _O_BINARY)
-#define CREAT_PMODE (_S_IREAD | _S_IWRITE)
-#else
 #define	CREAT_MODE	0664
-#endif
 
 typedef unsigned char	*pointer;
 typedef unsigned char   Wrec;
@@ -157,9 +127,6 @@ typedef unsigned char   Wrec;
 typedef union _rkunion {
   pointer	ptr;
   long		var;
-#ifdef WIN
-  HANDLE	hnd;
-#endif  
   unsigned long	uvar;
 } RkUnion;
 
@@ -254,63 +221,50 @@ typedef union _rkunion {
 #define rk_isascii(c) (!((c) & ~0xff) ? isascii((int)(c)) : 0)
 #define rk_isspace(c) (!((c) & ~0xff) ? isspace((int)(c)) : 0)
 
-#define HD_MAG		0
-#define HD_VER		1
-#define HD_TIME		2
-#define HD_REC		3
-#define HD_CAN		4
-#define HD_L2P		5
-#define HD_L2C		6
-#define HD_PAG		7
-#define HD_LND		8
-#define HD_SND		9
-#define HD_SIZ		10
-#define HD_HSZ		11
-#define HD_DROF		12
-#define HD_PGOF		13
-#define HD_DMNM		14
-#define HD_CODM		15
-#define HD_LANG		16
-#define HD_WWID		17
-#define HD_WTYP		18
-#define HD_COPY		19
-#define HD_NOTE		20
-#define HD_TYPE		21
+/* WARNING: これを並べ変えるときはHdrtagに注意すること! */
+enum {
+  /* These must be first 5 tags in this order for new (>=300702L) dic */
+  HD_MAG, /* mandatory */
+  HD_SIZ, /* mandatory */
+  HD_HSZ, /* mandatory */
+  HD_CURV, /* mandatory for new dic, but must not exist in 300000L dic */
+  HD_CMPV, /* mandatory for new dic, but must not exist in 300000L dic */
+  /* Some of them are optional */
+  HD_VER, /* only for 300000L format, must not exist in new format */
+  HD_TIME, /* mandatory */
+  HD_REC, /* mandatory */
+  HD_CAN, /* mandatory */
+  HD_L2P, /* mandatory except for freq file */
+  HD_L2C, /* mandatory except for freq file */
+  HD_PAG, /* mandatory except for freq file */
+  HD_LND, /* mandatory except for freq file */
+  HD_SND, /* mandatory except for freq file */
+  HD_DROF, /* mandatory except for freq file */
+  HD_PGOF, /* mandatory except for freq file */
+  HD_DMNM, /* mandatory */
+  HD_CODM, /* mandatory only in freq file, otherwise not referred */
+  HD_LANG, /* record is set but not referred */
+  HD_WWID, /* record is set but not referred */
+  HD_WTYP, /* record is set but not referred */
+  HD_COPY, /* optional */
+  HD_NOTE, /* optional */
+  HD_TYPE, /* record is set but not referred */
+  /* Tags below must not appear in 300000L dic */
+  HD_CRC, /* optional */
+  HD_GRAM, /* optional */
+  HD_GRSZ, /* optional */
+  HD_MAXTAG
+};
 
-#define HD_MAXTAG	(HD_TYPE + 1)
-
-#define HD_TAGSIZ	(sizeof(long))
+#define HD_TAGSIZ	4
 #define HD_MIN_TAGSIZ	(3 * HD_TAGSIZ)
+#define HD_VERSION(hd) (((hd)->flag[HD_CURV] == -1) \
+    ? (hd)->data[HD_CURV].var : 0x300000L)
 
 struct HD {
     RkUnion	data[HD_MAXTAG];
     int		flag[HD_MAXTAG];
 };
-
-#define	isEndTag(s)	(s[0] == 0 && s[1] == 0 && s[2] == 0 && s[3] == 0)
-
-#define HD_TAG_MAG	"MAG#"
-#define HD_TAG_VER	"VER#"
-#define HD_TAG_TIME	"TIME"
-#define HD_TAG_REC	"#REC"
-#define HD_TAG_CAN	"#CAN"
-#define HD_TAG_L2P	"L2P#"
-#define HD_TAG_L2C	"L2C#"
-#define HD_TAG_PAG	"#PAG"
-#define HD_TAG_LND	"#LND"
-#define HD_TAG_SND	"#SND"
-#define HD_TAG_SIZ	"#SIZ"
-#define HD_TAG_HSZ	"#HSZ"
-#define HD_TAG_DROF	"DROF"
-#define HD_TAG_PGOF	"PGOF"
-#define HD_TAG_DMNM	"DMNM"
-#define HD_TAG_CODM	"CODM"
-#define HD_TAG_LANG	"LANG"
-#define HD_TAG_WWID	"WWID"
-#define HD_TAG_WTYP	"WTYP"
-#define HD_TAG_COPY	"(C) "
-#define HD_TAG_NOTE	"NOTE"
-#define HD_TAG_TYPE	"TYPE"
 
 #define JMWD	1
 #define JSWD	2
@@ -363,33 +317,10 @@ struct NP {
 
 #include <sys/types.h>	
 
-#ifdef WIN
-#define malloc(x) (char *)LocalAlloc(GMEM_FIXED, (x))
-#define free(x) (char *)LocalFree(x)
-#define realloc(x, y) (char *)LocalReAlloc((x), (y), 0)
-#define calloc(x, y) (char *)LocalAlloc(GPTR, (x) * (y))
-/* Use the copy of this portion in each file just after the 
-   last #include statement in the file.  The reason not define these
-   here is that the prototype declaration corrupts with these definition.  */
-#ifdef NOT_IN_HEADER_FILE
-
-#define reanme(x, y) (MoveFileEx((x), (y), MOVEFILE_REPLACE_EXISTING) ? 0 : -1)
-#ifndef HAVE_RENAME
-#define HAVE_RENAME
-#endif
-
-#define unlink(x) (DeleteFile(x) ? 0 : -1)
-#define sprintf wsprintf
-/* The definitions below assumes that TCHAR == char in Windows environment */
-#define strcpy(x, y) lstrcpy((x), (y))
-#define strlen(x) lstrlen(x)
-#define strcat(x, y) lstrcat((x), (y))
-#define strcmp(x, y) lstrcmp((x), (y))
-#endif
-#endif
-
 struct ND {
   unsigned long time;
+  unsigned long crc;
+  int           crc_found;
   unsigned long rec;
   unsigned long can;
   unsigned long sz;
@@ -397,13 +328,10 @@ struct ND {
   unsigned long drsz;
   unsigned long pgsz;
   unsigned long ttlpg;
-#ifndef WIN
   int           fd;
-#else
-  HANDLE        fd;
-#endif
   unsigned char *buf;
   struct NP     *pgs;
+  long		version;
 };
 
 /* HEADER:
@@ -544,9 +472,7 @@ struct RUT{
 #define	NW_PREFIX	2	/* the length of kouho prefix in byte */
 
 /* flags */
-#define	NW_RC256	0x80	/* set when rowcol >= 256 */
 #define	NW_LEN		0x7f	/* kouho no nagasa ( zenkaku 31 moji) */
-#define	rowcol256(flag)	((flag) & NW_RC256)
 #ifdef LOGIC_HACK
 #define NW_RCBITS	9	/* bits of maximum rowcol number */
 #endif
@@ -573,37 +499,19 @@ typedef struct RkWcand {
  *
  */
 
-#define		crpair(row, col)	((long)(row))
-/* ngram
- *	tango kan no setuzoku wo simesu gyouretu
- *	SWD ga open sareruto douji ni yomikomareru
- */
-struct RkKxGram {
-/* setuzoku jouhou */
-    int		ng_rowcol;	/* row no kazu */
-    int		ng_rowbyte;	/* row atari no byte suu */
-    char	*ng_conj;	/* setuzoku gyouretu/code table */
-    char	**ng_strtab;
-#ifdef LOGIC_HACK
-    int		ng_numneg;	/* the number of negative conunctions */
-    unsigned long *ng_neg;	/* negative conjunctions */
-#endif
+struct RkKxGram;
+struct RkGramIterator {
+    int			rowcol;
 };
-
-#define	GetGramRow(g, r) 	((g)->ng_conj + (r)*(g)->ng_rowbyte)
-#define	TestGram(cnj, col)	((cnj) && ((cnj)[((col)>>3)]&(0x80>>(col&7))))
+#define RkNextGram(iter) ((void)++(iter)->rowcol)
 
 /* hinshi no bunrui
  *	renbunsetu henkan de siyou sareru
  */
-#define	IsShuutan(g, r)		TestGram(GetGramRow(g, r), 0)
+#define	IsShuutan(g, r)		RkTestGram(g, r, 0)
 #ifdef BUNMATU
-#define	IsBunmatu(g, r)		TestGram(GetGramRow(g, r), 1)
+#define	IsBunmatu(g, r)		RkTestGram(g, r, 1)
 #endif
-#define	IsTaigen(g, r)		TestGram(GetGramRow(g, R_TAIGEN), r)
-#define	IsYougen(g, r)		TestGram(GetGramRow(g, R_YOUGEN), r)
-#define	IsKakujs(g, r)		TestGram(GetGramRow(g, R_KAKUJS), r)
-#define is_row_num(g, n)	((0 <= (n)) && ((n) < ((g)->ng_rowcol)))
 
 /* RkGram -- grammatical information
  */
@@ -615,6 +523,7 @@ struct RkGram {
 #ifdef LOGIC_HACK
   int			P_KJ; /* tankanji */
 #endif
+  int			P_Ftte; /* FIXME: should go away */
 };
 
 extern struct RkGram SG;
@@ -676,10 +585,7 @@ struct nword {
     unsigned char	nw_lit;		/* literal conversion */
     unsigned long	nw_prio;	        /* kouzou ni yoru priority */  /* True ? by tamano */
     unsigned long   nw_csn;
-#ifdef LOGIC_HACK
     unsigned char	nw_count;	/* setsuzoku suu */
-    unsigned long	nw_rcvec;	/* hidari no hinshi retsu */
-#endif
     struct nword	*nw_left;	/* hidari ni tunagaru word */
     struct nword	*nw_next;	/* onaji nw_len wo motu list */
     unsigned char	*nw_kanji;	/* kanji kouho ichi/douteki na kouho */
@@ -693,9 +599,7 @@ struct nword {
 #define NW_SWD		0x40
 #define NW_PRE		0x20
 #define NW_SUC		0x10
-#ifdef LOGIC_HACK
 #define NW_LOWPRI	0x08
-#endif
 #ifdef BUNMATU
 #define NW_BUNMATU	0x04
 #endif
@@ -884,8 +788,22 @@ struct NV {
   struct NVE	**buf;
 };
 
+#ifdef RK_LOG
+struct henkanlog {
+    int n;
+    char *henkan;
+    struct henkanlog *next;
+};
+#endif
+
 struct nstore {
     Wchar		*yomi;		/* yomigana buffer */
+#ifdef RK_LOG
+    unsigned		nblog;
+    char		**blog;
+    struct henkanlog	*hlog;
+    struct henkanlog	dmi;
+#endif
     unsigned		nyomi;		/* number of yomigana chars */
     unsigned		maxyomi;	/* maximum number of yomigana chars */
     struct nbun		*bunq;		/* 文節キュー */
@@ -1053,11 +971,7 @@ struct DD		*RkGetSystemDD();
 struct DD		*RkGetUserDD();
 struct RkContext	*RkGetContext();
 struct RkContext	*RkGetXContext();
-#ifndef WIN
-struct RkKxGram		*RkReadGram pro((int));
-#else
-struct RkKxGram		*RkReadGram pro((HANDLE));
-#endif
+struct RkKxGram		*RkReadGram pro((int, size_t));
 struct RkKxGram		*RkOpenGram();
 struct RkKxGram		*RkDuplicateGram();
 void			RkCloseGram();
@@ -1147,13 +1061,9 @@ char			*_RkCreatePath();
 char			*_RkCreateUniquePath();
 char			*_RkMakePath();
 
-unsigned char		*_RkCreateHeader();
-#ifndef WIN
+unsigned char		*_RkCreateHeader pro((struct HD *, size_t *size));
 int			_RkReadHeader pro((int, struct HD *, off_t));
-#else
-int			_RkReadHeader pro((HANDLE, struct HD *, off_t));
-#endif
-void			_RkClearHeader();
+void			_RkClearHeader pro((struct HD *));
 void			_RkRehashCache();
 
 /*
@@ -1169,11 +1079,7 @@ void			_RkRehashCache();
 #ifdef PATH_MAX
 #define	RK_PATH_BMAX	PATH_MAX
 #else
-#ifdef WIN  /* OK ? */
-#define RK_PATH_BMAX 256
-#else
 #define RK_PATH_BMAX 1024
-#endif
 #endif
 #ifdef  NAME_MAX
 #define RK_LINK_BMAX	NAME_MAX
@@ -1187,13 +1093,8 @@ void			_RkRehashCache();
 #define	RK_MEMBER_BMAX	255
 #define	RK_NICK_BMAX	255
 
-#ifdef WIN /* OK ? */ 
-#define RK_LINE_BMAX    256
-#define RK_BUFFER_SIZE  256
-#else
 #define RK_LINE_BMAX    1024
 #define RK_BUFFER_SIZE  1024
-#endif
 
 /* 
  * RK_KEY_WMAX <= RK_LEN_WMAX
@@ -1211,11 +1112,7 @@ void			_RkRehashCache();
 /* 候補長 */
 #define	NW_MAXCANDLEN	0x7f
 #define RK_CAND_WMAX	0x7f
-#ifdef WIN  /* OK ? */
-#define RK_CAND_NMAX    0x3ff /* 1023 */
-#else
 #define RK_CAND_NMAX    0xfff /* 4095 */
-#endif
 
 /* wrec len */
 #define NW_MAXWREC	0x3f	/* 63 */
@@ -1236,7 +1133,7 @@ void			_RkRehashCache();
 
 #define	RK_CONC_NMAX	16	/* 接続する付属語の数(効いてるのかな？) */
 
-#define RK_MAX_HDRSIZ	1024
+#define RK_OLD_MAX_HDRSIZ	1024
 
 #ifndef	_RK_INTERN_FUNCTIONS_DEF_
 #define	_RK_INTERN_FUNCTIONS_DEF_
@@ -1259,7 +1156,7 @@ int _RkRealizeDD pro((struct DD *));
 int RkCvtWide pro((Wchar *, int, char *, int));
 int RkCvtNarrow pro((char *, int, Wchar *, int));
 
-#if defined(MMAP) || defined(WIN)
+#if defined(MMAP)
 int _RkDoInvalidateCache pro((long, unsigned long));
 #endif
 
@@ -1274,6 +1171,12 @@ int RkwCvtSuuji pro((Wchar *, int, Wchar *, int, int));
 int RkwCvtNone pro((Wchar *, int, Wchar *, int));
 
 int _RkRowNumber pro((unsigned char *));
+int RkTestGram pro((const struct RkKxGram *, int, int));
+#ifdef LOGIC_HACK
+int RkCheckNegGram pro((const struct RkKxGram *, int, int, int));
+#endif
+void RkFirstGram pro((struct RkGramIterator *, const struct RkKxGram *));
+void RkEndGram pro((struct RkGramIterator *, const struct RkKxGram *));
 int _RkRegisterNV pro((struct NV *, Wrec *, int, int));
 int FQopen pro((struct DM *, struct DM *, char *, int));
 void FQclose pro((struct RkContext *, struct DM *, struct DM *, char *));
@@ -1296,4 +1199,5 @@ int parse_string pro((char *));
 #endif /* _RK_INTERN_FUNCTIONS_DEF_ */
 
 #endif /* _RKintern_h */
+/* vim: set sw=2: */
 /* don't add stuff after this line */

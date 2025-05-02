@@ -21,62 +21,33 @@
  */
 
 /*
- * @(#) 102.1 $Id: canna.h,v 1.2 2002/10/20 14:29:59 aida_s Exp $
+ * @(#) 102.1 $Id: canna.h,v 1.11 2003/09/25 07:24:54 aida_s Exp $
  */
 
 #ifndef _CANNA_H_
 #define _CANNA_H_
 
-#if (defined(_WINDOWS) || defined(WIN32)) && !defined(WIN)
-#define WIN
-#endif
-
 #include "cannaconf.h"
-#include "widedef.h"
 #include "ccompat.h"
 #include <stdio.h>
 
-#ifdef WIN 
-#include <windows.h>
-typedef char *caddr_t;
-#define ENGINE_SWITCH
-#define NO_EXTEND_MENU
-#define NOT_ENGLISH_TABLE
-#define JAPANESE_SORT
-#endif
-
+#define CANNA_NEW_WCHAR_AWARE
 #include <canna/RK.h>
 #include <canna/jrkanji.h>
 
-#ifdef BIGPOINTER
-#define POINTERINT long long
-#else
-#define POINTERINT long
+#define POINTERINT canna_intptr_t
+#define exp(x) x
+
+#if 0
+#define USE_MALLOC_FOR_BIG_ARRAY
 #endif
 
-#define	WCHARSIZE	(sizeof(wchar_t))
-
-#ifdef HAVE_WCHAR_OPERATION
-
-#ifndef JAPANESE_LOCALE
-#define JAPANESE_LOCALE "japan"
-#endif
-
-#define MBstowcs mbstowcs
-#define WCstombs wcstombs
-
-#else
+#define	WCHARSIZE	(sizeof(cannawc))
 
 #define MBstowcs CANNA_mbstowcs
 #define WCstombs CANNA_wcstombs
 
-extern CANNA_wcstombs pro((char *, wchar_t *, int));
-
-#endif
-
-#ifndef WIN
 #include "sglobal.h"
-#endif
 
 #define XLookupKanji2			 IROHA_G300_XLookupKanji2
 #define XKanjiControl2			 IROHA_G301_XKanjiControl2
@@ -86,14 +57,15 @@ extern CANNA_wcstombs pro((char *, wchar_t *, int));
 
 #define STROKE_LIMIT 500 /* ストロークで接続を切る */
 
-#ifdef WIN
-#define malloc(x) (char *)GlobalAlloc(GMEM_FIXED, (x))
-#define free(x) (char *)GlobalFree(x)
-#define realloc(x, y) (char *)GlobalReAlloc((x), (y), 0)
-#define calloc(x, y) (char *)GlobalAlloc(GPTR, (x) * (y))
-#endif
-
 typedef unsigned char BYTE;
+
+/*********************************************************************
+ *                      wchar_t replace begin                        *
+ *********************************************************************/
+#ifdef wchar_t
+# error "wchar_t is already defined"
+#endif
+#define wchar_t cannawc
 
 /*
  * CANNALIBDIR  -- システムのカスタマイズファイルやローマ字かな変換
@@ -596,6 +568,7 @@ typedef struct _uiContext {
   /* リストコールバック関連 */
   char           *client_data;   /* アプリケーション用データ */
   int            (*list_func) pro((char *, int, wchar_t **, int, int *));
+  jrEUCListCallbackStruct elistcb; /* EUCの場合の実体(旧wcも兼用) */
                  /* リストコールバック関数 */
   /* その他 */
   char		 flags;		 /* 下を見てね */
@@ -881,6 +854,7 @@ struct CannaConfig { /* 以下のコメントはダイアログなどに記述するときなどに
   BYTE quickly_escape; /* (互換用) 一覧表示時、選択で即座に一覧を抜ける */
   BYTE InhibitHankakuKana; /* 半角カタカナの禁止 */
   BYTE code_input;    /* コード(0: jis, 1: sjis, 2: 区点) */
+  BYTE DelayConnect;  /* 初期化時にすぐにサーバに接続しない */
 };
 
 #define CANNA_CODE_JIS   0
@@ -1030,6 +1004,7 @@ extern void generalReplace
 extern ChikujiSubstYomi pro((uiContext));
 extern TanMuhenkan pro((uiContext));
 extern CANNA_mbstowcs pro((wchar_t *, char *, int));
+extern CANNA_wcstombs pro((char *, wchar_t *, int));
 extern makeRkError pro((uiContext, char *));
 extern void moveStrings pro((wchar_t *, BYTE *, int, int, int));
 extern TanBackwardBunsetsu pro((uiContext));
@@ -1139,7 +1114,18 @@ extern char *KanjiInitError pro((void));
 extern void prepare_autodic pro((void));
 extern int doKakutei
  pro((uiContext, tanContext, tanContext, wchar_t *, wchar_t *, yomiContext *));
+extern int EUCListCallback pro((char *, int, wchar_t **, int, int *));
+#if SUPPORT_OLD_WCHAR
+extern int owcListCallback pro((char *, int, wchar_t **, int, int *));
+#endif
 
 #endif /* _UTIL_FUNCTIONS_DEF_ */
 
+#ifndef wchar_t
+# error "wchar_t is already undefined"
+#endif
+#undef wchar_t
+/*********************************************************************
+ *                       wchar_t replace end                         *
+ *********************************************************************/
 #endif /* !_CANNA_H_ */

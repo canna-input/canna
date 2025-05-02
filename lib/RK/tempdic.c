@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[]="$Id: tempdic.c,v 1.3 2002/10/20 14:29:58 aida_s Exp $";
+static char rcsid[]="$Id: tempdic.c,v 1.4 2003/09/17 08:50:52 aida_s Exp $";
 #endif
 /*LINTLIBRARY*/
 
@@ -37,32 +37,12 @@ static char rcsid[]="$Id: tempdic.c,v 1.3 2002/10/20 14:29:58 aida_s Exp $";
 #include <sys/types.h>
 #endif
 
-#if defined(__STDC__) || defined(SVR4) || defined(WIN)
+#if defined(__STDC__) || defined(SVR4)
 #include <time.h>
 #define TIME_T time_t
 #else
 #define TIME_T long
 #endif
-
-#ifdef WIN
-#if 0
-#define rename(x, y) (MoveFileEx((x), (y), MOVEFILE_REPLACE_EXISTING) ? 0 : -1)
-#ifndef HAVE_RENAME
-#define HAVE_RENAME
-#endif
-#endif /* 0 */
-
-#define unlink(x) (DeleteFile(x) ? 0 : -1)
-
-#define sprintf wsprintf
-
-/* The definitions below assumes that TCHAR == char in Windows environment */
-#define strcpy(x, y) lstrcpy((x), (y))
-#define strlen(x) lstrlen(x)
-#define strcat(x, y) lstrcat((x), (y))
-#define strcmp(x, y) lstrcmp((x), (y))
-
-#endif /* WIN */
 
 #define	dm_td	dm_extdata.ptr
 
@@ -393,11 +373,7 @@ _Rktopen(dm, file, mode, gram)
   struct DF	*df = dm->dm_file;
   struct DD	*dd = df->df_direct;
   struct TD	*xdm;
-#ifndef WIN
   FILE		*f;
-#else
-  HANDLE f;
-#endif
   long		offset = 0L;
   int		ecount = 0;
   int ret = -1;
@@ -415,29 +391,15 @@ _Rktopen(dm, file, mode, gram)
 #endif
     
   if (!df->df_rcount) {
-#ifdef WIN
-    DWORD att = GetFileAttributes(file);
-
-    if (att == 0xFFFFFFFF) {
-      goto return_ret;
-    }
-    df->df_flags |= DF_EXIST;
-    dm->dm_flags |= DM_EXIST;
-    if (!(att & FILE_ATTRIBUTE_READONLY)) {
-      dm->dm_flags |= DM_WRITABLE;
-    }
-#else /* !WIN */
     if (close(open(file, 0)))
       goto return_ret;
     df->df_flags |= DF_EXIST;
     dm->dm_flags |= DM_EXIST;
     if (!close(open(file, 2)))
       dm->dm_flags |= DM_WRITABLE;
-#endif /* !WIN */
   }
   if (!(dm->dm_flags & DM_EXIST))
     ;
-#ifndef WIN
 #ifdef __EMX__
   else if (!(f = fopen(file, "rt"))) {
 #else
@@ -446,83 +408,22 @@ _Rktopen(dm, file, mode, gram)
     df->df_flags &= ~DF_EXIST;
     dm->dm_flags &= ~DM_EXIST;
   }
-#else
-  else if ((f = CreateFile(file, GENERIC_READ,
-			   FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
-			   OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL))
-	   == INVALID_HANDLE_VALUE) {
-    df->df_flags &= ~DF_EXIST;
-    dm->dm_flags &= ~DM_EXIST;
-  }
-#endif
   else if (!(xdm = newTD())) {
-#ifndef WIN
     fclose(f);
-#else
-    CloseHandle(f);
-#endif
   }
   else {
-#ifdef WIN
-    DWORD dwFileSize = GetFileSize(f, NULL);
-    HANDLE mfp;
-    LPCVOID sdir;
-    char *pdir, *qdir, *edir;
-
-    if (dwFileSize == 0) {
-      mfp = NULL;
-      sdir = (LPCVOID)0;
-      edir = pdir = (char *)0;
-      goto map_ok;
-    }
-
-    mfp = CreateFileMapping(f, NULL, PAGE_READONLY, 0, 0, NULL);
-    if (mfp != NULL) {
-      sdir = MapViewOfFile(mfp, FILE_MAP_READ, 0, 0, dwFileSize);
-      pdir = (char *)sdir;
-      if (pdir) {
-	edir = pdir + dwFileSize;
-	goto map_ok;
-      }
-      CloseHandle(mfp);
-    }
-    goto return_ret;
-
-  map_ok:
-    while (pdir < edir)
-#else /* !WIN */
-    while (fgets((char *)line, RK_LINE_BMAX*10, f))
-#endif
-    {
+    while (fgets((char *)line, RK_LINE_BMAX*10, f)) {
       int		sz;
 
-#ifdef WIN
-      for (qdir = pdir ;
-	   *qdir && *qdir != '\r' && *qdir != '\n' && qdir < edir ;
-	   qdir++) /* empty */;
-      offset += qdir - pdir;
-      sz = RkCvtWide(wcline, RK_LINE_BMAX*10, pdir, qdir - pdir);
-      while ((*qdir == '\r' || *qdir == '\n') && qdir < edir) qdir++;
-      pdir = qdir;
-#else
       offset += strlen(line);
       sz = RkCvtWide(wcline, RK_LINE_BMAX*10, line, strlen(line));
-#endif
       if (sz < RK_LINE_BMAX*10 - 1) {
 	if ( enterTD(dm, xdm, gram, wcline) < 0 )
 	  ecount++;
       } else
 	ecount++;
     }
-#ifdef WIN
-    if (mfp) {
-      UnmapViewOfFile(sdir);
-      CloseHandle(mfp);
-    }
-    CloseHandle(f);
-#else
     (void)fclose(f);
-#endif
     dm->dm_offset = 0L;
     df->df_size = offset;
     if (ecount) {		
@@ -548,21 +449,13 @@ _Rktopen(dm, file, mode, gram)
 /*
  * CLOSE
  */
-#ifndef WIN
 static int writeTD pro((struct TD *, struct RkKxGram *, int));
-#else
-static int writeTD pro((struct TD *, struct RkKxGram *, HANDLE));
-#endif
 
 static int
 writeTD(td, gram, fdes)
      struct TD		*td;
      struct RkKxGram	*gram;
-#ifndef WIN
      int		fdes;
-#else
-     HANDLE fdes;
-#endif
 {
   int	i, tmpres;
   int	ecount = 0;
@@ -595,19 +488,7 @@ writeTD(td, gram, fdes)
 #endif
               line[sz++] = '\n';
               line[sz] = 0;
-#ifndef WIN
 	      tmpres = write(fdes, line, sz);
-#else
-	      {
-		DWORD written;
-		if (!WriteFile(fdes, line, sz, &written, NULL)) {
-		  tmpres = -1;
-		}
-		else {
-		  tmpres = written;
-		}
-	      }
-#endif
               if (tmpres != sz)
                 ecount++;
 	      free(line);
@@ -634,12 +515,7 @@ _Rktclose(dm, file, gram)
   struct DF	*df = dm->dm_file;
   struct TD	*xdm = (struct TD *)dm->dm_td;
   int		ecount;
-#ifndef WIN
   int		fdes;
-#else
-  HANDLE fdes;
-  DWORD dummy;
-#endif
   
 #ifndef USE_MALLOC_FOR_BIG_ARRAY
   char	backup[RK_PATH_BMAX];
@@ -669,40 +545,19 @@ _Rktclose(dm, file, gram)
       strcpy(&backup[(int)(p-file) + 1], p);
     };
     
-#ifdef WIN
-    fdes = CreateFile(backup, GENERIC_WRITE,
-		      FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
-		      CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-#else
     fdes = creat(backup, (unsigned)0666);
 #ifdef __CYGWIN32__
     setmode(fdes, O_BINARY);
 #endif
-#endif
     ecount = 0;
-    if 
-#ifdef WIN
-      (fdes != INVALID_HANDLE_VALUE)
-#else
-      (fdes >= 0)
-#endif
-    {
+    if (fdes >= 0) {
       int	n;
 
-#ifndef WIN      
       TIME_T	tloc;
 
       tloc = time(0);
       strcpy(whattime, ctime(&tloc));
       whattime[strlen(whattime)-1] = 0;
-#else
-      SYSTEMTIME curtime;
-
-      GetLocalTime(&curtime);
-      wsprintf(whattime, "%d/%d/%d %d:%02d:%02d",
-	       curtime.wYear, curtime.wMonth, curtime.wDay,
-	       curtime.wHour, curtime.wMinute, curtime.wSecond);
-#endif
       (void)strcpy(header, "#*DIC ");
       (void)strcat(header, dm->dm_nickname);
       (void)strcat(header, " [");
@@ -714,29 +569,15 @@ _Rktclose(dm, file, gram)
       (void)strcat(header, "\n");
 #endif
       n = strlen(header);
-      if
-#ifndef WIN
-	(write(fdes, header, n) != n)
-#else
-	(!WriteFile(fdes, header, n, &dummy, NULL) || (DWORD)n != dummy)
-#endif
-      {
+      if (write(fdes, header, n) != n) {
 	ecount++;
       }
       ecount += writeTD(xdm, gram, fdes);
-#ifndef WIN
       (void)close(fdes);
-#else
-      CloseHandle(fdes);
-#endif
     } else
       ecount++;
 
     if (!ecount) {
-#ifdef WIN
-      DeleteFile(file);
-      MoveFile(backup, file);
-#else /* !WIN */
 #ifdef HAVE_RENAME
 #ifdef __EMX__
       unlink(file);
@@ -748,7 +589,6 @@ _Rktclose(dm, file, gram)
 	unlink(backup);
       }
 #endif
-#endif /* !WIN */
     }
     dm->dm_flags &= ~DM_UPDATED;
   };
@@ -941,12 +781,7 @@ _Rktsync(cx, dm, qm)
   int		ecount;
   char	        *file;
   int ret = -1;
-#ifndef WIN
   int		fdes;
-#else
-  HANDLE fdes;
-  DWORD dummy;
-#endif
 
 #ifndef USE_MALLOC_FOR_BIG_ARRAY
   char	backup[RK_PATH_BMAX];
@@ -979,39 +814,18 @@ _Rktsync(cx, dm, qm)
 	strcpy(&backup[(int)(p-file) + 1], p);
       };
 
-#ifdef WIN
-      fdes = CreateFile(backup, GENERIC_WRITE,
-			FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
-			CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-#else
       fdes = creat(backup, (unsigned)0666);
 #ifdef __CYGWIN32__
       setmode(fdes, O_BINARY);
 #endif
-#endif
       ecount = 0;
-      if 
-#ifdef WIN
-	(fdes != INVALID_HANDLE_VALUE)
-#else
-	(fdes >= 0)
-#endif
-      {
+      if (fdes >= 0) {
 	int	n;
-#ifndef WIN
 	TIME_T	tloc;
 	
 	tloc = time(0);
 	strcpy(whattime, ctime(&tloc));
 	whattime[strlen(whattime)-1] = 0;
-#else
-	SYSTEMTIME curtime;
-
-	GetLocalTime(&curtime);
-	wsprintf(whattime, "%d/%d/%d %d:%02d:%02d",
-		 curtime.wYear, curtime.wMonth, curtime.wDay,
-		 curtime.wHour, curtime.wMinute, curtime.wSecond);
-#endif
 	(void)strcpy(header, "#*DIC ");
 	(void)strcat(header, dm->dm_nickname);
 	(void)strcat(header, " [");
@@ -1023,29 +837,15 @@ _Rktsync(cx, dm, qm)
 	(void)strcat(header, "\n");
 #endif
 	n = strlen(header);
-	if 
-#ifndef WIN
-	  (write(fdes, header, n) != n)
-#else
-	  (!WriteFile(fdes, header, n, &dummy, NULL) || (DWORD)n != dummy)
-#endif
-	{ 
+	if (write(fdes, header, n) != n) { 
 	  ecount++;
 	}
 	ecount += writeTD(xdm, gram, fdes);
-#ifndef WIN
 	(void)close(fdes);
-#else
-	CloseHandle(fdes);
-#endif
       } else
 	ecount++;
       
       if (!ecount) {
-#ifdef WIN
-	DeleteFile(file);
-	MoveFile(backup, file);
-#else /* !WIN */
 #ifdef HAVE_RENAME
 #ifdef __EMX__
 	unlink(file);
@@ -1057,7 +857,6 @@ _Rktsync(cx, dm, qm)
 	  unlink(backup);
 	}
 #endif
-#endif /* !WIN */
 	dm->dm_flags &= ~DM_UPDATED;
       } else {
 	(void)free(file);

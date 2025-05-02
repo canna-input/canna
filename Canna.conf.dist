@@ -49,33 +49,12 @@
  *		ログファイルは、かな漢字変換サーバがエラーメッセージを
  *		出力するファイルです。
  *
- * wcharDefinition;
- *              -DCANNA_WCHAR を定義すると、OS の wchar_t の代わりに
- *		『かんな』の wchar_t を使うことを表します。wchar_t は
- *		定義されていても日本語 locale 環境が定義されていない
- *		場合もこの定義をして下さい。
- *		3.6追記:この記述は実態を反映していません。現在の所、どの
- *		プラットフォームでも-DCANNA_WCHARを指定してください。
- * 
- * Wlib
- *              wchar_t 関連の関数が入っているライブラリを指定します。
- *              libc に入っている場合にはブランクのままにしておきます。
- *              System V では通常 -lw です。
- *
- * JapaneseLocale;
- *              Locale を使うときに日本語の環境を表す LANG の値を入れます。
- *
  * cannaOwner:
  *		辞書とかな漢字変換サーバのオーナを指定します。
  *
  * cannaGroup:
  *		辞書とかな漢字変換サーバのグループを指定します。
  *
- * pointerIntegerDef:
- *		ポインタのサイズが long のサイズよりも大きい場合で、
- *		long long 型が存在する場合はここに -DBIGPOINTER を定義
- *		してください(例えば NEC SX3 の SUPER-UX の場合)。
- *		
  * sharedLibExtension:
  *              shared library の拡張子を指定します。通常は so.1 など
  *              が使われます。 HP-UX では sl です。
@@ -91,14 +70,10 @@
  *              が作られている状態になっているようにしてください。
  *
  * engineSwitch:
- *              jserver と cannaserver の両方を使いたい場合には 
- *              engineSwitch を #define します。これを #define した場
- *              合には以下の２つも設定が必要です。
+ *              (現在は利用できません。)
  *
  * cannaLight:
- *              『かんな』を少しでも軽くしたい人は以下を 1 にして下さ
- *              い。古いプロトコルを組み込まなくなります。デフォルトは 
- *              1 です。
+ *              (特別な理由が無い限り1のままにしてください。)
  *
  * USE_OBSOLETE_STYLE_FILENAME:
  *              漢字辞書名、ローマ字テーブル名を Version 3.4 以前の名
@@ -108,13 +83,6 @@
  *              バイナリ辞書ファイル、辞書学習ファイルの拡張子がそれぞ
  *              れ、.t, .d, .fq から .cbd, .ctd, .cld に変更になりまし
  *              た。
- *
- * kinput2SrcDir: (engineSwitch をする時のみ必要)
- *              kinput2 のソースが存在するディレクトリを指定します。
- * wnn4SrcDir: (engineSwitch をする時のみ必要)
- *              Wnn4 のソースが存在するディレクトリを指定します。
- * sj3SrcDir:  (engineSwitch をする時のみ必要)
- *              Sj3 のソースが存在するディレクトリを指定します。
  *
  * 《以下の２つは修正不要とは思いますが説明をしておきます》
  *
@@ -127,13 +95,15 @@
  *              そろっていないので #define しておいてください。
  */
 /*
- * $Id: Canna.conf.dist,v 1.4.2.7 2003/09/12 14:32:51 aida_s Exp $
+ * $Id: Canna.conf.dist,v 1.22 2003/09/25 06:30:20 aida_s Exp $
  */
 
 /* rootにならずにインストールする時はこれを定義して下さい */
 /* #define InstallAsUser */
 /* 従来と互換のディレクトリ構造にする場合はこれを定義してください */
-#define ObsoleteInstallDir
+/* #define ObsoleteInstallDir */
+
+/* 以下デフォルト値、変更不要 */
 #ifdef InstallAsUser
 # define DefCannaPrefix $(HOME)/canna
 # define DefErrDir $(cannaPrefix)/log
@@ -156,6 +126,20 @@
 # define DefCannaLibDir $(cannaPrefix)/share/canna
 #endif
 
+#if defined(LinuxArchitecture) || defined(FreeBSDArchitecture) \
+    || defined(NetBSDArchitecture) || defined(OpenBSDArchitecture)
+# ifdef UseElfFormat
+#  define ModernElfLinkAvailable UseElfFormat
+#  define CannaGccElfArchitecture
+# else
+#  define ModernElfLinkAvailable NO
+# endif
+#elif defined(SVR4Architecture)
+# define ModernElfLinkAvailable YES
+#else
+# define ModernElfLinkAvailable NO
+#endif
+
 cannaPrefix = DefCannaPrefix
 cannaExecPrefix = $(cannaPrefix)
 cannaBinDir = $(cannaExecPrefix)/bin
@@ -170,10 +154,20 @@ cannaIncDir = $(cannaPrefix)/include/canna
 libCannaDir = DefLibCannaDir
 ErrDir  = DefErrDir
 
-/* 次の3行は変更しないでください */
-wcharDefinition = -DCANNA_WCHAR
-Wlib =
-JapaneseLocale = japanese
+/* 旧バージョンとの互換APIを無効にする場合は0と定義してください */
+#define SupportOldWchar 1
+
+/* IPv6を用いる場合は1と定義してください */
+#define UseInet6 0 /* requires newer IPv6 implementation */
+
+/* 3.2系から3.6系までの形式の辞書を作る場合はこれを定義してください */
+/* #define DIC_3_6_COMPAT */
+
+/* ELFを使うプラットフォームで、共有ライブラリの扱いを、LinuxやNetBSD、
+ * OpenBSDのような現代的な扱いにしたい場合、YESにしてください。
+ */
+#define ModernElfLink NO /* experimental */
+
 
 cannaOwner = bin
 cannaGroup = bin
@@ -184,17 +178,14 @@ cannaOwnerGroup =
 cannaOwnerGroup = -o $(cannaOwner) -g $(cannaGroup)
 #endif
 
-pointerIntegerDef =
+cannaDsoRev = 1.2
 
-cannaDsoRev = 1.1
-
-#if defined(__CYGWIN32__)
+#if defined(cygwinArchitecture)
 /* import libraryの方を指定しておく。DLL本体は/usr/X11R6/binに入る。 */
 sharedLibExtension = a
-#elif defined(hpux)
+#elif defined(HPArchitecture)
 sharedLibExtension = sl.$(cannaDsoRev)
-#elif defined(__APPLE__) || defined(DarwinArchitecture)
-/* 今のところ__APPLE__はImake.cfでundefされる */
+#elif defined(DarwinArchitecture)
 sharedLibExtension = $(cannaDsoRev).dylib
 #else
 sharedLibExtension = so.$(cannaDsoRev)
@@ -216,11 +207,6 @@ CHMOD = chmod
 /* 日本語マニュアルを使わないのであればコメントアウト */
 #define JAPANESEMAN
 
-/* locale ディレクトリを持っている場合は以下を記述する */
-/* #define LOCALE_DIR /usr/lib/locale */
-
-/* エンジンスイッチ機能を使うのであればコメントをはずす */
-/* ※注 Canna version 3.5 ではコメントをはずさないでください */
 /* #define engineSwitch */
 
 /* 以下エンジンスイッチがらみ */
@@ -233,16 +219,16 @@ CHMOD = chmod
   cannaDsoRevDef = -DCANNA_DSOREV=\"$(cannaDsoRev)\"
 #endif
 
-/* 『かんな』を少しでも軽くしたい人は以下を 1 にして下さい。
-    cannaserver、libcanna に EUC プロトコル処理部を組み込みません */
+/* cannaserver、libcanna に EUC プロトコル処理部を組み込みません。
+ * EUCプロトコルのサポートは打ち切られたので、特別な理由が無い限り1に
+ * 設定して下さい。
+ */
 cannaLight = 1
 
 /* 漢字辞書名、ローマ字テーブル名を以前の名前のままにする場合には、
    USE_OBSOLETE_STYLE_FILENAME を定義する */
 /* #define USE_OBSOLETE_STYLE_FILENAME */
 
-/* rename() が存在しない場合には 1 にして下さい */
-dontHaveRename = 0
 
 /*
  * インストール済みの共有ライブラリを用いて Canna の
@@ -253,22 +239,17 @@ dontHaveRename = 0
 
 DicDir   = $(cannaLibDir)/dic
 
-#ifdef NeXT
-#define NO_X_ENV
-#endif
-
 /* ここから下は変更不要です */
 
 /*
  * これらについては <Library.tmpl> も見てくだい。 
  */
-/* #define DoSharedLib NO  SUN でうまくないのでちょっと NO にしておく */
 
 #ifndef DoSharedLib
 #define DoSharedLib HasSharedLibraries
 #endif
 
-#if DoSharedLib == YES && defined(__CYGWIN32__)
+#if DoSharedLib == YES && defined(cygwinArchitecture)
 #define CYGWIN_DLL
 #endif
 #ifndef CYGWIN_DLL
@@ -284,58 +265,67 @@ DicDir   = $(cannaLibDir)/dic
 #define UseInstalledLibCanna NO
 #endif /* UseInstalledLibCanna */
 
-#if UseInstalledLibCanna
-# if DoSharedLib
-    DEPCANNALIB = $(libCannaDir)/libcanna.$(sharedLibExtension)
-# else
-#ifdef __EMX__
-    DEPCANNALIB = $(libCannaDir)/canna.a
-#else
-    DEPCANNALIB = $(libCannaDir)/libcanna.a
-#endif
+#if 0 && defined(OS2Architecutre)
+# ifdef LibraryTargetName
+#  undef LibraryTargetName
 # endif
-       CANNALIB = -L$(libCannaDir) -lcanna $(DLLIB)
-#else /* ! UseInstalledLibCanna */
-# if DoSharedLib
-    DEPCANNALIB = $(CANNASRC)/libcanna.$(sharedLibExtension)
-# else
-#ifdef __EMX__
-    DEPCANNALIB = $(CANNASRC)/canna.a
-#else
-    DEPCANNALIB = $(CANNASRC)/libcanna.a
+# define LibraryTargetName(libname) libname.a
 #endif
-# endif
-       CANNALIB = -L$(CANNASRC) -lcanna $(DLLIB)
-#endif /* UseInstalledLibCanna */
+#if DoSharedLib
+# define CannaDepLibraryName(libname) Concat(lib,libname.$(sharedLibExtension))
+#else
+# define CannaDepLibraryName(libname) LibraryTargetName(libname)
+#endif
 
 #if UseInstalledLibCanna
-# if DoSharedLib
-    DEPCANNALIB16 = $(libCannaDir)/libcanna16.$(sharedLibExtension)
-# else
-    DEPCANNALIB16 = $(libCannaDir)/libcanna16.a
+DEPCANNALIB = $(libCannaDir)/CannaDepLibraryName(canna)
+CANNALIB = -L$(libCannaDir) -lcanna $(DLLIB)
+DEPCANNALIB16 = $(libCannaDir)/CannaDepLibraryName(canna16)
+CANNALIB16 = -L$(libCannaDir) -lcanna16 $(DLLIB)
+#else
+DEPCANNALIB = $(CANNASRC)/CannaDepLibraryName(canna)
+CANNALIB = -L$(CANNASRC) -lcanna $(DLLIB)
+DEPCANNALIB16 = $(CANNASRC)/CannaDepLibraryName(canna16)
+CANNALIB16 = -L$(CANNASRC) -lcanna16 $(DLLIB)
+#endif
+
+#if DoSharedLib
+DEPRKCLIB = $(DEPCANNALIB)
+RKCLIB = $(CANNALIB)
+#else /* !HasSharedLibraries */
+DEPRKCLIB = $(RKCSRC)/LibraryTargetName(RKC)
+RKCLIB = -L$(RKCSRC) -lRKC
+#endif /* !HasSharedLibraries */
+
+DEPRKLIB = $(CANNAROOT)/lib/RK/LibraryTargetName(RK)
+RKLIB = -L$(CANNAROOT)/lib/RK -lRK
+DEPRKINDEPLIB = $(CANNAROOT)/lib/RKindep/LibraryTargetName(RKindep)
+RKINDEPLIB = -L$(CANNAROOT)/lib/RKindep -lRKindep
+LDOPTIONS = $(CDEBUGFLAGS) $(CCOPTIONS) $(LOCAL_LDFLAGS) -L$(libCannaDir)
+#if ModernElfLink
+/* best effort */
+# ifdef CannaGccElfArchitecture
+SHLIBLDFLAGS = -shared -Wl,-rpath,$(libCannaDir)
 # endif
-       CANNALIB16 = -L$(libCannaDir) -lcanna16 $(DLLIB)
-#else /* ! UseInstalledLibCanna */
-# if DoSharedLib
-    DEPCANNALIB16 = $(CANNASRC)/libcanna16.$(sharedLibExtension)
-# else
-    DEPCANNALIB16 = $(CANNASRC)/libcanna16.a
-# endif
-       CANNALIB16 = -L$(CANNASRC) -lcanna16 $(DLLIB)
-#endif /* UseInstalledLibCanna */
+USRLIBDIRPATH = $(libCannaDir)
+CCENVSETUP = LD_RUN_PATH=$(USRLIBDIRPATH)
+SOSYMLINK = true
+#endif
 
 /*
  * ここから下は変更しないようにしてください。
  */
-
- CANNASERVER_DEFINES = $(wcharDefinition)
-          RK_DEFINES = $(pointerIntegerDef)
-         RKC_DEFINES = $(wcharDefinition)
-       UILIB_DEFINES = $(wcharDefinition) $(pointerIntegerDef) \
-                       $(cannaDsoRevDef)
-          XN_DEFINES = $(wcharDefinition) $(pointerIntegerDef)
-      SAMPLE_DEFINES = $(wcharDefinition) $(pointerIntegerDef)
-     SCRIPTS_DEFINES = 
+#if defined(SunArchitecture)
+# define CannaDefines -D__EXTENSIONS__
+#else
+# define CannaDefines
+#endif
+CANNA_DEFINES = CannaDefines
+CANNASERVER_DEFINES = $(CANNA_DEFINES)
+RK_DEFINES = $(CANNA_DEFINES)
+RKC_DEFINES = -DCPP='"$(CPP)"' $(CANNA_DEFINES)
+UILIB_DEFINES = $(cannaDsoRevDef) $(CANNA_DEFINES)
+SCRIPTS_DEFINES = $(CANNA_DEFINES)
 
 #ifdef JAPANESEMAN
 JMNLOCALE = ja
@@ -355,7 +345,11 @@ AccessFile = /etc/hosts.canna
 #endif
 UnixSockName = IROHA
 
-#ifndef __EMX__
+/*
+ * 以下manページに関する定義
+ */
+
+#ifndef OS2Architecutre
 MANUALSED = $(CANNAROOT)/misc/manual.sed
 
 #define ConvertPathName(dst,src)					@@\
@@ -492,22 +486,59 @@ install.man::								@@\
 	$(LN) LibManBase(file) JManTop(destdir)/LibManDest($$i) \	@@\
 	); done
 #endif
-#ifndef MakeDirectoriesLong
-#define MakeDirectoriesLong(step,dirs,owner,group)			@@\
-step::									@@\
-	@case '${MFLAGS}' in *[i]*) set +e;; esac;			@@\
-	DirFailPrefix@for i in dirs; do if [ -d $(DESTDIR)$$i ]; then \	@@\
-		set +x; else (set -x; $(MKDIRHIER) $(DESTDIR)$$i;$(CHOWN) owner $(DESTDIR)$$i;$(CHGRP) group $(DESTDIR)$$i); fi; \	@@\
-	done
-#endif /* MakeDirectoriesLong */
 
+/*
+ * 以下ライブラリに関する定義
+ */
+
+#if ModernElfLink
+# define CannaLongShLib(libname,rev) Concat(lib,libname.so.rev)
+# define CannaShortShLib(libname) Concat(lib,libname.so)
+
+# if defined(CannaGccElfArchitecture)
+#  define CannaLinkTmpSharedLibrary(tmpso,dlname,solist) \
+    $(CC) -o tmpso $(SHLIBLDFLAGS) -Wl,-soname,dlname solist $(REQUIREDLIBS) BaseShLibReqs
+# elif defined(SVR4Architecture)
+#  define CannaLinkTmpSharedLibrary(tmpso,dlname,solist) \
+    $(CCENVSETUP) $(LD) -o tmpso $(SHLIBLDFLAGS) -h dlname solist $(REQUIREDLIBS) BaseShLibReqs
+# else
+#  error unsupported platform
+# endif
+/* CannaLinkTmpSharedLibrary */
+
+# define CannaSharedLibraryTarget(libname,rev,solist,down,up)		@@\
+AllTarget(CannaLongShLib(libname,rev))					@@\
+									@@\
+CannaLongShLib(libname,rev):  solist $(EXTRALIBRARYDEPS)		@@\
+	$(RM) $@~							@@\
+	@SONAME=`echo $@ | sed 's/\.[^\.]*$$//'`; set -x; \		@@\
+		(cd down; CannaLinkTmpSharedLibrary(up/$@~,$$SONAME,solist)); \ @@\
+		$(RM) $$SONAME; $(LN) $@ $$SONAME			@@\
+	$(RM) $@ 							@@\
+	$(MV) $@~ $@							@@\
+	@if $(SOSYMLINK); then (set -x; \				@@\
+	  $(RM) CannaShortShLib(libname); \				@@\
+	  $(LN) $@ CannaShortShLib(libname)); fi			@@\
+									@@\
+clean::									@@\
+	@MAJREV=`expr rev : '\([^.]*\)'`; \				@@\
+	set -x; $(RM) CannaLongShLib(libname,$$MAJREV)			@@\
+	$(RM) CannaLongShLib(libname,rev) CannaShortShLib(libname)
+/* CannaSharedLibraryTarget */
+# define CannaInstallSharedLibrary(libname,rev,dest)			@@\
+install:: CannaLongShLib(libname,rev) 					@@\
+	MakeDir($(DESTDIR)dest)						@@\
+	$(INSTALL) $(INSTALLFLAGS) $(INSTBINFLAGS) CannaLongShLib(libname,rev) $(DESTDIR)dest @@\
+	@T=`echo $(DESTDIR)dest/CannaLongShLib(libname,rev) | sed 's/\.[^\.]*$$//'`;\
+	  set -x; $(RM) $$T && $(LN) CannaLongShLib(libname,rev) $$T	@@\
+	@if $(SOSYMLINK); then (set -x; \
+	  $(RM) $(DESTDIR)dest/CannaShortShLib(libname); \		@@\
+	  $(LN) CannaLongShLib(libname,rev) $(DESTDIR)dest/CannaShortShLib(libname)); fi
+/* CannaInstallSharedLibrary */
+
+#elif defined(CYGWIN_DLL)
 /* libname-def.cppを作るのが面倒なのでXのSharedLibraryTargetを上書き */
-#ifdef CYGWIN_DLL
-#ifdef SharedLibraryTarget
-#undef SharedLibraryTarget
-#endif
-
-#define SharedLibraryTarget(libname,rev,solist,down,up)			@@\
+# define CannaSharedLibraryTarget(libname,rev,solist,down,up)		@@\
 AllTarget(Concat3(lib,libname,.dll))					@@\
 									@@\
 Concat3(lib,libname,.dll):  solist					@@\
@@ -518,16 +549,16 @@ Concat3(lib,libname,.dll):  solist					@@\
 clean::									@@\
 	RemoveFile(LibraryTargetName(libname))				@@\
 	RemoveFile(Concat3(lib,libname,.dll))
+/* CannaSharedLibraryTarget */
+/* 4.3.0ではライブラリの命名が変更されているようなので古い命名を使う */
+# define CannaInstallSharedLibrary(libname,rev,dest)                    @@\
+InstallTarget(install,LibraryTargetName(libname),$(INSTLIBFLAGS),$(USRLIBDIR)) @@\
+InstallTarget(install,Concat3(lib,libname,.dll),$(INSTLIBFLAGS),$(BINDIR))
+/* CannaInstallSharedLibrary */
 
-#endif /* CYGWIN_DLL */
-
+#elif defined(RsArchitecture)
 /* 以下は IBM 基礎研の古畑さん(furuhata@trl.ibm.co.jp)により書かれました */
-#if defined(RsArchitecture) && DoSharedLib
-#ifdef SharedLibraryTarget
-#undef SharedLibraryTarget
-#endif /* SharedLibraryTarget */
-
-#define SharedLibraryTarget(libname,rev,solist,down,up)			@@\
+# define CannaSharedLibraryTarget(libname,rev,solist,down,up)		@@\
 AllTarget(Concat(lib,libname.a))					@@\
 									@@\
 Concat(lib,libname.a):  solist $(UNSHAREDOBJS)				@@\
@@ -542,68 +573,47 @@ Concat(lib,libname.a):  solist $(UNSHAREDOBJS)				@@\
 									@@\
 clean::									@@\
 	$(RM) Concat(lib,libname.a)
+/* CannaSharedLibraryTarget */
+#endif /* Special link rules */
 
-      LDOPTIONS = $(CDEBUGFLAGS) $(CCOPTIONS) $(LOCAL_LDFLAGS) -L$(libCannaDir)
-#endif /* RsArchitecture */
+/* 必要に応じてXのルールを上書き */
+#ifdef CannaSharedLibraryTarget
+# ifdef SharedLibraryTarget
+#  undef SharedLibraryTarget
+# endif
+# define SharedLibraryTarget CannaSharedLibraryTarget
+#endif
 
-/* R6 の LinkBuildLibrary の上書き */
+#ifdef CannaInstallSharedLibrary
+# ifdef InstallSharedLibrary
+#  undef InstallSharedLibrary
+# endif
+# define InstallSharedLibrary CannaInstallSharedLibrary
+#endif
+
 #ifdef LinkBuildLibrary
-#undef LinkBuildLibrary
+# undef LinkBuildLibrary
 #endif
 #define LinkBuildLibrary(lib) $(_NULLCMD_)
 
-/* 以下は cannaconf.h を作るルール */
-#if defined(__EMX__)
-#define MakeCannaConfigH(dst)						@@\
-dst:: Canna.conf							@@\
-	echo "/* for cannaserver */" > junk				@@\
-	echo "#define DICHOME '$(DicDir)'" >> junk			@@\
-	echo "#define ERRDIR '$(ErrDir)'" >> junk			@@\
-	echo "#define USE_INET_SOCKET" >> junk				@@\
-	echo "#define ACCESS_FILE '$(AccessFile)'" >> junk		@@\
-	echo "/* for lib/RKC */" >> junk				@@\
-	echo "#define JAPANESE_LOCALE '$(JapaneseLocale)'" >> junk	@@\
-	echo "#define CANNAHOSTFILE '$(cannaLibDir)/cannahost'" >> junk	@@\
-	echo "/* for lib/canna */" >> junk				@@\
-	echo "#define CANNALIBDIR '$(cannaLibDir)'" >> junk		@@\
-	echo "/* for scripts */" >> junk				@@\
-	echo "#define CANNABINDIR $(cannaBinDir)" >> junk		@@\
-	echo "/* others */" >> junk					@@\
-	echo "#define CANNA_LIGHT $(cannaLight)" >> junk		@@\
-	echo "#define DONT_HAVE_RENAME $(dontHaveRename)" >> junk	@@\
-	echo "#ifdef nec" >> junk					@@\
-	echo "#undef nec" >> junk					@@\
-	echo "#endif" >> junk						@@\
-	sed -e "s/'/\\\"/" -e "s/'/\\\"/" < junk > $@			@@\
-	$(RM) junk
-#else
-#define MakeCannaConfigH(dst)						@@\
-dst:: Canna.conf							@@\
-	@(echo "/* for cannaserver */";\				@@\
-	 echo "#define DICHOME \"$(DicDir)\"";  \			@@\
-	 echo "#define ERRDIR \"$(ErrDir)\"";   \			@@\
-	 echo "#define USE_UNIX_SOCKET"; \                              @@\
-	 echo "#define USE_INET_SOCKET"; \                              @@\
-	 echo "#define IR_UNIX_DIR \"$(UnixSockDir)\""; \		@@\
-	 echo "#define IR_UNIX_SOCKNAME \"$(UnixSockName)\""; \		@@\
-	 echo "#define ACCESS_FILE \"$(AccessFile)\""; \		@@\
-	 echo "/* for lib/RKC */";\					@@\
-	 echo "#define JAPANESE_LOCALE \"$(JapaneseLocale)\"";\		@@\
-	 echo "#define CANNAHOSTFILE \"$(cannaLibDir)/cannahost\"";\	@@\
-	 echo "/* for lib/canna */";\					@@\
-	 echo "#define CANNALIBDIR \"$(cannaLibDir)\""; \		@@\
-	 echo "/* for scripts */";\					@@\
-	 echo "#define CANNABINDIR $(cannaBinDir)"; \			@@\
-	 echo "/* others */";\					@@\
-	 echo "#define CANNA_LIGHT $(cannaLight)"; \			@@\
-	 echo "#define DONT_HAVE_RENAME $(dontHaveRename)"; \		@@\
-	 echo "#ifdef nec"; \						@@\
-	 echo "#undef nec"; \						@@\
-	 echo "#endif") > junk; \					@@\
-	 if test -r $@ && cmp -s junk $@; then \			@@\
-	   echo "$@ unchanged"; \					@@\
-	   rm junk; \							@@\
-	 else \								@@\
-	   mv junk $@; \						@@\
-	fi
+/* 以下定義が欠けている場合のための代替定義 */
+#ifndef ProgramTargetName
+# if defined(OS2Architecutre) || defined(cygwinArchitecture)
+#  define ProgramTargetName(target) Concat(target,.exe)
+# else
+#  define ProgramTargetName(target) target
+# endif
+#endif /* ProgramTargetName */
+
+#ifndef MakeDirectoriesLong
+# define MakeDirectoriesLong(step,dirs,owner,group)			@@\
+step::									@@\
+	@case '${MFLAGS}' in *[i]*) set +e;; esac;			@@\
+	DirFailPrefix@for i in dirs; do if [ -d $(DESTDIR)$$i ]; then \	@@\
+		set +x; else (set -x; $(MKDIRHIER) $(DESTDIR)$$i;$(CHOWN) owner $(DESTDIR)$$i;$(CHGRP) group $(DESTDIR)$$i); fi; \	@@\
+	done
+#endif /* MakeDirectoriesLong */
+
+#ifndef BaseShLibReqs
+# define BaseShLibReqs
 #endif

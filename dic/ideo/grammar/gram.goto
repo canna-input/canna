@@ -19,7 +19,7 @@
  * OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
  * PERFORMANCE OF THIS SOFTWARE. 
  *
- * $Id: gram.goto,v 1.2 2002/10/20 04:10:29 aida_s Exp $
+ * $Id: gram.goto,v 1.3 2003/09/27 06:18:38 aida_s Exp $
  */
 /*
  * gram.goto: ÀÜÂ³´Ø·¸
@@ -98,10 +98,10 @@ KJ+	BB
 	Fmade \
 	Fka Fkoso Fsae Fsika Fsura Fdano Fttara Ftte\
 	Ftoka Ftote Ftomo Fdokoro Fnagara Fnaradeha Fnari Fnomi\
-	Fha Fbakari Fmo Fya Fyara Fyue Fnazo Fdatte Fttatte FKN JTNO Snara\
+	Fha Fbakari Fmo Fya Fyara Fyue Fnazo Fdatte Fttatte FKN Snara\
 	rasii ppoi ddat ddemo dde1 ddar ddeha djan des desho deshou ssu mitaida buru na\
 	N2T10 N2T15 N2T16 N2T18 N2T30 N2KS N2K5 N2R5 N2KYT ND2KY SUC
-#define	T_GOKAN COMMON_GOKAN dda1
+#define	T_GOKAN COMMON_GOKAN dda1 JTNO
 
 
 T00+	T_NA

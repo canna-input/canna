@@ -1,6 +1,6 @@
 /*
  *  sheader.h,v 1.11 2002/06/22 13:26:21 hiroo Exp
- *  Canna: $Id: sheader.h,v 1.3.2.1 2003/01/11 17:53:57 aida_s Exp $
+ *  Canna: $Id: sheader.h,v 1.3 2003/01/04 07:31:02 aida_s Exp $
  */
 
 /*

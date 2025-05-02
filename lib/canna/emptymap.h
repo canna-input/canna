@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char emptymap_id[] = "@(#) 102.1 $Id: emptymap.h,v 1.1.1.1.2.1 2003/09/12 13:18:05 aida_s Exp $";
+static char emptymap_id[] = "@(#) 102.1 $Id: emptymap.h,v 1.3 2003/09/17 08:50:53 aida_s Exp $";
 #endif /* lint */
 
 extern AlphaMode(), HenkanNyuryokuMode(), ZenHiraKakuteiMode();
@@ -76,20 +76,10 @@ static struct funccfunc empty_funcs[] = {
   {CANNA_FN_UseOtherKeymap	,UseOtherKeymap		},
   {CANNA_FN_UserMode		,(int (*) pro((struct _uiContext *)))
                                  ProcExtraFunc		},
-#ifdef WIN
-  {CANNA_FN_DefineDicMode	,dicTouroku		},
-  {CANNA_FN_DeleteDicMode	,dicSakujo		},
-  {CANNA_FN_HenkanRegion	,HenkanRegion		},
-  {CANNA_FN_PhonoEdit		,PhonoEdit		},
-  {CANNA_FN_DicEdit		,DicEdit		},
-  {CANNA_FN_Configure		,Configure		},
-#endif
 
 #ifndef NO_EXTEND_MENU
-#ifndef WIN
   {CANNA_FN_DefineDicMode	,dicTouroku		},
   {CANNA_FN_DeleteDicMode	,dicSakujo		},
-#endif
   {CANNA_FN_HexMode		,HexMode		},
   {CANNA_FN_BushuMode		,BushuMode		},
   {CANNA_FN_RussianMode		,kigoRussia		},
@@ -250,13 +240,8 @@ BYTE empty_kmap[256] =
 /* Insert */    CANNA_FN_KigouMode,
 /* Rollup */    NONE,
 /* Rolldown */  NONE,
-#ifdef WIN
-/* Home */      NONE,
-/* Help */      NONE,
-#else
 /* Home */      CANNA_FN_ExtendMode,
 /* Help */      CANNA_FN_ExtendMode,
-#endif
 /* KeyPad */    NONE,
 /* 8c */        NONE,
 /* 8d */        NONE,

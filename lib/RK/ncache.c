@@ -21,7 +21,7 @@
  */
 
 /*
-static char rcsid[]="$Id: ncache.c,v 1.1.1.1 2002/10/19 08:27:45 aida_s Exp $";
+static char rcsid[]="$Id: ncache.c,v 1.2 2003/09/17 08:50:52 aida_s Exp $";
 */
 
 #include	"RKintern.h"
@@ -204,7 +204,7 @@ _RkKillCache(dm)
   };
 }
 
-#if defined(MMAP) || defined(WIN)
+#if defined(MMAP)
 int
 _RkDoInvalidateCache(addr, size)
      long	addr;

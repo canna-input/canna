@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "$Id: permdic.c,v 1.3 2002/10/20 14:29:58 aida_s Exp $";
+static char rcs_id[] = "$Id: permdic.c,v 1.8 2003/09/17 08:50:52 aida_s Exp $";
 #endif
 
 #include	"RKintern.h"
@@ -35,18 +35,8 @@ static char rcs_id[] = "$Id: permdic.c,v 1.3 2002/10/20 14:29:58 aida_s Exp $";
 #include <fcntl.h> /* for O_BINARY */
 #endif
 
-#ifdef WIN 
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#endif
-
 #define dm_xdm	dm_extdata.ptr
-#ifndef WIN
 #define df_fdes	df_extdata.var
-#else
-#define df_fdes df_extdata.hnd
-#endif
 
 extern	unsigned	_RkCalcLVO();
 extern	Wchar		uniqAlnum();
@@ -59,15 +49,13 @@ extern	Wchar		uniqAlnum();
 extern int fd_dic;      /* mmap */
 #endif
 
-#ifndef WIN
 static int
-#else
-static HANDLE
-#endif
-openDF(df, dfnm, w)
+openDF(df, dfnm, w, gramoff, gramsz)
      struct DF	*df;
      char	*dfnm;
      int        *w;
+     off_t	*gramoff;
+     size_t	*gramsz;
 {
   struct HD	hd;
   struct ND	nd, *xnd;
@@ -75,29 +63,14 @@ openDF(df, dfnm, w)
   off_t		off;
   unsigned char	ll[4];
   int		count = 0, err;
-#ifdef WIN
-  HANDLE fd;
-  DWORD readsize;
-  HANDLE errres = INVALID_HANDLE_VALUE;
-#else
   int		fd;
   int errres = -1;
-#endif
     
   *w = 0;
-#ifdef WIN
-  fd = CreateFile(dfnm, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
-		  OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-
-  if (fd == INVALID_HANDLE_VALUE) {
-    return fd;
-  }
-#else
   if ((fd = open(dfnm, 0)) == -1) 
     return errres;
 #ifdef __CYGWIN32__
   setmode(fd, O_BINARY);
-#endif
 #endif
 
   for (off = 0, err = 0; !err && _RkReadHeader(fd, &hd, off) >= 0;) {
@@ -107,6 +80,13 @@ openDF(df, dfnm, w)
       break;
     }
     nd.time = hd.data[HD_TIME].var;
+    /* XXX: sanity check taking advantage of this CRC */
+    if (hd.flag[HD_CRC]) {
+      nd.crc = hd.data[HD_CRC].var;
+      nd.crc_found = 1;
+    } else {
+      nd.crc_found = 0;
+    }
     nd.rec = hd.data[HD_REC].var;
     nd.can = hd.data[HD_CAN].var;
     nd.doff = off + hd.data[HD_HSZ].var;
@@ -117,21 +97,31 @@ openDF(df, dfnm, w)
     nd.fd = fd;
     nd.buf = (unsigned char *)0;
     nd.pgs = (struct NP *)0;
+    nd.version = HD_VERSION(&hd);
     off += hd.data[HD_SIZ].var;
     if (!strncmp(".swd",
 		 (char *)(hd.data[HD_DMNM].ptr
 			  + strlen((char *)hd.data[HD_DMNM].ptr) - 4),
 		 4)) {
-#ifndef WIN
-      if (lseek(fd, off, 0) < 0 || read(fd, (char *)ll, 4) != 4)
-	err++;
-#else
-      if (SetFilePointer(fd, off, NULL, FILE_BEGIN) == 0xFFFFFFFF ||
-	  !ReadFile(fd, (char *)ll, 4, &readsize, NULL) || readsize != 4) {
-	err++;
+      if (nd.version >= 0x300702L) {
+	if (hd.flag[HD_GRAM] == -1) {
+	  *gramoff = hd.data[HD_GRAM].var;
+	  *gramsz = hd.data[HD_GRSZ].var;
+	} else {
+	  *gramoff = 0;
+	  *gramsz = 0;
+	}
+      } else {
+	if (lseek(fd, off, 0) < 0 || read(fd, (char *)ll, 4) != 4) {
+	  err++;
+	  *gramoff = 0;
+	  *gramsz = 0;
+	} else {
+	  *gramoff = off;
+	  *gramsz = (size_t)-1;
+	  off += bst4_to_l(ll) + 4;
+	}
       }
-#endif
-      off += bst4_to_l(ll) + 4;
     }
     dmh = &df->df_members;
     for (dm = dmh->dm_next; dm != dmh; dm = dm->dm_next) {
@@ -153,11 +143,7 @@ openDF(df, dfnm, w)
   _RkClearHeader(&hd);
   df->df_size = off;
   if (!count) {
-#ifndef WIN
     (void)close(fd);
-#else
-    CloseHandle(fd);
-#endif
     return errres;
   }
   return (df->df_fdes = fd);
@@ -174,23 +160,15 @@ _Rkpopen(dm, dfnm, mode, gram)
   struct DD	*dd;
   struct ND	*xdm;
   int 		writable, i, readsize;
-#ifndef WIN
   int fd;
-#else
-  HANDLE fd;
-#endif
+  off_t		gramoff;
+  size_t	gramsz;
   
   if (!(df = dm->dm_file) || !(dd = df->df_direct))
     return -1;
   if (!df->df_rcount) {
-#ifndef WIN
-    if ((df->df_fdes = (long)openDF(df, dfnm, &writable)) < 0)
+    if ((df->df_fdes = (long)openDF(df, dfnm, &writable, &gramoff, &gramsz)) < 0)
       return -1;
-#else
-    if ((df->df_fdes = openDF(df, dfnm, &writable)) == INVALID_HANDLE_VALUE) {
-      return -1;
-    }
-#endif
     if (writable)
       df->df_flags |= DF_WRITABLE;
     else
@@ -223,16 +201,8 @@ _Rkpopen(dm, dfnm, mode, gram)
     xdm->pgs[i].buf = (unsigned char *) 0;
   }
 
-#ifndef WIN
   (void)lseek(fd, xdm->doff, 0);
   readsize = read(fd, (char *)xdm->buf, (unsigned int) xdm->drsz);
-#else
-  SetFilePointer(fd, xdm->doff, NULL, FILE_BEGIN);
-  if (!ReadFile(fd, (char *)xdm->buf, (unsigned int)xdm->drsz,
-		&readsize, NULL)) {
-    readsize = 0;
-  }
-#endif
   if (readsize != ((int) xdm->drsz)) {
     (void)free((char *)xdm->pgs);
     (void)free((char *)xdm->buf);
@@ -240,16 +210,11 @@ _Rkpopen(dm, dfnm, mode, gram)
     xdm->pgs = (struct NP *)0;
     return(-1);
   }
-  if (dm->dm_class == ND_SWD) {
+  if (dm->dm_class == ND_SWD && gramsz) {
     struct RkKxGram *gram;
 
-#ifndef WIN
-    lseek(fd, xdm->doff + xdm->drsz + xdm->ttlpg * xdm->pgsz, 0);
-#else
-    SetFilePointer(fd, xdm->doff + xdm->drsz + xdm->ttlpg * xdm->pgsz, NULL,
-		   FILE_BEGIN);
-#endif
-    gram = RkReadGram(fd);
+    lseek(fd, gramoff, 0);
+    gram = RkReadGram(fd, gramsz);
     if (gram) {
       dm->dm_gram = (struct RkGram *)malloc(sizeof(struct RkGram));
       if (dm->dm_gram) {
@@ -262,6 +227,7 @@ _Rkpopen(dm, dfnm, mode, gram)
 #ifdef LOGIC_HACK
 	dm->dm_gram->P_KJ  = RkGetGramNum(gram, "KJ");
 #endif
+	dm->dm_gram->P_Ftte = RkGetGramNum(gram, "Ftte");
 	dm->dm_gram->refcount = 1;
 	goto next;
       }
@@ -318,20 +284,12 @@ _Rkpclose(dm, dfnm, gram)
   }
 
   if (--df->df_rcount == 0)  {
-#ifndef WIN
     int	fd;
-#else
-    HANDLE fd;
-#endif
     struct DM	*dmh, *ddm;
 
     fd = df->df_fdes;
     
-#ifndef WIN
     (void)close(fd);
-#else
-    CloseHandle(fd);
-#endif
     dmh = &df->df_members;
     for (ddm = dmh->dm_next; ddm != dmh; ddm = ddm->dm_next) {
       xdm = (struct ND *)ddm->dm_xdm;
@@ -354,11 +312,7 @@ assurep(dic, id)
   unsigned	size = dic->pgsz;
   unsigned char	*buf;
   int i;
-#ifndef WIN
   int fd;
-#else
-  HANDLE fd;
-#endif
 
   fd = dic->fd;
   if (!dic->pgs)
@@ -366,26 +320,6 @@ assurep(dic, id)
   if ((unsigned)id >= dic->ttlpg)
     return((unsigned char *)0);
   if (!isLoadedPage(dic->pgs + id)) {
-#ifdef WIN
-    for(i = 0; i < (int)dic->ttlpg; i++) {
-      if (dic->pgs[i].flags & RK_PG_LOADED) { 
-        if (_RkDoInvalidateCache((long)dic->pgs[i].buf, dic->pgsz) == 1) {
-	  if (dic->pgs[i].buf) {
-	    free(dic->pgs[i].buf); 
-	  }
-
-          dic->pgs[i].buf = (unsigned char *)0;
-
-          dic->pgs[i].lnksz = (unsigned) 0;
-          dic->pgs[i].ndsz = (unsigned) 0;
-          dic->pgs[i].lvo = (unsigned) 0;
-          dic->pgs[i].csn = (unsigned) 0;
-          dic->pgs[i].flags = (unsigned) 0;
-          dic->pgs[i].count = 0;
-	}
-      }
-    }
-#endif
 
 #ifdef MMAP
     buf = (unsigned char *)mmap(0, size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd_dic, 0);
@@ -395,24 +329,11 @@ assurep(dic, id)
     if (!(buf = (unsigned char *)malloc(size)))
       return((unsigned char *)0);
 #endif
-#ifndef WIN
     (void)lseek(fd, off, 0);
     if (read(fd, (char *)buf, size) != (int)size) {
       free((char *)buf);
       return((unsigned char *)0);
     }
-#else
-    SetFilePointer(fd, off, NULL, FILE_BEGIN);
-    {
-      DWORD foo;
-
-      if (!ReadFile(fd, (char *)buf, size, &foo, NULL) ||
-	  foo != size) {
-	free((char *)buf);
-	return (unsigned char *)0;
-      }
-    }
-#endif
 
     dic->pgs[id].buf = buf;
     dic->pgs[id].count = 0;
@@ -908,3 +829,4 @@ _Rkpsync(cx, dm, qm)
   }
   return (0);
 }
+/* vim: set sw=2: */
