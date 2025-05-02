@@ -125,6 +125,9 @@ Canna 3.6から3.7までの新機能、重要な修正、仕様変更を述べます。なお、
   ライセンスの明確化が行われています。
 ・そのほか潜在的なバグの修正やドキュメントの訂正を行いました。
 
+2.2 Canna 3.7p3での変更点
+・FreeBSD, Solaris, AIXなどでmakeできない問題を修正しました。
+
 以上
 
 /* Copyright (c) 2003-2004 Canna Project. All rights reserved.
@@ -149,4 +152,4 @@ Canna 3.6から3.7までの新機能、重要な修正、仕様変更を述べます。なお、
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. 
  */
 
-($Id: CHANGES.jp,v 1.6.2.6 2004/05/04 22:35:51 aida_s Exp $)
+($Id: CHANGES.jp,v 1.6.2.7 2004/05/19 15:47:33 aida_s Exp $)

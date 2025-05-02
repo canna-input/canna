@@ -1,5 +1,5 @@
 # Process this file with autoconf to produce a configure script.
-AC_INIT([canna], [3.7p2], [canna-dev@lists.sourceforge.jp])
+AC_INIT([canna], [3.7p3], [canna-dev@lists.sourceforge.jp])
 AC_CONFIG_SRCDIR([WHATIS.jp])
 AC_CONFIG_HEADER([accanna.h])
 
@@ -125,4 +125,4 @@ else
 ])
 
 AC_OUTPUT
-# $Id: configure.ac,v 1.12.2.4 2004/05/18 15:10:00 aida_s Exp $
+# $Id: configure.ac,v 1.12.2.5 2004/05/19 15:47:33 aida_s Exp $

@@ -1,3 +1,18 @@
+2004-05-21 AIDA Shinra <shinra@j10n.org>
+
+	* Canna 3.7p3 release.
+	* configure.ac: bump to 3.7p3
+	* canna/patchlevel.h: ditto
+	* CHANGES.jp: updated
+
+2004-05-21 AIDA Shinra <shinra@j10n.org>
+
+	* confwrapper: "." bashism. Many shells don't searches the current
+	  directory.
+	* Imakefile: $(CC) -> env $(CC) in case $(CC) is
+	  "LD_LIBRARY_PATH=/usr/X11R6/lib cc".
+	* canuum/Imakefile: ditto
+
 2004-05-19 AIDA Shinra <shinra@j10n.org>
 
 	* Canna 3.7p2 release.
@@ -1857,4 +1872,4 @@
 
 	* Virgin import of Canna3.5b2.
 
-$Id: ChangeLog,v 1.155.2.19 2004/05/18 15:10:00 aida_s Exp $
+$Id: ChangeLog,v 1.155.2.21 2004/05/19 15:47:33 aida_s Exp $
