@@ -1,0 +1,97 @@
+/* $Id: Imakefile,v 2.7 1996/12/02 11:38:14 kon Exp $ */
+#include "../../Canna.conf"
+
+       CANNAROOT = ../..
+        CANNASRC = $(CANNAROOT)/lib/canna
+          RKCSRC = $(CANNAROOT)/lib/RKC
+
+#ifdef engineSwitch
+     ENGINE_DEFS = -DENGINE_SWITCH
+#endif
+
+#if defined(engineSwitch)
+       DEPRKCLIB = $(RKCSRC)/libRKC.so.$(cannaDsoRev)
+          RKCLIB = -L$(RKCSRC) -lRKC
+#else /* !defined(engineSwitch) */
+#if DoSharedLib
+       DEPRKCLIB = $(DEPCANNALIB)
+          RKCLIB = $(CANNALIB)
+#else /* !HasSharedLibraries */
+#ifdef __EMX__
+       DEPRKCLIB = $(RKCSRC)/RKC.a
+#else
+       DEPRKCLIB = $(RKCSRC)/libRKC.a
+#endif
+          RKCLIB = -L$(RKCSRC) -lRKC
+#endif /* !HasSharedLibraries */
+#endif /* !defined(engineSwitch) */
+
+          DEFINES = $(SIGNAL_DEFINES) $(ENGINE_DEFS)
+         INCLUDES = -I$(CANNAROOT)/include
+             SRCS = can.c rutil.c RKdelline.c
+             OBJS = can.o rutil.o RKdelline.o
+           TARGET = catdic
+
+#ifdef __EMX__
+AllTarget($(TARGET).exe)
+#else
+AllTarget($(TARGET))
+#endif
+NormalProgramTarget($(TARGET),$(OBJS),$(DEPRKCLIB),$(RKCLIB),)
+InstallProgram($(TARGET),$(cannaBinDir))
+InstallManPage(catdic,$(cannaManDir))
+InstallManPage(cpdic,$(cannaManDir))
+InstallManPage(lsdic,$(cannaManDir))
+InstallManPage(mkdic,$(cannaManDir))
+InstallManPage(mvdic,$(cannaManDir))
+InstallManPage(rmdic,$(cannaManDir))
+InstallManPage(addwords,$(cannaManDir))
+InstallManPage(delwords,$(cannaManDir))
+InstallManPage(cannakill,$(cannaManDir))
+DependTarget()
+LintTarget()
+
+#ifdef __EMX__
+install::
+	$(RM) $(cannaBinDir)/cpdic.exe
+	$(RM) $(cannaBinDir)/lsdic.exe
+	$(RM) $(cannaBinDir)/mkdic.exe
+	$(RM) $(cannaBinDir)/mvdic.exe
+	$(RM) $(cannaBinDir)/rmdic.exe
+	$(RM) $(cannaBinDir)/syncdic.exe
+	$(RM) $(cannaBinDir)/chmoddic.exe
+	$(RM) $(cannaBinDir)/addwords.exe
+	$(RM) $(cannaBinDir)/delwords.exe
+	$(RM) $(cannaBinDir)/cannakill.exe
+	$(LN) $(cannaBinDir)/catdic.exe $(cannaBinDir)/cpdic.exe
+	$(LN) $(cannaBinDir)/catdic.exe $(cannaBinDir)/lsdic.exe
+	$(LN) $(cannaBinDir)/catdic.exe $(cannaBinDir)/mkdic.exe
+	$(LN) $(cannaBinDir)/catdic.exe $(cannaBinDir)/mvdic.exe
+	$(LN) $(cannaBinDir)/catdic.exe $(cannaBinDir)/rmdic.exe
+	$(LN) $(cannaBinDir)/catdic.exe $(cannaBinDir)/syncdic.exe
+	$(LN) $(cannaBinDir)/catdic.exe $(cannaBinDir)/chmoddic.exe
+	$(LN) $(cannaBinDir)/catdic.exe $(cannaBinDir)/addwords.exe
+	$(LN) $(cannaBinDir)/catdic.exe $(cannaBinDir)/delwords.exe
+	$(LN) $(cannaBinDir)/catdic.exe $(cannaBinDir)/cannakill.exe
+#else
+install::
+	$(RM) $(cannaBinDir)/cpdic
+	$(RM) $(cannaBinDir)/lsdic
+	$(RM) $(cannaBinDir)/mkdic
+	$(RM) $(cannaBinDir)/mvdic
+	$(RM) $(cannaBinDir)/rmdic
+	$(RM) $(cannaBinDir)/syncdic
+	$(RM) $(cannaBinDir)/chmoddic
+	$(RM) $(cannaBinDir)/addwords
+	$(RM) $(cannaBinDir)/delwords
+	$(RM) $(cannaBinDir)/cannakill
+	$(LN) $(cannaBinDir)/catdic $(cannaBinDir)/cpdic
+	$(LN) $(cannaBinDir)/catdic $(cannaBinDir)/lsdic
+	$(LN) $(cannaBinDir)/catdic $(cannaBinDir)/mkdic
+	$(LN) $(cannaBinDir)/catdic $(cannaBinDir)/mvdic
+	$(LN) $(cannaBinDir)/catdic $(cannaBinDir)/rmdic
+	$(LN) $(cannaBinDir)/catdic $(cannaBinDir)/syncdic
+	$(LN) $(cannaBinDir)/catdic $(cannaBinDir)/addwords
+	$(LN) $(cannaBinDir)/catdic $(cannaBinDir)/delwords
+	$(LN) $(cannaBinDir)/catdic $(cannaBinDir)/cannakill
+#endif

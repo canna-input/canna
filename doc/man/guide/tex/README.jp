@@ -1,0 +1,36 @@
+TeX ファイルをコンパイルするに当たっての注意
+  
+  LaTeX によっては、生成するファイルのコードが JIS コードになるもの
+  もあるようです。その場合、canna.idx が JIS コードで作られてしまい 
+  cannaindex コマンドが正しく動作しません。
+
+  そのような LaTeX をお使いの場合には、canna-dist.tex から canna.tex 
+  を作成する処理を手動で行い、LaTeX 後に nkf -e などで  canna.idx を
+  EUC コードに変換してから cannaindex にかけるようにしてください。
+
+  詳しくは、 doc/README.jp を参照してください。
+
+
+($Id: README.jp,v 2.1 1994/07/19 05:58:47 kuma Exp $)
+
+
+ Copyright 1994 NEC Corporation, Tokyo, Japan.
+
+ Permission to use, copy, modify, distribute and sell this software
+ and its documentation for any purpose is hereby granted without
+ fee, provided that the above copyright notice appear in all copies
+ and that both that copyright notice and this permission notice
+ appear in supporting documentation, and that the name of NEC
+ Corporation not be used in advertising or publicity pertaining to
+ distribution of the software without specific, written prior
+ permission.  NEC Corporation makes no representations about the
+ suitability of this software for any purpose.  It is provided "as
+ is" without express or implied warranty.
+
+ NEC CORPORATION DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
+ INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN 
+ NO EVENT SHALL NEC CORPORATION BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+ CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF 
+ USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR 
+ OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
+ PERFORMANCE OF THIS SOFTWARE. 

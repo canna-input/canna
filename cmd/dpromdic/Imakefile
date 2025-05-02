@@ -1,0 +1,21 @@
+/* $Id: Imakefile,v 1.12 1996/11/27 07:13:03 kon Exp $ */
+#include "../../Canna.conf"
+
+      CANNAROOT = ../..
+       CANNASRC = $(CANNAROOT)/lib/canna
+       INCLUDES = -I$(CANNAROOT)/include
+
+         TARGET = dpromdic
+           OBJS = dpromdic.o
+           SRCS = dpromdic.c
+
+#ifdef __EMX__
+AllTarget($(TARGET).exe)
+#else
+AllTarget($(TARGET))
+#endif
+NormalProgramTarget($(TARGET),$(OBJS),$(DEPCANNALIB),$(CANNALIB),)
+InstallProgram($(TARGET),$(cannaBinDir))
+InstallManPage($(TARGET),$(cannaManDir))
+DependTarget()
+LintTarget()

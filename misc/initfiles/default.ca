@@ -1,0 +1,162 @@
+;; Copyright 1992 NEC Corporation, Tokyo, Japan.
+;;
+;; Permission to use, copy, modify, distribute and sell this software
+;; and its documentation for any purpose is hereby granted without
+;; fee, provided that the above copyright notice appear in all copies
+;; and that both that copyright notice and this permission notice
+;; appear in supporting documentation, and that the name of NEC
+;; Corporation not be used in advertising or publicity pertaining to
+;; distribution of the software without specific, written prior
+;; permission.  NEC Corporation makes no representations about the
+;; suitability of this software for any purpose.  It is provided "as
+;; is" without express or implied warranty.
+;;
+;; NEC CORPORATION DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
+;; INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN 
+;; NO EVENT SHALL NEC CORPORATION BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+;; CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF 
+;; USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR 
+;; OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
+;; PERFORMANCE OF THIS SOFTWARE. 
+
+;;  $Id: default.ca,v 1.9 1996/10/25 05:22:51 kon Exp $
+
+;;; ローマ字かな変換の設定
+;
+; ローマ字かな変換テーブルを指定します。ローマ字かな変換テーブルは
+; (1) カレントディレクトリ
+; (2) ホームディレクトリ
+; (3)  CANNALIBDIR/dic  (CANNALIBDIR は、例えば /usr/lib/canna です)
+; の順にサーチされます。
+;
+(setq romkana-table "default.cbp")
+
+;;; 利用する辞書
+;
+; ただ単に書き並べているのは単語登録を行わない辞書でシステム辞書などが
+; これに当たります。
+;
+; 部首辞書に関しては :bushu を先行させて記述します。
+;
+; 単語登録をしたい辞書に関しては :user を先行させて記述します。単語登
+; 録をする辞書はテキスト形式辞書でなければなりません。単語登録させたい
+; 辞書は mkdic user の様なコマンドを打つことでで簡単に作成することがで
+; きます。
+;
+(use-dictionary
+ "iroha"
+ "fuzokugo"
+ "hojomwd"
+ "hojoswd"
+ :bushu "bushu"
+ :user  "user"
+ )
+
+;;; さまざまなパラメタの設定
+;
+; 真理値を設定するものについては真については t 、偽については nil を
+; 設定します。
+
+; ローマ字かな変換で不正なローマ字は入力から捨てられるか(t)
+; nil の時は不正なローマ字も入力として残ります。
+(setq abandon-illegal-phonogram nil)    ; default nil
+
+; 一覧の時に数字以外のキーを打つと次の入力に進むか(t)
+; nil の時は「ピッ」という音がなり、次の入力には進みません。
+(setq allow-next-input t)         	; default t
+
+; 逐次自動変換をするか(t)
+; nil の時は逐次自動変換を行いません。
+(setq auto nil)                         ; default nil
+
+; 単語登録/削除の直後に辞書の書き出し処理を行うか(t)
+; nil の時は書き出し処理を行いません。
+(setq auto-sync t)                      ; dafault t
+
+; 読みを入力中にバックスペースを打つとローマ字までバラバラにするか(t)
+; nil の時は文字ベースで削除します。
+(setq break-into-roman nil)               ; default nil
+
+; 候補表示時に文節ごとに空白で区切るかどうか(t)
+; nil の時は空白で区切りません。
+(setq bunsetsu-kugiri nil)              ; default nil
+
+; カーソル移動を文字ベースで行うか(t)
+; nilの時はローマ字かな変換の単位でカーソル移動が行われます。
+(setq character-based-move t)           ; default t
+
+; カーソル移動をする時、右端から右に行こうとすると左端に行くか(t)
+; nil の時は右端にとどまります。
+(setq cursor-wrap t)                    ; default t
+
+; 頻度学習をするか(t)
+; nil の時は頻度学習を行いません。
+(setq gakushu t)                        ; default t
+
+; 単語登録時に文法関連の質問をするか(t)
+; nilの時は詳細な品詞分類を行わず、適当な品詞で登録を行います。
+(setq grammatical-question t)           ; default t
+
+; 16 進コード入力時に 4 ケタ目を入れた時点で 16 進コード入力モードが
+; 終了するか(t)
+; nil の時は 4 ケタ目を入れた時点でも入力が確定しない状態となります。
+(setq hex-direct nil)                   ; default nil
+
+; 大文字で入力してもローマ字かな変換では小文字として扱うか(t)
+; nil の時は大文字と小文字を区別します。 default.cbp 使用時は
+; 大文字で入力するとアルファベットのまま入力されます。
+(setq ignore-case nil)                  ; default nil
+
+; 候補一覧の番号を全角文字から半角文字に変更するか(t)
+; nil の時は候補一覧の番号は全角で表示されます。
+(setq index-hankaku nil)                ; default nil
+
+; 文節の右端で右移動をすると全体が確定してしまうか(t)
+; nil の時は、cursor-wrap が t であると左端の文節に移動します。
+; cursor-wrap が nil であると右端の文節にとどまります。
+(setq kakutei-if-end-of-bunsetsu nil)   ; default nil
+
+; 候補が全体の何番目かを表示するか(t)
+; nil の時は表示しません。
+(setq kouho-count t)                    ; default t
+
+; 何回の変換キーで一覧表示を行うか。
+; 0 を入れると変換キーだけでは一覧表示には移りません。
+; その場合には C-w を入力して一覧表示して下さい。
+(setq n-henkan-for-ichiran 2)           ; default 2
+
+; 逐次変換をする時に何個の文節までを未確定で保持するか
+; 3 〜 32 の範囲で指定して下さい。
+(setq n-kouho-bunsetsu 16)              ; default 16
+
+; 一覧表示時、数字キーを用いて候補を選択するか(t)
+; nilの時は数字が表示されません。
+(setq numerical-key-select t)           ; default t
+
+; 入力中の読み全体をリバースするか(t)
+; nil の時は反転表示しません。
+(setq reverse-widely       nil)         ; default nil
+
+; ローマ字かな変換を優先するか(t)
+; nil の時はキーに割り当てられた機能が優先されます。
+;   例えば、"x" + " "(スペース) に対して、ローマ字かな変換テーブルで
+;   "　"(全角のスペース)を割り当てている場合、romaji-yuusen が t の時は
+;   全角のスペースが表示されますが、romaji-yuusen が nil の時は、スぺー
+;   スが『変換』の意味として用いられます。
+(setq romaji-yuusen nil)                ; default nil
+
+; 記号入力モードで記号を入力したとき記号入力モードを終了するか(t)
+; nil のときは記号を連続して入力できます。
+(setq quickly-escape-from-kigo-input nil) ; default nil
+
+; 一覧の最後までいったら一旦一覧表示をやめるか(t)
+; nil の時は終了しません。
+(setq quit-if-end-of-ichiran nil)       ; default nil
+
+; 一覧表示時、数字キーを打ったときに一覧表示を終了するか(t)
+; nil の時は一覧表示のままです。
+(setq select-direct t)                  ; default t
+
+; 一覧選択後同じ文節にとどまるか(t)。
+; nilの時は一覧選択を行うとひとつ先の文節に移動します。
+(setq stay-after-validate t)            ; default t

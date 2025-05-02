@@ -1,0 +1,109 @@
+/* $Id: Imakefile,v 2.5 1996/11/27 07:15:14 kon Exp $ */
+#include "../../Canna.conf"
+
+#ifdef __EMX__
+                 SORT = gsort -d
+            CANNAROOT = ..\\..
+               CMDDIR = $(CANNAROOT)\\cmd
+               FORCPP = $(CMDDIR)\\forcpp\\forcpp.exe
+               PRECPP = $(FORCPP) -7
+              POSTCPP = $(FORCPP) -8
+              FORSORT = $(BINDIR)\\forsort\\forsort.exe
+              PRESORT = $(FORSORT) -7
+             POSTSORT = $(FORSORT) -8
+                KPDIC = $(CMDDIR)\\kpdic\\kpdic.exe
+#else
+                 SORT = sort -d
+            CANNAROOT = ../..
+               CMDDIR = $(CANNAROOT)/cmd
+               FORCPP = $(CMDDIR)/forcpp/forcpp
+               PRECPP = $(FORCPP) -7
+              POSTCPP = $(FORCPP) -8
+              FORSORT = $(BINDIR)/forsort/forsort
+              PRESORT = $(FORSORT) -7
+             POSTSORT = $(FORSORT) -8
+                KPDIC = $(CMDDIR)/kpdic/kpdic
+#endif
+
+       ROMAJI_DIC_DEF = -DSHIFT
+
+               DICDIR = $(cannaLibDir)/dic
+            SAMPLEDIR = $(cannaLibDir)/sample
+         SAMPLESRCDIR = $(cannaLibDir)/sample/src
+
+    KPDEF = default.kpdef jdaemon.kpdef just.kpdef kaisoku.kpdef kana.kpdef \
+            lan5.kpdef matsu.kpdef newjis.kpdef romaji.kpdef sokuon.kpdef \
+            english.kpdef tut.kpdef vje.kpdef wx2+.kpdef
+
+   CBP = default.cbp jdaemon.cbp just.cbp kaisoku.cbp kana.cbp \
+         lan5.cbp matsu.cbp newjis.cbp romaji.cbp sokuon.cbp \
+         english.cbp tut.cbp vje.cbp wx2+.cbp
+    KP = default.kp jdaemon.kp just.kp kaisoku.kp kana.kp \
+         lan5.kp matsu.kp newjis.kp romaji.kp sokuon.kp \
+         english.kp tut.kp vje.kp wx2+.kp
+
+#ifdef USE_OBSOLETE_STYLE_FILENAME
+    ROMKANA_TABLES = $(KP)
+#else
+    ROMKANA_TABLES = $(CBP)
+#endif
+
+AllTarget($(ROMKANA_TABLES))
+
+.SUFFIXES: .cbp .kp .kpdef
+
+#ifdef __EMX__
+.kpdef.kp:
+	$(FORCPP) -7 < $< | $(CPP) $(ROMAJI_DIC_DEF) | $(FORCPP) -8 | $(KPDIC) > $@
+
+.kpdef.cbp:
+	$(FORCPP) -7 < $< | $(CPP) $(ROMAJI_DIC_DEF) | $(FORCPP) -8 | $(KPDIC) > $@
+#else
+.kpdef.kp:
+	$(FORCPP) -7 < $< | $(CPP) $(ROMAJI_DIC_DEF) | $(FORCPP) -8 | $(KPDIC) > `basename $< '.kpdef'`.kp
+
+.kpdef.cbp:
+	$(FORCPP) -7 < $< | $(CPP) $(ROMAJI_DIC_DEF) | $(FORCPP) -8 | $(KPDIC) > `basename $< '.kpdef'`.cbp
+#endif
+
+MakeDirectories(install,$(DICDIR))
+MakeDirectories(install,$(SAMPLESRCDIR))
+
+InstallMultiple($(ROMKANA_TABLES),$(DICDIR))
+
+#ifdef USE_OBSOLETE_STYLE_FILENAME
+InstallNonExec(default.kpdef,$(SAMPLESRCDIR))
+InstallNonExec(jdaemon.kpdef,$(SAMPLESRCDIR))
+InstallNonExec(just.kpdef,$(SAMPLESRCDIR))
+InstallNonExec(kaisoku.kpdef,$(SAMPLESRCDIR))
+InstallNonExec(kana.kpdef,$(SAMPLESRCDIR))
+InstallNonExec(lan5.kpdef,$(SAMPLESRCDIR))
+InstallNonExec(matsu.kpdef,$(SAMPLESRCDIR))
+InstallNonExec(newjis.kpdef,$(SAMPLESRCDIR))
+InstallNonExec(romaji.kpdef,$(SAMPLESRCDIR))
+InstallNonExec(sokuon.kpdef,$(SAMPLESRCDIR))
+InstallNonExec(english.kpdef,$(SAMPLESRCDIR))
+InstallNonExec(tut.kpdef,$(SAMPLESRCDIR))
+InstallNonExec(vje.kpdef,$(SAMPLESRCDIR))
+InstallNonExec(wx2+.kpdef,$(SAMPLESRCDIR))
+#else
+InstallNamedNonExec(default.kpdef,default.ctd,$(SAMPLESRCDIR))
+InstallNamedNonExec(jdaemon.kpdef,jdaemon.ctd,$(SAMPLESRCDIR))
+InstallNamedNonExec(just.kpdef,just.ctd,$(SAMPLESRCDIR))
+InstallNamedNonExec(kaisoku.kpdef,kaisoku.ctd,$(SAMPLESRCDIR))
+InstallNamedNonExec(kana.kpdef,kana.ctd,$(SAMPLESRCDIR))
+InstallNamedNonExec(lan5.kpdef,lan5.ctd,$(SAMPLESRCDIR))
+InstallNamedNonExec(matsu.kpdef,matsu.ctd,$(SAMPLESRCDIR))
+InstallNamedNonExec(newjis.kpdef,newjis.ctd,$(SAMPLESRCDIR))
+InstallNamedNonExec(romaji.kpdef,romaji.ctd,$(SAMPLESRCDIR))
+InstallNamedNonExec(sokuon.kpdef,sokuon.ctd,$(SAMPLESRCDIR))
+InstallNamedNonExec(english.kpdef,english.ctd,$(SAMPLESRCDIR))
+InstallNamedNonExec(tut.kpdef,tut.ctd,$(SAMPLESRCDIR))
+InstallNamedNonExec(vje.kpdef,vje.ctd,$(SAMPLESRCDIR))
+InstallNamedNonExec(wx2+.kpdef,wx2+.ctd,$(SAMPLESRCDIR))
+#endif
+
+clean::
+	$(RM) $(ROMKANA_TABLES)
+
+depend::

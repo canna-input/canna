@@ -1,0 +1,20 @@
+/* $Id: Imakefile,v 2.3 1996/10/28 00:22:13 kon Exp $ */
+#include "../../Canna.conf"
+
+      CANNAROOT = ../..
+       PROGRAMS = mkbindic
+           SRCS = mkbindic.cpp
+
+        DEFINES = -I$(CANNAROOT)/include $(SCRIPTS_DEFINES) -DCPP=$(CPP) \
+                  $(useObsoleteFileName)
+
+AllTarget($(PROGRAMS))
+
+CppScriptTarget(mkbindic,mkbindic.cpp,$(DEFINES),/**/)
+InstallNamedProg(mkbindic,mkbindic,$(cannaBinDir))
+InstallManPage(mkbindic,$(cannaManDir))
+
+clean::
+	$(RM) $(PROGRAMS)
+
+depend::

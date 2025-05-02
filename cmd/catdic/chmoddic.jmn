@@ -1,0 +1,54 @@
+.\" Copyright 1995 NEC Corporation, Tokyo, Japan.
+.\"
+.\" Permission to use, copy, modify, distribute and sell this software
+.\" and its documentation for any purpose is hereby granted without
+.\" fee, provided that the above copyright notice appear in all copies
+.\" and that both that copyright notice and this permission notice
+.\" appear in supporting documentation, and that the name of NEC
+.\" Corporation not be used in advertising or publicity pertaining to
+.\" distribution of the software without specific, written prior
+.\" permission.  NEC Corporation makes no representations about the
+.\" suitability of this software for any purpose.  It is provided
+.\" "as is" without express or implied warranty.
+.\"
+.\" NEC CORPORATION DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
+.\" INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN 
+.\" NO EVENT SHALL NEC CORPORATION BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+.\" CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF 
+.\" USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR 
+.\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
+.\" PERFORMANCE OF THIS SOFTWARE. 
+.\"
+.\" $Id: chmoddic.jmn,v 3.2 1995/10/09 07:49:19 kuma Exp $
+.nr X 0
+.if \nX=0 .ds x} chmoddic 1 "日本語機能ユーティリティ" "\&"
+.TH \*(x}
+.SH "\s+2名前\s-2"
+\f4chmoddic\f1 \- 辞書のアクセス権を変更する
+.SH "\s+2形式\s-2"
+.B "\f4chmoddic [{\-cs|\-cannaserver} \fIcanna-server\fP] {\+|\-}{r|w|rw|wr} [\-G] \fIdicname"
+.SH "\s+2説明\s-2"
+.PP
+辞書 \fIdicname \fPのREAD権、WRITE権の追加、削除を行います。
+.PP
+指定した辞書が現在使用中である場合は変更できません。
+.SH "\s+2オプション\s-2"
+.IP "\f4\-cs\f1 \fIcannaserver\fP (または \f4\-cannaserver\f1 \fIcanna-server\fP)" 12
+変更したい辞書のあるサーバマシンを指定します。
+.IP "\f4\-\f1" 12
+以降に示すアクセス権を削除します。
+.IP "\f4\+\f1" 12
+以降に示すアクセス権を追加します。
+.IP "\f4r\f1" 12
+READ権に対する変更を行います。w とともに組み合わせて指定することもできます。
+.IP "\f4w\f1" 12
+WRITE権に対する変更を行います。r とともに組み合わせて指定することもできます。
+.IP "\f4\-G\f1" 12
+自分のグループ辞書のアクセス権を変更します。
+.SH "\s+2使用例\s-2"
+.IP "\f4chmoddic -r +w test\f1" 2
+ユーザ辞書testのREAD権を削除しWRITE権を追加します。
+.IP "\f4chmoddic +wr -G test" 2
+グループ辞書testのREAD権、WRITE権を追加します。
+.SH "\s+2関連項目\s-2"
+\f4lsdic\f1(1), \f4mkdic\f1(1)

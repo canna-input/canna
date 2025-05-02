@@ -1,0 +1,52 @@
+/* $Id: Imakefile,v 2.4 1996/10/26 07:37:42 kon Exp $ */
+#include "../Canna.conf"
+
+CANNAROOT = ..
+
+#define IHaveSubdirs
+#define PassCDebugFlags
+
+       PROGRAMS = engine.cf default.canna
+           SRCS = engine.cpp
+#ifdef nec
+        DEFINES = $(SCRIPTS_DEFINES) -DLIBCANNADIR=$(libCannaDir) \
+                  -DCPP=$(CPP) -DCANNA_DSOREV=$(cannaDsoRev) -Unec
+#else
+        DEFINES = $(SCRIPTS_DEFINES) -DLIBCANNADIR=$(libCannaDir) \
+		  -DCPP=$(CPP) -DCANNA_DSOREV=$(cannaDsoRev)
+#endif
+
+SUBDIRS =initfiles
+
+AllTarget($(PROGRAMS))
+
+CppScriptTarget(engine.cf,engine.cpp,$(DEFINES),/**/)
+InstallNonExec(engine.cf,$(cannaLibDir))
+
+MakeSubdirs($(SUBDIRS))
+DependSubdirs($(SUBDIRS))
+MakeLintLibSubdirs($(SUBDIRS))
+MakeLintSubdirs($(SUBDIRS),install.ln,install.ln)
+
+MakeDirectories(install,$(cannaLibDir)/sample/src)
+#if defined(nec_ews_svr4) || defined(pcux_r32)
+InstallNamedNonExec(rMakefile,Makefile,$(cannaLibDir)/sample/src)
+#else
+InstallNamedNonExec(cMakefile,Makefile,$(cannaLibDir)/sample/src)
+#endif /* nec_ews_svr4 */
+
+#ifdef USE_OBSOLETE_STYLE_FILENAME
+default.canna: default.ca
+	sed 's/\.cbp/\.kp/' < default.ca > default.canna
+#else
+default.canna: default.ca
+	$(CP) default.ca default.canna
+#endif
+
+InstallNonExec(default.canna,$(cannaLibDir))
+InstallNonExec(is.c,$(cannaLibDir)/sample/src)
+
+clean::
+	$(RM) $(PROGRAMS)
+
+DependDependency()

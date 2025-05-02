@@ -1,0 +1,14 @@
+/* $Id: Imakefile,v 1.9 1996/12/02 09:21:19 kon Exp $ */
+#include "../../Canna.conf"
+
+CANNAROOT = ../..
+
+#define IHaveSubdirs
+#define PassCDebugFlags
+
+SUBDIRS = pubdic grammar words
+
+MakeSubdirs($(SUBDIRS))
+DependSubdirs($(SUBDIRS))
+MakeLintLibSubdirs($(SUBDIRS))
+MakeLintSubdirs($(SUBDIRS),install.ln,install.ln)

@@ -1,0 +1,16 @@
+/* $Id: Imakefile,v 1.10 1996/11/27 07:14:04 kon Exp $ */
+#include "../../Canna.conf"
+
+      CANNAROOT = ../..
+           SRCS = splitwd.c
+
+#ifdef __EMX__
+AllTarget(splitword.exe)
+#else
+AllTarget(splitword)
+#endif
+SingleProgramTarget(splitword,splitwd.o,,)
+InstallProgram(splitword,$(cannaBinDir))
+InstallManPageLong(splitwd,$(cannaManDir),splitword)
+DependTarget()
+LintTarget()

@@ -1,0 +1,57 @@
+.\" Copyright 1995 NEC Corporation, Tokyo, Japan.
+.\"
+.\" Permission to use, copy, modify, distribute and sell this software
+.\" and its documentation for any purpose is hereby granted without
+.\" fee, provided that the above copyright notice appear in all copies
+.\" and that both that copyright notice and this permission notice
+.\" appear in supporting documentation, and that the name of NEC
+.\" Corporation not be used in advertising or publicity pertaining to
+.\" distribution of the software without specific, written prior
+.\" permission.  NEC Corporation makes no representations about the
+.\" suitability of this software for any purpose.  It is provided
+.\" "as is" without express or implied warranty.
+.\"
+.\" NEC CORPORATION DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
+.\" INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN 
+.\" NO EVENT SHALL NEC CORPORATION BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+.\" CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF 
+.\" USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR 
+.\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
+.\" PERFORMANCE OF THIS SOFTWARE. 
+.\"
+.\" $Id: chmoddic.man,v 3.2 1995/10/09 07:49:30 kuma Exp $
+.TH "chmoddic" "1" "Japanese Facility Utilities" 
+.SH "NAME
+\f4chmoddic\f1 \- change access rights for a directory
+.SH "SYNOPSIS"
+.nf
+.ft 4
+chmoddic [{(-cs | - cannaserver} \f2canna-server\f4] {+ | -}{r|w|rw|wr} 
+[-G] \f2dicname\f4
+.ft 1
+.fi
+.SH "DESCRIPTION"
+Add and/or remove READ/WRITE rights for the dictionary \f2dicname\f1.  The access rights for the dictionary cannot be changed if it is being used.
+.SH "OPTION"
+.IP "\f4-cs \f2cannaserver\f1 (or \f4-cannaserver \f2canna-server\f1)" 10n
+Specify the server machine which has a dictionary to be changed.
+.IP "\f4-\f1" 10n
+Remove the following access rights.
+.IP "\f4+\f1" 10n
+Add the following access rights.
+.IP "\f4r\f1" 10n
+Change READ rights.  w can be specified at the same time.
+.IP "\f4w\f1" 10n
+Change WRITE rights.  r can be specified at the same time.
+.IP "\f4-G\f1" 10n
+Change the access rights for the user's own group dictionary.
+.SH "EXAMPLE"
+.IP "\f4chmoddic -r +w test\f1" 10n
+Remove READ rights from and add WRITE rights for user dictionary test.
+.IP "\f4chmoddic +wr -G test\f1" 10n
+Add READ/WRITE rights to group dictionary test.
+.SH "SEE ALSO"
+.na
+\f4lsdic\f1(1),
+\f4mkdic\f1(1)
+.ad

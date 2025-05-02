@@ -1,0 +1,26 @@
+/* $Id: Imakefile,v 1.14 1996/11/27 07:13:16 kon Exp $ */
+#include "../../Canna.conf"
+
+      CANNAROOT = ../..
+       INCLUDES = -I$(CANNAROOT)/include -I$(CANNAROOT)/lib/RK
+#ifdef __EMX__
+LOCAL_LIBRARIES = $(CANNAROOT)/lib/RK/RK.a
+#else
+LOCAL_LIBRARIES = $(CANNAROOT)/lib/RK/libRK.a
+#endif
+           SRCS = dpxdic.c
+#ifdef USE_OBSOLETE_STYLE_FILENAME
+        DEFINES = -DHYOUJUN_GRAM=\"$(DicDir)/canna/fuzokugo.d\"
+#else
+        DEFINES = -DHYOUJUN_GRAM=\"$(DicDir)/canna/fuzokugo.cbd\"
+#endif
+
+#ifdef __EMX__
+AllTarget(dpxdic.exe)
+#else
+AllTarget(dpxdic)
+#endif
+NormalProgramTarget(dpxdic,dpxdic.o,$(LOCAL_LIBRARIES),$(LOCAL_LIBRARIES),)
+InstallProgram(dpxdic,$(cannaBinDir))
+DependTarget()
+LintTarget()

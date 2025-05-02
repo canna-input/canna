@@ -1,0 +1,16 @@
+/* $Id: Imakefile,v 2.5 1994/08/26 05:15:48 kon Exp $ */
+#include "../Canna.conf"
+
+         CANNAROOT = ..
+      CANNA_HEADER = jrkanji.h  keydef.h mfdef.h
+      OSDEP_HEADER = net.h widedef.h
+        INT_HEADER = symbolname.h patchlevel.h protodefs.h
+
+all::
+
+LinkFileList(includes,$(CANNA_HEADER),$(CANNAROOT)/include/canna,../../canna)
+LinkFileList(includes,$(INT_HEADER),$(CANNAROOT)/include,../canna)
+LinkFileList(includes,$(OSDEP_HEADER),$(CANNAROOT)/include,../canna)
+InstallMultiple($(CANNA_HEADER),$(cannaIncDir))
+
+depend::

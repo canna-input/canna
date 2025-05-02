@@ -1,0 +1,207 @@
+;;  Copyright 1994 NEC Corporation, Tokyo, Japan.
+;;  
+;;  Permission to use, copy, modify, distribute and sell this software
+;;  and its documentation for any purpose is hereby granted without
+;;  fee, provided that the above copyright notice appear in all copies
+;;  and that both that copyright notice and this permission notice
+;;  appear in supporting documentation, and that the name of NEC
+;;  Corporation not be used in advertising or publicity pertaining to
+;;  distribution of the software without specific, written prior
+;;  permission.  NEC Corporation makes no representations about the
+;;  suitability of this software for any purpose.  It is provided "as
+;;  is" without express or implied warranty.
+;;  
+;;  NEC CORPORATION DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
+;;  INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN 
+;;  NO EVENT SHALL NEC CORPORATION BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+;;  CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF 
+;;  USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR 
+;;  OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
+;;  PERFORMANCE OF THIS SOFTWARE. 
+
+;; Using this customize file gives you a Japanese Input Interface
+;; like matsutake does.
+
+;;  $Id: matsu.canna,v 2.8 1996/10/25 05:22:57 kon Exp $ 
+
+
+;;;  拡張メニューをあまり使わない場合は、do-not-use-extend-mode を
+;;;  t に設定して下さい。
+(setq do-not-use-extend-mode   nil)
+
+
+;; ローマ字かな変換の設定
+
+(setq romkana-table "matsu.cbp")
+
+;;; 利用する辞書
+
+(use-dictionary
+ "iroha"
+ "fuzokugo"
+ "hojomwd"
+ "hojoswd"
+ :bushu "bushu"
+ :user  "user"
+ )
+
+
+;日本語入力 on にする。
+(set-key 'alpha-mode "\C-Xfer" 'japanese-mode)
+
+; 右端で右に行こうとすると左端にいく。
+(setq cursor-wrap            t)         ; default t
+
+; 一覧表示で数字を打ったときに選択までする。
+(setq select-direct          t)         ; default t
+
+;一覧から選択を行うとひとつ先の文節に移動する。
+(setq stay-after-validate    nil)       ; default t
+
+; 一覧表示で数字で選択する。
+(setq numerical-key-select   t)         ; default t
+
+; 入力中の読み全体をリバースしない。
+(setq reverse-widely         nil)       ; default nil
+
+; 一覧の最後までいったら、また先頭の候補を表示する。
+(setq quit-if-end-of-ichiran nil)       ; default nil
+
+; 文節の右端で右移動をすると全体が確定してしまう。
+(setq kakutei-if-end-of-bunsetsu t)     ; default nil
+
+; 何度変換キーを押しても一覧表示は行わない。
+(setq n-henkan-for-ichiran   0)         ; default 2
+
+; 候補が全体の何番目かを表示しない。
+(setq kouho-count 	     nil)       ; default t
+
+; 頻度学習をする。
+(setq gakushu                t)         ; default t
+
+; 候補一覧の番号を半角文字にする。
+(setq index-hankaku	     t)         ; default nil
+
+; 候補の番号との区切り文字。
+(setq index-separator	     ?:)
+
+; 記号入力モードで記号を入力したとき記号入力モードを終了する。
+(setq quickly-escape-from-kigo-input t) ; default nil
+
+; 単語登録/削除の直後に辞書の書き出し処理を行う
+(setq auto-sync		     t)         ; default t
+
+
+;;  キーマップ
+
+(global-unbind-key-function 'henkan)
+(global-unbind-key-function 'extend)
+(global-unbind-key-function 'shrink)
+(global-unbind-key-function 'forward)
+(global-unbind-key-function 'backward)
+(global-unbind-key-function 'previous)
+(global-unbind-key-function 'next)
+(global-unbind-key-function 'beginning-of-line)
+(global-unbind-key-function 'end-of-line)
+(global-unbind-key-function 'kill-to-end-of-line)
+ 
+(global-set-key "\S-Right"  'end-of-line)
+(global-set-key "\S-Left"   'beginning-of-line)
+(global-set-key "\Right"    'forward)
+(global-set-key "\Left"     'backward)
+(global-set-key "\S-Up"     'previous)
+(global-set-key "\S-Down"   'next)
+(global-set-key "\Xfer"     'henkan)
+(global-set-key "\Return"   'kakutei)
+
+(global-set-key	"\F10"      'base-hiragana-katakana-toggle)
+(global-set-key	"\F9"       'base-zenkaku-hankaku-toggle)
+(global-set-key	"\F8"       'base-kana-eisu-toggle)
+(global-set-key	"\F4"       'kigou-mode)
+
+
+;; モード表示文字列定義
+
+(set-mode-display 'henkan-nyuuryoku-mode " Ｒか ")
+(set-mode-display 'empty-mode            " Ｒか ")
+(set-mode-display 'yomi-mode             " Ｒか ")
+(set-mode-display 'zen-kata-henkan-mode  " Ｒカ ")
+(set-mode-display 'han-kata-henkan-mode  " Ｒ半 ")
+(set-mode-display 'zen-alpha-henkan-mode "  か  ")
+(set-mode-display 'han-alpha-henkan-mode "  半  ")
+
+
+;; 読みモード時
+
+(let ((mode 'yomi-mode))
+  (set-key mode "\Delete"       'delete-next)
+  (set-key mode "\Backspace"    'delete-previous)
+  (set-key mode "\F6"           'katakana)
+  (set-key mode "\F7"           'hankaku)
+)
+
+
+;; 単候補モード時
+
+(let ((mode 'tankouho-mode))
+  (set-key mode "\F6"           'katakana)
+  (set-key mode "\F7"           'hankaku)
+  (set-key mode "\Space"        'forward)
+  (set-key mode "\Nfer"         'henkan)
+  (set-key mode "\Down"         'kouho-ichiran)
+  (set-key mode "\S-Left"       'shrink)
+  (set-key mode "\S-Right"      'extend)
+)
+
+
+;; 文字種モード時
+
+(let ((mode 'mojishu-mode))
+  (set-key mode "\F6"           'katakana)
+  (set-key mode "\F7"           'hankaku)
+  (set-key mode "\Space"        'forward)
+  (set-key mode "\S-Left"       'shrink)
+  (set-key mode "\S-Right"      'extend)
+)
+
+
+;; 一覧候補モード時
+
+(let ((mode 'ichiran-mode))
+  (set-key mode "\Down"         'forward)
+  (set-key mode "\Up"           'backward)
+  (set-key mode "\Space"        'kakutei)
+    (if  do-not-use-extend-mode
+      (progn
+         (set-key mode "\S-Left"       '(quit shrink))
+         (set-key mode "\S-Right"      '(quit extend))))
+)
+
+
+;; 記号入力モード時
+
+(let ((mode 'kigou-mode))
+  (set-key mode "\Down"         'forward)
+  (set-key mode "\Up"           'backward)
+  (set-key mode "\Space"        'kakutei)
+)
+
+
+;; 辞書マウントアンマウント時
+
+(let ((mode 'on-off-mode))
+  (set-key mode "\Down"         'forward)
+  (set-key mode "\Up"           'backward)
+  (set-key mode "\Space"        'henkan)
+)
+
+
+; シンボルの定義 
+
+(defsymbol 
+  ?[ "「" "［" 
+  ?] "」" "］")
+(defsymbol 
+  ?/ "・" "／")
+(defsymbol 
+  ?~ "−" "〜")

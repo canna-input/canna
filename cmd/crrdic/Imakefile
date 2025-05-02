@@ -1,0 +1,16 @@
+/* $Id: Imakefile,v 1.8 1996/11/27 07:12:00 kon Exp $ */
+#include "../../Canna.conf"
+
+      CANNAROOT = ../..
+       INCLUDES = -I$(CANNAROOT)/include
+           SRCS = crrdic.c
+
+#ifdef __EMX__
+AllTarget(crrdic.exe)
+#else
+AllTarget(crrdic)
+#endif
+SingleProgramTarget(crrdic,crrdic.o,,)
+InstallProgram(crrdic,$(cannaBinDir))
+DependTarget()
+LintTarget()

@@ -1,0 +1,16 @@
+/* $Id: Imakefile,v 1.9 1996/11/27 07:14:13 kon Exp $ */
+#include "../../Canna.conf"
+
+      CANNAROOT = ../..
+           SRCS = wtoc.c
+
+#ifdef __EMX__
+AllTarget(wtoc.exe)
+#else
+AllTarget(wtoc)
+#endif
+SingleProgramTarget(wtoc,wtoc.o,,)
+InstallProgram(wtoc,$(cannaBinDir))
+InstallManPage(wtoc,$(cannaManDir))
+DependTarget()
+LintTarget()

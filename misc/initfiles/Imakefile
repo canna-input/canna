@@ -1,0 +1,58 @@
+/* $Id: Imakefile,v 2.4 1996/10/25 05:21:27 kon Exp $ */
+#include "../../Canna.conf"
+
+#ifdef unix /* for unix.canna.  Some system define unix as 1. */
+#undef unix
+#endif
+
+            CANNAROOT = ../..
+            SAMPLEDIR = $(cannaLibDir)/sample
+
+all::
+
+.SUFFIXES: .cob .ca .canna
+
+.canna.cob:
+	sed 's/\.cbp/\.kp/g' < $< > `basename $< '.canna'`.cob
+
+.ca.cob:
+	sed 's/\.cbp/\.kp/g' < $< > `basename $< '.ca'`.cob
+
+#ifdef USE_OBSOLETE_STYLE_FILENAME
+Install: 1.1.cob 1.2.cob fixer.cob jdemon.cob just.cob lan5.cob modes.cob \
+         matsu.cob sample.cob skk.cob tut.cob unix.cob vje.cob wx2+.cob \
+         default.cob
+InstallNamedNonExec(default.cob,default.canna,$(SAMPLEDIR))
+InstallNamedNonExec(1.1.cob,1.1.canna,$(SAMPLEDIR))
+InstallNamedNonExec(1.2.cob,1.2.canna,$(SAMPLEDIR))
+InstallNamedNonExec(fixer.cob,fixer.canna,$(SAMPLEDIR))
+InstallNamedNonExec(jdemon.cob,jdemon.canna,$(SAMPLEDIR))
+InstallNamedNonExec(just.cob,just.canna,$(SAMPLEDIR))
+InstallNamedNonExec(lan5.cob,lan5.canna,$(SAMPLEDIR))
+InstallNamedNonExec(modes.cob,modes.canna,$(SAMPLEDIR))
+InstallNamedNonExec(matsu.cob,matsu.canna,$(SAMPLEDIR))
+InstallNamedNonExec(sample.cob,sample.canna,$(SAMPLEDIR))
+InstallNamedNonExec(skk.cob,skk.canna,$(SAMPLEDIR))
+InstallNamedNonExec(tut.cob,tut.canna,$(SAMPLEDIR))
+InstallNamedNonExec(unix.cob,unix.canna,$(SAMPLEDIR))
+InstallNamedNonExec(vje.cob,vje.canna,$(SAMPLEDIR))
+InstallNamedNonExec(wx2+.cob,wx2+.canna,$(SAMPLEDIR))
+#else
+InstallNamedNonExec(default.ca,default.canna,$(SAMPLEDIR))
+InstallNonExec(1.1.canna,$(SAMPLEDIR))
+InstallNonExec(1.2.canna,$(SAMPLEDIR))
+InstallNonExec(fixer.canna,$(SAMPLEDIR))
+InstallNonExec(jdemon.canna,$(SAMPLEDIR))
+InstallNonExec(just.canna,$(SAMPLEDIR))
+InstallNonExec(lan5.canna,$(SAMPLEDIR))
+InstallNonExec(modes.canna,$(SAMPLEDIR))
+InstallNonExec(matsu.canna,$(SAMPLEDIR))
+InstallNonExec(sample.canna,$(SAMPLEDIR))
+InstallNonExec(skk.canna,$(SAMPLEDIR))
+InstallNonExec(tut.canna,$(SAMPLEDIR))
+InstallNonExec(unix.canna,$(SAMPLEDIR))
+InstallNonExec(vje.canna,$(SAMPLEDIR))
+InstallNonExec(wx2+.canna,$(SAMPLEDIR))
+#endif
+
+DependTarget()

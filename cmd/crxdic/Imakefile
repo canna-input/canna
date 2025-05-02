@@ -1,0 +1,27 @@
+/* $Id: Imakefile,v 1.12 1996/11/27 07:12:15 kon Exp $ */
+#include "../../Canna.conf"
+
+      CANNAROOT = ../..
+       INCLUDES = -I$(CANNAROOT)/include -I$(CANNAROOT)/lib/RK
+#ifdef __EMX__
+LOCAL_LIBRARIES = $(CANNAROOT)/lib/RK/RK.a
+#else
+LOCAL_LIBRARIES = $(CANNAROOT)/lib/RK/libRK.a
+#endif
+           SRCS = crxdic.c
+#ifdef USE_OBSOLETE_STYLE_FILENAME
+    FUZOKUGODIC = $(DicDir)/canna/fuzokugo.d
+#else
+    FUZOKUGODIC = $(DicDir)/canna/fuzokugo.cbd
+#endif
+  EXTRA_DEFINES = -DHYOUJUN_GRAM=\"$(FUZOKUGODIC)\"
+
+#ifdef __EMX__
+AllTarget(crxdic.exe)
+#else
+AllTarget(crxdic)
+#endif
+NormalProgramTarget(crxdic,crxdic.o,$(LOCAL_LIBRARIES),$(LOCAL_LIBRARIES),)
+InstallProgram(crxdic,$(cannaBinDir))
+DependTarget()
+LintTarget()

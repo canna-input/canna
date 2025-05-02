@@ -1,0 +1,17 @@
+/* $Id: Imakefile,v 1.9 1996/11/27 07:12:24 kon Exp $ */
+#include "../../Canna.conf"
+
+      CANNAROOT = ../..
+       INCLUDES =
+LOCAL_LIBRARIES = $(CANNAROOT)/lib/RK/libRK.a
+           SRCS = crxgram.c
+
+#ifdef __EMX__
+AllTarget(crxgram.exe)
+#else
+AllTarget(crxgram)
+#endif
+NormalProgramTarget(crxgram,crxgram.o,,,)
+InstallProgram(crxgram,$(cannaBinDir))
+DependTarget()
+LintTarget()

@@ -1,0 +1,30 @@
+/* $Id: Imakefile,v 1.12 1996/11/27 07:02:12 kon Exp $ */
+#include "../../Canna.conf"
+
+       CANNAROOT = ../..
+        CANNASRC = $(CANNAROOT)/lib/canna
+#if 0
+#if HasSharedLibraries
+      SOCANNAREV = 1
+     DEPCANNALIB = $(CANNASRC)/libcanna.so.$(SOCANNAREV)
+#else
+     DEPCANNALIB = $(CANNASRC)/libcanna.a
+#endif
+        CANNALIB = -L$(CANNASRC) -lcanna
+#endif
+         DEFINES = -DCHECK_COMMAND $(wcharDefinition) $(pointerIntegerDef)
+        INCLUDES = -I$(CANNAROOT)/include
+            OBJS = main.o
+            SRCS = main.c
+          TARGET = cannacheck
+
+#ifdef __EMX__
+AllTarget($(TARGET).exe)
+#else
+AllTarget($(TARGET))
+#endif
+NormalProgramTarget($(TARGET),$(OBJS),$(DEPCANNALIB),$(CANNALIB),)
+InstallProgram($(TARGET),$(cannaBinDir))
+InstallManPageLong(ccheck,$(cannaManDir),$(TARGET))
+DependTarget()
+LintTarget()

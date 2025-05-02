@@ -1,0 +1,16 @@
+/* $Id: Imakefile,v 1.14 1996/11/27 07:13:55 kon Exp $ */
+#include "../../Canna.conf"
+
+      CANNAROOT = ../..
+       INCLUDES = -I$(CANNAROOT)/lib/RK -I$(CANNAROOT)/include
+           SRCS = mergewd.c
+
+#ifdef __EMX__
+AllTarget(mergeword.exe)
+#else
+AllTarget(mergeword)
+#endif
+NormalProgramTarget(mergeword,mergewd.o,,,)
+InstallProgram(mergeword,$(cannaBinDir))
+DependTarget()
+LintTarget()

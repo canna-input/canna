@@ -1,0 +1,17 @@
+/* $Id: Imakefile,v 1.12 1996/11/27 07:13:44 kon Exp $ */
+#include "../../Canna.conf"
+
+    CANNAROOT = ../..
+     INCLUDES =
+         SRCS = kpdic.c
+
+#ifdef __EMX__
+AllTarget(kpdic.exe)
+#else
+AllTarget(kpdic)
+#endif
+SingleProgramTarget(kpdic,kpdic.o,,)
+InstallProgram(kpdic,$(cannaBinDir))
+DependTarget()
+LintTarget()
+

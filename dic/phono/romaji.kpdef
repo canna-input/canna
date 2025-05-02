@@ -1,0 +1,246 @@
+#define copyright /*
+#
+#  Copyright 1993 NEC Corporation, Tokyo, Japan.
+# 
+#  Permission to use, copy, modify, distribute and sell this software
+#  and its documentation for any purpose is hereby granted without
+#  fee, provided that the above copyright notice appear in all copies
+#  and that both that copyright notice and this permission notice
+#  appear in supporting documentation, and that the name of NEC
+#  Corporation not be used in advertising or publicity pertaining to
+#  distribution of the software without specific, written prior
+#  permission.  NEC Corporation makes no representations about the
+#  suitability of this software for any purpose.  It is provided "as
+#  is" without express or implied warranty.
+# 
+#  NEC CORPORATION DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
+#  INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN 
+#  NO EVENT SHALL NEC CORPORATION BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+#  CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF 
+#  USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR 
+#  OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
+#  PERFORMANCE OF THIS SOFTWARE. 
+#
+#  $Id: romaji.kpdef,v 1.8 1995/04/06 08:49:54 kuma Exp $
+#
+#  ローマ字カナ変換テーブル
+# 	1988・1	(C)	てらや・うちやま・すがい
+# 
+# 	ローマ字辞書の作成方法
+# 		/lib/cpp .rdic | sort | crrdic > .rdef
+# */
+@568	たろう88・1
+
+1	  １
+2	  ２
+3	  ３
+4	  ４
+5	  ５
+6	  ６
+7	  ７
+8	  ８
+9	  ９
+0	  ０
+
+a         あ
+i         い
+u         う
+e         え
+o         お
+ka        か
+ki        き
+ku        く
+ke        け
+ko        こ
+sa        さ
+si        し
+su        す
+se        せ
+so        そ
+ta        た
+ti        ち
+tu        つ
+te        て
+to        と
+na        な
+ni        に
+nu        ぬ
+ne        ね
+no        の
+ha        は
+hi        ひ
+hu        ふ
+he        へ
+ho        ほ
+ma        ま
+mi        み
+mu        む
+me        め
+mo        も
+ya        や
+yi        い
+yu        ゆ
+ye      いぇ
+yo        よ
+ra        ら
+ri        り
+ru        る
+re        れ
+ro        ろ
+wa        わ
+wu        う
+wo        を
+ga        が
+gi        ぎ
+gu        ぐ
+ge        げ
+go        ご
+za        ざ
+zi        じ
+zu        ず
+ze        ぜ
+zo        ぞ
+da        だ
+di        ぢ
+du        づ
+de        で
+do        ど
+ba        ば
+bi        び
+bu        ぶ
+be        べ
+bo        ぼ
+pa        ぱ
+pi        ぴ
+pu        ぷ
+pe        ぺ
+po        ぽ
+fa      ふぁ
+fi      ふぃ
+fu        ふ
+fe      ふぇ
+fo      ふぉ
+ja      じゃ
+ji        じ
+ju      じゅ
+je      じぇ
+jo      じょ
+kya     きゃ
+kyi     きぃ
+kyu     きゅ
+kye     きぇ
+kyo     きょ
+gya     ぎゃ
+gyi     ぎぃ
+gyu     ぎゅ
+gye     ぎぇ
+gyo     ぎょ
+sya     しゃ
+syi     しぃ
+syu     しゅ
+sye     しぇ
+syo     しょ
+zya     じゃ
+zyi     じぃ
+zyu     じゅ
+zye     じぇ
+zyo     じょ
+tya     ちゃ
+tyi     ちぃ
+tyu     ちゅ
+tye     ちぇ
+tyo     ちょ
+dya     ぢゃ
+dyi     ぢぃ
+dyu     ぢゅ
+dye     ぢぇ
+dyo     ぢょ
+nya     にゃ
+nyi     にぃ
+nyu     にゅ
+nye     にぇ
+nyo     にょ
+hya     ひゃ
+hyi     ひぃ
+hyu     ひゅ
+hye     ひぇ
+hyo     ひょ
+bya     びゃ
+byi     びぃ
+byu     びゅ
+bye     びぇ
+byo     びょ
+pya     ぴゃ
+pyi     ぴぃ
+pyu     ぴゅ
+pye     ぴぇ
+pyo     ぴょ
+mya     みゃ
+myi     みぃ
+myu     みゅ
+mye     みぇ
+myo     みょ
+rya     りゃ
+ryi     りぃ
+ryu     りゅ
+rye     りぇ
+ryo     りょ
+tsa     つぁ 
+tsi     つぃ
+tsu     つ
+tse     つぇ
+tso     つぉ
+sha     しゃ
+shi       し
+shu     しゅ
+she     しぇ
+sho     しょ
+cha     ちゃ
+chi       ち
+chu     ちゅ
+che     ちぇ
+cho     ちょ
+n         ん
+n\x27     ん
+mn        ん
+
+kk	っ	k
+ss	っ	s
+tt	っ	t
+hh	っ	h
+mm	っ	m
+yy	っ	y
+rr	っ	r
+ww	っ	w
+gg	っ	g
+zz	っ	z
+dd	っ	d
+bb	っ	b
+pp	っ	p
+cc	っ	c
+ff	っ	f
+jj	っ	j
+qq	っ	q
+vv	っ	v
+tch	っ	ch
+
+~	￣
+?	？
+!	！
+\#	＃
+$	＄
+\x22	”
+%	％
+&	＆
+\x27	’
+`	｀
++	＋
+*	＊
+=	＝
+|	｜
+;	；
+:	：
+_	＿
+/	／
+\\	￥
+

@@ -1,0 +1,26 @@
+XCOMM $Id: Imakefile,v 1.10 1996/12/02 10:37:49 kon Exp $
+
+#ifdef __EMX__
+      CANNAROOT = ..\\..\\..
+    CANNACMDDIR = $(CANNAROOT)\\cmd
+          MERGE = $(CANNACMDDIR)\\mergewd\\mergeword
+#else
+      CANNAROOT = ../../..
+    CANNACMDDIR = $(CANNAROOT)/cmd
+          MERGE = $(CANNACMDDIR)/mergewd/mergeword
+#endif
+        TARGETS = iroha.t
+        PUBDICS = a.p k.p s.p t.p n.p h.p m.p y.p r.p w.p x.p
+
+AllTarget($(TARGETS))
+SingleProgramTarget(pod,pod.o,,)
+DependTarget()
+LintTarget()
+
+iroha.t: $(PUBDICS) pod
+	cat $(PUBDICS) | ./pod - -p -i -2 > iroha.spl
+	$(MERGE) < iroha.spl > iroha.t
+	$(RM) iroha.spl
+
+clean::
+	$(RM) iroha.t

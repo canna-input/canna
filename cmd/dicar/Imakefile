@@ -1,0 +1,22 @@
+/* $Id: Imakefile,v 1.10 1996/11/27 07:12:55 kon Exp $ */
+#include "../../Canna.conf"
+
+      CANNAROOT = ../..
+       INCLUDES = -I$(CANNAROOT)/include -I$(CANNAROOT)/lib/RK
+#ifdef __EMX__
+LOCAL_LIBRARIES = $(CANNAROOT)/lib/RK/RK.a
+#else
+LOCAL_LIBRARIES = $(CANNAROOT)/lib/RK/libRK.a
+#endif
+           SRCS = dicar.c
+
+#ifdef __EMX__
+AllTarget(dicar.exe)
+#else
+AllTarget(dicar)
+#endif
+NormalProgramTarget(dicar,dicar.o,$(LOCAL_LIBRARIES),$(LOCAL_LIBRARIES),)
+InstallProgram(dicar,$(cannaBinDir))
+InstallManPage(dicar,$(cannaManDir))
+DependTarget()
+LintTarget()

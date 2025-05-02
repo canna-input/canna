@@ -1,0 +1,16 @@
+/* $Id: Imakefile,v 1.7 1996/11/27 07:13:25 kon Exp $ */
+#include "../../Canna.conf"
+
+      CANNAROOT = ../..
+           SRCS = forcpp.c
+
+#ifdef __EMX__
+AllTarget(forcpp.exe)
+#else
+AllTarget(forcpp)
+#endif
+SingleProgramTarget(forcpp,forcpp.o,,)
+InstallProgram(forcpp,$(cannaBinDir))
+DependTarget()
+LintTarget()
+

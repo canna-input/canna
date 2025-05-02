@@ -1,0 +1,97 @@
+/* $Id: Imakefile,v 4.7 1996/11/27 07:14:55 kon Exp $ */
+#include "../../../Canna.conf"
+
+#ifdef __EMX__
+            CANNAROOT = ..\\..\\..
+          CANNACMDDIR = $(CANNAROOT)\\cmd
+               FORCPP = $(CANNACMDDIR)\\forcpp\\forcpp.exe
+              FORSORT = $(CANNACMDDIR)\\forsort\\forsort.exe
+                 SORT = gsort
+                  SED = sed
+            SPLITWORD = $(CANNACMDDIR)\\splitwd\\splitword
+            MERGEWORD = $(CANNACMDDIR)\\mergewd\\mergeword
+               CRXDIC = $(CANNACMDDIR)\\crxdic\\crxdic
+               CRFREQ = $(CANNACMDDIR)\\crfreq\\crfreq
+#else
+            CANNAROOT = ../../..
+          CANNACMDDIR = $(CANNAROOT)/cmd
+               FORCPP = $(CANNACMDDIR)/forcpp/forcpp
+              FORSORT = $(CANNACMDDIR)/forsort/forsort
+                 SORT = sort
+                  SED = sed
+            SPLITWORD = $(CANNACMDDIR)/splitwd/splitword
+            MERGEWORD = $(CANNACMDDIR)/mergewd/mergeword
+               CRXDIC = $(CANNACMDDIR)/crxdic/crxdic
+               CRFREQ = $(CANNACMDDIR)/crfreq/crfreq
+#endif
+          CANNADICDIR = $(DicDir)/canna
+            SAMPLEDIR = $(CANNADIR)/sample
+         SAMPLESRCDIR = $(CANNADIR)/sample/src
+
+#ifdef USE_OBSOLETE_STYLE_FILENAME
+              TARGETS = iroha.d iroha.fq bushu.fq
+#else
+              TARGETS = iroha.cbd iroha.cld bushu.cld 
+#endif
+          FUZOKUGODIC = ../grammar/cnj.bits
+
+AllTarget($(TARGETS))
+
+iroha.cbd iroha.cld: $(pubdicDir)/iroha.t bushu.cbd $(FUZOKUGODIC)
+	$(CRXDIC) -D $(FUZOKUGODIC) -m -o iroha.cbd -n iroha $(pubdicDir)/iroha.t
+	$(CRFREQ) -o iroha.cld iroha.cbd iroha.mwd
+	cat bushu.cbd >> iroha.cbd
+
+iroha.d iroha.fq: $(pubdicDir)/iroha.t bushu.d $(FUZOKUGODIC)
+	$(CRXDIC) -D $(FUZOKUGODIC) -m -o iroha.d -n iroha $(pubdicDir)/iroha.t
+	$(CRFREQ) -o iroha.fq iroha.d iroha.mwd
+	cat bushu.d >> iroha.d
+
+clean::
+	$(RM) $(TARGETS) bushu.cbd bushu.d
+
+bushu.cbd bushu.cld: bushu.t $(FUZOKUGODIC)
+	$(CRXDIC) -D $(FUZOKUGODIC) -m -o bushu.cbd -n bushu bushu.t
+	$(CRFREQ) -o bushu.cld bushu.cbd bushu.mwd
+
+bushu.d bushu.fq: bushu.t $(FUZOKUGODIC)
+	$(CRXDIC) -D $(FUZOKUGODIC) -m -o bushu.d -n bushu bushu.t
+	$(CRFREQ) -o bushu.fq bushu.d bushu.mwd
+
+MakeDirectories(install,$(CANNADICDIR))
+
+InstallMultipleFlags($(TARGETS),$(CANNADICDIR),-m 0664 $(cannaOwnerGroup))
+
+#ifdef USE_OBSOLETE_STYLE_FILENAME
+InstallNamedNonExec(obsolete.dir,dics.dir,$(CANNADICDIR))
+#else
+InstallNonExec(dics.dir,$(CANNADICDIR))
+#endif
+
+install::
+	$(CHGRP) $(cannaGroup) $(CANNADICDIR)
+	$(CHOWN) $(cannaOwner) $(CANNADICDIR)
+	$(CHMOD) ug+w $(CANNADICDIR)
+	$(CHGRP) $(cannaGroup) $(DicDir)
+	$(CHOWN) $(cannaOwner) $(DicDir)
+	$(CHMOD) ug+w $(DicDir)
+	$(CHMOD) -w $(CANNADICDIR)/dics.dir
+
+#ifndef USE_OBSOLETE_STYLE_FILENAME
+InstallNamedNonExec(necgaiji.t,necgaiji.ctd,$(CANNADICDIR))
+InstallNamedNonExec(kanasmpl.t,kanasmpl.ctd,$(CANNADICDIR))
+InstallNamedNonExec(software.t,software.ctd,$(CANNADICDIR))
+InstallNamedNonExec(chimei.t,chimei.ctd,$(CANNADICDIR))
+InstallNamedNonExec(hojomwd.t,hojomwd.ctd,$(CANNADICDIR))
+InstallNamedNonExec(hojoswd.t,hojoswd.ctd,$(CANNADICDIR))
+InstallNamedNonExec(suffix.t,suffix.ctd,$(CANNADICDIR))
+InstallNamedNonExec(number.t,number.ctd,$(CANNADICDIR))
+InstallNamedNonExec(katakana.t,katakana.ctd,$(CANNADICDIR))
+InstallNamedNonExec(keishiki.t,keishiki.ctd,$(CANNADICDIR))
+#else
+    TEXTDICS = necgaiji.t kanasmpl.t software.t chimei.t \
+               hojomwd.t hojoswd.t suffix.t number.t katakana.t keishiki.t
+InstallMultipleFlags($(TEXTDICS),$(CANNADICDIR),-m 0664 $(cannaOwnerGroup))
+#endif
+
+depend::
