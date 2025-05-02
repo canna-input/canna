@@ -1,4 +1,4 @@
-/* $Id: Imakefile,v 1.1.1.1 2002/10/19 08:27:44 aida_s Exp $ */
+/* $Id: Imakefile,v 1.1.1.1.2.1 2002/11/07 14:46:02 aida_s Exp $ */
 #include "../../Canna.conf"
         CANNAROOT = ../..
           DEFINES = $(DEBUGFLAGS) $(useObsoleteFilename)
@@ -31,7 +31,7 @@ LinkFileList(includes,$(HEADER),$(CANNAROOT)/include/canna,../../lib/RK)
 LinkFileList(includes,RKrename.h,$(CANNAROOT)/include,../lib/RK)
 InstallMultiple($(HEADER),$(cannaIncDir))
 
-InstallLibManPageLong(RkBgnBun,$(cannaManDir),RkRgnBun)
+InstallLibManPageLong(RkBgnBun,$(cannaManDir),RkBgnBun)
 InstallLibManPageLong(RkDefine,$(cannaManDir),RkDefineDic)
 InstallLibManPageLong(RkDelete,$(cannaManDir),RkDeleteDic)
 InstallLibManPageLong(RkEndBun,$(cannaManDir),RkEndBun)

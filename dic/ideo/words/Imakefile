@@ -1,4 +1,4 @@
-/* $Id: Imakefile,v 1.2 2002/10/20 04:10:29 aida_s Exp $ */
+/* $Id: Imakefile,v 1.2.2.1 2002/11/07 14:46:02 aida_s Exp $ */
 #include "../../../Canna.conf"
 
 #ifdef __EMX__
@@ -69,13 +69,13 @@ InstallNonExec(dics.dir,$(CANNADICDIR))
 #endif
 
 install::
-	$(CHGRP) $(cannaGroup) $(CANNADICDIR)
-	$(CHOWN) $(cannaOwner) $(CANNADICDIR)
-	$(CHMOD) ug+w $(CANNADICDIR)
-	$(CHGRP) $(cannaGroup) $(DicDir)
-	$(CHOWN) $(cannaOwner) $(DicDir)
-	$(CHMOD) ug+w $(DicDir)
-	$(CHMOD) -w $(CANNADICDIR)/dics.dir
+	$(CHGRP) $(cannaGroup) $(DESTDIR)$(CANNADICDIR)
+	$(CHOWN) $(cannaOwner) $(DESTDIR)$(CANNADICDIR)
+	$(CHMOD) ug+w $(DESTDIR)$(CANNADICDIR)
+	$(CHGRP) $(cannaGroup) $(DESTDIR)$(DicDir)
+	$(CHOWN) $(cannaOwner) $(DESTDIR)$(DicDir)
+	$(CHMOD) ug+w $(DESTDIR)$(DicDir)
+	$(CHMOD) -w $(DESTDIR)$(CANNADICDIR)/dics.dir
 
 #ifndef USE_OBSOLETE_STYLE_FILENAME
 InstallNamedNonExec(necgaiji.t,necgaiji.ctd,$(CANNADICDIR))
@@ -88,6 +88,10 @@ InstallNamedNonExec(suffix.t,suffix.ctd,$(CANNADICDIR))
 InstallNamedNonExec(number.t,number.ctd,$(CANNADICDIR))
 InstallNamedNonExec(katakana.t,katakana.ctd,$(CANNADICDIR))
 InstallNamedNonExec(keishiki.t,keishiki.ctd,$(CANNADICDIR))
+
+install::
+	cd $(DESTDIR)$(CANNADICDIR) ; $(CHMOD) 0664 *.ctd ;\
+	$(CHOWN) $(cannaOwner) *.ctd ; $(CHGRP) $(cannaGroup) *.ctd
 #else
     TEXTDICS = necgaiji.t kanasmpl.t software.t chimei.t \
                hojomwd.t hojoswd.t suffix.t number.t katakana.t keishiki.t

@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: convert.c,v 1.1.1.1 2002/10/19 08:27:53 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: convert.c,v 1.1.1.1.2.1 2002/12/02 00:35:39 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */
@@ -53,6 +53,8 @@ static char rcs_id[] = "@(#) 102.1 $Id: convert.c,v 1.1.1.1 2002/10/19 08:27:53 
 #define ACK2 2
 #define ACK3 3
 #define CHECK_ACK_BUF_SIZE	(ACK_BUFSIZE + (SIZEOFLONG * 2) )
+#define IR_INT_MAX 32767
+#define IR_INT_INVAL(x) ((unsigned int)x > IR_INT_MAX)
 
 extern int  errno;
 
@@ -1778,6 +1780,8 @@ int size ;
 	return( needsize ) ;
 
     req->namelen = (int)L4TOL(buf + SIZE4);
+    if( IR_INT_INVAL(req->namelen) )
+	return( -1 );
    ir_debug( Dmsg(10,"req->namelen =%d\n", req->namelen ); )
 
     if( (needsize = SIZE8 + req->namelen - size) > 0 )
@@ -1785,6 +1789,8 @@ int size ;
 
     if( req->namelen > 0 ){
 	req->name = buf + SIZE8 ;
+	if( req->name[req->namelen - 1] != 0 )
+	    return( -1 );
     }
    ir_debug( Dmsg(10,"req->namelen =%d\n", req->namelen ); )
    ir_debug( Dmsg(10,"req->name =%s\n", req->name ); )

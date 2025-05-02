@@ -22,7 +22,6 @@ imake on X11R6 to compile Canna.
 	 % xmkmf
 	 % make Makefile
 	 % make canna
-	   (It may take some minutes)
 	 % su
 	 # make install
 	 # make install.man
@@ -415,6 +414,9 @@ imake on X11R6 to compile Canna.
 
        For example, add the following lines in /etc/rc.local.
 
+     if [ -e /tmp/.iroha_unix/IROHA] ; then
+            rm -f /tmp/.iroha_unix/IROHA
+     fi
      /usr/local/canna/bin/cannaserver -syslog
      echo 'cannaserver started.'
 
@@ -858,4 +860,4 @@ That's all.
  * PERFORMANCE OF THIS SOFTWARE. 
  */
 
-($Id: INSTALL,v 1.2 2002/10/23 15:40:55 aida_s Exp $)
+($Id: INSTALL,v 1.3 2002/10/30 21:11:29 zu2 Exp $)

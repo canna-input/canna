@@ -19,12 +19,12 @@
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 .\" PERFORMANCE OF THIS SOFTWARE. 
 .\"
-.\" $Id: server.man,v 1.4 2002/10/24 14:16:43 aida_s Exp $
+.\" $Id: server.man,v 1.6 2002/11/01 08:32:06 zu2 Exp $
 .TH CANNASERVER 1M
 .SH "NAME"
 cannaserver \- Kana-Kanji conversion server
 .SH "SYNOPSIS"
-.B "cannaserver [\-d] [\-u \fIuserid\fP] [\-inet] [\-l \fIn\fP] [\fIddpath\fP] "
+.B "cannaserver [\-d] [\-u \fIuserid\fP] [\-inet] [\-l \fIn\fP] [\-syslog] [\-p \fInum\fP] [\fIddpath\fP] "
 .SH "DESCRIPTION"
 .PP
 cannaserver provides the Kana-Kanji conversion service.  Usually all
@@ -64,6 +64,11 @@ output.
 .IP "\-u \fIuserid\fP" 12
 Specifies which user cannaserver(1M) runs as.  By default, cannaserver(1M)
 runs as the user who started cannaserver(1M).
+.IP "\-syslog" 12
+Outputs the cannaserver(1M) log to syslogd(8).
+.IP "\-p \fInum\fP" 12
+If specified, cannaserver(1M) will use the port number 5680 + num.  By
+default, cannaserver(1M) uses the port number 5680.
 .SH "FILES"
 .IP "@(UnixSockDir)/@(UnixSockName)[:num]" 36
 Socket

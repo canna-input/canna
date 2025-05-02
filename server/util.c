@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "$Id: util.c,v 1.3 2002/10/20 08:20:33 aida_s Exp $";
+static char rcs_id[] = "$Id: util.c,v 1.3.2.2 2002/12/02 00:35:39 aida_s Exp $";
 #endif
 
 #include "widedef.h"
@@ -81,7 +81,7 @@ int srclen, destlen;
       case 0x8e: /* SS2 */
 	dest[j++] = (Ushort)(0x80 | ((unsigned)src[++i] & 0x7f));
 	break;
-      case 0xef: /* SS3 */
+      case 0x8f: /* SS3 */
 	dest[j++] = (Ushort)(0x8000
 			      | (((unsigned)src[i + 1] & 0x7f) << 8)
 			      | ((unsigned)src[i + 2] & 0x7f));
@@ -215,6 +215,19 @@ Ushort *ws;
     res++;
   }
   return res;
+}
+
+const Ushort *
+ushortmemchr(ws, ch, len)
+const Ushort *ws;
+int ch;
+size_t len;
+{
+  const Ushort *p, *end;
+  for (p = ws, end = ws + len; p < end; ++p)
+      if (*p == (Ushort)ch)
+	  return p;
+  return NULL;
 }
 
 int

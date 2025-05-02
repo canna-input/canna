@@ -1,33 +1,49 @@
-2002-10-24 AIDA Shinra <aida_s@jcom.home.ne.jp>
+2002-12-02 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* server/wconvert.c: CANNA-2002-1 security fix.
+	* server/convert.c: ditto
+	* server/util.c(ushortmemchr): added
+
+2002-11-07 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* ChangeLog: fix my mail address
+	* [canna-dev 50] [canna-dev 58] [canna-dev 75]:
+	  patch by Ikumi-san. currently dic fixes are not marged.
+	* cmd/catdic/Imakefile: add chmoddic, DESTDIR
+	* dic/ideo/words/Imakefile: fix text dic permission, add DESTDIR
+	* lib/RK/Imakefile: s/RkRgnBun/RkBgnBun/
+	* server/util.c(euc2ushort): SS3 conversion was wrong.
+
+2002-10-24 AIDA Shinra <aida-s@jcom.home.ne.jp>
 
 	* server/server.jmn: remove premountdics desc
 	* server/server.man: ditto
 	* INSTALL(Acknowledgements): changed to "see README.ja."
 
-2002-10-24 AIDA Shinra <aida_s@jcom.home.ne.jp>
+2002-10-24 AIDA Shinra <aida-s@jcom.home.ne.jp>
 
 	* server/server.man: fix SYNOPSIS (Thanks to Hane san)
 	* dic/ideo/words/dics.dir: add fuzokugo.cld
 
-2002-10-23 AIDA Shinra <aida_s@jcom.home.ne.jp>
+2002-10-23 AIDA Shinra <aida-s@jcom.home.ne.jp>
 
 	* INSTALL.jp: updated
 	* INSTALL: ditto
 
-2002-10-23 AIDA Shinra <aida_s@jcom.home.ne.jp>
+2002-10-23 AIDA Shinra <aida-s@jcom.home.ne.jp>
 
 	* canna/patchlevel.h: bump to 3.6
 	* CHANGES.jp: add 3.6 desc
 	* README.jp: updated
 	* README: updated (acknowledgement is not yet done)
 
-2002-10-23 AIDA Shinra <aida_s@jcom.home.ne.jp>
+2002-10-23 AIDA Shinra <aida-s@jcom.home.ne.jp>
 
 	* Canna.conf.dist: Added warning not to change -DCANNA_WCHAR.
 	* cmd/mkbindic/mkbindic.cpp: pass -div 512 to crfreq.
 	* ChangeLog (2002-10-20 first commit): corrected patch file name.
 
-2002-10-22 AIDA Shinra <aida_s@jcom.home.ne.jp>
+2002-10-22 AIDA Shinra <aida-s@jcom.home.ne.jp>
 
 	* dic/ideo/pubdic/h.p (ha, hi, himatsu, funman): corrected spells.
 	* dic/ideo/pubdic/n.p (noukousoku): ditto
@@ -41,7 +57,7 @@
 	* Canna.conf.dist (ConvertPathName): added UnixSockDir,
 		UnixSockName, and AccessFile.
 
-2002-10-21 AIDA Shinra <aida_s@jcom.home.ne.jp>
+2002-10-21 AIDA Shinra <aida-s@jcom.home.ne.jp>
 
 	* server/misc.c (CreateAccessControlList): remove needless init.
 		(from Debian)
@@ -61,7 +77,7 @@
 	  (installLibManAliases): ditto, use symlink instead of .so
 	* Canna.conf.dist (MakeDirectoriesLong): add semicolon (from Debian)
 
-2002-10-21 AIDA Shinra <aida_s@jcom.home.ne.jp>
+2002-10-21 AIDA Shinra <aida-s@jcom.home.ne.jp>
 
 	* lib/RK/dd.c (DDchmod): wrong buffer size (ported from Debian)
 	* server/misc.c (SetDicHome): fixed buffer overflow found by
@@ -76,7 +92,7 @@
 	  (CreateWellKnownSockets): check UseInet
 	* server/Imakefile: We have -u option, no need to setuid.
 
-2002-10-20 AIDA Shinra <aida_s@jcom.home.ne.jp>
+2002-10-20 AIDA Shinra <aida-s@jcom.home.ne.jp>
 
 	* Imakefile: do not ignore errors when making all.
 	* canna/ccompat.h: added
@@ -128,7 +144,7 @@
 	* dic/ideo/pubdic/Imakefile (INCLUDES): ditto
 	* lib/RK/RK.h: support prototype when __cplusplus.
 
-2002-10-20 AIDA Shinra <aida_s@jcom.home.ne.jp>
+2002-10-20 AIDA Shinra <aida-s@jcom.home.ne.jp>
 
 	* ChangeLog: added
 	* mkrelease.sh: added
@@ -152,7 +168,7 @@
 	* server/util.c: remove #include "net.h"
 	* server/misc.c: add #ifdef ACCESS_FILE
 
-2002-10-20 AIDA Shinra <aida_s@jcom.home.ne.jp>
+2002-10-20 AIDA Shinra <aida-s@jcom.home.ne.jp>
 
 	* Applied Fujieda-san's patches:
 	  http://www.jaist.ac.jp/~fujieda/canna/Canna35b2-unoff1.patch.gz,
@@ -162,8 +178,8 @@
 	  
 	  Corrected on 2002-10-23: not -cygwin.patch.gz, but -cygwin.patch.bz2.
 
-2002-10-19 AIDA Shinra <aida_s@jcom.home.ne.jp>
+2002-10-19 AIDA Shinra <aida-s@jcom.home.ne.jp>
 
 	* Virgin import of Canna3.5b2.
 
-$Id: ChangeLog,v 1.10 2002/10/24 14:16:42 aida_s Exp $
+$Id: ChangeLog,v 1.10.2.2 2002/12/02 00:35:38 aida_s Exp $

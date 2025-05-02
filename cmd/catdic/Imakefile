@@ -1,4 +1,4 @@
-/* $Id: Imakefile,v 1.2 2002/10/20 04:10:25 aida_s Exp $ */
+/* $Id: Imakefile,v 1.2.2.1 2002/11/07 14:46:02 aida_s Exp $ */
 #include "../../Canna.conf"
 
        CANNAROOT = ../..
@@ -53,45 +53,46 @@ LintTarget()
 
 #if defined(__EMX__) || defined(__CYGWIN32__)
 install::
-	$(RM) $(cannaBinDir)/cpdic.exe
-	$(RM) $(cannaBinDir)/lsdic.exe
-	$(RM) $(cannaBinDir)/mkdic.exe
-	$(RM) $(cannaBinDir)/mvdic.exe
-	$(RM) $(cannaBinDir)/rmdic.exe
-	$(RM) $(cannaBinDir)/syncdic.exe
-	$(RM) $(cannaBinDir)/chmoddic.exe
-	$(RM) $(cannaBinDir)/addwords.exe
-	$(RM) $(cannaBinDir)/delwords.exe
-	$(RM) $(cannaBinDir)/cannakill.exe
-	$(LN) $(cannaBinDir)/catdic.exe $(cannaBinDir)/cpdic.exe
-	$(LN) $(cannaBinDir)/catdic.exe $(cannaBinDir)/lsdic.exe
-	$(LN) $(cannaBinDir)/catdic.exe $(cannaBinDir)/mkdic.exe
-	$(LN) $(cannaBinDir)/catdic.exe $(cannaBinDir)/mvdic.exe
-	$(LN) $(cannaBinDir)/catdic.exe $(cannaBinDir)/rmdic.exe
-	$(LN) $(cannaBinDir)/catdic.exe $(cannaBinDir)/syncdic.exe
-	$(LN) $(cannaBinDir)/catdic.exe $(cannaBinDir)/chmoddic.exe
-	$(LN) $(cannaBinDir)/catdic.exe $(cannaBinDir)/addwords.exe
-	$(LN) $(cannaBinDir)/catdic.exe $(cannaBinDir)/delwords.exe
-	$(LN) $(cannaBinDir)/catdic.exe $(cannaBinDir)/cannakill.exe
+	$(RM) $(DESTDIR)$(cannaBinDir)/cpdic.exe
+	$(RM) $(DESTDIR)$(cannaBinDir)/lsdic.exe
+	$(RM) $(DESTDIR)$(cannaBinDir)/mkdic.exe
+	$(RM) $(DESTDIR)$(cannaBinDir)/mvdic.exe
+	$(RM) $(DESTDIR)$(cannaBinDir)/rmdic.exe
+	$(RM) $(DESTDIR)$(cannaBinDir)/syncdic.exe
+	$(RM) $(DESTDIR)$(cannaBinDir)/chmoddic.exe
+	$(RM) $(DESTDIR)$(cannaBinDir)/addwords.exe
+	$(RM) $(DESTDIR)$(cannaBinDir)/delwords.exe
+	$(RM) $(DESTDIR)$(cannaBinDir)/cannakill.exe
+	$(LN) $(DESTDIR)$(cannaBinDir)/catdic.exe $(DESTDIR)$(cannaBinDir)/cpdic.exe
+	$(LN) $(DESTDIR)$(cannaBinDir)/catdic.exe $(DESTDIR)$(cannaBinDir)/lsdic.exe
+	$(LN) $(DESTDIR)$(cannaBinDir)/catdic.exe $(DESTDIR)$(cannaBinDir)/mkdic.exe
+	$(LN) $(DESTDIR)$(cannaBinDir)/catdic.exe $(DESTDIR)$(cannaBinDir)/mvdic.exe
+	$(LN) $(DESTDIR)$(cannaBinDir)/catdic.exe $(DESTDIR)$(cannaBinDir)/rmdic.exe
+	$(LN) $(DESTDIR)$(cannaBinDir)/catdic.exe $(DESTDIR)$(cannaBinDir)/syncdic.exe
+	$(LN) $(DESTDIR)$(cannaBinDir)/catdic.exe $(DESTDIR)$(cannaBinDir)/chmoddic.exe
+	$(LN) $(DESTDIR)$(cannaBinDir)/catdic.exe $(DESTDIR)$(cannaBinDir)/addwords.exe
+	$(LN) $(DESTDIR)$(cannaBinDir)/catdic.exe $(DESTDIR)$(cannaBinDir)/delwords.exe
+	$(LN) $(DESTDIR)$(cannaBinDir)/catdic.exe $(DESTDIR)$(cannaBinDir)/cannakill.exe
 #else
 install::
-	$(RM) $(cannaBinDir)/cpdic
-	$(RM) $(cannaBinDir)/lsdic
-	$(RM) $(cannaBinDir)/mkdic
-	$(RM) $(cannaBinDir)/mvdic
-	$(RM) $(cannaBinDir)/rmdic
-	$(RM) $(cannaBinDir)/syncdic
-	$(RM) $(cannaBinDir)/chmoddic
-	$(RM) $(cannaBinDir)/addwords
-	$(RM) $(cannaBinDir)/delwords
-	$(RM) $(cannaBinDir)/cannakill
-	$(LN) $(cannaBinDir)/catdic $(cannaBinDir)/cpdic
-	$(LN) $(cannaBinDir)/catdic $(cannaBinDir)/lsdic
-	$(LN) $(cannaBinDir)/catdic $(cannaBinDir)/mkdic
-	$(LN) $(cannaBinDir)/catdic $(cannaBinDir)/mvdic
-	$(LN) $(cannaBinDir)/catdic $(cannaBinDir)/rmdic
-	$(LN) $(cannaBinDir)/catdic $(cannaBinDir)/syncdic
-	$(LN) $(cannaBinDir)/catdic $(cannaBinDir)/addwords
-	$(LN) $(cannaBinDir)/catdic $(cannaBinDir)/delwords
-	$(LN) $(cannaBinDir)/catdic $(cannaBinDir)/cannakill
+	$(RM) $(DESTDIR)$(cannaBinDir)/cpdic
+	$(RM) $(DESTDIR)$(cannaBinDir)/lsdic
+	$(RM) $(DESTDIR)$(cannaBinDir)/mkdic
+	$(RM) $(DESTDIR)$(cannaBinDir)/mvdic
+	$(RM) $(DESTDIR)$(cannaBinDir)/rmdic
+	$(RM) $(DESTDIR)$(cannaBinDir)/syncdic
+	$(RM) $(DESTDIR)$(cannaBinDir)/chmoddic
+	$(RM) $(DESTDIR)$(cannaBinDir)/addwords
+	$(RM) $(DESTDIR)$(cannaBinDir)/delwords
+	$(RM) $(DESTDIR)$(cannaBinDir)/cannakill
+	$(LN) $(DESTDIR)$(cannaBinDir)/catdic $(DESTDIR)$(cannaBinDir)/cpdic
+	$(LN) $(DESTDIR)$(cannaBinDir)/catdic $(DESTDIR)$(cannaBinDir)/lsdic
+	$(LN) $(DESTDIR)$(cannaBinDir)/catdic $(DESTDIR)$(cannaBinDir)/mkdic
+	$(LN) $(DESTDIR)$(cannaBinDir)/catdic $(DESTDIR)$(cannaBinDir)/mvdic
+	$(LN) $(DESTDIR)$(cannaBinDir)/catdic $(DESTDIR)$(cannaBinDir)/rmdic
+	$(LN) $(DESTDIR)$(cannaBinDir)/catdic $(DESTDIR)$(cannaBinDir)/syncdic
+	$(LN) $(DESTDIR)$(cannaBinDir)/catdic $(DESTDIR)$(cannaBinDir)/chmoddic
+	$(LN) $(DESTDIR)$(cannaBinDir)/catdic $(DESTDIR)$(cannaBinDir)/addwords
+	$(LN) $(DESTDIR)$(cannaBinDir)/catdic $(DESTDIR)$(cannaBinDir)/delwords
+	$(LN) $(DESTDIR)$(cannaBinDir)/catdic $(DESTDIR)$(cannaBinDir)/cannakill
 #endif
