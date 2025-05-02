@@ -21,7 +21,7 @@
  */
 
 #ifndef	lint
-static char rcsid[] = "@(#) 112.1 $Id: splitwd.c,v 1.2 2002/10/20 14:29:58 aida_s Exp $";
+static char rcsid[] = "@(#) 112.1 $Id: splitwd.c,v 1.2.4.1 2003/10/09 15:29:11 aida_s Exp $";
 #endif
     
 #include	<stdio.h>
@@ -83,18 +83,20 @@ uchar   *hinshi;
 	
     if( !(tp = (struct tango *)malloc(sizeof(struct tango))) )
 	fprintf(stderr, gettxt("cannacmd:41", 
-	       "cannnot malloc %d\n"), sizeof(struct tango) );
+	       "cannnot malloc %lu\n"), (unsigned long)sizeof(struct tango) );
 
     if( !(p = (uchar *)malloc(strlen((char *)tsuduri) + 1)) )
 	fprintf(stderr, gettxt("cannacmd:42",
-	       "cannnot malloc %d\n"), strlen((char *)tsuduri)+1 );
+	       "cannnot malloc %lu\n"),
+		(unsigned long)strlen((char *)tsuduri)+1 );
     
     tp->tsuduri = p;
     strcpy((char *)p,(char *)tsuduri);
 
     if( !(p = (uchar *)malloc(strlen((char *)hinshi) + 1)) )
 	fprintf(stderr, gettxt("cannacmd:43",
-	       "cannnot malloc %d\n"), strlen((char *)hinshi)+1 );
+	       "cannnot malloc %lu\n"),
+		(unsigned long)strlen((char *)hinshi)+1 );
     tp->hinshi = p;
     strcpy((char *)p, (char *)hinshi);
     

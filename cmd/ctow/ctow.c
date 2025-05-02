@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static char rcs[]="@(#) 112.1 $Id: ctow.c,v 1.3 2003/01/15 13:41:02 aida_s Exp $";
+static char rcs[]="@(#) 112.1 $Id: ctow.c,v 1.3.2.2 2003/10/09 15:40:59 aida_s Exp $";
 #endif
 /* ctow.c  テキスト形式の辞書を「かんな」からＷｎｎのものに変換する。
  *	ctow [-f parts-of-speech table ] [cannadic] [wnndic]
@@ -29,6 +29,7 @@ static char rcs[]="@(#) 112.1 $Id: ctow.c,v 1.3 2003/01/15 13:41:02 aida_s Exp $
 #include	<stdio.h>
 #include        <ctype.h>
 #include	"ccompat.h"
+#include	<unistd.h>
 
 #if  defined(__STDC__) || defined(SVR4)
 #include <locale.h>
@@ -213,7 +214,7 @@ char *argv[];
 	exit(2);
       }
       fsize = read_hinshi(fph, taiou);
-      close( fph );
+      fclose( fph );
       option = 1;
     }
     fpi = stdin;
@@ -221,8 +222,7 @@ char *argv[];
   }
   else { /* 引数が不正 */
     fprintf(stderr,gettxt("cannacmd:10", 
-	  "Usage: ctow [-f parts-of-speech table] [cannadic] [wnndic]\n"),
-	    argv[0]);
+	  "Usage: ctow [-f parts-of-speech table] [cannadic] [wnndic]\n"));
     exit(2);
   }
   if( argc >= (2 + option*2) ) { /* いろは辞書をオープン */

@@ -20,7 +20,7 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. 
  */
 
-/* $Id: sysdep.h,v 1.3 2003/09/17 10:15:09 aida_s Exp $ */
+/* $Id: sysdep.h,v 1.4 2003/10/02 07:40:29 aida_s Exp $ */
 
 #ifndef CANNA_SYSDEP_H
 #define CANNA_SYSDEP_H
@@ -30,6 +30,8 @@
 # include <inttypes.h>
 #elif defined(CANNA_HAVE_STDINT_H)
 # include <stdint.h>
+#else
+# include <sys/types.h>
 #endif
 
 #ifndef _WCHAR_T

@@ -21,7 +21,7 @@
  */
 
 /* LINTLIBRARY */
-/* $Id: RKintern.h,v 1.15 2003/09/24 14:50:40 aida_s Exp $ */
+/* $Id: RKintern.h,v 1.15.2.1 2003/10/09 15:29:12 aida_s Exp $ */
 #ifndef		_RKintern_h
 #define		_RKintern_h
 
@@ -1190,6 +1190,7 @@ int copyFile pro((struct DM *, struct DM *));
 int DDchmod pro((struct DD *, int));
 int DMchmod pro((struct DM *, int));
 int uslen pro((Wchar *));
+unsigned char *ustoeuc pro((Wchar *, int, unsigned char *, int));
 int _RkSubstYomi pro((struct RkContext *, int, int, Wchar *, int));
 int HowManyChars pro((Wchar *, int));
 int HowManyBytes pro((Wchar *, int));

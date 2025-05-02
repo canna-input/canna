@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static char rcsid[]="@(#) 102.1 $Id: kpdic.c,v 1.4 2003/06/28 19:36:48 aida_s Exp $";
+static char rcsid[]="@(#) 102.1 $Id: kpdic.c,v 1.4.2.1 2003/10/09 15:29:11 aida_s Exp $";
 #endif
 
 #if defined(__STDC__) || defined(SVR4)
@@ -54,6 +54,7 @@ extern char *gettxt();
 static char	fileName[256];
 static int	lineNum;
 static int	errCount;
+int chk_dflt pro((int c));
 
 	struct  def_tbl {
 	    int   used  ;
@@ -171,8 +172,12 @@ unsigned char	*s;
 {
     unsigned char	*d;
 
-    if ( d = (unsigned char *)malloc(strlen((char *)s) + 1) )
+    if ( (d = (unsigned char *)malloc(strlen((char *)s) + 1)) != NULL )
 	 strcpy((char *)d, (char *)s);
+    else {
+	fprintf(stderr, "Out of memory\n");
+	exit(1);
+    }
     return d;
 }
 
@@ -323,7 +328,7 @@ main(argc, argv)
 	    werr = 1;
 	  }
 	  else {
-	    p = chk_dflt((char)roman[nKey].roma[0]);
+	    p = chk_dflt((int)(unsigned char)roman[nKey].roma[0]);
 	    if (p--) {
 	      if (def[p].used == 0) { /* if not used */
 		if (nKey < maxkey) {
@@ -430,11 +435,12 @@ main(argc, argv)
 
 /* sub */
 int
-chk_dflt(c) char c ; {
+chk_dflt(c) int c ; {
     int  i,n ; 
+    char cc = (char)c;
     n = sizeof(def) / sizeof(struct def_tbl) ; 
     for (i=0; i < n ; i++) {
-	if (c == def[i].intr[0]) {
+	if (cc == def[i].intr[0]) {
 	    return(i+1) ;
 	}
     }

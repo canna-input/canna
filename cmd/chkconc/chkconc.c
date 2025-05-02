@@ -48,7 +48,7 @@ main(ac, av)
 
   for (i = 0; i < ac; i++) {
     struct RkGramIterator curr, end;
-    int j, row;
+    int row;
 
     if (av[i][0] == '#')
       av[i]++;

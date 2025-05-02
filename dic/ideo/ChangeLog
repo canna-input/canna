@@ -1,3 +1,10 @@
+2003-11-01 Toru TAKAMIZU <ttaka@earth.email.ne.jp>
+
+	* pubdic/k.p: remove an incorrect "kahi"([Canna-dev 260] from
+	  Sugano-san). Also add several entries.
+	* pubdic/s.p: add 1 entry.
+	* pubdic/t.p: add 2 entries.
+
 2003-09-26 Toru TAKAMIZU <ttaka@earth.email.ne.jp>
 
 	* pubdic/Imakefile: sync with HEAD
@@ -267,4 +274,4 @@
 	* pubdic/s.p: remove 1 entry "sanpai" ("zanpai"'s wrong reading?)
 	* pubdic/t.p: add 14 entries (#T35 & #T30)
 
-$Header: /cvsroot/canna/canna/dic/ideo/ChangeLog,v 1.2 2003/09/27 06:18:38 aida_s Exp $
+$Header: /cvsroot/canna/canna/dic/ideo/ChangeLog,v 1.2.2.1 2003/12/12 09:47:52 aida_s Exp $

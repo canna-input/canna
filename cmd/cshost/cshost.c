@@ -22,7 +22,7 @@
 
 #ifndef lint
 static char sccs_id[]="@(#) NEC UNIX( PC-UX/EWS-UX ) cshost.c 2.1 91/11/11 11:17:51";
-static char rcs_id[] = "$Id: cshost.c,v 1.3 2003/09/23 09:10:14 aida_s Exp $";
+static char rcs_id[] = "$Id: cshost.c,v 1.3.2.1 2003/10/09 15:29:10 aida_s Exp $";
 #endif
 
 /*
@@ -69,10 +69,8 @@ main(argc, argv)
 int argc ;
 char **argv ;
 {
-    char		*hostname = (char *)NULL ;
     char		cannahostname[256];
     int 		i ;
-    int 		ServerVersion ; 
     int proto_major, proto_minor, cx;				/* S000 */
     int status;
 
@@ -112,12 +110,11 @@ last:
 static int
 CannaDispControlList()
 {
-    int     UserNum, HostNum, NameLen ;
+    int     HostNum;
     int     i ;
     BYTE reqbuf[HEADER_SIZE], replybuf[128], *replyp = replybuf;
     BYTE *wp, *endp;
     int replylen, status;
-    int requiredlen;
 
     /*	パケット組み立て */
     wp = reqbuf;

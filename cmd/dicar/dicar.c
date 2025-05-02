@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static char rcsid[]="@(#) 102.1 $Id: dicar.c,v 1.4 2003/03/24 04:04:25 aida_s Exp $";
+static char rcsid[]="@(#) 102.1 $Id: dicar.c,v 1.4.2.1 2003/10/09 15:29:10 aida_s Exp $";
 #endif
 
 /*
@@ -99,7 +99,7 @@ struct HD *hd;
     date = ctime( &tloc );
     date[strlen(date)-1] = '\0';
 
-    (void)printf("%s.d [%s] = %d + %d\n",
+    (void)printf("%s.d [%s] = %lu + %lu\n",
 		 hd->data[HD_DMNM].ptr, date,
 		 hd->data[HD_CAN].uvar, hd->data[HD_REC].uvar);
   }
@@ -154,7 +154,7 @@ unsigned siz;
   char *buf;
 
   if (!(buf = (char *)malloc((unsigned)siz))) {
-    (void)fprintf(stderr, "%s: cannot malloc %ld siz.\n", program, siz);
+    (void)fprintf(stderr, "%s: cannot malloc %d siz.\n", program, siz);
   }
   else {
     (void)read(src, buf, siz);

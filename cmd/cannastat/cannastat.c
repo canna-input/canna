@@ -47,7 +47,7 @@
 #include "RKrename.h"
 #endif
 #include "ccompat.h"
-RCSID("$Id: cannastat.c,v 1.5 2003/09/25 07:38:11 aida_s Exp $");
+RCSID("$Id: cannastat.c,v 1.5.2.1 2003/10/09 15:29:09 aida_s Exp $");
 
 #include    <stdio.h>
 #include    <time.h>
@@ -134,7 +134,6 @@ int argc ;
 char **argv ;
 {
     char		cannahostname[ 256 ] ;
-    ClientRec		client ;		
     int 		argflag = 0, flag = 0 ;
     int i;
     int proto_major, cx;
@@ -442,7 +441,7 @@ int flag ;
     char	*ascdate = (char *)0xdeadbeef /* for gcc */ ;
     int 	i, id, user_no, u_cx ;
     ir_time_t	cdate, udate, idate ;
-    struct tm	*tt, *tt_buf ;
+    struct tm	*tt ;
 
     id = client->id ;
     user_no = client->usr_no ;
@@ -524,13 +523,6 @@ static void
 DispProto( client )
 register ClientPtr client ;
 {
-    static char *OldProtoList[] = {
-    "IR_INIT", "IR_FIN", "IR_CRE_CON", "IR_DUP_CON", "IR_CLO_CON",
-    "IR_DIC_LIST", "IR_CRE_DIC", "IR_DEF_DIC", "IR_UNDEF_DIC", "IR_DIC_PATH",
-    "IR_DIR_LIST", "IR_MNT_DIC", "IR_UMNT_DIC", "IR_RMNT_DIC", "IR_MNT_LIST",
-    "IR_CONVERT", "IR_CONV_END", "IR_KAN_LST", "IR_RESIZE", "IR_STO_YOMI",
-    "IR_GET_LEX", "IR_GET_STA"
-    } ;
     register int i ;
     char *protoname ;
     int  *dispdata ;
@@ -553,7 +545,7 @@ ClientPtr   who ;
 size_t cinfolen ;
 {
     const BYTE *receivep = readbuf ;
-    size_t len, j ;
+    size_t j ;
     int r = 0;
     size_t requiredsize;
 
@@ -608,9 +600,11 @@ size_t cinfolen ;
     if (cinfolen > requiredsize)
 	goto protoerr;
     goto last;
+    /*
 memerr:
     r = E_MEMORY;
     goto last;
+    */
 protoerr:
     r = E_PROTOCOL;
     goto last;

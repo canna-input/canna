@@ -21,7 +21,7 @@
  */
 
 /*
- * @(#) 102.1 $Id: widedef.h,v 1.7 2003/09/17 08:50:52 aida_s Exp $
+ * @(#) 102.1 $Id: widedef.h,v 1.7.2.1 2003/12/07 17:10:54 aida_s Exp $
  */
 
 #ifndef _WIDEDEF_H_
@@ -45,8 +45,12 @@
 #  else
 #   define _BSD_WCHAR_T_ unsigned long
 #  endif
-# include <stddef.h>
-# define _WCHAR_T
+#  if defined(__APPLE__) && defined(__WCHAR_TYPE__)
+#   undef __WCHAR_TYPE__
+#   define __WCHAR_TYPE__ _BSD_WCHAR_T_
+#  endif
+#  include <stddef.h>
+#  define _WCHAR_T
 # endif
 #elif defined(__FreeBSD__) && __FreeBSD_version >= 500000
 # ifdef WCHAR16

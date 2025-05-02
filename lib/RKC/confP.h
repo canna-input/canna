@@ -20,7 +20,7 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. 
  */
 
-/* $Id: confP.h,v 1.6 2003/09/25 07:14:36 aida_s Exp $ */
+/* $Id: confP.h,v 1.7 2003/10/05 09:27:02 aida_s Exp $ */
 
 /* 自動判別支援コメント: これはEUC-JPだぞ。幅という字があれば大丈夫。 */
 
@@ -113,7 +113,7 @@ typedef struct {
   const char *curr;
   const char *rdend;
   RkcErrorBuf *errorbuf;
-  size_t lineno;
+  unsigned int lineno;
   int eof_occured;
   int linetop;
 } Lexer;

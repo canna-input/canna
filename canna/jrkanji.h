@@ -25,7 +25,7 @@
  *	8/16 bit String Manipulations.
  *
  *      "@(#)kanji.h	2.3    88/10/03 10:25:34"
- *      "@(#) 102.1 $Id: jrkanji.h,v 1.7 2003/09/25 07:24:54 aida_s Exp $"
+ *      "@(#) 102.1 $Id: jrkanji.h,v 1.8.2.1 2003/12/07 17:10:54 aida_s Exp $"
  */
 
 #ifndef _JR_KANJI_H_
@@ -271,7 +271,10 @@ typedef struct {
 extern "C" {
 #endif
 extern char *jrKanjiError;
+#ifdef CANNA_NEW_WCHAR_AWARE /* to avoid problems in old programs */
 extern int (*jrBeepFunc) pro((void));
+# define CANNA_JR_BEEP_FUNC_DECLARED
+#endif
 #ifdef __cplusplus
 }
 #endif

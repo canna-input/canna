@@ -25,8 +25,9 @@
 #include "RKindep/strops.h"
 #include <stddef.h>
 #include <stdio.h>
+#include <fcntl.h>
 
-RCSID("$Id: comm.c,v 1.3 2003/09/24 14:50:40 aida_s Exp $");
+RCSID("$Id: comm.c,v 1.4.2.1 2003/10/09 15:29:12 aida_s Exp $");
 
 /* TODO: better error reporting */
 
@@ -69,6 +70,15 @@ static int ClientBuf_send pro((ClientBuf *obj));
 #define ClientBuf_getfd_fast(obj) ((obj)->fd)
 #define CLIENT_BUF_IS_SENDING(obj) \
     ((obj)->sendbuf.sb_curr != (obj)->sendbuf.sb_buf)
+
+static int
+set_nonblock(sock)
+sock_type sock;
+{
+  int oldflags;
+  oldflags = fcntl(sock, F_GETFL, 0 /* dummy */);
+  return fcntl(sock, F_SETFL, oldflags | O_NONBLOCK);
+}
 
 static void
 ClientBuf_init(obj, parent, fd)
@@ -115,7 +125,7 @@ ClientBuf *obj;
   size = recv(obj->fd, buf->sb_curr, buf->sb_end - buf->sb_curr, 0);
   ir_debug(Dmsg(7, "ClientBuf_recv(): recv() returned %d\n", size));
   if (size < 0) {
-    if (errno == EINTR)
+    if (errno == EINTR || errno == EWOULDBLOCK || errno == EAGAIN)
       return 0;
     else
       goto recvfail;
@@ -157,7 +167,7 @@ ClientBuf *obj;
   size = send(obj->fd, obj->sendptr, buf->sb_curr - obj->sendptr, 0);
   ir_debug(Dmsg(7, "ClientBuf_send(): send() returned %d\n", size));
   if (size < 0) {
-    if (errno == EINTR)
+    if (errno == EINTR || errno == EWOULDBLOCK || errno == EAGAIN)
       return 0;
     else
       goto fail;
@@ -325,7 +335,6 @@ EventMgr *obj;
 ListenerRec *listener_entry;
 {
   ClibufList *cbl_ent = NULL;
-  ClientPtr client = NULL;
   sock_type connfd = INVALID_SOCK;
 
   ir_debug(Dmsg(7, "EventMgr_accept() start\n"));
@@ -336,6 +345,10 @@ ListenerRec *listener_entry;
     goto fail;
   } else if (connfd >= RKI_FD_SETSIZE) {
     PrintMsg("EventMgr_accept(): out of rki_fd_set: fd=%d\n", connfd);
+    goto fail;
+  }
+  if (set_nonblock(connfd)) {
+    PrintMsg("EventMgr_accept(): set_nonblock(): errno=%d\n", errno);
     goto fail;
   }
   if (!(cbl_ent = malloc(sizeof(ClibufList))))
@@ -366,8 +379,7 @@ rki_fd_set *rfds;
 rki_fd_set *wfds;
 {
   int listenerno;
-  ClibufList *cbl_ent, **cbl_link;
-  struct timeval timeout_tmp;
+  ClibufList **cbl_link;
 
   ir_debug(Dmsg(7, "EventMgr_check_fds() start\n"));
   for (listenerno = 0; listenerno < obj->nlisteners; ++listenerno) {
@@ -509,6 +521,7 @@ enum {
   SOCK_OTHER_ERROR = -2,
   SOCK_OK = 0
 };
+
 #ifdef USE_UNIX_SOCKET  /* ＵＮＩＸドメインの作成 */
 static int
 open_unix_socket (sock, unaddr)
@@ -544,11 +557,16 @@ struct sockaddr_un *unaddr;
 	     sizeof(struct sockaddr_un))) {
       ir_debug( Dmsg(5, "ファイル名:[%s]\n",unaddr->sun_path));
       if (!listen (request, 5)) {
-	status = SOCK_OK;
-	goto last;
+	if (!set_nonblock(request)) {
+	  status = SOCK_OK;
+	  goto last;
+	} else {
+	  ir_debug( Dmsg(5,"Warning: Server could not set nonblocking mode.\n"));
+	}
+      } else {
+	ir_debug( Dmsg(5,"Warning: Server could not listen.\n"));
       }
       unlink(unaddr->sun_path);
-      ir_debug( Dmsg(5,"Warning: Server could not listen.\n"));
     }
     else {
       status = SOCK_BIND_ERROR;
@@ -623,8 +641,15 @@ sock_type *sock;
 	ir_debug( Dmsg(5,"Warning: Server could not listen.\n"));
 	close(request); 
 	request = -1; /* listen 失敗  */
+      } else {
+	if (set_nonblock(request)) {
+	  ir_debug( Dmsg(5,"Warning: Server could not set nonblocking mode.\n"));
+	  close(request); 
+	  request = -1;
+	} else {
+	  status = SOCK_OK;
+	}
       }
-      status = SOCK_OK;
     } else {
       status = SOCK_BIND_ERROR;
     }
@@ -705,8 +730,15 @@ sock_type *sock;
 	  ir_debug( Dmsg(5,"Warning: Server could not listen.\n"));
 	  close(request); 
 	  request = -1; /* listen 失敗  */
+	} else {
+	  if (set_nonblock(request)) {
+	    ir_debug( Dmsg(5,"Warning: Server could not set nonblocking mode.\n"));
+	    close(request); 
+	    request = -1;
+	  } else {
+	    status = SOCK_OK;
+	  }
 	}
-	status = SOCK_OK;
       } else {
 	status = SOCK_BIND_ERROR;
       }
@@ -755,8 +787,8 @@ char **hostname;
   struct sockaddr_storage from;
 #else /* !INET6 */
   struct sockaddr_in	from;
-#endif /* !INET6 */
   struct hostent	*hp;
+#endif /* !INET6 */
   char		buf[MAXDATA];
   canna_socklen_t 	fromlen = sizeof( from ) ;
   struct sockaddr	*fromp = (struct sockaddr *)&from;

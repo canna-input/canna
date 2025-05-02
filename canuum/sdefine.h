@@ -1,6 +1,6 @@
 /*
  *  sdefine.h,v 1.3 2001/06/14 18:16:08 ura Exp
- *  Canna: $Id: sdefine.h,v 1.3 2003/01/04 07:31:02 aida_s Exp $
+ *  Canna: $Id: sdefine.h,v 1.3.4.1 2003/10/12 11:58:17 aida_s Exp $
  */
 
 /*
@@ -149,6 +149,9 @@ struct msg_cat { /* dummy */
 };
 
 struct msg_cat *msg_open();
+#ifdef CANNA
+char *msg_get(struct msg_cat *cad, int n, char *msg, char *lang);
+#endif
 
 #define MSG_GET(no)     msg_get(cd, no, NULL, NULL)
 

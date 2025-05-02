@@ -1,3 +1,105 @@
+2003-12-12 AIDA Shinra <shinra@j10n.org>
+
+	* Canna 3.7 release.
+	* CHANGES.jp: updated
+	* canna/patchlevel.h: bump to 3.7
+
+2003-12-12 AIDA Shinra <shinra@j10n.org>
+
+	* dic/ideo/*: Sync with DIC_WORK branch.
+
+2003-12-07 AIDA Shinra <shinra@j10n.org>
+
+	* canna/widedef.h: MacOS X 10.3 support
+	* canna/jrkanji.h: define CANNA_JR_BEEP_FUNC_DECLARED
+
+2003-10-12 AIDA Shinra <shinra@j10n.org>
+
+	* Imakefile: s/CANNA_PURE_CFLAGS/PURE_CFLAGS/
+	* configure.ac: check inet_aton
+	* server/misc.c(GetAddrListFromName): use inet_addr if inet_aton is
+	  not available
+	* canuum/configure.ac: pass PURE_CFLAGS to configure
+	* canuum/header.c: specify argument types of code_trans to distinguish
+	  int and size_t
+	* canuum/sdefine.h: declare msg_get to distinguish int and size_t
+	* canuum/termio.c(set_scroll_region): pass exactly 10 arguments to
+	  tparm (as XSI Curses standard notes)
+	  (throw_cur_raw): ditto
+
+2003-10-10 AIDA Shinra <shinra@j10n.org>
+
+	* cmd/ctow/ctow.c: s/close/fclose/
+
+2003-10-10 AIDA Shinra <shinra@j10n.org>
+
+	* Some minor cleanups (especially printf format problems and unused
+	  variables)
+	* cmd/cannacheck/main.c: cleanuped
+	* cmd/cannastat/cannastat.c: cleanuped
+	* cmd/catdic/rutil.c: cleanuped
+	* cmd/chkconc/chkconc.c: cleanuped
+	* cmd/crfreq/crfreq.c: cleanuped
+	* cmd/crxdic/crxdic.c: cleanuped
+	* cmd/cshost/cshost.c: cleanuped
+	* cmd/ctow/ctow.c: cleanuped
+	* cmd/dicar/dicar.c: cleanuped
+	* cmd/dpxdic/dpxdic.c: cleanuped
+	* cmd/kpdic/kpdic.c: cleanuped
+	* cmd/mergewd/mergewd.c: cleanuped
+	* cmd/splitwd/splitwd.c: cleanuped
+	* cmd/wtoc/wtoc.c: cleanuped, s/close/fclose/
+	* server/comm.c: cleanuped
+	* lib/RK/RKintern.h: declare ustoeuc
+
+2003-10-10 AIDA Shinra <shinra@j10n.org>
+
+	* configure.ac: check arpa/inet.h
+	* canna/net.h: include <arpa/inet.h> if exists
+	* server/misc.c(DetachTTY): use HAVE_*
+
+2003-10-05 AIDA Shinra <shinra@j10n.org>
+
+	* canna/jrkanji.h: declare jrBeepFunc only if CANNA_NEW_WCHAR_AWARE is
+	  defined
+	* lib/RKC/confP.h(Lexer): turn typeof(lineno) to unsigned int
+	* lib/RKC/conf.c(Lexer_next): ditto
+	  (Lexer_error): ditto
+
+2003-10-02 AIDA Shinra <shinra@j10n.org>
+
+	* Set nonblocking mode properly.
+	* server/comm.c(set_nonblock): added
+	  (EventMgr_accept): invoke set_nonblock
+	  (open_unix_socket): ditto
+	  (open_inet_socket): invoke set_nonblock. handle failure in listen() properly.
+	  (open_inet6_socket): ditto
+	  (ClientBuf_send): check EAGAIN and EWOULDBLOCK
+	  (ClientBuf_recv): ditto
+
+2003-10-02 AIDA Shinra <shinra@j10n.org>
+
+	* canna/sysdep.h: fallback to sys/types.h if neither inttypes.h nor
+	  stdint.h are found
+	* configure.ac: better checking of int32_t and in_addr_t (for Cygwin)
+	* cmd/canlisp/canlisp.c: define CANNA_NEW_WCHAR_AWARE
+	* cmd/catdic/RKdelline.c: ditto
+	* cmd/catdic/Imakefile: cannakill was bad link ([Canna-dev 257])
+	* Canna.conf.dist(LDOPTIONS): remove -l$(libCannaDir)
+	  ([Canna-dev 258])
+
+2003-09-30 AIDA Shinra <shinra@j10n.org>
+
+	* CHANGES.jp: add some items
+
+2003-09-30 AIDA Shinra <shinra@j10n.org>
+
+	* [Canna-dev 254]
+	* lib/RKC/conf.c(host_num_defaults): change default value of
+	  CONF_SERVER_TIMEOUT to 1500ms
+	* RKCCONF.jp: updated due to avobe change
+	* Imakefile: ifdef UseInet6 -> if UseInet6
+
 2003-09-27 AIDA Shinra <shinra@j10n.org>
 
 	* dic/ideo/*: Sync with DIC_WORK branch. See dic/ideo/ChangeLog for
@@ -1615,4 +1717,4 @@
 
 	* Virgin import of Canna3.5b2.
 
-$Id: ChangeLog,v 1.150 2003/09/27 06:18:38 aida_s Exp $
+$Id: ChangeLog,v 1.155.2.7 2003/12/12 09:53:07 aida_s Exp $

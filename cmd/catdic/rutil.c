@@ -24,7 +24,7 @@
  * rutil.c
  */
 #ifndef lint
-static char rcs[] = "@(#) 112.1 $Id: rutil.c,v 1.3 2003/02/01 19:34:20 aida_s Exp $";
+static char rcs[] = "@(#) 112.1 $Id: rutil.c,v 1.3.2.1 2003/10/09 15:29:09 aida_s Exp $";
 #endif
 
 #ifdef ENGINE_SWITCH
@@ -278,8 +278,7 @@ unsigned char  *dicname;
 	 "Specified dictionary \"%s\" is binary dictionary.\n"),dicname);
     break;
   case BADDR :
-    (void)fprintf(stderr, gettxt("cannacmd:197", "dics.dir is abnormal.\n"),
-		  dicname);
+    (void)fprintf(stderr, gettxt("cannacmd:197", "dics.dir is abnormal.\n"));
     break;
   case NOMOUNT :
     (void)fprintf(stderr, gettxt("cannacmd:198", 

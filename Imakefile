@@ -1,15 +1,15 @@
-/* $Id: Imakefile,v 1.11 2003/09/25 06:30:20 aida_s Exp $ */
+/* $Id: Imakefile,v 1.12.2.1 2003/10/12 11:58:17 aida_s Exp $ */
 #include "./Canna.conf"
 
 #define IHaveSubdirs
 #define PassCDebugFlags 'CDEBUGFLAGS=$(CDEBUGFLAGS)'
 #ifndef ConfigureEnv
-# define ConfigureEnv CPPFLAGS='$(ALLDEFINES)' CC='$(CC)' CFLAGS='$(CANNA_PURE_CFLAGS)'
+# define ConfigureEnv CPPFLAGS='$(ALLDEFINES)' CC='$(CC)' CFLAGS='$(PURE_CFLAGS)'
 #endif
 #ifndef ConfigureArgs
 # define ConfigureArgs
 #endif
-#ifdef UseInet6
+#if UseInet6
 # define CannaConfInet6 echo "#define INET6"
 #else
 # define CannaConfInet6 echo "/* #undef INET6 */"

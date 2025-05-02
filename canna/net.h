@@ -21,7 +21,7 @@
  */
 
 /* sccs_id[]="@(#) NEC UNIX( PC-UX/EWS-UX ) net.h 1.1 90/11/01 16:25:42"; */
-/* $Id: net.h,v 1.3 2003/09/24 14:50:39 aida_s Exp $ */
+/* $Id: net.h,v 1.3.2.1 2003/10/09 15:27:28 aida_s Exp $ */
 
 #ifndef NET_H
 #define NET_H
@@ -40,6 +40,9 @@
 #include <netdb.h>
 #ifdef UNIXCONN
 #include <sys/un.h>
+#endif
+#ifdef HAVE_ARPA_INET_H
+#include <arpa/inet.h>
 #endif
 #endif
 

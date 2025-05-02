@@ -16,7 +16,7 @@ AC_PROG_CC
 AC_HEADER_STDC
 AC_CHECK_HEADERS([fcntl.h locale.h memory.h netdb.h netinet/in.h stddef.h stdlib.h string.h]dnl
  [strings.h sys/ioctl.h sys/param.h sys/socket.h sys/time.h sys/timeb.h syslog.h unistd.h]dnl
- [sys/select.h])
+ [sys/select.h arpa/inet.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
@@ -37,7 +37,7 @@ AC_FUNC_STAT
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS([bzero dup2 gethostbyaddr gethostbyname gethostname inet_ntoa isascii memchr]dnl
  [memset mkdir munmap select setlocale socket strchr strdup strrchr strspn]dnl
- [index bcopy memcpy setsid rename FD_ISSET strlcpy syslog vsyslog] )
+ [index bcopy memcpy setsid rename FD_ISSET strlcpy syslog vsyslog inet_aton] )
 
 AC_CHECK_TYPES([fd_set],,,[dnl
 #include <sys/types.h>
@@ -45,8 +45,20 @@ AC_CHECK_TYPES([fd_set],,,[dnl
 # include <sys/select.h>
 #endif
 ])
-AC_CHECK_TYPES([int32_t, time_t])
-AC_CHECK_TYPES([in_addr_t],,,[#include <netinet/in.h>])
+AC_CHECK_TYPES([int32_t],,,[dnl
+#if defined(HAVE_INTTYPES_H)
+# include <inttypes.h>
+#elif defined(HAVE_STDINT_H)
+# include <stdint.h>
+#else
+# include <sys/types.h>
+#endif
+])
+AC_CHECK_TYPES([time_t])
+AC_CHECK_TYPES([in_addr_t],,,[dnl
+#include <sys/types.h>
+#include <netinet/in.h>
+])
 AC_CHECK_TYPES([socklen_t],,,[dnl
 #include <sys/types.h>
 #ifdef HAVE_SYS_SOCKET_H

@@ -37,7 +37,7 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 
-RCSID("$Id: conf.c,v 1.10 2003/09/25 07:14:36 aida_s Exp $");
+RCSID("$Id: conf.c,v 1.12 2003/10/05 09:27:02 aida_s Exp $");
 #define	MY_UINT32MAX 0xffffffffU
 #define UINT32_NUMLEN 10
 
@@ -531,7 +531,7 @@ restart:
 	count = sizeof numbuf - 1;
       memcpy(numbuf, p, count);
       numbuf[count] = '\0';
-      cx->lineno = (size_t)strtol(numbuf, NULL, 10);
+      cx->lineno = (unsigned int)strtol(numbuf, NULL, 10);
       p = memchr(p, '\n', cx->rdend - p);
       if (!p) {
 	cx->curr = cx->rdend;
@@ -697,7 +697,7 @@ const Lexer *cx;
 const char *msg;
 {
   char *newmsg;
-  size_t lineno;
+  unsigned int lineno;
   
   newmsg = malloc(sizeof("line X(10col)XX: ") + strlen(msg));
   if (!newmsg) {
@@ -1483,7 +1483,7 @@ const NumberDefaultRec top_num_defaults[] = {
 };
 
 const NumberDefaultRec host_num_defaults[] = {
-  { CONF_SERVER_TIMEOUT, 500 },
+  { CONF_SERVER_TIMEOUT, 1500 },
 };
 
 const char *

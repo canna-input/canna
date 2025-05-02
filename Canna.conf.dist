@@ -95,7 +95,7 @@
  *              そろっていないので #define しておいてください。
  */
 /*
- * $Id: Canna.conf.dist,v 1.22 2003/09/25 06:30:20 aida_s Exp $
+ * $Id: Canna.conf.dist,v 1.23 2003/10/02 07:40:29 aida_s Exp $
  */
 
 /* rootにならずにインストールする時はこれを定義して下さい */
@@ -301,7 +301,7 @@ DEPRKLIB = $(CANNAROOT)/lib/RK/LibraryTargetName(RK)
 RKLIB = -L$(CANNAROOT)/lib/RK -lRK
 DEPRKINDEPLIB = $(CANNAROOT)/lib/RKindep/LibraryTargetName(RKindep)
 RKINDEPLIB = -L$(CANNAROOT)/lib/RKindep -lRKindep
-LDOPTIONS = $(CDEBUGFLAGS) $(CCOPTIONS) $(LOCAL_LDFLAGS) -L$(libCannaDir)
+LDOPTIONS = $(CDEBUGFLAGS) $(CCOPTIONS) $(LOCAL_LDFLAGS)
 #if ModernElfLink
 /* best effort */
 # ifdef CannaGccElfArchitecture

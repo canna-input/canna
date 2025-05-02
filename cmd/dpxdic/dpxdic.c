@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static char rcsid[]="@(#) 102.1 $Id: dpxdic.c,v 1.7 2003/09/18 12:59:58 aida_s Exp $";
+static char rcsid[]="@(#) 102.1 $Id: dpxdic.c,v 1.7.2.1 2003/10/09 15:29:11 aida_s Exp $";
 #endif
 
 #include "RKintern.h"
@@ -77,7 +77,7 @@ show_a_cand(gram, wrec, or)
   }
   *dst = (Wchar)0;
   if (gram) {
-    if (ptr = (char *)RkGetGramName(gram, row)) {
+    if ((ptr = (char *)RkGetGramName(gram, row)) != NULL) {
       (void)strcpy(rowname, ptr);
       if (*or != row) {
 	printf(" #%s", rowname);
@@ -229,7 +229,7 @@ loadPage(dic, id)
   }
 
   if (id >= dic->ttlpg) {
-    fprintf(stderr, "ERROR: %dth page is greater than max page %d\n",
+    fprintf(stderr, "ERROR: %dth page is greater than max page %lu\n",
 	    id, dic->ttlpg);
     return(-1);
   }
@@ -337,7 +337,7 @@ compit(a, b)
      unsigned char *a;
      unsigned char *b;
 {
-  if (*a > *b || (*a == *b) && *(a+1) >= *(b+1)) {
+  if (*a > *b || ((*a == *b) && *(a+1) >= *(b+1))) {
     return(1);
   }
   return(-1);
@@ -426,7 +426,7 @@ getdic(dic, filenm, dmnm)
       tloc = hd.data[HD_TIME].var;
       strcpy(date, ctime(&tloc));
       date[24] = 0;
-      (void)fprintf(stderr, "%s [ %s ] = %d + %d\n",
+      (void)fprintf(stderr, "%s [ %s ] = %ld + %ld\n",
 		    (char *)hd.data[HD_DMNM].ptr,
 		    date,
 		    hd.data[HD_CAN].var,

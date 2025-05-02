@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static char rcsid[]="@(#) 102.1 $Id: crfreq.c,v 1.5 2003/09/24 14:50:39 aida_s Exp $";
+static char rcsid[]="@(#) 102.1 $Id: crfreq.c,v 1.5.2.1 2003/10/09 15:29:09 aida_s Exp $";
 #endif
 
 #include "RKintern.h"
@@ -51,7 +51,7 @@ CreateNL(fr, size1, size2)
      int	size1;
      int	size2;
 {
-  unsigned char ll[4], *buf;
+  unsigned char ll[4], *buf = (unsigned char *)0xdeadbeef; /* for gcc */
   
   size1 = size1 > 0 ? size1 : 0;
   size2 = size2 > 0 ? size2 : 0;
@@ -110,7 +110,6 @@ main(argc, argv)
   char		*flnm = (char *)0, *dmnm, freq[RK_OLD_MAX_HDRSIZ];
   char		*frqf, *frqe, freqfile[RK_OLD_MAX_HDRSIZ];
   int		bit_size, fd, fr, fqoffset, i, j, k, lk, nc, nw, vds = 0, err;
-  int		fnum;
   long		fqbytes;
 
   freq[0] = '\0';
@@ -257,7 +256,7 @@ main(argc, argv)
     }
   }
   fqbytes = (fqoffset + 7)/8;
-  (void)fprintf(stderr, "size %d bits %d bytes\n", fqoffset, fqbytes);
+  (void)fprintf(stderr, "size %d bits %ld bytes\n", fqoffset, fqbytes);
   if (fqbytes >= sizeof(fqbits)) {
     (void)close(fd);
     (void)close(fr);

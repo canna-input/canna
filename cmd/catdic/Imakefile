@@ -1,4 +1,4 @@
-/* $Id: Imakefile,v 1.8 2003/09/25 06:30:21 aida_s Exp $ */
+/* $Id: Imakefile,v 1.9 2003/10/02 07:40:30 aida_s Exp $ */
 #include "../../Canna.conf"
 #include "../cmd.tmpl"
 
@@ -34,7 +34,7 @@ LintTarget()
 
 #define CannaInstalledProgram(prog) $(DESTDIR)$(cannaBinDir)/ProgramTargetName(prog)
 
-INSTALLED_CATDIC_ALIASES = \
+INSTALLED_CATDIC_ALIASES_BIN = \
 	CannaInstalledProgram(cpdic) \
 	CannaInstalledProgram(lsdic) \
 	CannaInstalledProgram(mkdic) \
@@ -43,9 +43,12 @@ INSTALLED_CATDIC_ALIASES = \
 	CannaInstalledProgram(syncdic) \
 	CannaInstalledProgram(chmoddic) \
 	CannaInstalledProgram(addwords) \
-	CannaInstalledProgram(delwords) \
+	CannaInstalledProgram(delwords)
+
+INSTALLED_CATDIC_ALIASES_OTHER = \
 	$(DESTDIR)cannakillDir/ProgramTargetName(cannakill)
 
 install::
-	$(RM) $(INSTALLED_CATDIC_ALIASES)
-	for p in $(INSTALLED_CATDIC_ALIASES); do $(LN) catdic $$p; done
+	$(RM) $(INSTALLED_CATDIC_ALIASES_BIN) $(INSTALLED_CATDIC_ALIASES_OTHER)
+	for p in $(INSTALLED_CATDIC_ALIASES_BIN); do $(LN) catdic $$p; done
+	for p in $(INSTALLED_CATDIC_ALIASES_OTHER); do $(LN) $(cannaBinDir)/catdic $$p; done

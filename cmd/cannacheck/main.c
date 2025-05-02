@@ -20,7 +20,7 @@
  * PERFORMANCE OF THIS SOFTWARE. 
  */
 
-static char rcs_id[] = "@(#) 102.1 $Id: main.c,v 1.6 2003/09/21 09:08:17 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: main.c,v 1.6.2.1 2003/10/09 15:29:08 aida_s Exp $";
 
 /* 自動判別支援コメント: これはEUC-JPだぞ。幅という字があれば大丈夫。 */
 
@@ -75,7 +75,7 @@ char *argv[], *envp[];
       if (p)
 	  printf("サーバ \"%s\" に接続します。\n", p);
       else
-	  printf("接続先のサーバが不明です\n", p);
+	  printf("接続先のサーバが不明です\n");
     }
     if (warn) {
       char **p;

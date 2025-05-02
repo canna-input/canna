@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[]="@(#) $Id: misc.c,v 1.16 2003/09/21 23:43:04 aida_s Exp $";
+static char rcs_id[]="@(#) $Id: misc.c,v 1.16.2.2 2003/10/12 11:58:17 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */
@@ -603,7 +603,13 @@ const char   *hostname;
 	  freeaddrinfo(infolists[i]);
     }
 #else /* !INET6 */
-    if (inet_aton(hostname, &numaddr)) {
+    if (
+#ifdef HAVE_INET_ATON
+	inet_aton(hostname, &numaddr)
+#else
+	((numaddr.s_addr = inet_addr(hostname)) != (canna_in_addr_t)-1)
+#endif
+       ) {
       res = calloc(1, sizeof(AddrList));
       if (!res)
 	goto fail;
@@ -975,21 +981,18 @@ DetachTTY()
     /*
      * TTY の切り離し
      */
-#if defined(SVR4) || defined(__convex__) || defined(__BSD_NET2__) || defined(__BSD44__)
+#if defined(HAVE_SETSID)
     (void)setsid();
-#else
-#ifdef __EMX__
+#elif defined(__EMX__)
     (void)_setsid();
-#else
-#if defined(SYSV) || defined(linux) || defined(__OSF__)
+#elif defined(SETPGRP_VOID)
+    /* defined(SYSV) || defined(linux) || defined(__OSF__) */
     setpgrp();
 #else
     setpgrp(0, getpid());
 #endif
-#endif
-#endif
     
-#ifdef TIOCNOTTY
+#if defined(TIOCNOTTY) && !defined(HAVE_SETSID)
     {
       int fd = open("/dev/tty", O_RDWR, 0);
       if (fd >= 0) {

@@ -1,6 +1,5 @@
-/* $Id: Imakefile,v 1.8 2003/03/24 04:15:22 aida_s Exp $ */
+/* $Id: Imakefile,v 1.8.2.1 2003/10/12 11:58:17 aida_s Exp $ */
 #include "../Canna.conf"
-/* #include "canuum.tmpl" */
 #ifdef TermcapLibrary
 TERMCAP_LIB = TermcapLibrary
 #else
@@ -11,7 +10,7 @@ TERMCAP_LIB = -ltermcap
 # endif
 #endif
 #ifndef CanuumConfigureEnv
-# define CanuumConfigureEnv CPPFLAGS="$(ALLDEFINES)" CC='$(CC)'
+# define CanuumConfigureEnv CPPFLAGS="$(ALLDEFINES)" CC='$(CC)' CFLAGS='$(PURE_CFLAGS)'
 #endif
 #ifndef CanuumConfigureArgs
 # define CanuumConfigureArgs --with-term-libs="$(TERMCAP_LIB)"
@@ -33,6 +32,7 @@ SYS_LIBRARIES = $(TERMCAP_LIB) `libspt-config --libs`
             TARGET = canuum
 XCOMM --prefix is not used but add just in case
 CONFIGURE_CMD = CanuumConfigureEnv IN_MAKE=yes ./configure --prefix=$(cannaPrefix) CanuumConfigureArgs
+PURE_CFLAGS = $(CDEBUGFLAGS) $(CCOPTIONS) /* $(THREADS_CFLAGS) $(MODULE_CFLAGS) */
 
 AllTarget($(TARGET))
 NormalProgramTarget($(TARGET),$(OBJS),$(DEPCANNALIB16),$(CANNALIB16),)

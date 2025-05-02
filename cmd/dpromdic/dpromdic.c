@@ -21,12 +21,13 @@
  */
 
 #ifndef lint
-static char rcsid[]="@(#) 112.1 $Id: dpromdic.c,v 1.3 2003/06/28 19:36:48 aida_s Exp $";
+static char rcsid[]="@(#) 112.1 $Id: dpromdic.c,v 1.3.2.1 2003/10/09 15:29:10 aida_s Exp $";
 #endif
 
 /* # include       "RKintern.h"       */
 
 # include	<stdio.h>
+#include	<unistd.h>
 #if defined(__STDC__) || defined(SVR4)
 # include       <locale.h>
 #endif
@@ -76,7 +77,7 @@ char	**argv;
     /* NOTREACHED */
   }
 
-  if(rdic = RkwOpenRoma(filename)) {
+  if((rdic = RkwOpenRoma(filename)) != NULL) {
 
     if( rdic -> nr_bchars != NULL && rdic -> nr_bchars[0] ) {
       printf("!%s\n",rdic -> nr_bchars) ;

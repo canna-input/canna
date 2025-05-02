@@ -2380,7 +2380,8 @@ done
 
 
 
-for ac_header in fcntl.h locale.h memory.h netdb.h netinet/in.h stddef.h stdlib.h string.h strings.h sys/ioctl.h sys/param.h sys/socket.h sys/time.h sys/timeb.h syslog.h unistd.h sys/select.h
+
+for ac_header in fcntl.h locale.h memory.h netdb.h netinet/in.h stddef.h stdlib.h string.h strings.h sys/ioctl.h sys/param.h sys/socket.h sys/time.h sys/timeb.h syslog.h unistd.h sys/select.h arpa/inet.h
 do
 as_ac_Header=`echo "ac_cv_header_$ac_header" | $as_tr_sh`
 if eval "test \"\${$as_ac_Header+set}\" = set"; then
@@ -4492,7 +4493,8 @@ done
 
 
 
-for ac_func in bzero dup2 gethostbyaddr gethostbyname gethostname inet_ntoa isascii memchr memset mkdir munmap select setlocale socket strchr strdup strrchr strspn index bcopy memcpy setsid rename FD_ISSET strlcpy syslog vsyslog
+
+for ac_func in bzero dup2 gethostbyaddr gethostbyname gethostname inet_ntoa isascii memchr memset mkdir munmap select setlocale socket strchr strdup strrchr strspn index bcopy memcpy setsid rename FD_ISSET strlcpy syslog vsyslog inet_aton
 do
 as_ac_var=`echo "ac_cv_func_$ac_func" | $as_tr_sh`
 echo "$as_me:$LINENO: checking for $ac_func" >&5
@@ -4638,7 +4640,15 @@ else
   cat >conftest.$ac_ext <<_ACEOF
 #line $LINENO "configure"
 #include "confdefs.h"
-$ac_includes_default
+#if defined(HAVE_INTTYPES_H)
+# include <inttypes.h>
+#elif defined(HAVE_STDINT_H)
+# include <stdint.h>
+#else
+# include <sys/types.h>
+#endif
+
+
 #ifdef F77_DUMMY_MAIN
 #  ifdef __cplusplus
      extern "C"
@@ -4686,6 +4696,7 @@ _ACEOF
 
 
 fi
+
 echo "$as_me:$LINENO: checking for time_t" >&5
 echo $ECHO_N "checking for time_t... $ECHO_C" >&6
 if test "${ac_cv_type_time_t+set}" = set; then
@@ -4751,7 +4762,9 @@ else
   cat >conftest.$ac_ext <<_ACEOF
 #line $LINENO "configure"
 #include "confdefs.h"
+#include <sys/types.h>
 #include <netinet/in.h>
+
 
 #ifdef F77_DUMMY_MAIN
 #  ifdef __cplusplus

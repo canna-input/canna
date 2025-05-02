@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static char rcsid[]="@(#) 102.1 $Id: crxdic.c,v 1.11 2003/09/25 14:37:24 aida_s Exp $";
+static char rcsid[]="@(#) 102.1 $Id: crxdic.c,v 1.11.2.1 2003/10/09 15:29:10 aida_s Exp $";
 #endif
 
 #include "RKintern.h"
@@ -1196,7 +1196,7 @@ main (argc, argv)
 {
   struct dictionary	*dic;
   struct node		*topnd;
-  int			fd, pg, i;
+  int			fd, i;
   struct RkKxGram	*gram;
   char			date[26], tempfile[1024];
   
