@@ -48,7 +48,7 @@ SOFTWARE.
 ******************************************************************/
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "$Id: wconvert.c,v 1.3 2002/10/20 14:29:59 aida_s Exp $";
+static char rcs_id[] = "$Id: wconvert.c,v 1.3.2.1 2003/01/06 04:42:08 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */
@@ -1112,7 +1112,14 @@ Ushort *wstr;
       for (wp = wstr, i = 0 ; i < wlen ; wp++, i++) {
 	STOS2(*wp, p); p += SIZEOFSHORT;
       }
-      p[0] = p[1] = (BYTE)0;
+      /*
+       * このリクエストは実装されて以来、実際には空のwstrを渡すStoreYomi
+       * でしか使われていない。また、3.6p1までのサーバにはバグがあり、
+       * 3.6まではwstrの領域は空でなくてはならず(ヌル文字も不可)、
+       * 3.6p1の場合は常に失敗してしまう。そのため、このリクエストに
+       * ついては当面、呼び出し側がヌル終端かwlen=0を保証するものとする。
+       * 2003.01.05 aida_s
+       */
 
       retval = WriteServer(bufp, sz);
       if (bufp != lbuf) free((char *)bufp);

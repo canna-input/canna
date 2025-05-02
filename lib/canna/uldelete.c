@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: uldelete.c,v 1.1.1.1 2002/10/19 08:27:52 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: uldelete.c,v 1.1.1.1.2.1 2003/01/15 13:42:37 aida_s Exp $";
 #endif
 
 #if !defined(NO_EXTEND_MENU) && !defined(WIN)
@@ -279,7 +279,12 @@ int *num_return;
         check = RkwChmodDic(defaultContext, p->name, 0);
         if (check >= 0 && (check & RK_ENABLE_WRITE)) {
           nmmdic++;
-        }
+        } else {
+	  check = RkwChmodDic(defaultContext, p->name, RK_GRP_DIC);
+	  if (check >= 0 && (check & RK_ENABLE_WRITE)) {
+	    nmmdic++;
+	  }
+	}
       }
     }
   }
@@ -309,6 +314,11 @@ int *num_return;
         check = RkwChmodDic(defaultContext, p->name, 0);
         if (check >= 0 && (check & RK_ENABLE_WRITE)) {
           *--tp = WString(p->name);
+        } else {
+	  check = RkwChmodDic(defaultContext, p->name, RK_GRP_DIC);
+	  if (check >= 0 && (check & RK_ENABLE_WRITE)) {
+	    *--tp = WString(p->name);
+	  }
         }
       }
     }

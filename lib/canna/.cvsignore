@@ -1,0 +1,8 @@
+.depend
+Makefile
+libcanna.a
+libcanna.so*
+libcanna.sl*
+libcanna.dll
+unshared
+sglobal.h

@@ -1,0 +1,10 @@
+Some of files in this directory are licensed under GNU GPL.
+The license is written in "COPYRIGHT".
+
+GPL'd files are:
+* All files listed in freewnn-uum.files except "COPYRIGHT" itself.
+* canna.c.
+* Files derived from other GPL'd files.
+  This includes object files and configure, but not restricted to them.
+
+$Id: README.copyright,v 1.2.2.1 2003/01/11 17:53:57 aida_s Exp $

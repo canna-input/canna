@@ -20,7 +20,7 @@ XCOMM USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 XCOMM OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 XCOMM PERFORMANCE OF THIS SOFTWARE. 
 
-XCOMM $Id: mkbindic.cpp,v 1.2 2002/10/22 16:54:27 aida_s Exp $
+XCOMM $Id: mkbindic.cpp,v 1.2.2.3 2003/01/15 13:42:37 aida_s Exp $
 #include "cannaconf.h"
 #if defined(SYSV) || defined(SVR4)
 # ifdef nec_ews
@@ -39,6 +39,8 @@ cpp_text=;
 spl_text=;
 bck_text=;
 flag=;
+sortcmd="sort -d -s +0 -1"
+: ${TMPDIR:=/tmp}
 
 /* main */
 {
@@ -97,10 +99,13 @@ flag=;
 		    awk -F. '{
 			printf("%s", $NF)
 		    }'`";
-        if [ "$dic_ck" != "d" -a "$dic_ck" != "cbd" ]; then
-	    echo "Invalid name : $dic_name";
-            exit 1;
-        fi;
+	case "$dic_ck" in
+	    d) fqsuff="fq" ;;
+	    cbd) fqsuff="cld" ;;
+	    *)
+	    echo "Invalid name : $dic_name"
+            exit 1 ;;
+	esac
         dic_ckn="`echo $dic_name | \
 		awk -F/ '{print $NF}' | \
 		awk -F. '{print NF}'`";
@@ -133,7 +138,7 @@ flag=;
 	cpp_text="`echo $text_file | \
 		awk -F/ '{print $NF}'`".;
     fi;
-    cpp_text=/tmp/"$cpp_text"cpp;
+    cpp_text=$TMPDIR/"$cpp_text"cpp;
 /* temp file of splitword */
     spl_text="`echo $text_file | \
 		awk -F/ '{print $NF}' | \
@@ -145,7 +150,7 @@ flag=;
 	spl_text="`echo $text_file | \
 		awk -F/ '{print $NF}'`".;
     fi;
-    spl_text=/tmp/"$spl_text"spl;
+    spl_text=$TMPDIR/"$spl_text"spl;
 /* temp file of backup */
     bck_text="`echo $text_file | \
 		awk -F/ '{print $NF}' | \
@@ -200,6 +205,9 @@ flag=;
         exit 1;
     fi
 
+    if [ "x$fqsuff" != "x" ]; then
+	fqoutopt="-o $child$fqsuff"
+    fi
     if [ "OPT$flag" = "OPT-m" ]; then
 	child="$child"mwd;
     else
@@ -207,7 +215,7 @@ flag=;
     fi
 /* main routin */
     trap "rm -f $cpp_text $spl_text; exit 1;" 2;
-    if [ -x CPP ]; then
+    if echo cpptest | CPP $args >/dev/null 2>&1; then
         echo "forcpp -7 < $text_file |" CPP "$args | forcpp -8 > $cpp_text";
         forcpp -7 < $text_file | CPP $args | forcpp -8 > $cpp_text;
     else
@@ -229,8 +237,8 @@ flag=;
     fi;
     echo "mv $text_file $bck_text";
     mv $text_file $bck_text;
-    echo "forsort -7 < $spl_text | sort -d | forsort -8 | mergeword -X > $text_file";
-    forsort -7 < $spl_text | sort -d | forsort -8 | mergeword -X > $text_file;
+    echo "forsort -7 < $spl_text | $sortcmd | forsort -8 | mergeword -X > $text_file";
+    forsort -7 < $spl_text | $sortcmd | forsort -8 | mergeword -X > $text_file;
     if [ $? != 0 ]; then
         mv $bck_text $text_file;
 	echo "mkbindic: fatal error. exit";
@@ -250,8 +258,8 @@ flag=;
 	rm -f $cpp_text $spl_text;
 	exit 1;
     fi;
-    echo "crfreq -div 512 $dic_name $child";
-    crfreq -div 512 $dic_name $child;
+    echo "crfreq -div 512 $fqoutopt $dic_name $child";
+    crfreq -div 512 $fqoutopt $dic_name $child;
     if [ $? != 0 ]; then
         mv $bck_text $text_file;
 	echo "mkbindic: fatal error. exit";

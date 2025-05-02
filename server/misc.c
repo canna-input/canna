@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[]="@(#) $Id: misc.c,v 1.4 2002/10/20 18:00:22 aida_s Exp $";
+static char rcs_id[]="@(#) $Id: misc.c,v 1.4.2.1 2002/12/18 08:29:09 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */
@@ -111,6 +111,7 @@ static char *MyName ;
 static unsigned long MyAddr = 0;
 
 ACLPtr ACLHead = (ACLPtr)NULL;
+static int caught_signal = 0;
 
 static void Reset();
 static void parQUIT();
@@ -285,17 +286,18 @@ char *argv[];
 
     CreateAccessControlList() ;
 
+    signal(SIGTERM, parQUIT);
 #ifndef __EMX__
     if ((parent = fork()) == -1) {
 	PrintMsg( "Fork faild\n" );
 	exit( 1 ) ;
     }
     if ( parent ) {
-        signal(SIGTERM, parQUIT);
 	pause() ;
 	exit( 0 ) ;
 	/* wait( (int *)0 ) ;	*/
-    }
+    } else
+	signal(SIGTERM, SIG_DFL);
     return parentid;
 #else
     return 0;
@@ -463,14 +465,20 @@ static void
 Reset(sig)
 int	sig;
 {
+    caught_signal = sig;
+}
+
+void
+CheckSignal()
+{
 #ifdef USE_UNIX_SOCKET
   extern struct sockaddr_un unsock;
 #endif
-    if( sig == SIGTERM ) {
+    if( caught_signal == SIGTERM ) {
 	PrintMsg( "Cannaserver Terminated\n" ) ;
 	CloseServer() ;
-    } else {
-	PrintMsg( "Caught a signal(%d)\n", sig ) ;
+    } else if(caught_signal) {
+	PrintMsg( "Caught a signal(%d)\n", caught_signal ) ;
     }
 #ifdef USE_UNIX_SOCKET
   PrintMsg("remove [%s]\n" ,unsock.sun_path);

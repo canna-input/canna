@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: parse.c,v 1.1.1.1 2002/10/19 08:27:50 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: parse.c,v 1.1.1.1.2.1 2003/01/15 13:42:37 aida_s Exp $";
 #endif /* lint */
 
 #include "canna.h"
@@ -75,10 +75,12 @@ extern YYparse_by_rcfilename();
 #define FILEENVNAME "CANNAFILE"
 #define HOSTENVNAME "CANNAHOST"
 
+#if 0
 #ifdef WIN
 #define OBSOLETE_RCFILENAME  ".irh"
 #else
 #define OBSOLETE_RCFILENAME  ".iroha"
+#endif
 #endif
 #define OBSOLETE_FILEENVNAME "IROHAFILE"
 #define OBSOLETE_HOSTENVNAME "IROHAHOST"

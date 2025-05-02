@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static	char	rcs_id[] = "@(#) 102.1 $Id: henkan.c,v 1.1.1.1 2002/10/19 08:27:49 aida_s Exp $";
+static	char	rcs_id[] = "@(#) 102.1 $Id: henkan.c,v 1.1.1.1.2.2 2003/01/17 07:27:44 aida_s Exp $";
 #endif /* lint */
 
 #include	"canna.h"
@@ -53,7 +53,9 @@ extern exp(int) RkwGetServerVersion pro((int *, int *));
 
 #define DICERRORMESGLEN 78
 
-static int doYomiHenkan();
+static int doYomiHenkan pro((uiContext, int, wchar_t *, yomiContext));
+static yomiContext tanbunToYomi pro((uiContext, tanContext, wchar_t *));
+static void tanbunCommitYomi pro((uiContext, tanContext, yomiContext));
 
 static char dictmp[DICERRORMESGLEN];
 static char *mountErrorMessage = "\244\362\245\336\245\246\245\363\245\310"
@@ -634,6 +636,31 @@ extern void setMode pro((uiContext, tanContext, int));
 extern void trimYomi pro((uiContext, int, int, int, int));
 
 /*
+ * 学習を可能にするためtanContextをyomiContextにする。
+ * 失敗したらtanContextのままにしておく。
+ * 本当はtanContextは廃止すべきだが、とりあえずquick hack。
+ * DO_MERGEにも全く対応していない。
+ */
+static void
+tanbunToYomiAll(d, st, et)
+uiContext d;
+tanContext st;
+tanContext et;
+{
+  tanContext tan;
+  for (tan = st; tan != et; tan = tan->right) {
+    yomiContext tyc;
+    if (tan->id != TAN_CONTEXT)
+      continue;
+    tyc = tanbunToYomi(d, tan, tan->kanji);
+    if (tyc) {
+      tanbunCommitYomi(d, tan, tyc);
+      tan = (tanContext)tyc;
+    }
+  }
+}
+
+/*
   全文節を tanContext に変換する
  */
 
@@ -645,6 +672,7 @@ yomiContext yc;
   int cur = yc->curbun, i, len, ylen = 0, rlen = 0, ret = 0;
   int scuryomi, ecuryomi, scurroma, ecurroma;
   tanContext tan, prevLeft = yc->left, curtan = (tanContext)0;
+  tanContext st = (tanContext)NULL, et = (tanContext)NULL;
   BYTE *p, *q, *r;
 #ifndef WIN
   wchar_t xxx[ROMEBUFSIZE];
@@ -700,6 +728,8 @@ yomiContext yc;
 		      yc->left->right = tan;
 		    }
 		    yc->left = tan;
+		    if (i == 0)
+		      st = tan;
 		    if (i == cur) {
 		      curtan = tan;
 		    }
@@ -758,7 +788,7 @@ yomiContext yc;
   }
 
   RkwGoTo(yc->context, cur);
-  if (RkwEndBun(yc->context, cannaconf.Gakushu ? 1 : 0) == -1) {
+  if (RkwEndBun(yc->context, 0) == -1) {
     jrKanjiError = "\244\253\244\312\264\301\273\372\312\321\264\271\244\316"
 	"\275\252\316\273\244\313\274\272\307\324\244\267\244\336\244\267"
 	"\244\277";
@@ -772,6 +802,7 @@ yomiContext yc;
   setMode(d, curtan, 1);
   makeKanjiStatusReturn(d, (yomiContext)curtan);
 
+  et = yc->right;
   /* yc をリンクから抜く */
   if (yc->left) {
     yc->left->right = yc->right;
@@ -781,6 +812,7 @@ yomiContext yc;
   }
   abandonContext(d, yc);
   freeYomiContext(yc);
+  tanbunToYomiAll(d, st, et);
 
  return_ret:
 #ifdef WIN
@@ -797,7 +829,7 @@ yomiContext yc;
 {
   int cur = yc->curbun, i, len, ylen = 0, rlen = 0, ret = 0;
   int scuryomi, ecuryomi, scurroma, ecurroma;
-  tanContext tan, prevLeft = yc->left;
+  tanContext tan, prevLeft = yc->left, prevRight = yc->right;
   BYTE *p, *q, *r;
 #ifndef WIN
   wchar_t xxx[ROMEBUFSIZE];
@@ -951,7 +983,7 @@ yomiContext yc;
     yc->right = tan;
   }
   RkwGoTo(yc->context, cur);
-  if (RkwEndBun(yc->context, cannaconf.Gakushu ? 1 : 0) == -1) {
+  if (RkwEndBun(yc->context, 0) == -1) {
     jrKanjiError = "\244\253\244\312\264\301\273\372\312\321\264\271\244\316"
 	"\275\252\316\273\244\313\274\272\307\324\244\267\244\336\244\267"
 	"\244\277";
@@ -984,6 +1016,13 @@ yomiContext yc;
 
   abandonContext(d, yc);
   ret = 0;
+  if (prevLeft)
+    tan = prevLeft->right;
+  else if (!yc->left)
+    tan = (tanContext)yc;
+  else
+    for (tan = yc->left; tan->left; tan = tan->left);
+  tanbunToYomiAll(d, tan, prevRight);
 
  return_ret:
 #ifdef WIN
@@ -1159,24 +1198,35 @@ yomiContext yc;
 /*
   tanContext を yomiContext にして、読み入力状態にする
 
-   0          失敗
+   0          失敗(jrKanjiErrorが設定される。ガイドラインは不定である。)
    otherwise  あたらしい読みコンテキストが返る
-
+   基本的に副作用はない。
+   ycはkanjiを指定すればtankouho_mode, 指定しなければyomi_modeになる。
  */
 
 static yomiContext
-tanbunUnconvert(d, tan)
+tanbunToYomi(d, tan, kanji)
 uiContext d;
 tanContext tan;
+wchar_t *kanji;
 {
   yomiContext yc;
 
   yc = newFilledYomiContext(tan->next, tan->prevMode);
   if (yc) {
-    extern KanjiModeRec yomi_mode, empty_mode;
+    extern KanjiModeRec tankouho_mode;
 
     appendTan2Yomi(tan, yc);
     copyTaninfo2Yomi(tan, yc);
+    if (kanji) {
+      if (doYomiHenkan(d, 0, kanji, yc)) {
+	freeYomiContext(yc);
+	return (yomiContext)NULL;
+      }
+      yc->curMode = &tankouho_mode;
+      yc->minorMode = CANNA_MODE_TankouhoMode;
+      yc->kouhoCount = 0;
+    }
     yc->right = tan->right;
     yc->left = tan->left;
     if (yc->myMinorMode) {
@@ -1188,24 +1238,38 @@ tanContext tan;
       yc->generalFlags |= CANNA_YOMI_BASE_CHIKUJI;
     }
 
-    if (yc->left) {
-      yc->left->right = (tanContext)yc;
-    }
-    if (yc->right) {
-      yc->right->left = (tanContext)yc;
-    }
-    freeTanContext(tan);
-#ifdef DO_MERGE /* 定義していない */
-    yc = mergeYomiContext(yc);
-#endif
-    d->current_mode = yc->curMode;
-    d->modec = (mode_context)yc;
     return yc;
   }
   jrKanjiError = "\245\341\245\342\245\352\244\254\302\255\244\352\244\336"
 	"\244\273\244\363";
                  /* メモリが足りません */
   return (yomiContext)0;
+}
+
+/*
+ * tanbunToYomiで作られたycを有効にする。
+ * 具体的には、文節リストの入れ換え、モード遷移、古いtanContextの破棄
+ * を行う。文節リストはtanbunToYomiの時点から変更されていてはならないが、
+ * yc->curModeは変更されていてもよい。
+ */
+static void
+tanbunCommitYomi(d, tan, yc)
+uiContext d;
+tanContext tan;
+yomiContext yc;
+{
+  if (yc->left)
+    yc->left->right = (tanContext)yc;
+  if (yc->right)
+    yc->right->left = (tanContext)yc;
+#ifdef DO_MERGE /* 定義していない */
+  yc = mergeYomiContext(yc);
+#endif
+  if (d && d->modec == (mode_context)tan) {
+    d->current_mode = yc->curMode; 
+    d->modec = (mode_context)yc;
+  }
+  freeTanContext(tan);
 }
 
 static int
@@ -1215,8 +1279,9 @@ uiContext d;
   tanContext tan = (tanContext)d->modec;
   yomiContext yc;
 
-  yc = tanbunUnconvert(d, tan);
+  yc = tanbunToYomi(d, tan, (wchar_t *)NULL);
   if (yc) {
+    tanbunCommitYomi(d, tan, yc);
     currentModeInfo(d);
     makeKanjiStatusReturn(d, yc);
     return 0;
@@ -1274,7 +1339,7 @@ int len;
 wchar_t *kanji;
 {
   /* よみを漢字に変換する */
-  if(doYomiHenkan(d, len, kanji) == NG) {
+  if(doYomiHenkan(d, len, kanji, (yomiContext)d->modec) == NG) {
     return -1;
   }
 
@@ -1286,8 +1351,11 @@ wchar_t *kanji;
 
 /*
  * かな漢字変換を行う
- * ・d->yomi_bufferによみを取り出し、RkwBgnBunを呼んでかな漢字変換を開始する
- * ・カレント文節を先頭文節にして、エコー文字列を作る
+ * ・yc->kana_bufferの読みで、RkwBgnBunを呼んでかな漢字変換を開始する
+ * ・d->genbuf,contextCacheを使う他、jrKanjiErrorが設定される
+ * ・「かな漢字変換に失敗しました」の場合だけガイドラインも生成されるが、
+ * 　ガイドラインは再設定しても良いので、単に未設定として扱えば良い
+ * ・それ以外に副作用はないはず
  *
  * 引き数	uiContext
  *		len       len が指定されていたら文節長をその長さにする。
@@ -1296,13 +1364,13 @@ wchar_t *kanji;
  * 戻り値	正常終了時 0	異常終了時 -1
  */
 static
-doYomiHenkan(d, len, kanji)
+doYomiHenkan(d, len, kanji, yc)
 uiContext	d;
 int len;
 wchar_t *kanji;
+yomiContext yc;
 {
   unsigned int mode;
-  yomiContext yc = (yomiContext)d->modec;
   extern defaultContext;
 
 #if defined(DEBUG) && !defined(WIN)
@@ -1551,41 +1619,6 @@ yomiContext   yc;
 }
 
 /*
-  tanbunHenkan -- 変換する。
-
-    みそは、kanji で示された候補と同じ候補が出るまで RkwNext をすること
-    である。一周したことも検出しなければなるまい。
- */
-
-static int
-tanbunHenkan(d, yc, kanji)
-uiContext d;
-yomiContext yc;
-wchar_t *kanji;
-{
-  if (!prepareHenkanMode(d)) {
-    makeGLineMessageFromString(d, jrKanjiError);
-    makeYomiReturnStruct(d);
-    return 0;
-  }
-  yc->minorMode = CANNA_MODE_TankouhoMode;
-  yc->kouhoCount = 1;
-  if (doHenkan(d, 0, kanji) < 0) {
-    makeGLineMessageFromString(d, jrKanjiError);
-    makeYomiReturnStruct(d);
-    return 0;
-  }
-  if (cannaconf.kouho_threshold > 0 &&
-      yc->kouhoCount >= cannaconf.kouho_threshold) {
-    return tanKouhoIchiran(d, 0);
-  }
-  
-  currentModeInfo(d);
-  makeKanjiStatusReturn(d, yc);
-  return 0;
-}
-
-/*
   enterTanHenkanMode -- tanContext を yomiContext にして変換の準備をする
 
  */
@@ -1601,22 +1634,23 @@ uiContext d;
   prevkanji = tan->kanji;
   tan->kanji = (wchar_t *)0;
 
-  yc = tanbunUnconvert(d, tan);
+  yc = tanbunToYomi(d, tan, prevkanji);
+  free((char *)prevkanji);
   if (yc) {
-    tanbunHenkan(d, yc, prevkanji);
-    free((char *)prevkanji);
 
     /*ここで
       単候補モードの形にする
       */
+    if (confirmContext(d, yc) >= 0) { /* really needed? */
+      tanbunCommitYomi(d, tan, yc);
+      yc->kouhoCount = 1;
 
-    d->more.todo = 1;
-    d->more.ch = d->ch;
-    d->more.fnum = fnum;
-    return 0;
-  }
-  else { /* 二重フリーをしないため強調的に else を書く */
-    free((char *)prevkanji);
+      d->more.todo = 1;
+      d->more.ch = d->ch;
+      d->more.fnum = fnum;
+      return 0;
+    }
+    freeYomiContext(yc);
   }
   makeGLineMessageFromString(d, jrKanjiError);
   return NothingChangedWithBeep(d);
@@ -2448,6 +2482,7 @@ uiContext	d;
   d->kanji_status_return->gline.revPos = 0;
   d->kanji_status_return->gline.revLen = 0;
   d->flags |= PLEASE_CLEAR_GLINE;
+  d->flags &= ~PCG_RECOGNIZED;
   return 0;
 }
 #endif /* BUNPOU_DISPLAY */
@@ -2477,6 +2512,7 @@ uiContext	d;
   d->kanji_status_return->gline.revLen = 0;
   d->kanji_status_return->length = -1;
   d->flags |= PLEASE_CLEAR_GLINE;
+  d->flags &= ~PCG_RECOGNIZED;
   return 0;
 }
 #endif /* MEASURE_TIME */

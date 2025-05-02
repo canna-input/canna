@@ -1,0 +1,14 @@
+.depend
+Makefile
+cannaindex
+canna.sty
+*.dvi
+*.ps
+*.aux
+*.idx
+*.lof
+*.log
+*.lot
+*.toc
+canna.tex
+candex.tex

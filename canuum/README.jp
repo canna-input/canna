@@ -1,9 +1,7 @@
                       『かんな』版 uum について
 
-                           今            昭
-                         1993 年  8 月  11 日
-
-                        kon@d1.bs2.mt.nec.co.jp
+                             Canna Project
+		     http://canna.sourceforge.jp/
 
 このディレクトリにあるプログラム canuum (キャニウムと読みます)は、 Wnn 
 の TTY 用のフロントエンドプログラム uum を『かんな』対応にしたものです。
@@ -14,8 +12,10 @@
 る jserver と通信してかな漢字変換することもできるのです。(ちょっとおか
 しいですね。(^o^))
 
-ところで、このソフトウェアは京都大学数理解析研究所、オムロン株式会社お
-よび ASTEC により開発された Wnn のオリジナル版をベースに作られています。
+元は、このソフトウェアは京都大学数理解析研究所、オムロン株式会社および
+ASTEC により開発された Wnn のオリジナル版をベースに作られていました。
+現在は、 ベースの Wnn に、GPL のフリーソフトウェアとして有志で開発して
+いる FreeWnn を採用して、書き直されています。
 
 このプログラムの著作権記述に関しては本文書の最後に記述しますので参照し
 て下さい。
@@ -23,52 +23,40 @@
 
 1. canuum の作り方
 
- 次の手順で作成します。
+ まず、補助ライブラリとして、 libspt:
+ http://members.jcom.home.ne.jp/aida-s/libspt/
+ をインストールします。そして、 libspt-config のあるディレクトリにPATHを
+ 通しておきます。
 
- (1) uum のソースをコピーする。
+ canuum 本体は、次の手順で作成します。
 
-   Bring.sh に Wnn のソースディレクトリを引数として与えて実行します。
+ (1) xmkmf する。
 
-    % Bring.sh /sources/X11R5/contrib/im/Xsi/Wnn
+    % xmkmf ; make Makefile ; make includes
 
-   間違えて uum のソースパスを与えないで下さい。以下の例は誤りです。
-
-    % Bring.sh /sources/X11R5/contrib/im/Xsi/Wnn/uum (× 誤り)
-
- (2) canuum に対応させるためのパッチをかける。
-
-    % patch < Canuum.patch
-
- (3) xmkmf する。
-
-    % xmkmf ; make Makefile
-
- (4) make depend する。
+ (2) make depend する。
 
     % make depend
 
- (5) make する。
+ (3) make する。
 
     % make
+
+  なお、最近の xmkmf を使う場合は、 (1) と (2) は、
+
+    % xmkmf -a
+
+  でまとめて実行できます。
 
 
 2. 注意事項
 
- (1) この canuum は Wnn4.109 の uum をベースにしています。
+ (1) この canuum は 2002 年 12 月 21 日時点の CVS 先端の uum をベース
+     にしています。
 
- (2) uum からもって来たソースにはほとんど手を入れていませんので Wnn 側
-     で発行されるパッチもほぼ適用可能と思われます。Wnn にて発行される
-     パッチにもご注意下さい。
-
-    uum からもって来たファイルの一覧は Uum.files と言うファイルに記述
-    されています。Uum.files の記述において、ファイルは３つのブロックに
-    分けて記述されていますが、上から順に、
-
-      ・『かんな』対応でちょっと手が入っているもの
-      ・不要の include をしていたものを抜いただけ程度のもの
-      ・もって来てそのまま使っているもの
-
-    のようになっています。
+ (2) canuum のディレクトリには、著作権上『かんな』と異なる条件で配布
+     されているファイルが含まれています。詳しくは README.copyright
+     を参照してください。
 
  (3) uum の初期化ファイル uumrc は参照されません。
 
@@ -128,51 +116,30 @@
 4. 著作権表示
 
 /*
+ * FreeWnn is a network-extensible Kana-to-Kanji conversion system.
+ * This file is part of FreeWnn.
+ * 
  * Copyright Kyoto University Research Institute for Mathematical Sciences
  *                 1987, 1988, 1989, 1990, 1991, 1992
- * Copyright OMRON Corporation. 1987, 1988, 1989, 1990, 1991, 1992
+ * Copyright OMRON Corporation. 1987, 1988, 1989, 1990, 1991, 1992, 1999
  * Copyright ASTEC, Inc. 1987, 1988, 1989, 1990, 1991, 1992
+ * Copyright FreeWnn Project 1999, 2000, 2002
  *
- * Permission to use, copy, modify, distribute, and sell this software
- * and its documentation for any purpose is hereby granted without fee,
- * provided that all of the following conditions are satisfied:
+ * Maintainer:  FreeWnn Project   <freewnn@tomo.gr.jp>
  *
- * 1) The above copyright notices appear in all copies
- * 2) Both those copyright notices and this permission notice appear
- *    in supporting documentation
- * 3) The name of "Wnn" isn't changed unless substantial modifications
- *    are made, or
- * 3') Following words followed by the above copyright notices appear
- *    in all supporting documentation of software based on "Wnn":
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *   "This software is based on the original version of Wnn developed by
- *    Kyoto University Research Institute for Mathematical Sciences (KURIMS),
- *    OMRON Corporation and ASTEC Inc."
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * 4) The names KURIMS, OMRON and ASTEC not be used in advertising or
- *    publicity pertaining to distribution of the software without
- *    specific, written prior permission
- *
- * KURIMS, OMRON and ASTEC make no representations about the suitability
- * of this software for any purpose.  It is provided "as is" without
- * express or implied warranty.
- *
- * Wnn consortium is one of distributors of the official Wnn source code
- * release.  Wnn consortium also makes no representations about the
- * suitability of this software for any purpose.  It is provided "as is"
- * without express or implied warranty.
- *
- * KURIMS, OMRON, ASTEC AND WNN CONSORTIUM DISCLAIM ALL WARRANTIES WITH
- * REGARD TO THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL KURIMS, OMRON, ASTEC OR
- * WNN CONSORTIUM BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL
- * DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
- * PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
- * TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
- * PERFORMANCE OF THIS SOFTWARE.
- *
- */
-/*	Version 4.0
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /* Copyright 1993 NEC Corporation, Tokyo, Japan.
@@ -197,4 +164,4 @@
  * PERFORMANCE OF THIS SOFTWARE. 
  */
 
-/* $Id: README.jp,v 1.1.1.1 2002/10/19 08:27:29 aida_s Exp $ */
+/* $Id: README.jp,v 1.1.1.1.2.2 2003/01/11 18:17:09 aida_s Exp $ */

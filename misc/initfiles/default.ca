@@ -19,7 +19,7 @@
 ;; OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 ;; PERFORMANCE OF THIS SOFTWARE. 
 
-;;  $Id: default.ca,v 1.1.1.1 2002/10/19 08:27:52 aida_s Exp $
+;;  $Id: default.ca,v 1.1.1.1.2.2 2003/01/21 10:57:03 aida_s Exp $
 
 ;;; ローマ字かな変換の設定
 ;
@@ -40,7 +40,7 @@
 ;
 ; 単語登録をしたい辞書に関しては :user を先行させて記述します。単語登
 ; 録をする辞書はテキスト形式辞書でなければなりません。単語登録させたい
-; 辞書は mkdic user の様なコマンドを打つことでで簡単に作成することがで
+; 辞書は mkdic user の様なコマンドを打つことで簡単に作成することがで
 ; きます。
 ;
 (use-dictionary
@@ -160,3 +160,26 @@
 ; 一覧選択後同じ文節にとどまるか(t)。
 ; nilの時は一覧選択を行うとひとつ先の文節に移動します。
 (setq stay-after-validate t)            ; default t
+
+; 文字種変換で、次の入力を行ったら文字種部分を確定しないか(t)
+; nil のときは確定します。
+(setq mojishu-continue t)		; default t
+
+; 候補表示状態で次の入力をしたときに、確定しないか(t)
+; nil のときは確定します。
+; （Canna 3.5b2 では、この２つが or される）
+(setq renbun-continue nil)		; default nil
+(setq chikuji-continue t)		; default t
+
+
+;; シンボルの定義
+;(defsymbol 
+;  ?[ "「" "『" "[" "［" "〔"
+;  ?] "」" "』" "]" "］" "〕" )
+
+
+;(defsymbol 
+;  ?. "。" "." "．"
+;  ?, "、" "," "，" )
+;(defsymbol ?~ "~" "￣" "〜")
+;(defsymbol ?/  "/"  "／"  "・")

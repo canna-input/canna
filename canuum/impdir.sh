@@ -19,9 +19,11 @@
 # OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 # PERFORMANCE OF THIS SOFTWARE. 
 
-for i in `sed '/;/d' Uum.files`
+rm -rf freewnn-uum
+mkdir freewnn-uum
+for i in `sed '/;/d' freewnn-uum.files`
 do
-  cp $1/$i .
+  cp $1/$i freewnn-uum
 done
 
-# $Id: Bring.sh,v 1.1.1.1 2002/10/19 08:27:28 aida_s Exp $
+# $Id: impdir.sh,v 1.1.2.1 2003/01/11 17:53:57 aida_s Exp $

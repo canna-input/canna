@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static char rcsid[]="@(#) 102.1 $Id: crfreq.c,v 1.2 2002/10/20 04:10:26 aida_s Exp $";
+static char rcsid[]="@(#) 102.1 $Id: crfreq.c,v 1.2.2.1 2003/01/15 13:42:35 aida_s Exp $";
 #endif
 
 #include "RKintern.h"
@@ -147,6 +147,8 @@ main(argc, argv)
     }
     usage();
   }
+  if (!flnm)
+    usage();
 
   if (strlen(flnm) >= RK_MAX_HDRSIZ || strlen(dmnm) >= RK_MAX_HDRSIZ ||
       (fd = open(flnm, O_RDONLY)) < 0) {

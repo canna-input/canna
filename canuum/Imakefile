@@ -1,24 +1,38 @@
-/* $Id: Imakefile,v 1.1.1.1 2002/10/19 08:27:29 aida_s Exp $ */
+/* $Id: Imakefile,v 1.1.1.1.2.1 2003/01/11 17:53:57 aida_s Exp $ */
 #include "../Canna.conf"
-
-#if SystemV || SystemV4
-SYS_LIBRARIES = -lcurses
+/* #include "canuum.tmpl" */
+#ifdef TermcapLibrary
+TERMCAP_LIB = TermcapLibrary
 #else
-SYS_LIBRARIES = -ltermcap
+# if SystemV || SystemV4
+TERMCAP_LIB = -lcurses
+# else
+TERMCAP_LIB = -ltermcap
+# endif
+#endif
+#ifndef ConfigureEnv
+# define ConfigureEnv CPPFLAGS="$(ALLDEFINES)" CC='$(CC)'
+#endif
+#ifndef ConfigureArgs
+# define ConfigureArgs --with-term-libs="$(TERMCAP_LIB)"
 #endif
 
     CANNAROOT = ..
 INSTUGIDFLAGS = -m 4755 -o root
      CANNASRC = $(CANNAROOT)/lib/canna16
-      DEFINES = -DCANNA -DJAPANESE $(SIGNAL_DEFINES)
-     INCLUDES = -I$(CANNAROOT)/include
+      DEFINES = -DCANNA -DJAPANESE $(SIGNAL_DEFINES) -DHAVE_CONFIG_H \
+		-DCONFIG_TERMINFO
+     INCLUDES = -I$(CANNAROOT)/include -I.
+SYS_LIBRARIES = $(TERMCAP_LIB)
 
-         SRCS = header.c printf.c termio.c termcap.c ttyfdslot.c setutmp.c \
+         SRCS = header.c printf.c termio.c termcap.c \
 		screen.c cursor.c jhlp.c xutoj.c canna.c
-         OBJS = header.o printf.o termio.o termcap.o ttyfdslot.o setutmp.o \
+         OBJS = header.o printf.o termio.o termcap.o \
 		screen.o cursor.o jhlp.o xutoj.o canna.o
 
             TARGET = canuum
+XCOMM --prefix is not used but add just in case
+CONFIGURE_CMD = ConfigureEnv ./configure --prefix=$(cannaPrefix) ConfigureArgs
 
 AllTarget($(TARGET))
 NormalProgramTarget($(TARGET),$(OBJS),$(DEPCANNALIB16),$(CANNALIB16),)
@@ -26,3 +40,15 @@ InstallMultipleFlags($(TARGET),$(cannaBinDir),$(INSTUGIDFLAGS))
 InstallManPage($(TARGET),$(cannaManDir))
 DependTarget()
 LintTarget()
+distclean::
+	$(RM) config.h config.cache config.status
+includes:: config.h
+XCOMM Invoke configure only when config.h does not exist for faster build
+config.h:
+	$(CONFIGURE_CMD)
+XCOMM If you want to invoke configure explicitly, do "make config"
+config::
+	$(CONFIGURE_CMD)
+reconfig::
+	$(RM) config.cache
+	$(CONFIGURE_CMD)

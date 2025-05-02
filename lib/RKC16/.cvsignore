@@ -1,0 +1,8 @@
+.depend
+Makefile
+libRKC16.a
+libRKC16.so*
+libRKC16.sl*
+libRKC16.dll
+unshared
+*.[ch]

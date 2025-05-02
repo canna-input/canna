@@ -147,20 +147,20 @@ imake on X11R6 to compile Canna.
        For example, the default setting is:
 
                 /* #define InstallAsUser */
-                cannaPrefix = /usr/local/canna
-                cannaExecPrefix = $(cannaPrefix)
-                cannaBinDir = $(cannaExecPrefix)/bin
-                cannaSrvDir = $(cannaExecPrefix)/bin
-                cannaLibDir = $(cannaPrefix)/lib
-                cannaManDir = $(cannaPrefix)/man
-                cannaIncDir = $(cannaPrefix)/include/canna
-                #ifdef InstallAsUser
-                libCannaDir = $(cannaExecPrefix)/lib
-                ErrDir  = $(cannaExecPrefix)/log
-                #else
-                libCannaDir = /usr/lib
-                ErrDir  = /usr/spool/canna
-                #endif
+		#define ObsoleteInstallDir
+		cannaPrefix = DefCannaPrefix
+		cannaExecPrefix = $(cannaPrefix)
+		cannaBinDir = $(cannaExecPrefix)/bin
+		cannaSrvDir = DefCannaSrvDir
+		XCOMM cannaLibDir = /var/lib/canna
+		XCOMM cannaLibDir = /var/db/canna
+		cannaLibDir = DefCannaLibDir
+		XCOMM cannaManDir = $(cannaPrefix)/share/man
+		cannaManDir = $(cannaPrefix)/man
+		cannaIncDir = $(cannaPrefix)/include/canna
+
+		libCannaDir = DefLibCannaDir
+		ErrDir  = DefErrDir
                 wcharDefinition = -DCANNA_WCHAR
                 Wlib =
                 JapaneseLocale = japan
@@ -409,8 +409,8 @@ imake on X11R6 to compile Canna.
 
        If you want to start it automatically each time the UNIX system
   is started, set to start cannaserver in the starting script(ex. 
-  /etc/rc.local, etc.).  You should remove its lock file when start
-  cannaserver since cannaserver cannot be started with its lock file.
+  /etc/rc.local, etc.).  You should remove its socket when start
+  cannaserver since cannaserver cannot be started with its socket.
 
        For example, add the following lines in /etc/rc.local.
 
@@ -714,7 +714,6 @@ A.7 Definition of wcharDefinition on Next(This discription is
 	cannakill
 	dpbindic
 	mkromdic 
-	canvert
 	mkbindic
 
        You try one of following ways:
@@ -860,4 +859,4 @@ That's all.
  * PERFORMANCE OF THIS SOFTWARE. 
  */
 
-($Id: INSTALL,v 1.3 2002/10/30 21:11:29 zu2 Exp $)
+($Id: INSTALL,v 1.3.2.3 2003/01/15 13:42:35 aida_s Exp $)

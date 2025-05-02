@@ -26,7 +26,7 @@ dpbindic \- バイナリ形式の辞書ファイルの単語情報を出力する
 テキスト形式辞書ファイル名を指定しない場合。
 .sp
 .nf
-% dpbindic iroha.d
+% dpbindic iroha.cbd
 
 (テキスト形式辞書ファイル名 [バージョン(辞書作成時間] = 総単語数 + 総読み数)
 iroha.swd [Mon Nov 25 10:10:10 1991] = 260 + 160
@@ -37,7 +37,7 @@ iroha.mwd [Sun Dec  1 14:30:30 1991] = 80000 + 6996
 テキスト形式辞書ファイルiroha.mwdを指定した場合。
 .sp
 .nf
-% dpbindic iroha.d iroha.mwd
+% dpbindic iroha.cbd iroha.mwd
 (読み   品詞番号    単語)
 あーと  #T35	    アート
 ああ    #CJ         ああ
@@ -50,7 +50,7 @@ iroha.mwd [Sun Dec  1 14:30:30 1991] = 80000 + 6996
 
 .ft
 .SH "関連情報"
-mkbindic(1), dicar(1), canvert(1)
+mkbindic(1), dicar(1)
 
 .\" Copyright 1994 NEC Corporation, Tokyo, Japan.
 .\"
@@ -73,4 +73,4 @@ mkbindic(1), dicar(1), canvert(1)
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 .\" PERFORMANCE OF THIS SOFTWARE. 
 .\"
-.\" $Id: dpbindic.jmn,v 1.1.1.1 2002/10/19 08:27:34 aida_s Exp $
+.\" $Id: dpbindic.jmn,v 1.1.1.1.2.1 2003/01/15 13:42:36 aida_s Exp $

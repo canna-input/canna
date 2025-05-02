@@ -1,0 +1,11 @@
+.depend
+Makefile
+canuum
+config.h
+config.h.in
+configure
+config.status
+config.log
+config.cache
+autom4te.cache
+cvstmp

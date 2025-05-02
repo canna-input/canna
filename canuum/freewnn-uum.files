@@ -19,22 +19,28 @@
 ; OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 ; PERFORMANCE OF THIS SOFTWARE.
 
-; $Id: Uum.files,v 1.1.1.1 2002/10/19 08:27:29 aida_s Exp $
+; $Id: freewnn-uum.files,v 1.3.2.1 2003/01/11 17:53:57 aida_s Exp $
 
-include/commonhd.h
-include/config.h
-uum/header.c
-uum/jhlp.c
-uum/sdefine.h
-uum/sheader.h
-uum/termcap.c
-uum/termio.c
-etc/xutoj.c
-uum/setutmp.c
+Wnn/include/commonhd.h
+Wnn/include/wnn_config.h
+Wnn/include/wnn_os.h
+Wnn/uum/header.c
+Wnn/uum/jhlp.c
+Wnn/uum/sdefine.h
+Wnn/uum/sheader.h
+Wnn/uum/termcap.c
+Wnn/uum/termio.c
+Wnn/etc/xutoj.c
 
-uum/printf.c
-uum/screen.c
+Wnn/uum/printf.c
+Wnn/uum/screen.c
 
-uum/buffer.h
-uum/cursor.c
-uum/ttyfdslot.c
+Wnn/uum/buffer.h
+Wnn/uum/cursor.c
+
+COPYRIGHT
+acconfig.h
+config.guess
+config.sub
+configure.in
+install-sh

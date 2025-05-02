@@ -1,0 +1,9 @@
+.depend
+Makefile
+ccustom
+y.tab.h
+y.tab.c
+lex.yy.c
+lex.c
+gram.h
+gram.c

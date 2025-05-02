@@ -21,10 +21,10 @@
  */
 
 #ifndef lint
-static char rcs[]="@(#) 112.1 $Id: ctow.c,v 1.2 2002/10/20 14:29:57 aida_s Exp $";
+static char rcs[]="@(#) 112.1 $Id: ctow.c,v 1.2.2.1 2003/01/15 13:42:35 aida_s Exp $";
 #endif
-/* itow.c  テキスト形式の辞書を「いろは」からＷｎｎのものに変換する。
- *	itow [-f hinshifile] [irohadic] [wnndic]
+/* ctow.c  テキスト形式の辞書を「かんな」からＷｎｎのものに変換する。
+ *	ctow [-f parts-of-speech table ] [cannadic] [wnndic]
  */
 #include	<stdio.h>
 #include        <ctype.h>
@@ -221,7 +221,7 @@ char *argv[];
   }
   else { /* 引数が不正 */
     fprintf(stderr,gettxt("cannacmd:10", 
-	  "Usage: ctow [-f parts-of-speach table] [cannadic] [wnndic]\n"),
+	  "Usage: ctow [-f parts-of-speech table] [cannadic] [wnndic]\n"),
 	    argv[0]);
     exit(2);
   }

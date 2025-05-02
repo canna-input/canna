@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "$Id: convert.c,v 1.2 2002/10/20 14:29:59 aida_s Exp $";
+static char rcs_id[] = "$Id: convert.c,v 1.2.2.1 2002/12/18 09:13:05 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */
@@ -39,7 +39,7 @@ static char rcs_id[] = "$Id: convert.c,v 1.2 2002/10/20 14:29:59 aida_s Exp $";
 #include <signal.h>
 
 /* 単語登録で辞書が作れなくなるので、とりあえずコメントアウト
-#if CANNA_LIGHT
+#ifdef CANNA_LIGHT
 #ifdef EXTENSION
 #undef EXTENSION
 #endif

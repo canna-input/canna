@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: convert.c,v 1.1.1.1.2.1 2002/12/02 00:35:39 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: convert.c,v 1.1.1.1.2.3 2002/12/18 09:13:05 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */
@@ -35,7 +35,7 @@ static char rcs_id[] = "@(#) 102.1 $Id: convert.c,v 1.1.1.1.2.1 2002/12/02 00:35
 #include "net.h"
 #include "IR.h"
 
-#if CANNA_LIGHT
+#ifdef CANNA_LIGHT
 #ifdef EXTENSION
 #undef EXTENSION
 #endif
@@ -56,6 +56,7 @@ static char rcs_id[] = "@(#) 102.1 $Id: convert.c,v 1.1.1.1.2.1 2002/12/02 00:35
 #define IR_INT_MAX 32767
 #define IR_INT_INVAL(x) ((unsigned int)x > IR_INT_MAX)
 
+extern void CheckSignal pro((void));
 extern int  errno;
 
 #ifdef DEBUGPROTO
@@ -210,6 +211,8 @@ ClientPtr *clientp ;
 	DebugDump( 5, buf, size );
 #endif
     }
+    if( size == -1 && errno == EINTR )
+	CheckSignal();
     return( -1 ) ;
 }
 
@@ -1566,6 +1569,8 @@ int size ;
 	    else
 		continue ;
 #endif
+	} else if (errno == EINTR) {
+	    CheckSignal();
 	} else {
 	    /* errno set by write system call. */
 	    PrintMsg( "Write Error[ %d ]\n", errno ) ;
@@ -1625,6 +1630,8 @@ int *status;	      /* read at least n from client */
     while( empty_count < TRY_COUNT ) {
 	if ( (readsize = read( client, (char *)bufptr, bufsize )) < 0) {
 
+	    if (errno == EINTR)
+		CheckSignal();
 	    if (who->username) {
 		PrintMsg( "[%s] ", who->username  ) ;
 	    }

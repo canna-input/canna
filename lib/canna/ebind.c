@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[] = "$Id: ebind.c,v 1.1.1.1 2002/10/19 08:27:48 aida_s Exp $";
+static char rcsid[] = "$Id: ebind.c,v 1.1.1.1.2.1 2002/12/21 13:07:13 aida_s Exp $";
 #endif
 
 #include "canna.h"
@@ -205,9 +205,9 @@ jrKanjiStatus *kanji_status_return;
     }
   }
 
-  inbuf[0] = (wchar_t)buffer_return[0];
+  inbuf[0] = (wchar_t)(unsigned char)buffer_return[0];
   for (i = 1 ; i < nbytes ; i++) {
-    inbuf[i] = (wchar_t)buffer_return[i];
+    inbuf[i] = (wchar_t)(unsigned char)buffer_return[i];
   }
   ch = buffer_return[0] & 0xff;
   ret = XwcLookupKanji2(dpy, win, inbuf, inbufsize, nbytes, functionalChar,

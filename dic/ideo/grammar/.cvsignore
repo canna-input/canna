@@ -1,0 +1,11 @@
+.depend
+Makefile
+*.d
+*.fq
+*.cbd
+*.cld
+*.swd
+cpp.gram
+cnj.bits
+cnj.h
+cnj.mac

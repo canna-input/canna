@@ -21,7 +21,7 @@
  */
 
 /*
- * @(#) 102.1 $Id: widedef.h,v 1.1.1.1 2002/10/19 08:27:28 aida_s Exp $
+ * @(#) 102.1 $Id: widedef.h,v 1.1.1.1.2.1 2003/01/06 04:36:58 aida_s Exp $
  */
 
 #ifndef _WIDEDEF_H_
@@ -35,7 +35,12 @@
 #define WCHAR16
 #endif
      
-#if defined(__FreeBSD__) || defined(__NetBSD__)
+#ifdef __FreeBSD__
+# include <osreldate.h>
+#endif
+
+#if (defined(__FreeBSD__) && __FreeBSD_version < 500000) \
+    || defined(__NetBSD__) || defined(__OpenBSD__)
 # include <machine/ansi.h>
 #endif
 
@@ -61,7 +66,8 @@
 #endif /* !nec_ews_svr2 */
 #endif /* HAVE_WCHAR_OPERATION */
 
-#if defined(__FreeBSD__) || defined(__NetBSD__)
+#if (defined(__FreeBSD__) && __FreeBSD_version < 500000) \
+    || defined(__NetBSD__) || defined(__OpenBSD__)
 # ifdef _BSD_WCHAR_T_
 #  undef _BSD_WCHAR_T_
 #  ifdef WCHAR16
@@ -72,6 +78,13 @@
 # include <stddef.h>
 # define _WCHAR_T
 # endif
+#elif defined(__FreeBSD__) && __FreeBSD_version >= 500000
+# ifdef WCHAR16
+typedef unsigned short wchar_t;
+#  define _WCHAR_T_DECLARED
+# endif
+# include <stddef.h>
+# define _WCHAR_T
 #else
 #if !defined(WCHAR_T) && !defined(_WCHAR_T) && !defined(_WCHAR_T_) \
  && !defined(__WCHAR_T) && !defined(_GCC_WCHAR_T) && !defined(_WCHAR_T_DEFINED)

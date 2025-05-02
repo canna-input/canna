@@ -19,7 +19,7 @@
 ;; OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 ;; PERFORMANCE OF THIS SOFTWARE. 
 
-;;  $Id: unix.canna,v 1.1.1.1 2002/10/19 08:27:53 aida_s Exp $
+;;  $Id: unix.canna,v 1.1.1.1.2.2 2003/01/21 10:57:03 aida_s Exp $
 
 ;; 記号置き換え変換を利用するか。
 
@@ -30,7 +30,7 @@
 ; ローマ字かな変換テーブルを指定します。ローマ字かな変換テーブルは
 ; (1) カレントディレクトリ
 ; (2) ホームディレクトリ
-; (3) /usr/lib/canna/dic
+; (3)  CANNALIBDIR/dic  (CANNALIBDIR は、例えば /usr/lib/canna です)
 ; の順にサーチされます。
 ;
 
@@ -38,7 +38,7 @@
 (setq romkana-table "default.cbp")
 
 ;; 外来語変換
-;(setq english-table "canna/english.cbp")
+;(setq english-table "english.cbp")
 
 
 ;;; 利用する辞書
@@ -50,7 +50,7 @@
 ;
 ; 単語登録をしたい辞書に関しては :user を先行させて記述します。単語登
 ; 録をする辞書はテキスト形式辞書でなければなりません。単語登録させたい
-; 辞書は mkdic user の様なコマンドを打つことでで簡単に作成することがで
+; 辞書は mkdic user の様なコマンドを打つことで簡単に作成することがで
 ; きます。
 ;
 (use-dictionary
@@ -103,7 +103,7 @@
 ; 読みを入力中にバックスペースを打つとローマ字までバラバラにするか
 (setq break-into-roman     t)	; default nil
 
-; 何回の変換キーで一覧表示を行うか。０を入れると変換キーだけでは
+; 何回の変換キーで一覧表示を行うか。0を入れると変換キーだけでは
 ; 一覧表示には移りません。その場合には C-w を入力して一覧表示して
 ; 下さい。
 (setq n-henkan-for-ichiran 2)	; default 2
@@ -166,6 +166,7 @@
       (defsymbol ?' "'" "’")
       (defsymbol ?` "`" "‘")
       (defsymbol ?\" "\"" "”")
+      (defsymbol ?~ "~" "￣" "〜")
       ))
 
 ;; delete キーもバックスペースと同じ処理をさせる

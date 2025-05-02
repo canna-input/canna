@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: romaji.c,v 1.2 2002/10/20 18:00:21 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: romaji.c,v 1.2.2.3 2003/01/17 08:48:19 aida_s Exp $";
 #endif /* lint */
 
 #include "canna.h"
@@ -4657,6 +4657,7 @@ int sy, ey, sr, er;
   kanaReplace   (-sy, (wchar_t *)NULL, 0, 0);
 }
 
+#if 0 /* unused */
 static int
 TbBubunKakutei(d)
 uiContext d;
@@ -4677,6 +4678,7 @@ uiContext d;
   (void)TanMuhenkan(d);
   return len;
 }
+#endif
 
 int doTanConvertTb pro((uiContext, yomiContext));
 

@@ -48,7 +48,7 @@ SOFTWARE.
 ******************************************************************/
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "$Id: WaitFor.c,v 1.1.1.1 2002/10/19 08:27:53 aida_s Exp $";
+static char rcs_id[] = "$Id: WaitFor.c,v 1.1.1.1.2.1 2002/12/18 08:29:09 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */
@@ -76,6 +76,7 @@ extern ClientPtr *ConnectionTranslation;
 
 extern void CheckConnections();
 extern void EstablishNewConnections();
+extern void CheckSignal pro((void));
 
 extern int errno;
 
@@ -134,6 +135,7 @@ int *nnew;
 	    else if (selecterr != EINTR){
 	      PrintMsg("WaitForSomething(): select: errno=%d\n", selecterr);
 	    }	
+	    CheckSignal();
 	  }
 	  else{ /* select の制限時間を越えたので sync 処理を行なう。 */
 	    if (sync_flag == 0)

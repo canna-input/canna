@@ -19,7 +19,7 @@
 ;; OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 ;; PERFORMANCE OF THIS SOFTWARE. 
 
-;;  $Id: sample.canna,v 1.1.1.1 2002/10/19 08:27:52 aida_s Exp $
+;;  $Id: sample.canna,v 1.1.1.1.2.1 2003/01/21 10:57:03 aida_s Exp $
 
 ;;	sample.canna はカスタマイズファイルの一例です。
 ;;	デフォルトをベースにカスタマイズファイルを変更したい方は
@@ -228,15 +228,10 @@
 
 
 ;; delete キーもバックスペースと同じ処理をさせる
-;; emacs で bobcat.el を使っている時は必要です。
 (global-set-key "\Delete" 'delete-previous) 
 
 ;; Help がない人もいるので F10 でも同じ動作をさせる。
 (global-set-key "\F10" 'extend-mode)
-
-;; 一覧表示状態から、文字伸縮を行う。
-(set-key 'ichiran-mode "\C-o" '(quit extend))
-(set-key 'ichiran-mode "\C-i" '(quit shrink))
 
 
 ;; F7 ひらがな入力・カタカナ入力を切り換える。

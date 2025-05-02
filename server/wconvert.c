@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: wconvert.c,v 1.2.2.1 2002/12/02 00:35:39 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: wconvert.c,v 1.2.2.3 2003/01/06 04:42:08 aida_s Exp $";
 #endif
 
 #define EXTPROTO 1
@@ -83,6 +83,7 @@ static char rcs_id[] = "@(#) 102.1 $Id: wconvert.c,v 1.2.2.1 2002/12/02 00:35:39
 #include "net.h"
 #include "IR.h"
 
+extern void CheckSignal pro((void));
 extern int  errno;
 
 typedef struct {
@@ -1146,7 +1147,7 @@ ClientPtr *clientp ;
 	ir_debug( Dmsg(5, "読み = %s\n",
 		       (req->yomi)?conveuc(req->yomi):null));
 
-	len = ((int)req->datalen - SIZEOFSHORT * 2) / SIZEOFSHORT;
+	len = req->yomi ? ushortstrlen(req->yomi) : 0;
 	ret = RkwStoreYomi(cxnum, req->yomi, len);
 	if( ret >= 0 ){
 	  if (len == 0 && ret && bunsetu >= ret)
@@ -2026,7 +2027,7 @@ ClientPtr *clientp ;
 	curbun = (int)req->curbun;
 	RkwGoTo(cxnum, curbun);
 
-	maxyomi = ushortstrlen( req->yomi );
+	maxyomi = req->yomi ? ushortstrlen( req->yomi ) : 0;
 	if ((ret = RkwStoreRange(cxnum, req->yomi, maxyomi)) < 0) { 
 	    PrintMsg( "[%s](%s) kana-kanji convert failed\n",
 		     client->username, WideProtoName[wStoreRange - 1]);
@@ -2162,6 +2163,8 @@ int size;
 	    else
 		continue;
 #endif
+	} else if (errno == EINTR) {
+	    CheckSignal();
 	} else {
 	    /* errno set by write system call. */
 	    PrintMsg( "Write Error[ %d ]\n", errno );
@@ -2218,7 +2221,10 @@ int *status;	      /* read at least n from client */
 
     while (empty_count < TRY_COUNT && rest > 0) {
 	if ((readsize = read(client, (char *)bufptr, rest)) < 0) {
-	  break;
+	  if (errno == EINTR)
+	    CheckSignal();
+	  else
+	    break;
 	} else if ( !readsize ) {	
 	    empty_count ++ ;
 	    continue ;
@@ -2521,18 +2527,26 @@ BYTE *buf ;
 
     ir_debug( Dmsg(10, "ProcWideReq11 start!!\n") );
 
-    if (Request.type11.datalen < SIZEOFSHORT * 2)
+    if (Request.type11.datalen < SIZEOFSHORT * 2
+	|| Request.type11.datalen % SIZEOFSHORT != 0 )
 	return( -1 );
     buf += HEADER_SIZE; Request.type11.context = S2TOS(buf);
     buf += SIZEOFSHORT; Request.type11.curbun = S2TOS(buf);
     buf += SIZEOFSHORT; Request.type11.yomi = (Ushort *)buf;
-    if (Request.type11.datalen % SIZEOFSHORT != 0)
-	return( -1 );
     len = ((int)Request.type11.datalen - SIZEOFSHORT * 2) / SIZEOFSHORT ;
-    if (len == 0 || Request.type11.yomi[len - 1] != 0)
-	return( -1 );
-    for (data = Request.type11.yomi, i = 0; i < len; i++, data++)
-	*data = ntohs( *data ); /* なんかやだ */
+    /*
+     * XXX: 今のところ、RkwStoreYomiで空のデータが送られる以外で、この
+     * リクエストは発行されない。とりあえず、長さ0の場合は正当なリクエストと
+     * みなし、それ以外の場合はヌル終端を要求する。 2003.01.05 aida_s
+     */
+    if (len) {
+      if (Request.type11.yomi[len - 1] != 0)
+	  return( -1 );
+      for (data = Request.type11.yomi, i = 0; i < len; i++, data++)
+	  *data = ntohs( *data ); /* なんかやだ */
+    } else {
+      Request.type11.yomi = NULL;
+    }
     ir_debug( Dmsg(10, "req->context =%d\n", Request.type11.context) );
     ir_debug( Dmsg(10, "req->curbun =%d\n", Request.type11.curbun) );
     ir_debug( Dmsg(10, "req->yomi =%s\n",

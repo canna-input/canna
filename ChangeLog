@@ -1,3 +1,200 @@
+2003-01-24 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* canna/patchlevel.h: 3.6p2 release
+
+2003-01-24 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* canuum/jhlp.c(open_ttyp): I_PUSH
+	* canuum/commonhd.h: fix typo (s/CONFIG_TEMRIO/CONFIG_TERMINFO)
+
+2003-01-23 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* Canna.conf: CannaDsoRev is now 1.1 in all platforms.
+	* CHANGES.jp: update
+
+2003-01-21 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* [Canna-dev 153]: sample file problems (Thanks to Ikumi san)
+	* misc/initfiles/Imakefile: install default.canna to cannaLibDir
+	* misc/initfiles/default.ca: fix typo, 3.5 options
+	* misc/initfiles/sample.canna: ditto
+	* misc/initfiles/unix.canna: ditto
+
+2003-01-17 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* lib/canna/romaji.c(YomiKakutei): Oops, I left debug fprintf.
+
+2003-01-17 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* lib/canna/henkan.c(TanPrintBunpou): correctly handle guidline clear
+	  flags (Thanks to Ikumi san)
+	  (TanPrintTime): ditto
+	  (tanbunToYomiAll): avoid dereference of tan after tanbunCommitYomi
+	* lib/canna/romaji.c(howFarToGoBackward): character-based-move was
+	  broken. Don't stop at HENKANSUMI && !SENTOU char. Instead we set
+	  SENTOU flag in tango-touroku time.
+	  (howFarToGoForward): ditto
+	* lib/canna/uldefine.c(uuT2TangoEveryTimeCatch): SENTOU flag on.
+	  Now we can handle cursor in tango-touroku really properly.
+
+2003-01-15 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* dic/ideo/pubdic/k.p(kabun): T35 -> T15 (Bugs #773)
+
+2003-01-15 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* lib/canna/uldelete.c: delete words in group dictionaries (Thanks to
+	  Ikumi san)
+	* cmd/crfreq/crfreq.c: avoid crash when filename and dicname are not
+	  specified
+	* [Canna-dev 143]: misc fixes (Thanks to Toru TAKAMIZU san)
+	* ChangeLog(previous commit): s/TEMPDIR/TMPDIR/
+	* INSTALL: remove canvert
+	* INSTALL.jp: ditto
+	* cmd/dpbindic/dpbindic.man: reformat
+	* cmd/dpbindic/dpbindic.jmn: remove canvert(1) from .SH
+	* cmd/mkbindic/mkbindic.cpp: use .fq suffix if "-name foo.d" is
+	  specified
+	* cmd/mkbindic/mkbindic.jmn: new filename, remove canvert(1)
+	* cmd/mkbindic/mkbindic.man: ditto, update examples, add $TMPDIR desc
+	* cmd/ctow/ctow.c: s/itow/ctow/ in comments, s/speach/speech/
+	* cmd/splitwd/splitwd.man: s/itow/ctow/
+	* lib/canna/parse.c: undef OBSOLETE_RCFILE
+
+2003-01-13 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* cmd/dicar/dicar.man: correct typo(Thanks to NAKAMURA Takeshi san)
+	* cmd/mkbindic/mkbindic.cpp: change cpp check method, $TMPDIR (Thanks
+	  to takasan san)
+	* Canna.conf.dist(MakeCannaConfigH): suppress echo
+	* misc/default.ca: already moved into initfiles; removed
+	* misc/Imakefile: remove default.ca
+	* misc/initfiles/default.ca: append old default.ca contents and
+	  "nami" "nakaten" symbol defs as comment.
+	* misc/initfiles/unix.ca: add "nami" symbol
+
+2003-01-12 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* INSTALL: update
+	* INSTALL.jp: update
+	* canuum/README.jp: update
+
+2003-01-12 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* canuum/*: merge canuum from HEAD.
+	  don't use libspt because it's still alpha release.
+	* mkrelease.sh: invoke autoconf
+
+2003-01-10 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* Prevent wrong learning. It had occured in two situations:
+	  1. bubun kakutei at bunsetsus (probably) except in jishu-henkan mode
+	  2. bubun muhenkan
+	  In both cases, all bunsetsus had been learned.
+	  This commit is only a quick hack. tanbunContext should be removed
+	  and new protocol should be added in future.
+	* lib/canna/henkan.c(tanbunToYomiAll): added
+	  (doTanConvertTb): use tanbunToYomiAll
+	  (doTanBubunMuhenkan): ditto
+	  (tanbunToYomi,tanbunCommitYomi): added
+	  (tanbunUnconvert): separated into tanbunToYomi and tanbunCommitYomi
+	  (TbBubunMuhenkan): use tanbunToYomi and tanbunCommitYomi
+	  (doYomiHenkan): added yc arg, new comment
+	  (tanbunHenkan): removed because enterTanHenkanMode no longer calls
+	  (enterTanHenkanMode): more strict error handling
+	* lib/canna/romaji.c(TbBubunKakutei): commented out (already unused)
+
+2003-01-06 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* [Canna-dev 119] chikuji input was broken
+	* lib/RKC/wconvert.c(SendType11Request): stop buffer overrun
+	* server/wconvert.c(irw_store_yomi): len = ushortstrlen() unless
+	  req->yomi == NULL
+	  (irw_store_range): ditto
+	  (ProcWideReq11): allow empty string that is not null terminated
+	* lib/RK/bun.c(RkStoreYomi): allow yomi == NULL && len == 0
+
+2003-01-06 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* server/IR.h: define _WCHAR_t again after include "canna/RK.h"
+	* canna/widedef.h: FreeBSD 5.x and OpenBSD
+ 	* Imakefile(instmost): added
+
+2003-01-06 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* add .cvsignore to all directories.
+
+2002-12-28 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* [canna-dev 97] [canna-dev 106] [canna-dev 107]
+	  New direcroty hierarchy.
+	  Currently old hierarchy is default on stable branch.
+	* Canna.conf.dist: new directory hierarchy if !ObsoleteInstallDir
+	  (ObsoleteInstallDir): set by default
+	  (MakeCannaConfigH for !EMX): preserve old cannaconf.h if unchanged
+	* cmd/catdic/Imakefil: cannakill in cannaSrvDir if !ObsoleteInstallDir
+
+2002-12-21 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* lib/canna/ebind.c(XLookupKanji2): cast to unsigned char first
+
+2002-12-18 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* INSTALL.jp: s/lockfile/socket/g
+	* INSTALL: ditto
+	* CHANGES.jp: more desc about one-letter word hack
+	* cmd/mkbindic/mkbindic.cpp: use only yomi as sort key
+	* lib/canna/romaji.c(howFarToGoBackward): Stop at HENKANSUMI char.
+	  Otherwise we cannot edit the words in tango-touroku if
+	  character-based-move is true.
+	  (howFarToGoForward): ditto
+	  (TbBubunKakutei): commented out (already unused)
+
+2002-12-18 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* Oh, forgot to include last 4 changes.
+
+2002-12-18 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* dic/ideo/grammar/Imakefile: add DESTDIR (thanks to SUZUKI san)
+	* cmd/catdic/Imakefile: remove wrong DESTDIR (thanks to SUZUKI san)
+	* server/convert.c:
+	  if CANNA_LIGHT -> ifdef (thanks to Ayamura KIKUCHI san)
+	* lib/RKC/rkcw.h: ditto
+	* lib/RKC/convert.c: ditto
+	* lib/RK/Imakefile: RkMountD -> RkMountDic
+
+2002-12-18 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* dic/ideo/pubdic/a.p(adabana): fix kanji
+	  (atsureki): fix kanji
+	  (ankou): only two letter "ankou" is allowed.
+	  (abushiga): mabushiba
+	* dic/ideo/pubdic/m.p(mabushiba): added
+	* [canna-dev 50] [canna-dev 85]:
+	  patch by ikumi-san. dic fixes.
+	* dic/ideo/a.p: correct kanjis
+	* dic/ideo/k.p: correct kanjis
+	* dic/ideo/s.p: correct kanjis
+	* dic/ideo/t.p: correct kanjis
+	* dic/ideo/h.p: correct kanjis
+	* dic/ideo/m.p: correct kanjis
+	* dic/ideo/y.p: correct kanjis
+	* dic/ideo/p.p: correct kanjis
+	* dic/ideo/w.p: correct kanjis
+
+2002-12-18 AIDA Shinra <aida-s@jcom.home.ne.jp>
+
+	* server/misc.c(BecomeDaemon): hook SIGTERM before fork
+ 	  (Reset): only raise a flag and return
+ 	  (CheckSignal): added
+ 	* server/wconvert.c(ReadWideRequestFromClient): check signal
+ 	  (WriteClient): ditto
+ 	* server/convert.c(ReadRequestFromClient): ditto
+ 	  (WriteClient): ditto
+ 	  (ir_error): ditto
+ 	* server/WaitFor.c: ditto
+
 2002-12-02 AIDA Shinra <aida-s@jcom.home.ne.jp>
 
 	* server/wconvert.c: CANNA-2002-1 security fix.
@@ -182,4 +379,4 @@
 
 	* Virgin import of Canna3.5b2.
 
-$Id: ChangeLog,v 1.10.2.2 2002/12/02 00:35:38 aida_s Exp $
+$Id: ChangeLog,v 1.10.2.24 2003/01/24 09:58:04 aida_s Exp $

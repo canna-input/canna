@@ -1,4 +1,4 @@
-/* $Id: Imakefile,v 1.2 2002/10/20 18:00:21 aida_s Exp $ */
+/* $Id: Imakefile,v 1.2.2.1 2003/01/13 05:34:30 aida_s Exp $ */
 #include "../Canna.conf"
 
 CANNAROOT = ..
@@ -7,10 +7,10 @@ CANNAROOT = ..
 #define PassCDebugFlags
 
 #ifdef engineSwitch
-       PROGRAMS = engine.cf default.canna
+       PROGRAMS = engine.cf
            SRCS = engine.cpp
 #else
-       PROGRAMS = default.canna
+       PROGRAMS = 
 #endif
 #ifdef nec
         DEFINES = $(SCRIPTS_DEFINES) -DLIBCANNADIR=$(libCannaDir) \
@@ -41,15 +41,6 @@ InstallNamedNonExec(rMakefile,Makefile,$(cannaLibDir)/sample/src)
 InstallNamedNonExec(cMakefile,Makefile,$(cannaLibDir)/sample/src)
 #endif /* nec_ews_svr4 */
 
-#ifdef USE_OBSOLETE_STYLE_FILENAME
-default.canna: default.ca
-	sed 's/\.cbp/\.kp/' < default.ca > default.canna
-#else
-default.canna: default.ca
-	$(CP) default.ca default.canna
-#endif
-
-InstallNonExec(default.canna,$(cannaLibDir))
 InstallNonExec(is.c,$(cannaLibDir)/sample/src)
 
 clean::

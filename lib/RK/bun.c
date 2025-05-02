@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[] = "$Id: bun.c,v 1.2 2002/10/20 14:29:58 aida_s Exp $";
+static char rcsid[] = "$Id: bun.c,v 1.2.2.1 2003/01/06 04:42:08 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */
@@ -519,7 +519,7 @@ RkwStoreYomi(cx_num, yomi, nlen)
     RkSetErrno(RK_ERRNO_ECTXNO);
     return -1;
   }
-  if (!yomi || nlen < 0 || uslen(yomi) < nlen) {
+  if ((nlen && !yomi) || nlen < 0 || uslen(yomi) < nlen) {
     RkSetErrno(RK_ERRNO_EINVAL);
     return -1;
   }

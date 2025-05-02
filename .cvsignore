@@ -1,0 +1,5 @@
+.depend
+Makefile
+Canna.conf
+include
+cannaconf.h

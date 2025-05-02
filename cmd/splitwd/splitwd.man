@@ -13,7 +13,7 @@ dictionary is created.  splitword converts such text-form dictionaries
 The result is output to the standard output.
 .SH "EXAMPLE"
 .nf
-% splitwd user1.t user2.t | itow
+% splitwd user1.t user2.t | ctow
 .fi
 .sp
 Reads text-form dictionaries user1.t and user2.t, then modifies them
@@ -21,7 +21,7 @@ into the <1 word type, 1 candidate on 1 line> format.   The contents
 are converted into the Wnn textform dictionary, then output to the
 standard output.
 .SH "SEE ALSO"
-.IP "itow(1)" 12
+.IP "ctow(1)" 12
 
 .\" Copyright 1994 NEC Corporation, Tokyo, Japan.
 .\"
@@ -44,4 +44,4 @@ standard output.
 .\" OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 .\" PERFORMANCE OF THIS SOFTWARE. 
 .\"
-.\" $Id: splitwd.man,v 1.1.1.1 2002/10/19 08:27:34 aida_s Exp $
+.\" $Id: splitwd.man,v 1.1.1.1.2.1 2003/01/15 13:42:37 aida_s Exp $

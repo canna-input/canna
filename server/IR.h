@@ -21,7 +21,7 @@
  */
 
 /* sccs_id[]="%Z% NEC UNIX( PC-UX/EWS-UX ) %M% %R%.%L% %E% %U%"; */
-/* $Id: IR.h,v 1.3 2002/10/20 14:29:59 aida_s Exp $ */
+/* $Id: IR.h,v 1.3.2.1 2003/01/06 04:36:58 aida_s Exp $ */
 
 #include "cannaconf.h"
 #define EXTENSION
@@ -124,6 +124,11 @@ extern int	RkwInitialize(char *),
 		RkwCvtEuc(Ushort *, int, Ushort *, int),
 		RkwKillServer(void);
 /* struct DicInfo *RkwQueryDic(int, Ushort *, struct DicInfo *); */
+# define WCHAR_T
+# define _WCHAR_T
+# define _WCHAR_T_
+# define __WCHAR_T
+# define _GCC_WCHAR_T
 #endif
 
 #ifdef DEBUG

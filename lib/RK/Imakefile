@@ -1,4 +1,4 @@
-/* $Id: Imakefile,v 1.1.1.1.2.1 2002/11/07 14:46:02 aida_s Exp $ */
+/* $Id: Imakefile,v 1.1.1.1.2.2 2002/12/18 09:13:05 aida_s Exp $ */
 #include "../../Canna.conf"
         CANNAROOT = ../..
           DEFINES = $(DEBUGFLAGS) $(useObsoleteFilename)
@@ -46,7 +46,7 @@ InstallLibManPageLong(RkGoto,$(cannaManDir),RkGoto)
 InstallLibManPageLong(RkInitia,$(cannaManDir),RkInitialize)
 InstallLibManPageLong(RkIntro,$(cannaManDir),RkIntro)
 InstallLibManPageLong(RkLeft,$(cannaManDir),RkLeft)
-InstallLibManPageLong(RkMountD,$(cannaManDir),RkMountD)
+InstallLibManPageLong(RkMountD,$(cannaManDir),RkMountDic)
 InstallLibManPageLong(RkNext,$(cannaManDir),RkNext)
 InstallLibManPageLong(RkNfer,$(cannaManDir),RkNfer)
 InstallLibManPageLong(RkPrev,$(cannaManDir),RkPrev)
