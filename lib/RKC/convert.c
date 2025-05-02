@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "$Id: convert.c,v 1.9 2003/09/23 07:11:31 aida_s Exp $";
+static char rcs_id[] = "$Id: convert.c,v 1.9.2.1 2004/04/26 21:48:37 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */
@@ -236,12 +236,12 @@ int size ;
 	if (ServerTimeout) {
 	  int r = select(ServerFD + 1, NULL, &wfds, NULL, &timeout2);
 	  if (r == 0) {
-	    break;
+	    goto fail;
 	  } else if (r == -1) {
 	    if (errno == EINTR)
 	      continue;
 	    else
-	      break;
+	      goto fail;
 	  }
 	}
       }
@@ -266,13 +266,16 @@ int size ;
 	}
 #endif
 	else {
-	    /* errno set by write system call. */
-	    close( ServerFD ) ;
-	    retval = NO;
-	    errno = EPIPE ;
-	    break;
+	    goto fail;
 	}
     }
+    goto last;
+fail:
+    close( ServerFD ) ;
+    retval = NO;
+    errno = EPIPE ;
+    break;
+last:
     signal(SIGPIPE, Sig);
     return retval;
 }

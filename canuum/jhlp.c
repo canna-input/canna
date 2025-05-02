@@ -1,6 +1,6 @@
 /*
  *  jhlp.c,v 1.13 2002/08/26 09:27:21 aono Exp
- *  Canna: $Id: jhlp.c,v 1.9 2003/01/24 14:42:02 aida_s Exp $
+ *  Canna: $Id: jhlp.c,v 1.9.2.1 2004/04/26 21:48:37 aida_s Exp $
  */
 
 /*
@@ -1100,19 +1100,14 @@ chld_handler ()
 /* *INDENT-ON* */
 {
 #ifdef HAVE_WAIT3
-#ifdef HAVE_UNION_WAIT /* older way */
+#if !defined(_POSIX_VERSION) && defined(HAVE_UNION_WAIT) /* older way */
   union wait status;
 #else /* POSIX */
   int status;
 #endif
   int pid;
 
-/*
- * Remove warning.
- * Patched by Hidekazu Kuroki(hidekazu@cs.titech.ac.jp)         1996/8/20
- */
-/*  if ((pid = wait3(&status, WNOHANG | WUNTRACED, NULL)) == child_id) { */
-  if ((pid = wait3 ((int *) &status, WNOHANG | WUNTRACED, NULL)) == child_id)
+  if ((pid = wait3(&status, WNOHANG | WUNTRACED, NULL)) == child_id)
     {
       if (WIFSTOPPED (status))
         {

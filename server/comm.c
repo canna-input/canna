@@ -27,7 +27,7 @@
 #include <stdio.h>
 #include <fcntl.h>
 
-RCSID("$Id: comm.c,v 1.4.2.2 2003/12/27 17:15:24 aida_s Exp $");
+RCSID("$Id: comm.c,v 1.4.2.3 2004/04/26 21:48:37 aida_s Exp $");
 
 /* TODO: better error reporting */
 
@@ -48,6 +48,7 @@ struct tagClientBuf {
   ClientPtr client;
   size_t nwant;
   char *sendptr;
+  unsigned int nfail;
   RkiStrbuf recvbuf;
   RkiStrbuf sendbuf;
 };
@@ -93,6 +94,7 @@ sock_type fd;
 #ifdef COMM_DEBUG
   obj->sendptr = (char *)0xdeadbeef;
 #endif
+  obj->nfail = 0;
   RkiStrbuf_init(&obj->recvbuf);
   RkiStrbuf_init(&obj->sendbuf);
 }
@@ -114,6 +116,7 @@ ClientBuf *obj;
   ssize_t size;
   int newwant;
   RkiStrbuf *buf = &obj->recvbuf;
+  int savederr;
 
   assert(obj->nwant && !CLIENT_BUF_IS_SENDING(obj));
   if (RKI_STRBUF_RESERVE(buf, buf->sb_curr - buf->sb_buf + obj->nwant)) {
@@ -123,15 +126,21 @@ ClientBuf *obj;
   ir_debug(Dmsg(7, "ClientBuf_recv(): receiving %d bytes, nwant=%d\n",
 	buf->sb_end - buf->sb_curr, obj->nwant));
   size = recv(obj->fd, buf->sb_curr, buf->sb_end - buf->sb_curr, 0);
+  savederr = errno;
   ir_debug(Dmsg(7, "ClientBuf_recv(): recv() returned %d\n", size));
   if (size < 0) {
-    if (errno == EINTR || errno == EWOULDBLOCK || errno == EAGAIN)
-      return 0;
-    else
-      goto recvfail;
+    if (savederr == EINTR || savederr == EWOULDBLOCK || savederr == EAGAIN) {
+      if (++obj->nfail < 5)
+	return 0;
+      ir_debug(Dmsg(7,
+	    "ClientBuf_recv(): too many temporary errors. errno=%d\n",
+	    savederr));
+    }
+    goto recvfail;
   } else if (size == 0)
     goto recvfail;
 
+  obj->nfail = 0;
   buf->sb_curr += size;
   if (size < obj->nwant) {
     obj->nwant -= size;
@@ -160,19 +169,26 @@ ClientBuf *obj;
 {
   ssize_t size;
   RkiStrbuf *buf = &obj->sendbuf;
+  int savederr = 0;
 
   assert(!obj->nwant && CLIENT_BUF_IS_SENDING(obj));
   ir_debug(Dmsg(7, "ClientBuf_send(): sending %d bytes\n",
 	buf->sb_curr - obj->sendptr));
   size = send(obj->fd, obj->sendptr, buf->sb_curr - obj->sendptr, 0);
+  savederr = errno;
   ir_debug(Dmsg(7, "ClientBuf_send(): send() returned %d\n", size));
   if (size < 0) {
-    if (errno == EINTR || errno == EWOULDBLOCK || errno == EAGAIN)
-      return 0;
-    else
-      goto fail;
+    if (savederr == EINTR || savederr == EWOULDBLOCK || savederr == EAGAIN) {
+      if (++obj->nfail < 5)
+	return 0;
+      ir_debug(Dmsg(7,
+	    "ClientBuf_send(): too many temporary errors. errno=%d\n",
+	    savederr));
+    }
+    goto fail;
   }
   assert(size > 0);
+  obj->nfail = 0;
   obj->sendptr += size;
   if (obj->sendptr == buf->sb_curr) {
     ir_debug(Dmsg(5, "クライアントへの返信が完了, fd=%d\n", obj->fd));
@@ -193,7 +209,7 @@ ClientBuf *obj;
 fail:
   PrintMsg("[%s] Send request failed\n",
       obj->client ? obj->client->username : "unknown");
-  Dmsg(1, "Send Error[ %d ]\n", errno);
+  Dmsg(1, "Send Error[ %d ]\n", savederr);
   return -1;
 }
 
@@ -430,6 +446,7 @@ EventMgr *obj;
     struct timeval timeout_tmp;
     int r;
     int needwrite = 0;
+    int savederr;
 
     RKI_FD_ZERO(&rfds);
     RKI_FD_ZERO(&wfds);
@@ -455,11 +472,12 @@ EventMgr *obj;
     ir_debug(Dmsg(5, "\nselect()で待ちを開始\n"));
     timeout_tmp = timeout;
     r = select(nfds, &rfds, &wfds, NULL, &timeout_tmp);
+    savederr = errno;
     ir_debug(Dmsg(5, "select() returned %d\n", r));
     if (r < 0) {
-      if (errno != EINTR) {
+      if (savederr != EINTR) {
 	/* What happened? */
-	PrintMsg("EventMgr_run(): select: errno=%d\n", errno);
+	PrintMsg("EventMgr_run(): select: errno=%d\n", savederr);
 	obj->exit_status = 3;
 	break;
       }

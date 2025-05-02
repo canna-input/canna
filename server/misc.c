@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[]="@(#) $Id: misc.c,v 1.16.2.3 2003/12/27 17:15:24 aida_s Exp $";
+static char rcs_id[]="@(#) $Id: misc.c,v 1.16.2.4 2004/04/26 21:48:37 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */
@@ -281,13 +281,34 @@ char *argv[];
     CreateAccessControlList() ;
 }
 
+static void
+mysignal(sig, func)
+int sig;
+RETSIGTYPE (*func) pro((int));
+{
+#ifdef SA_RESTART
+    struct sigaction new_action;
+
+    sigemptyset(&new_action.sa_mask);
+    new_action.sa_handler = func;
+    new_action.sa_flags = 0
+# ifdef	SA_INTERRUPT
+	| SA_INTERRUPT /* don't restart */
+# endif
+	;
+    sigaction(sig, &new_action, NULL);
+#else
+    signal(sig, func);
+#endif
+}
+
 int
 BecomeDaemon ()
 {
     int     parent, parentid;
 
     if (DebugMode) {
-	signal(SIGPIPE,  SIG_IGN) ;
+	mysignal(SIGPIPE,  SIG_IGN) ;
 	return 0; /* デーモンにならない */
     }
 
@@ -495,11 +516,14 @@ const char *where;
     PrintMsg("out of memory\n");
 }
 
-static void
+static RETSIGTYPE
 Reset(sig)
 int	sig;
 {
     caught_signal = sig;
+#ifdef SIGNALRETURNSINT
+    return 0;
+#endif
 }
 
 int
@@ -1009,11 +1033,11 @@ DetachTTY()
     /*
      * シグナル処理
      */
-    signal(SIGHUP,   SIG_IGN);
-    signal(SIGINT,   Reset);
-    signal(SIGALRM,  SIG_IGN);
-    signal(SIGPIPE,  SIG_IGN) ;
-    signal(SIGTERM,  Reset); /* for killserver */
+    mysignal(SIGHUP,   SIG_IGN);
+    mysignal(SIGINT,   Reset);
+    mysignal(SIGALRM,  SIG_IGN);
+    mysignal(SIGPIPE,  SIG_IGN) ;
+    mysignal(SIGTERM,  Reset); /* for killserver */
 
     umask( 002 ) ;
 }

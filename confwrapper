@@ -1,22 +1,45 @@
 #! /bin/sh
-# $Id: confwrapper,v 1.4.2.2 2003/12/28 16:10:30 aida_s Exp $
+# $Id: confwrapper,v 1.4.2.3 2004/04/26 23:15:17 aida_s Exp $
+# vim: set sw=2 ts=8:
 
-filter="$1/confwrapper.sub filter"
+set -e
+case "$1" in
+  run)
+  shift
+  if test ! -r cwenv.sh; then
+    make cwenv.sh
+  fi
+  . cwenv.sh
+  if test -r cwlocal.sh; then
+    . cwlocal.sh
+  fi
+  export CPPFLAGS CC CFLAGS
+  echo "CPPFLAGS=\"$CPPFLAGS\""
+  echo "CC=\"$CC\""
+  echo "CFLAGS=\"$CFLAGS\""
+  echo "$@"
+  exec "$@"
+  ;;
 
-# Use var=`xx "yy"` instead of "`xx "yy"`". This IS more portable and
-# does what we want.
-cppflagsadd=`eval "$filter CPPFLAGS $CW_CPPFLAGS"`
-test "${CC+set}" = set || CC=`eval "$filter CC $CW_CC"`
-cflagsadd=`eval "$filter CFLAGS $CW_CFLAGS"`
-CPPFLAGS="$cppflagsadd $CPPFLAGS"
-CFLAGS="$cflagsadd $CFLAGS"
-export CPPFLAGS CC CFLAGS
-echo "CPPFLAGS=\"$CPPFLAGS\""
-echo "CC=\"$CC\""
-echo "CFLAGS=\"$CFLAGS\""
+  mkenv)
+  envname="$2"
+  shift
+  shift
+  for p in "$@"; do
+    case "$p" in
+      *" "*|*" 	"*|*"'"*|*'"'*)
+      echo 'confwrapper: warning: removing "'"$p"'" from '"$envname" >&2
+      ;;
+      *) args=$args${args+" "}$p ;;
+    esac
+  done
+  cat << EOF
+$envname="$args"
+EOF
+  ;;
 
-cmd="$2"
-shift
-shift
-echo "$cmd $@"
-exec "$cmd" "$@"
+  *)
+  echo "confwrapper.sub: Bad argument" >&2
+  exit 1
+  ;;
+esac

@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[] = "$Id: obind.c,v 1.4 2003/02/01 19:34:21 aida_s Exp $";
+static char rcsid[] = "$Id: obind.c,v 1.4.2.1 2004/04/26 22:49:21 aida_s Exp $";
 #endif
 
 #include "cannaconf.h"
@@ -66,8 +66,8 @@ typedef struct {
   int (*callback_func) pro((char *, int, wchar_t **, int, int *));
 } owcListCallbackStruct;
 
-typedef unsigned short cannawc16;
-typedef unsigned int cannawc32;
+typedef canna_uint16_t cannawc16;
+typedef canna_uint32_t cannawc32;
 
 extern int howToReturnModeInfo;
 extern char *context_table;
@@ -340,14 +340,13 @@ owcLookupKanji2(dpy, win, buffer_return, n_buffer, nbytes, functionalChar,
 	      kanji_status_return)
 unsigned int dpy, win;
 int functionalChar, nbytes;
-char *buffer_return;
+wchar_t *buffer_return;
 int n_buffer;
 owcKanjiStatus *kanji_status_return;
 {
   int ret;
   wcKanjiStatus wks;
   wchar_t ch;
-  int i;
   cannawc *inbuf = NULL;
   int inbufsize;
   int r;
@@ -362,10 +361,7 @@ owcKanjiStatus *kanji_status_return;
     return -1;
   }
 
-  inbuf[0] = (cannawc)(unsigned char)buffer_return[0];
-  for (i = 1 ; i < nbytes ; i++) {
-    inbuf[i] = (cannawc)(unsigned char)buffer_return[i];
-  }
+  OldwcstoWCs(inbuf, buffer_return, nbytes ? nbytes : 1);
   ch = buffer_return[0];
   ret = XwcLookupKanji2(dpy, win, inbuf, inbufsize, nbytes, functionalChar,
 			&wks);
@@ -551,7 +547,7 @@ int context_id, ch, nbuffer;
 wchar_t *buffer_return;
 owcKanjiStatus  *kanji_status_return;
 {
-  *buffer_return = ch;
+  *buffer_return = (wchar_t)ch;
 
   return owcLookupKanji2((unsigned int)0, (unsigned int)context_id,
 		       buffer_return, nbuffer,

@@ -11,3 +11,5 @@ config.log
 config.cache
 autom4te.cache
 pubconf.h
+cwenv.sh
+cwlocal.sh

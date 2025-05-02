@@ -1,6 +1,6 @@
 /*
  *  termcap.c,v 1.6 2002/06/13 21:27:47 hiroo Exp
- *  Canna: $Id: termcap.c,v 1.3 2003/01/04 07:31:02 aida_s Exp $
+ *  Canna: $Id: termcap.c,v 1.3.4.1 2004/04/26 21:48:37 aida_s Exp $
  */
 
 /*
@@ -362,6 +362,14 @@ sr_set (st, start, end)
                       return NULL;
                     }
                   params[i] += nextch;
+                }
+              break;
+            case 'p': /* our terminal library is terminfo in fact */
+	      /* skip this */
+              if (!(nextch = *++pt))
+                {
+                  fprintf (stderr, "Unexpected EOL in cs string.\n");
+                  return NULL;
                 }
               break;
             case 'r':

@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[] = "$Id: lisp.c,v 1.11 2003/09/24 14:50:40 aida_s Exp $";
+static char rcsid[] = "$Id: lisp.c,v 1.11.2.1 2004/04/26 22:49:21 aida_s Exp $";
 #endif
 
 /* 
@@ -914,7 +914,8 @@ int n;
     readptr = readbuf;
     *readptr = '\0';
     if (files[filep].f != stdin) {
-      fclose(files[filep].f);
+      if (files[filep].f)
+	fclose(files[filep].f);
       if (files[filep].name) {
 	free(files[filep].name);
       }

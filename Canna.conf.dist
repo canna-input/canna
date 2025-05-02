@@ -95,7 +95,7 @@
  *              そろっていないので #define しておいてください。
  */
 /*
- * $Id: Canna.conf.dist,v 1.23.2.3 2003/12/28 16:10:30 aida_s Exp $
+ * $Id: Canna.conf.dist,v 1.23.2.4 2004/04/26 23:15:17 aida_s Exp $
  */
 
 /* rootにならずにインストールする時はこれを定義して下さい */
@@ -555,7 +555,7 @@ clean::									@@\
 /* 4.3.0ではライブラリの命名が変更されているようなので古い命名を使う */
 # define CannaInstallSharedLibrary(libname,rev,dest)                    @@\
 InstallTarget(install,LibraryTargetName(libname),$(INSTLIBFLAGS),$(USRLIBDIR)) @@\
-InstallTarget(install,Concat3(lib,libname,.dll),$(INSTLIBFLAGS),$(BINDIR))
+InstallTarget(install,Concat3(lib,libname,.dll),$(INSTBINFLAGS),$(BINDIR))
 /* CannaInstallSharedLibrary */
 
 #elif defined(RsArchitecture)

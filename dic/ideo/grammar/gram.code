@@ -19,7 +19,7 @@
  * OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
  * PERFORMANCE OF THIS SOFTWARE. 
  *
- * $Id: gram.code,v 1.2 2002/10/20 04:10:29 aida_s Exp $
+ * $Id: gram.code,v 1.2.6.1 2004/04/26 22:49:21 aida_s Exp $
  */
 /*
  * gram.code: ワープロ用標準日本語文法
@@ -302,7 +302,7 @@ m5i	_	み              /* 住み_ます */
 m5ir	_	み		/* 編み_ます,編み */
 
 /* ら行5段 */
-r5      tO      っ              /* 困った_ら,謝っ_たら */
+r5      tO      っ              /* 困っ_たら,謝っ_たら */
         u       る              /* 困る_とき,謝る_とき */
         e       れ              /* 困れ,     謝れ */
         o       ろ              /* 困ろ_う,  謝ろ_う */

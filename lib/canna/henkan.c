@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static	char	rcs_id[] = "@(#) 102.1 $Id: henkan.c,v 1.8 2003/09/25 14:33:49 aida_s Exp $";
+static	char	rcs_id[] = "@(#) 102.1 $Id: henkan.c,v 1.8.2.2 2004/04/26 22:53:02 aida_s Exp $";
 #endif /* lint */
 
 #include	"canna.h"
@@ -53,6 +53,7 @@ extern int defaultContext;
 extern struct dicname *RengoGakushu, *KatakanaGakushu, *HiraganaGakushu;
 extern KanjiModeRec cy_mode, cb_mode, yomi_mode, tankouho_mode, empty_mode;
 extern char saveapname[];
+extern int mountnottry;
 extern exp(int) RkwGetServerVersion pro((int *, int *));
 
 #define DICERRORMESGLEN 78
@@ -155,7 +156,6 @@ KanjiInit()
 {
   char *ptr, *getenv(), *kodmesg = ""/* 辞書の種別毎のメッセージ */;
   int con;
-  static int mountnottry = 1; /* マウント処理を行っているかどうか */
   struct dicname *stp;
   extern struct dicname *kanjidicnames;
   extern FirstTime;
@@ -464,6 +464,9 @@ KanjiFin()
   }
   kanjidicnames = (struct dicname *)0;
 	  
+  defaultContext = -1;
+  defaultBushuContext = -1;
+  mountnottry = 1;
   /* 連文節ライブラリを終了させる */
   RkwFinalize();
 
@@ -2658,7 +2661,7 @@ int head;
   tan->yomi[1] = tan->roma[1] = tan->kanji[1] = (wchar_t)0;
   tan->rAttr[0] = SENTOU;
   tan->kAttr[0] = SENTOU | HENKANSUMI;
-  tan->rAttr[1] = tan->kAttr[1] = 0;
+  tan->rAttr[1] = tan->kAttr[1] = SENTOU;
 
   makeKanjiStatusReturn(d, (yomiContext)tan);
   return 0;

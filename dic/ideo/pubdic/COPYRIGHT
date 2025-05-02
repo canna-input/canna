@@ -1,0 +1,48 @@
+pubdic+パッケージの著作権とその利用について
+
+pubdic+プロジェクト
+1994年12月1日
+
+Copyright 1994 by the Pubdic+ Project.
+
+pubdic+パッケージにはpubdic+プロジェクトの成果であるかな漢字変換用辞書
+とそのユーティリティが含まれています。pubdic+プロジェクトは、pubdicプ
+ロジェクトの成果であるpubdicかな漢字変換用辞書の整備、拡充を目的とした
+ものです。
+
+pubdicプロジェクトは、1988年頃から数年間に渡って、フリーなかな漢字変換
+用辞書を作成することを目標に活動が行われました。そしてその成果は、Wnn
+かな漢字変換システムやX11のリリースとともに広く配布されました。
+
+The Pubdic+ package includes dictionaries and utilities for kana-kanji
+conversion systems. This package is a product of the Pubdic+
+project.  The objective of the Pubdic+ project is to enhance the
+pubdic package that was contributed to X11R4, X11R5.
+
+pubdic+プロジェクトの成果である辞書とそのユーティリティの著作権は、
+pubdic+プロジェクトにあります。これらの複製、配布、変更は、目的を問わ
+ず、また著作者の許可なしに、自由に行うことができます。なお、pubdic+パッ
+ケージを運用した結果については、pubdic+プロジェクトは、責任を負いませ
+ん。
+
+This package is copyrighted by the Pubdic+ project. Permission to use,
+copy, modify, and distribute this package for any purpose is hereby
+granted.
+
+THE PUBDIC+ PROJECT DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS
+PACKAGE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS, IN NO EVENT SHALL PUBDIC+ PROJECT BE LIABLE FOR ANY SPECIAL,
+INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING
+FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
+NEGLIGENCE OR OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION
+WITH THE USE OR PERFORMANCE OF THIS PACKAGE.
+
+不明な点などについてはpubdic-request@astec.co.jpまでお問い合わせ下さい。
+
+参考のために、和文を英語に翻訳したものを付けています。もし和文と英
+文との内容が一致しない場合には、和文の内容が優先します。
+
+For further information, please contact pubdic-request@astec.co.jp.
+If there is any difference between the Japanese copyright notice and
+the English one, the Japanese copyright notice takes precedence over
+the English one.

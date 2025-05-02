@@ -1,42 +1,31 @@
-/* Copyright 1994 Pubdic Project.
+/* Copyright 1994 Pubdic+ Project.
  *
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without
  * fee, provided that the above copyright notice appear in all copies
  * and that both that copyright notice and this permission notice
- * appear in supporting documentation, and that the name of Pubdic
+ * appear in supporting documentation, and that the name of Pubdic+
  * Project not be used in advertising or publicity pertaining to
  * distribution of the software without specific, written prior
- * permission.  Pubdic Project makes no representations about the
+ * permission.  Pubdic+ Project makes no representations about the
  * suitability of this software for any purpose.  It is provided "as
  * is" without express or implied warranty.
  *
- * PUBDIC PROJECT DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
+ * PUBDIC+ PROJECT DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
  * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN 
- * NO EVENT SHALL PUBDIC PROJECT BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+ * NO EVENT SHALL PUBDIC+ PROJECT BE LIABLE FOR ANY SPECIAL, INDIRECT OR
  * CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF 
  * USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR 
  * OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
  * PERFORMANCE OF THIS SOFTWARE. 
  */
 
-#ifndef lint
-static char rcsid[] = "$Id: pod.c,v 1.3 2002/10/20 14:29:58 aida_s Exp $";
-#endif
-
 #include <stdio.h>
 #include "ccompat.h"
 
-#define POD_WCHAR
+RCSID("$Id: pod.c,v 1.3.6.1 2004/05/04 22:04:43 aida_s Exp $");
 
-#ifdef POD_WCHAR
 typedef unsigned short Wchar;
-#else
-#include <stddef.h>
-#include <locale.h>
-#include <widec.h>
-#define Wchar wchar_t
-#endif
 
 static char *program;
 static int compare, ignore_hinshi_to_compare, sort_by_frequency, merge_sj3;
@@ -65,15 +54,6 @@ static int hinshi_direction = INORDER; /* see above */
 #define FOUND 0
 #define CREATE 1
 
-#ifndef POD_WCHAR
-# define Mbstowcs mbstowcs
-# define Wcstombs wcstombs
-# define Wscmp wscmp
-# define Wscpy wscpy
-# define Wslen wslen
-# define Fgetws fgetws
-# define Fputws fputws
-#else
 # define SS2 0x8e
 # define SS3 0x8f
 # define MSB 0x80
@@ -85,6 +65,7 @@ static int hinshi_direction = INORDER; /* see above */
 # define WCG3 0x8000
 # define WCMSK 0x8080
 
+int
 Mbstowcs(d, ss, n)
 Wchar *d;
 char *ss;
@@ -115,39 +96,40 @@ int n;
   return p - d;
 }
 
+int
 Wcstombs(d, s, n)
 char *d;
 Wchar *s;
 int n;
 {
-  register char *p = d;
+  register unsigned char *p = (unsigned char *)d;
   register Wchar ch;
 
-  while ((ch = *s++) && (p - d + 2 < n)) {
+  while ((ch = *s++) && ((char *)p - d + 2 < n)) {
     switch (ch & WCMSK) {
     case WCG0:
-      *p++ = (char)ch;
+      *p++ = ch & 0xff;
       break;
 
     case WCG1:
-      *p++ = (char)((ch >> 8) & 0xff);
-      *p++ = (char)(ch & 0xff);
+      *p++ = (ch >> 8) & 0xff;
+      *p++ = ch & 0xff;
       break;
 
     case WCG2:
       *p++ = SS2;
-      *p++ = (char)ch;
+      *p++ = ch & 0xff;
       break;
 
     case WCG3:
       *p++ = SS3;
-      *p++ = (char)((ch >> 8) & 0xff);
-      *p++ = (char)((ch & 0xff) | MSB);
+      *p++ = (ch >> 8) & 0xff;
+      *p++ = (ch & 0xff) | MSB;
       break;
     }
   }
   *p = '\0';
-  return p - d;
+  return (char *)p - d;
 }
 
 int
@@ -240,7 +222,6 @@ FILE *f;
   }
   return (Wchar *)0;
 }
-#endif
 
 /* s が全てカタカナから構成されているかどうかを返す関数 */
 
@@ -251,9 +232,9 @@ Wchar *s;
   static Wchar xa = 0, xke, aa, *p;
 
   if (!xa) {
-    Mbstowcs(&xa,  "\045\041", 1);
-    Mbstowcs(&xke, "\045\166", 1);
-    Mbstowcs(&aa,  "\041\074", 1);
+    (void)Mbstowcs(&xa,  "\045\041", 1);
+    (void)Mbstowcs(&xke, "\045\166", 1);
+    (void)Mbstowcs(&aa,  "\041\074", 1);
   }
 
   for (p = s ; *p ; p++) {
@@ -343,14 +324,14 @@ int flag;
     p = (struct hinshipack *)malloc(sizeof(struct hinshipack));
     if (p) {
       *pp = p;
-      (void)bzero(p, sizeof(struct hinshipack));
+      (void)bzero((char *)p, sizeof(struct hinshipack));
       p->hinshi = (Wchar *)malloc((Wslen(str) + 1) * sizeof(Wchar));
       if (p->hinshi) {
 	(void)Wscpy(p->hinshi, str);
 	p->nhinshis = 1;
 	return p;
       }
-      free(p);
+      free((char *)p);
     }
     malloc_failed();
   }
@@ -375,8 +356,8 @@ replace_hinshi()
     exit(1);
   }
   while (s = Fgetws(readbuf, READBUFSIZE, f)) {
-    from = extstr(s, &s, 0);
-    to = extstr(s, &s, 0);
+    from = extstr(s, &s, (int *)0);
+    to = extstr(s, &s, (int *)0);
     if (hinshi_direction == REVERSE) {
       Wchar *xx = from;
       from = to;
@@ -393,7 +374,7 @@ replace_hinshi()
 	int n = 1;
 
 	(void)Wscpy(xx, to);
-	free(hinshientry->hinshi);
+	free((char *)hinshientry->hinshi);
 	hinshientry->hinshi = xx;
 	for (cp = xx ; *cp ; cp++) {
 	  if (*cp == (Wchar)'/') {
@@ -455,7 +436,7 @@ int n;
 	    xx = (Wchar *)malloc((t - s + 1) * sizeof(Wchar));
 	    if (xx) {
 	      *t = (Wchar)0;
-	      Wscpy(xx, s);
+	      (void)Wscpy(xx, s);
 	      t = p->hinshi;
 	      p->hinshi = xx;
 	      (void)free((char *)t);
@@ -472,7 +453,7 @@ int n;
 	    t++;
 	    xx = (Wchar *)malloc((Wslen(t) + 1) * sizeof(Wchar));
 	    if (xx) {
-	      Wscpy(xx, t);
+	      (void)Wscpy(xx, t);
 	      t = p->hinshi;
 	      p->hinshi = xx;
 	      (void)free((char *)t);
@@ -499,10 +480,10 @@ static void
 freedesc(p)
 struct descpack *p;
 {
-  free(p->hinshi);
-  free(p->tandesc);
-  free(p->yomdesc);
-  free(p);
+  free((char *)p->hinshi);
+  free((char *)p->tandesc);
+  free((char *)p->yomdesc);
+  free((char *)p);
 }
 
 static struct descpack *description[HINSHIBUFSIZE];
@@ -534,7 +515,7 @@ Wchar *hin, *tan, *yom;
   p = (struct descpack *)malloc(sizeof(struct descpack));
   if (p) {
     *pp = p;
-    (void)bzero(p, sizeof(struct descpack));
+    (void)bzero((char *)p, sizeof(struct descpack));
     p->next = next;
     p->hinshi = (Wchar *)malloc((Wslen(hin) + 1) * sizeof(Wchar));
     if (p->hinshi) {
@@ -547,11 +528,11 @@ Wchar *hin, *tan, *yom;
 	  (void)Wscpy(p->yomdesc, yom);
 	  return p;
 	}
-	free(p->tandesc);
+	free((char *)p->tandesc);
       }
-      free(p->hinshi);
+      free((char *)p->hinshi);
     }
-    free(p);
+    free((char *)p);
   }
   malloc_failed();
   return (struct descpack *)0;
@@ -560,10 +541,10 @@ Wchar *hin, *tan, *yom;
 /* ルールの探索 */
 
 static struct descpack *
-searchdesc(hin, tan, yom)
-Wchar *hin, **tan, **yom;
+searchdesc(hin)
+Wchar *hin;
 {
-  struct descpack *p, **pp, *next = (struct descpack *)0;
+  struct descpack *p, **pp;
   Wchar *s;
   int key = 0;
 
@@ -599,15 +580,15 @@ store_description()
 
     nl[0] = (Wchar)0;
     hin = tan = yom = nl;
-    hin = extstr(s, &s, 0);
+    hin = extstr(s, &s, (int *)0);
     if (*hin) {
-      tan = extstr(s, &s, 0);
+      tan = extstr(s, &s, (int *)0);
       if (*tan) {
-	yom = extstr(s, &s, 0);
+	yom = extstr(s, &s, (int *)0);
       }
     }
 
-    interndesc(hin, tan, yom);
+    (void)interndesc(hin, tan, yom);
   }
   (void)fclose(f);
 }
@@ -666,7 +647,7 @@ listkinds()
 
   for (i = 0 ; i < nkinds ; i++) {
     Fputws(kinds[i].kind, stdout);
-    putchar('\n');
+    (void)putchar('\n');
   }
 }
 
@@ -680,7 +661,7 @@ struct kindpack *k1, *k2;
 static void
 sortkind()
 {
-  qsort(kinds, nkinds, sizeof(struct kindpack), kindcompar);
+  qsort((char *)kinds, nkinds, sizeof(struct kindpack), kindcompar);
 }
 
 /* 辞書を表す構造体 */
@@ -729,7 +710,6 @@ long kind, flags;
   struct descpack *dp;
   Wchar nl[1], *yomdesc = nl, *tandesc = nl;
   Wchar *yom = (Wchar *)0, *tan = (Wchar *)0, *dhinshi, *dh;
-  int ind;
 
   nl[0] = (Wchar)'\0';
 
@@ -749,9 +729,9 @@ long kind, flags;
 	t = (Wchar *)malloc((Wslen(yomi) + Wslen(yomdesc) + 1)
 			    * sizeof(Wchar));
 	if (t) {
-	  Wscpy(t, yomi);
+	  (void)Wscpy(t, yomi);
 	  yom = yomi = t;
-	  Wscpy(yomi + Wslen(yomi), yomdesc);
+	  (void)Wscpy(yomi + Wslen(yomi), yomdesc);
 	}
       }
       if (Wslen(tandesc)) {
@@ -759,18 +739,18 @@ long kind, flags;
 	t = (Wchar *)malloc((Wslen(kouho) + Wslen(tandesc) + 1)
 			    * sizeof(Wchar));
 	if (t) {
-	  Wscpy(t, kouho);
+	  (void)Wscpy(t, kouho);
 	  tan = kouho = t;
-	  Wscpy(kouho + Wslen(kouho), tandesc);
+	  (void)Wscpy(kouho + Wslen(kouho), tandesc);
 	}
       }
     }
     else {
       char foo[64];
 
-      fprintf(stderr, "no description rule for ");
-      Wcstombs(foo, dhinshi, 64);
-      fprintf(stderr, "%s.\n", foo);
+      (void)fprintf(stderr, "no description rule for ");
+      (void)Wcstombs(foo, dhinshi, 64);
+      (void)fprintf(stderr, "%s.\n", foo);
     }
   }
 
@@ -781,8 +761,8 @@ long kind, flags;
 	((flags & IGNORE_KIND) || ((p->kind & kind) == kind)) ) {
       /* match */
       if (stat) *stat = FOUND;
-      if (yom) free(yom);
-      if (tan) free(tan);
+      if (yom) free((char *)yom);
+      if (tan) free((char *)tan);
       return p;
     }
   }
@@ -790,7 +770,7 @@ long kind, flags;
     p = (struct dicpack *)malloc(sizeof(struct dicpack));
     if (p) {
       *pp = p;
-      (void)bzero(p, sizeof(struct dicpack));
+      (void)bzero((char *)p, sizeof(struct dicpack));
       p->yomi = (Wchar *)malloc((Wslen(yomi) + 1) * sizeof(Wchar));
       if (p->yomi) {
 	(void)Wscpy(p->yomi, yomi);
@@ -804,23 +784,24 @@ long kind, flags;
 	    ndicentries++;
 	    p->kind = kind;
 	    p->extdata = (Wchar *)0;
-	    if (yom) free(yom);
-	    if (tan) free(tan);
+	    if (yom) free((char *)yom);
+	    if (tan) free((char *)tan);
 	    return p;
 	  }
-	  free(p->tango);
+	  free((char *)p->tango);
 	}
-	free(p->yomi);
+	free((char *)p->yomi);
       }
-      free(p);
+      free((char *)p);
     }
     malloc_failed();
   }
-  if (yom) free(yom);
-  if (tan) free(tan);
+  if (yom) free((char *)yom);
+  if (tan) free((char *)tan);
   return (struct dicpack *)0;
 }
 
+#if 0 /* unused */
 /* 登録されているエントリに対して fn を実行する */
 
 static void
@@ -836,6 +817,7 @@ void (*fn)();
     }
   }
 }
+#endif
 
 static void
 storepd(file)
@@ -850,11 +832,11 @@ FILE *file;
     key = 0;
     yomi = extstr(p, &p, &tkey); key += tkey;
     kouho = extstr(p, &p, &tkey); key += tkey;
-    hinshi = extstr(p, &p, 0);
-    hindo = extstr(p, &p, 0);
+    hinshi = extstr(p, &p, (int *)0);
+    hindo = extstr(p, &p, (int *)0);
     nhindo = Watoi(hindo);
 
-    kind = extstr(p, 0, 0);
+    kind = extstr(p, (Wchar **)0, (int *)0);
     if (*kind) {
       kindbit = internkind(kind);
     }
@@ -883,14 +865,14 @@ FILE *file;
     key = 0;
     yomi = extstr(p, &p, &tkey); key += tkey;
     kouho = extstr(p, &p, &tkey); key += tkey;
-    hinshi = extstr(p, &p, 0);
+    hinshi = extstr(p, &p, (int *)0);
     if (ignore_hinshi_to_compare) {
       flags |= IGNORE_HINSHI;
     }
-    hindo = extstr(p, &p, 0);
+    hindo = extstr(p, &p, (int *)0);
     nhindo = Watoi(hindo);
 
-    kind = extstr(p, 0, 0);
+    kind = extstr(p, (Wchar **)0, (int *)0);
     if (*kind) {
       kindbit = internkind(kind);
     }
@@ -957,6 +939,34 @@ FILE *file;
 }
 
 static void
+canna_yomioutput(ws, cf)
+Wchar *ws;
+FILE *cf;
+{
+  Wchar yomi[READBUFSIZE];
+  Wchar *yp;
+  Wchar c;
+  static Wchar u[3] = {0xa5f4, 0xa4a6, 0xa1ab};		/* ヴ う ゛ */
+
+  /*
+   * かんな辞書は読みに「ヴ」の代わりに「う゛」を使用するので
+   * その変換を行なう
+   */
+  yp = yomi;
+  while ((c = *ws++) != 0) {
+    if (c == u[0]) {
+      *yp++ = u[1];
+      *yp++ = u[2];
+    } else {
+      *yp++ = c;
+    }
+  }
+  *yp = 0;
+
+  Fputws(yomi, cf);
+}
+
+static void
 canna_output(cf, p, h, n)
 FILE *cf;
 struct dicpack *p;
@@ -964,7 +974,8 @@ Wchar *h;
 int n;
 {
   for (; n-- > 0 ; h += Wslen(h) + 1) {
-    Fputws(p->yomi, cf); (void)putc(' ', cf);
+    canna_yomioutput(p->yomi, cf);
+    (void)putc(' ', cf);
     Fputws(h, cf);
     if (p->hindo) {
       (void)fprintf(cf, "*%d", p->hindo);
@@ -1055,6 +1066,7 @@ struct dicpack *p;
   }
 }
 
+#if 0 /* unused */
 static void
 showdeleted(p)
 struct dicpack *p;
@@ -1064,6 +1076,7 @@ struct dicpack *p;
     printentry(stdout, p);
   }
 }
+#endif
 
 static void
 showentry(pd, n)
@@ -1180,6 +1193,7 @@ struct dicpack **p1, **p2;
   }
 }
 
+static void
 shrinkargs(argv, n, count)
 char **argv;
 int n, count;
@@ -1362,13 +1376,11 @@ static Wchar kihonh[] = {
   (Wchar)'k', (Wchar)'i', (Wchar)'h', (Wchar)'o', (Wchar)'n', (Wchar)0,
 };
 
+int
 main(argc, argv)
 int argc;
 char *argv[];
 {
-#ifndef POD_WCHAR
-  setlocale(LC_ALL, "");
-#endif
   in1 = in2 = stdin;
 
   (void)internkind(kihonh); /* 基本辞書用。1L として登録 */
@@ -1405,10 +1417,10 @@ char *argv[];
       }
     }
     if (sort_by_frequency) {
-      qsort(pdic, ndicentries, sizeof(struct dicpack *), dichindocompar);
+      qsort((char *)pdic, ndicentries, sizeof(struct dicpack *), dichindocompar);
     }
     else {
-      qsort(pdic, ndicentries, sizeof(struct dicpack *), diccompar);
+      qsort((char *)pdic, ndicentries, sizeof(struct dicpack *), diccompar);
     }
     sortkind();
     showentry(pdic, ndicentries);
@@ -1417,4 +1429,5 @@ char *argv[];
     malloc_failed();
   }
   exit(0);
+  /* NOTREACHED */
 }

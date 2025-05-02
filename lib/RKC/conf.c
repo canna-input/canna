@@ -37,7 +37,7 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 
-RCSID("$Id: conf.c,v 1.12.2.1 2003/12/27 17:15:24 aida_s Exp $");
+RCSID("$Id: conf.c,v 1.12.2.2 2004/04/26 21:48:37 aida_s Exp $");
 #define	MY_UINT32MAX 0xffffffffU
 #define UINT32_NUMLEN 10
 
@@ -192,14 +192,14 @@ size_t *size;
     }
   }
   if ((no_exitstatus && errbuf.sb_curr == errbuf.sb_buf)
-      || (WIFEXITED(status) && !WEXITSTATUS(status))) {
+      || (!no_exitstatus && WIFEXITED(status) && !WEXITSTATUS(status))) {
     RkiStrbuf_pack(&outbuf);
     *size = outbuf.sb_curr - outbuf.sb_buf;
     return outbuf.sb_buf;
   } else {
-    char msg[sizeof "child received signal XXX"];
+    char msg[sizeof "child terminated with some errors"];
     if (no_exitstatus)
-      ;
+      strcpy(msg, "child terminated with some errors");
     else if (WIFEXITED(status))
       sprintf(msg, "child returned %d", WEXITSTATUS(status));
     else if (WIFSIGNALED(status))
@@ -538,7 +538,6 @@ restart:
       memcpy(numbuf, p, count);
       numbuf[count] = '\0';
       cx->lineno = (unsigned int)strtol(numbuf, NULL, 10);
-      p = memchr(p, '\n', cx->rdend - p);
       goto skiptoeol;
     }
     goto not_a_directive;

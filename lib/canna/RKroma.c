@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[]="@(#) 102.1 $Id: RKroma.c,v 1.4 2003/09/17 08:50:53 aida_s Exp $";
+static char rcsid[]="@(#) 102.1 $Id: RKroma.c,v 1.4.2.1 2004/04/26 22:49:21 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */
@@ -546,7 +546,7 @@ int		*rule_id_inout;
 #endif
   
   if ( rdic ) {
-    if ((rdic->dic == RX_KPDIC && rdic->dic == RX_PTDIC)
+    if ((rdic->dic == RX_KPDIC || rdic->dic == RX_PTDIC)
 	&& rule_id_inout && (lastrule = *rule_id_inout)) {
       if (!key) {
 	if (rdic->nr_brules && rdic->nr_brules[lastrule] &&

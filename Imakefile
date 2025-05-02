@@ -1,11 +1,8 @@
-/* $Id: Imakefile,v 1.12.2.2 2003/12/27 17:15:20 aida_s Exp $ */
+/* $Id: Imakefile,v 1.12.2.3 2004/04/26 23:15:17 aida_s Exp $ */
 #include "./Canna.conf"
 
 #define IHaveSubdirs
 #define PassCDebugFlags 'CDEBUGFLAGS=$(CDEBUGFLAGS)'
-#ifndef ConfigureEnv
-# define ConfigureEnv CW_CPPFLAGS='$(ALLDEFINES)' CW_CC='$(CC)' CW_CFLAGS='$(PURE_CFLAGS)'
-#endif
 #ifndef ConfigureArgs
 # define ConfigureArgs
 #endif
@@ -15,12 +12,13 @@
 # define CannaConfInet6 echo "/* #undef INET6 */"
 #endif
 
+      CANNAROOT = .
       WORLDOPTS = /* -k */
         SUBDIRS = lib canna server cmd dic misc doc
         INCLUDE = ./include/canna
      RKIINCLUDE = ./include/RKindep
         DEFINES = $(CANNA_DEFINES)
-CONFIGURE_CMD = ConfigureEnv IN_MAKE=yes ./confwrapper . ./configure --prefix=$(cannaPrefix) ConfigureArgs
+CONFIGURE_CMD = IN_MAKE=yes $(CANNAROOT)/confwrapper run ./configure --prefix=$(cannaPrefix) ConfigureArgs
 PURE_CFLAGS = $(CDEBUGFLAGS) $(CCOPTIONS) /* $(THREADS_CFLAGS) $(MODULE_CFLAGS) */
 supportOldWchar = SupportOldWchar
 
@@ -32,7 +30,7 @@ DependSubdirs($(SUBDIRS))
 clean::
 	$(RM) -r include cannaconf.h
 distclean::
-	$(RM) accanna.h config.log config.cache config.status pubconf.h
+	$(RM) accanna.h config.log config.cache config.status pubconf.h cwenv.sh
 
 includes:: cannaconf.h accanna.h pubconf.h
 	$(RM) -r include
@@ -114,8 +112,13 @@ XCOMM If you want to invoke configure explicitly, do "make config"
 config::
 	$(CONFIGURE_CMD)
 reconfig::
-	$(RM) config.cache
+	$(RM) config.cache cwenv.sh
 	$(CONFIGURE_CMD)
+XCOMM Invoked from confwrapper
+cwenv.sh:
+	$(CANNAROOT)/confwrapper mkenv CPPFLAGS $(ALLDEFINES) > $@
+	$(CANNAROOT)/confwrapper mkenv CC $(CC) >> $@
+	$(CANNAROOT)/confwrapper mkenv CFLAGS $(PURE_CFLAGS) >> $@
 
 CANNAROOT = .
 SERVERDIR = server dic/phono dic/ideo

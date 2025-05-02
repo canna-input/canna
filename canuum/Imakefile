@@ -1,4 +1,4 @@
-/* $Id: Imakefile,v 1.8.2.2 2003/12/27 17:15:20 aida_s Exp $ */
+/* $Id: Imakefile,v 1.8.2.3 2004/04/26 23:15:17 aida_s Exp $ */
 #include "../Canna.conf"
 #ifdef TermcapLibrary
 TERMCAP_LIB = TermcapLibrary
@@ -8,9 +8,6 @@ TERMCAP_LIB = -lcurses
 # else
 TERMCAP_LIB = -ltermcap
 # endif
-#endif
-#ifndef CanuumConfigureEnv
-# define CanuumConfigureEnv CW_CPPFLAGS="$(ALLDEFINES)" CW_CC='$(CC)' CW_CFLAGS='$(PURE_CFLAGS)'
 #endif
 #ifndef CanuumConfigureArgs
 # define CanuumConfigureArgs --with-term-libs="$(TERMCAP_LIB)"
@@ -31,18 +28,17 @@ SYS_LIBRARIES = $(TERMCAP_LIB) `libspt-config --libs`
 
             TARGET = canuum
 XCOMM --prefix is not used but add just in case
-CONFIGURE_CMD = CanuumConfigureEnv IN_MAKE=yes $(CANNAROOT)/confwrapper \
-    $(CANNAROOT) ./configure --prefix=$(cannaPrefix) CanuumConfigureArgs
+CONFIGURE_CMD = IN_MAKE=yes $(CANNAROOT)/confwrapper run ./configure --prefix=$(cannaPrefix) CanuumConfigureArgs
 PURE_CFLAGS = $(CDEBUGFLAGS) $(CCOPTIONS) /* $(THREADS_CFLAGS) $(MODULE_CFLAGS) */
 
-AllTarget($(TARGET))
+AllTarget(ProgramTargetName($(TARGET)))
 NormalProgramTarget($(TARGET),$(OBJS),$(DEPCANNALIB16),$(CANNALIB16),)
 InstallMultipleFlags($(TARGET),$(cannaBinDir),$(INSTUGIDFLAGS))
 InstallManPage($(TARGET),$(cannaManDir))
 DependTarget()
 LintTarget()
 distclean::
-	$(RM) config.h config.cache config.status
+	$(RM) config.h config.cache config.status cwenv.sh
 includes:: config.h
 XCOMM Invoke configure only when config.h does not exist for faster build
 config.h:
@@ -51,5 +47,10 @@ XCOMM If you want to invoke configure explicitly, do "make config"
 config::
 	$(CONFIGURE_CMD)
 reconfig::
-	$(RM) config.cache
+	$(RM) config.cache cwenv.sh
 	$(CONFIGURE_CMD)
+XCOMM Invoked from confwrapper
+cwenv.sh:
+	$(CANNAROOT)/confwrapper mkenv CPPFLAGS $(ALLDEFINES) > $@
+	$(CANNAROOT)/confwrapper mkenv CC $(CC) >> $@
+	$(CANNAROOT)/confwrapper mkenv CFLAGS $(PURE_CFLAGS) >> $@

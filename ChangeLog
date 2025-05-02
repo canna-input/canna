@@ -1,3 +1,89 @@
+2004-05-19 AIDA Shinra <shinra@j10n.org>
+
+	* Canna 3.7p2 release.
+	* configure.ac: bump to 3.7p2
+	* canna/patchlevel.h: ditto
+
+2004-05-05 AIDA Shinra <shinra@j10n.org>
+
+	* CHANGES.jp: fix a typo
+
+2004-05-05 AIDA Shinra <shinra@j10n.org>
+
+	* COPYRIGHT: added
+	* CHANGES.jp: updated for 3.7p2
+	* RKCCONF.jp: warn about future change
+
+2004-05-05 AIDA Shinra <shinra@j10n.org>
+
+	* Merge Pubdic+-fix01 to make the license of pubdic more clear.
+	* dic/ideo/pubdic/pod.c: Remove #ifndef POD_WCHAR part.
+	  Make casts more proper. Add 'vu' conversion though it is not needed
+	  for now.
+	* dic/ideo/pubdic/COPYRIGHT: added
+	* dic/ideo/pubdic/VERSION: added
+
+2004-04-27 AIDA Shinra <shinra@j10n.org>
+
+	* VENDOR_DEFINES which comes from X.Org's imake contains single
+	  quotes.
+	* confwrapper: generate cwenv.sh first and then run configure
+	* Imakefile: ditto
+	* canuum/Imakefile: ditto
+	* confwrapper.sub: removed
+	* Canna.conf.dist: DLLs need INSTBINFLAGS instead of INSTLIBFLAGS
+
+2004-04-27 AIDA Shinra <shinra@j10n.org>
+
+	* When delay-connect is t and KC_FINALIZE is used uilib gets into
+	  inconsistent state.
+	* lib/canna/commondata.c(mountnottry): added
+	* lib/canna/globnames: added mountnottry
+	* lib/canna/henkan.c(KanjiInit): mountnottry is now global symbol
+	  (KanjiFin): clear some variables
+
+2004-04-27 AIDA Shinra <shinra@j10n.org>
+
+	* Merge trivial fixes (uilib, doc)
+	* lib/canna/obind.c(owcLookupKanji2): buffer_return is not char *
+	  but wchar_t *.
+	  (cannawc32): use canna_uint32_t
+	  (cannawc16): use canna_uint16_t
+	* lib/canna/RKroma.c(RkMapPhonogram): KPDIC&&PTDIC -> KPDIC||PTDIC
+	* [Canna-dev 297]: sentou 1moji sentaku bug
+	* lib/canna/henkan.c(TbChooseChar): last character's attribute needs
+	  SENTOU flag
+	* [Canna-dev 290]: Documents
+	* doc/man/guide/tex/func.tex: Now renbun-continue is t by default.
+	* dic/ideo/grammar/gram.code: correct a comment
+	* [Canna-dev 291]: Protocol definition is inconsistent with
+	  implementation.
+	* doc/intern/protocol.tex: corrected
+	* [Canna:05898]: canna-parse is broken
+	* lib/canna/lisp.c(Lread): stop fclose(NULL)
+
+2004-04-27 AIDA Shinra <shinra@j10n.org>
+
+	* Merge trivial fixes (canuum, RKC and server)
+	* canuum/canuum.jmn: Description about -[SJUsju] options were
+	  misleading or wrong.
+	* canuum/jhlp.c(chld_handler): cygwin has union wait but WIF*() macros
+	  do not work if union wait is given
+	* canuum/termcap.c(sr_set): check %p though it exists only in terminfo
+	* lib/RKC/conf.c(read_pipe_with_errors): bug fix in no_exitstatus
+	  case (thanks to nanashi san)
+	  (Lexer_next): an extra memchr() caused a crash
+ 	* lib/RKC/convert.c(RkcSendERequest): When communication fails, set
+ 	  errno to EPIPE and close the socket in any case.
+ 	* lib/RKC/wconvert.c(RkcSendWRequest): ditto
+	* server/misc.c(mysignal): added to prevent syscalls from restarting
+	* server/Imakefile: SIGNAL_DEFINES
+	* server/comm.c(ClientBuf): count temporary failures and close
+	  connection if too many errors happen
+	  (ClientBuf_recv): save errno before Dmsg
+	  (ClientBuf_send): ditto
+	  (EventMgr_run): ditto
+
 2004-01-02 AIDA Shinra <shinra@j10n.org>
 
 	* Canna 3.7p1 release.
@@ -1771,4 +1857,4 @@
 
 	* Virgin import of Canna3.5b2.
 
-$Id: ChangeLog,v 1.155.2.12 2004/01/02 12:23:05 aida_s Exp $
+$Id: ChangeLog,v 1.155.2.19 2004/05/18 15:10:00 aida_s Exp $

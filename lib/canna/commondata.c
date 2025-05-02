@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: commondata.c,v 1.4 2003/09/25 14:33:49 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: commondata.c,v 1.4.2.1 2004/04/26 22:53:02 aida_s Exp $";
 #endif /* lint */
 
 #include "canna.h"
@@ -136,6 +136,9 @@ char *hiraautodic = (char *)NULL; /* ひらがな語自動登録用辞書 */
 
 /* ユーザ情報 */
 jrUserInfoStruct *uinfo = (jrUserInfoStruct *)NULL;
+
+ /* マウント処理を行っているかどうか */
+int mountnottry = 1;
 
 void
 InitCannaConfig(cf)

@@ -48,7 +48,7 @@ SOFTWARE.
 ******************************************************************/
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "$Id: wconvert.c,v 1.16 2003/09/24 14:50:40 aida_s Exp $";
+static char rcs_id[] = "$Id: wconvert.c,v 1.16.2.1 2004/04/26 21:48:37 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */
@@ -776,12 +776,12 @@ int size ;
 	if (ServerTimeout) {
 	  int r = select(ServerFD + 1, NULL, &wfds, NULL, &timeout2);
 	  if (r == 0) {
-	    break;
+	    goto fail;
 	  } else if (r == -1) {
 	    if (errno == EINTR)
 	      continue;
 	    else
-	      break;
+	      goto fail;
 	  }
 	}
 	write_stat = write(ServerFD, (char *)bufindex, (int) todo);
@@ -805,13 +805,15 @@ int size ;
         }
 #endif
 	else {
-	    /* errno set by write system call. */
-	    close( ServerFD ) ;
-	    retval = -1;
-	    errno = EPIPE ;
-	    break;
+	    goto fail;
 	}
     }
+    goto last;
+fail:
+    close( ServerFD ) ;
+    retval = -1;
+    errno = EPIPE ;
+last:
     signal(SIGPIPE, Sig);
     return retval;
 }
