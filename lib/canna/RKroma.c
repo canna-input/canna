@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[]="@(#) 102.1 $Id: RKroma.c,v 1.4.2.1 2004/04/26 22:49:21 aida_s Exp $";
+static char rcsid[]="@(#) 102.1 $Id: RKroma.c,v 1.6 2007/08/08 14:54:33 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */
@@ -409,6 +409,7 @@ int		*status;
 		    if( (flags & RK_SOKON) &&
 			(match[1].start < rdic->nr_nkey) &&
 			(2 <= maxsrc) &&
+			!(src[0] & 0x80) &&
 			(src[0] == src[1]) &&
 			(i == 1)) {
 			kana = getTSU(rdic, flags);
@@ -627,14 +628,17 @@ int		*rule_id_inout;
 	  }
 	  if( (rdic->dic == RX_RXDIC) && /* tt の救済(旧辞書用) */
 	     (flags & RK_SOKON) &&
-	     (match[1].start < rdic->nr_nkey) &&
+	     (match[0].start < rdic->nr_nkey) &&
 	     (2 <= srclen) &&
+	     !(src[0] & 0x80) &&
 	     (src[0] == src[1]) &&
 	     (i == 1)) {
 	    kana = getTSU(rdic, flags);
 	    /* tsu ha jisho ni aru kao wo suru */
 	    byte = strlen((char *)kana);
-	    templen = 0;
+	    temp = src + 1;
+	    templen = 1;
+	    count = 2;
 	    if (rule_id_inout) *rule_id_inout = 0;
 	  }
 	  else { /* １文字変換されたことにする */

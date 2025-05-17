@@ -47,7 +47,7 @@
 #include "RKrename.h"
 #endif
 #include "ccompat.h"
-RCSID("$Id: cannastat.c,v 1.5.2.2 2003/12/27 17:15:21 aida_s Exp $");
+RCSID("$Id: cannastat.c,v 1.6 2003/10/09 15:25:30 aida_s Exp $");
 
 #include    <stdio.h>
 #include    <time.h>

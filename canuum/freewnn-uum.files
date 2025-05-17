@@ -19,7 +19,7 @@
 ; OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 ; PERFORMANCE OF THIS SOFTWARE.
 
-; $Id: freewnn-uum.files,v 1.3 2003/01/04 07:31:02 aida_s Exp $
+; $Id: freewnn-uum.files,v 1.4 2004/04/25 14:16:48 aida_s Exp $
 
 Wnn/include/commonhd.h
 Wnn/include/wnn_config.h
@@ -39,7 +39,6 @@ Wnn/uum/buffer.h
 Wnn/uum/cursor.c
 
 COPYRIGHT
-acconfig.h
 config.guess
 config.sub
 configure.in

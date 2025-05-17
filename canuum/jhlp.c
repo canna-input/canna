@@ -1,6 +1,6 @@
 /*
- *  jhlp.c,v 1.13 2002/08/26 09:27:21 aono Exp
- *  Canna: $Id: jhlp.c,v 1.9.2.1 2004/04/26 21:48:37 aida_s Exp $
+ *  jhlp.c,v 1.15 2003/05/11 18:25:29 hiroo Exp
+ *  Canna: $Id: jhlp.c,v 1.12 2004/04/25 18:19:27 aida_s Exp $
  */
 
 /*
@@ -11,7 +11,7 @@
  *                 1987, 1988, 1989, 1990, 1991, 1992
  * Copyright OMRON Corporation. 1987, 1988, 1989, 1990, 1991, 1992, 1999
  * Copyright ASTEC, Inc. 1987, 1988, 1989, 1990, 1991, 1992
- * Copyright FreeWnn Project 1999, 2000, 2002
+ * Copyright FreeWnn Project 1999, 2000, 2002-2003
  *
  * Maintainer:  FreeWnn Project   <freewnn@tomo.gr.jp>
  *
@@ -31,7 +31,7 @@
  */
 
 #ifndef lint
-static char *rcs_id = "jhlp.c,v 1.13 2002/08/26 09:27:21 aono Exp";
+static char *rcs_id = "jhlp.c,v 1.15 2003/05/11 18:25:29 hiroo Exp";
 #endif /* lint */
 
 #ifdef HAVE_CONFIG_H
@@ -67,19 +67,17 @@ static char *rcs_id = "jhlp.c,v 1.13 2002/08/26 09:27:21 aono Exp";
 #ifdef HAVE_UNISTD_H
 #  include <unistd.h>
 #endif
-#ifdef UX386
-#include <sys/kdef.h>
-#endif
 
+#ifndef CANNA
+#include "jllib.h"
+#endif
 #include "commonhd.h"
 #include "sdefine.h"
 #include "sheader.h"
 #include "wnn_config.h"
 #include "wnn_os.h"
 
-
 jmp_buf kk_env;
-
 
 #ifdef HAVE_WAIT3
 #       include <sys/wait.h>
@@ -399,7 +397,7 @@ main (argc, argv)
 
   if (j_term_init () == ERROR)
     {
-      err ("term initialize fault.");
+      uum_err ("term initialize fault.");
     }
 
 #ifndef CANNA
@@ -1186,7 +1184,7 @@ resize_handler ()
 
 /** メインループ */
 
-wnn_fd_set sel_ptn;
+fd_set sel_ptn;
 int ptyfd = -1;
 
 static void
@@ -1210,8 +1208,8 @@ do_main ()
   extern void canna_mainloop();
 #endif /* CANNA */
 
-  WNN_FD_SET(ptyfd, &sel_ptn);
-  WNN_FD_SET(ttyfd, &sel_ptn);
+  FD_SET(ptyfd, &sel_ptn);
+  FD_SET(ttyfd, &sel_ptn);
 
   if (henkan_off_flag == 0)
     {
@@ -1273,23 +1271,6 @@ keyin ()
   return (conv_keyin (inkey));
 }
 
-/*
-  through もどき
-  char の配列内の各文字を w_char にして w_char の配列に移す。
-  uum オリジナルの through とは違って void なので注意。
- */
-
-static void
-throughlike(dest, src, n)
-w_char *dest;
-unsigned char *src;
-int n;
-{
-  while (n-- > 0) {
-    *dest++ = (w_char)*src++;
-  }
-}
-
 /** キー入力関数 2 */
 unsigned char
 keyin0 ()
@@ -1299,7 +1280,7 @@ keyin0 ()
   static unsigned char *bufend = outbuf;
   static unsigned char *bufstart = outbuf;
   int n;
-  wnn_fd_set rfds, mask;
+  fd_set rfds, mask;
   int i, j;
   unsigned char *p;
   extern int henkan_off_flag;
@@ -1360,7 +1341,7 @@ keyin0 ()
           return (0xff);
         }
 
-      if (WNN_FD_ISSET(ptyfd, &rfds))
+      if (FD_ISSET(ptyfd, &rfds))
         {
           if ((n = read (ptyfd, buf, BUFSIZ)) <= 0)
             {
@@ -1392,13 +1373,13 @@ keyin0 ()
                       p += j;
                       i -= j;
                     }
-		  WNN_FD_SET(ttyfd, &mask);
+		  FD_SET(ttyfd, &mask);
                   select (32, 0, &mask, 0, 0);
                 }
               pop_cursor ();
             }
         }
-      if (WNN_FD_ISSET(ttyfd, &rfds))
+      if (FD_ISSET(ttyfd, &rfds))
         {
           if ((n = read (ttyfd, buf, BUFSIZ)) > 0)
             {
@@ -1533,7 +1514,7 @@ exec_cmd (argv)
 
   child_id = fork ();
   if (child_id < 0)
-    err ("cannot fork.");
+    uum_err ("cannot fork.");
   if (!child_id)
     {
       /* --- start changing controlling tty --- */
@@ -1547,7 +1528,7 @@ exec_cmd (argv)
       spth = NULL;
       if (spt_detach_ctty () || spt_set_ctty2 (ttypfd))
 	{
-	  err ("cannot change controlling tty.");
+	  uum_err ("cannot change controlling tty.");
 	}
 
 #elif defined(HAVE_SETSID) && !defined(USE_LINUX_TERM) /* !USE_LIBSPT */
@@ -1566,7 +1547,7 @@ exec_cmd (argv)
 #endif
       if ((fd = open("/dev/tty", O_WRONLY)) < 0)
 	{
-          err ("cannot change controlling tty.");
+          uum_err ("cannot change controlling tty.");
 	}
       close (fd);
       /* disable utmp logging for now */
@@ -1626,7 +1607,7 @@ exec_cmd (argv)
       close (2);
       if (dup (ttypfd) != 0 || dup (ttypfd) != 1 || dup (ttypfd) != 2)
         {
-          err ("redirection fault.");
+          uum_err ("redirection fault.");
         }
 #endif /* !HAVE_DUP2 */
       for (i = WNN_NFD - 1; i > 2; i--)
@@ -1653,7 +1634,7 @@ exec_cmd (argv)
       setuid (getuid ());
 #endif
       execvp (cmdnm, argv);
-      err ("exec fault.");
+      uum_err ("exec fault.");
     }
   /* parent */
 #ifdef USE_LIBSPT
@@ -1874,7 +1855,7 @@ open_ttyp ()
   if ((ttypfd = open (nmbuf, O_RDWR, 0)) == ERROR)
     {
 #endif
-      err ("Can't open ttyp.");
+      uum_err ("Can't open ttyp.");
     }
 #if !defined(USE_LINUX_TERM) && !defined(USE_LIBSPT)
   chown (nmbuf, getuid (), getgid ());
@@ -1924,7 +1905,7 @@ open_pty ()
   int r;
   r = spt_open_pty(&spth, &ptyfd, NULL, NULL);
   if (r != SPT_E_NONE && r != SPT_E_CHOWN_FAIL)
-    err ("Can't get pty.");
+    uum_err ("Can't get pty.");
   return;
 }
 #elif defined(sgi)
@@ -1935,7 +1916,7 @@ open_pty ()
   char *tty_name_buff;
   tty_name_buff = _getpty (&ptyfd, O_RDWR | O_NDELAY, 0600, 0);
   if (tty_name_buff == 0)
-    err ("Can't get pty.");
+    uum_err ("Can't get pty.");
   strcpy (ttypnm, tty_name_buff);
   return;
 
@@ -1961,13 +1942,13 @@ open_pty ()
 	  return;
         }
     }
-  err ("Can't get pty.");
+  uum_err ("Can't get pty.");
 }
 #endif
 
 /** エラーだよ。さようなら。 */
 void
-err (s)
+uum_err (s)
      char *s;
 {
   puts (s);
@@ -2042,7 +2023,7 @@ ioctl_off ()
 {
   static unsigned char buf[BUFSIZ];
   int n;
-  wnn_fd_set rfds;
+  fd_set rfds;
 
   kk_restore_cursor ();
   clr_line_all ();
@@ -2056,7 +2037,7 @@ ioctl_off ()
         }
       rfds = sel_ptn;
       select (20, &rfds, 0, 0, NULL);
-      if (WNN_FD_ISSET(ptyfd, &rfds))
+      if (FD_ISSET(ptyfd, &rfds))
         {
           if ((n = read (ptyfd, buf, BUFSIZ)) <= 0)
             {
@@ -2075,7 +2056,7 @@ ioctl_off ()
                 }
             }
         }
-      if (WNN_FD_ISSET(ttyfd, &rfds))
+      if (FD_ISSET(ttyfd, &rfds))
         {
           if ((n = read (ttyfd, buf, BUFSIZ)) > 0)
             {

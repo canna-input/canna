@@ -1,6 +1,6 @@
 /*
- *  wnn_os.h,v 1.12 2002/06/22 13:24:31 hiroo Exp
- *  Canna: $Id: wnn_os.h,v 1.5 2003/01/06 01:41:28 aida_s Exp $
+ *  wnn_os.h,v 1.14 2003/06/08 03:09:51 hiroo Exp
+ *  Canna: $Id: wnn_os.h,v 1.6 2004/04/25 14:16:48 aida_s Exp $
  */
 
 /*
@@ -171,28 +171,31 @@ typedef RETSIGTYPE (*intfnptr) ();
 #  define SRAND(x)  srand (x)
 #endif /* HAVE_RANDOM */
 
+/*
+ * It may be needless and had better be removed, however,
+ * Wnn4 did not take it for granted that the system provided
+ * FD_SET and other feature that SUS v.2 determines.
+ * So I left Wnn4's own definition with a little modification
+ * in case the system did not provide the feature.
+ * I took a look into the FreeBSD definition of FD_* family.
+ * A small change comes from Canna 3.6p3.
+ */
 #if !defined(HAVE_FD_SET) && !defined(FD_SET) && defined(HAVE_UNISTD_H)
-#include <unistd.h> /* to define FD_SET */
+#  include <unistd.h> /* to define FD_SET */
 #endif
-#if defined(HAVE_FD_SET) || defined(FD_SET)
-typedef fd_set wnn_fd_set;
-#define WNN_FD_SET		FD_SET
-#define WNN_FD_CLEAR		FD_CLEAR
-#define WNN_FD_ISSET		FD_ISSET
-#define WNN_FD_ZERO		FD_ZERO
-#else
-typedef unsigned long wnn_fd_mask;
-#define BINTSIZE		(sizeof(unsigend long) *8)
-#define WNN_FD_SETSIZE		WNN_NFD
-#define WNN_FD_SET_WIDTH	((WNN_FD_SETSIZE) + (BINTSIZE - 1U) / (BINTSIZE))
-typedef struct wnn_fd_set {
-  wnn_fd_mask fds_bits[WNN_FD_SET_WIDTH];
+#if !defined(HAVE_FD_SET) && !defined(FD_SET)
+typedef unsigned long fd_mask;
+#define BINTSIZE               (sizeof(unsigend long) *8)
+#define SETSIZE         WNN_NFD
+#define SET_WIDTH       ((SETSIZE) + (BINTSIZE - 1U) / (BINTSIZE))
+typedef struct fd_set {
+  fd_mask fds_bits[SET_WIDTH];
 }
-#define WNN_FD_SET(pos,array)	(array[pos/BINTSIZE] |= (1<<(pos%BINTSIZE)))
-#define WNN_FD_CLR(pos,array)	(array[pos/BINTSIZE] &= ~(1<<(pos%BINTSIZE)))
-#define WNN_FD_ISSET(pos,array)	(array[pos/BINTSIZE] &  (1<<(pos%BINTSIZE)))
-#define WNN_FD_ZERO(array)	(bzero (array, WNN_FD_SET_WIDTH))
-#endif /* !(HAVE_FD_ZERO || defined (FD_ZERO)) */
+#define FD_SET(pos,array)  (array[pos/BINTSIZE] |= (1<<(pos%BINTSIZE)))
+#define FD_CLR(pos,array)  (array[pos/BINTSIZE] &= ~(1<<(pos%BINTSIZE)))
+#define FD_ISSET(pos,array)        (array[pos/BINTSIZE] &  (1<<(pos%BINTSIZE)))
+#define FD_ZERO(array)     (bzero (array, FD_SET_WIDTH))
+#endif /* !HAVE_FD_SET */
 
 #ifdef HAVE_KILLPG
 # define KILLPG(pgrp, sig) killpg(pgrp, sig)
@@ -219,11 +222,13 @@ typedef struct wnn_fd_set {
 # error "don't know how to get my process group id"
 #endif /* GETMYPGRP */
 
+
 /* function prototypes (temporal use. need reconstruction) */
+int get_short (short *sp, FILE *ifpter);	/* bdic.c */
+char *get_server_env (char *lang);	/* server_env.c */
 unsigned int create_cswidth (char *s);	/* xutoj.c */
 int euksc_to_ksc (unsigned char *ksc,
 		  unsigned char *euksc,
 		  int eusiz);		/* xutoj.c */
-int get_short (short *sp, FILE *ifpter);	/* bdic.c */
 
 #endif  /* WNN_OS_H */

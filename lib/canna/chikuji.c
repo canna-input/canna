@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "$Id: chikuji.c,v 1.3 2003/09/17 08:50:53 aida_s Exp $";
+static char rcs_id[] = "$Id: chikuji.c,v 1.4 2004/03/15 04:43:50 aida_s Exp $";
 #endif
 
 #include	"canna.h"
@@ -616,8 +616,12 @@ ChikujiYomiDeletePrevious(d)
     makeYomiReturnStruct(d);
     if (yc->kEndp <= yc->cStartp && !yc->nbunsetsu) {
       /* 何にもない */
+      if (yc->savedFlags & CANNA_YOMI_MODE_SAVED) {
+	restoreFlags(yc);
+      }
       d->current_mode = yc->curMode = yc->myEmptyMode;
       d->kanji_status_return->info |= KanjiEmptyInfo;
+      currentModeInfo(d);
     }
   }
   return 0;
@@ -786,7 +790,10 @@ uiContext d;
   if (yc->nbunsetsu) {
     return TanMuhenkan(d);
   }
-  else if (yc->left || yc->right) {
+  if (yc->savedFlags & CANNA_YOMI_MODE_SAVED) {
+    restoreFlags(yc);
+  }
+  if (yc->left || yc->right) {
     removeCurrentBunsetsu(d, (tanContext)yc);
     yc = (yomiContext)d->modec;
   }
@@ -795,6 +802,7 @@ uiContext d;
     d->current_mode = yc->curMode = yc->myEmptyMode;
     d->kanji_status_return->info |= KanjiEmptyInfo;
   }
+  currentModeInfo(d);
   makeKanjiStatusReturn(d, yc);
   return 0;
 }

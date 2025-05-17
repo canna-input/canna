@@ -20,7 +20,7 @@ XCOMM USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 XCOMM OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 XCOMM PERFORMANCE OF THIS SOFTWARE. 
 
-XCOMM $Id: mkbindic.cpp,v 1.6 2003/08/24 09:40:27 aida_s Exp $
+XCOMM $Id: mkbindic.cpp,v 1.7 2008/04/05 17:25:46 aida_s Exp $
 #include "cannaconf.h"
 #if defined(SYSV) || defined(SVR4)
 # ifdef nec_ews
@@ -40,7 +40,6 @@ spl_text=;
 bck_text=;
 flag=;
 compat_flag=;
-sortcmd="sort -d -s +0 -1"
 usage="usage: mkbindic [-m|-s] [-name dicname] [-c version] textfile [cpp-args ...]";
 : ${TMPDIR:=/tmp}
 
@@ -248,8 +247,8 @@ usage="usage: mkbindic [-m|-s] [-name dicname] [-c version] textfile [cpp-args .
     fi;
     echo "mv $text_file $bck_text";
     mv $text_file $bck_text;
-    echo "forsort -7 < $spl_text | $sortcmd | forsort -8 | mergeword -X > $text_file";
-    forsort -7 < $spl_text | $sortcmd | forsort -8 | mergeword -X > $text_file;
+    echo "mergeword -s $spl_text > $text_file";
+    mergeword -s "$spl_text" > "$text_file";
     if [ $? != 0 ]; then
         mv $bck_text $text_file;
 	echo "mkbindic: fatal error. exit";

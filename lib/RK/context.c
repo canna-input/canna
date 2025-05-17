@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[]="$Id: context.c,v 1.5 2003/09/17 08:50:52 aida_s Exp $";
+static char rcsid[]="$Id: context.c,v 1.6 2004/05/04 23:41:15 aida_s Exp $";
 #endif
 /*LINTLIBRARY*/
 
@@ -30,6 +30,7 @@ static char rcsid[]="$Id: context.c,v 1.5 2003/09/17 08:50:52 aida_s Exp $";
 #include <canna/jrkanji.h>
 
 #include <errno.h>
+#include <sys/stat.h>
 
 static unsigned long now_context = 0L;
 

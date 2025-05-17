@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static char rcsid[]="@(#) 112.1 $Id: dpromdic.c,v 1.3.2.2 2003/12/27 17:15:22 aida_s Exp $";
+static char rcsid[]="@(#) 112.1 $Id: dpromdic.c,v 1.4 2003/10/09 15:25:32 aida_s Exp $";
 #endif
 
 /* # include       "RKintern.h"       */

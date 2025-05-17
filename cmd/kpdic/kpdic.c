@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static char rcsid[]="@(#) 102.1 $Id: kpdic.c,v 1.4.2.2 2003/12/27 17:15:23 aida_s Exp $";
+static char rcsid[]="@(#) 102.1 $Id: kpdic.c,v 1.5 2003/10/09 15:25:33 aida_s Exp $";
 #endif
 
 #if defined(__STDC__) || defined(SVR4)

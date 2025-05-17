@@ -19,7 +19,7 @@
 # OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 # PERFORMANCE OF THIS SOFTWARE. 
 #
-#$Id: globnames,v 1.8.2.1 2004/04/26 22:53:02 aida_s Exp $
+#$Id: globnames,v 1.9 2004/03/15 05:09:11 aida_s Exp $
 AlphaMode
 BackspaceBehavesAsQuit
 CannaBeep

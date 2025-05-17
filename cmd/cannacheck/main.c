@@ -20,7 +20,7 @@
  * PERFORMANCE OF THIS SOFTWARE. 
  */
 
-static char rcs_id[] = "@(#) 102.1 $Id: main.c,v 1.6.2.2 2003/12/27 17:15:21 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: main.c,v 1.7 2003/10/09 15:25:30 aida_s Exp $";
 
 /* 自動判別支援コメント: これはEUC-JPだぞ。幅という字があれば大丈夫。 */
 

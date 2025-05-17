@@ -1,6 +1,6 @@
 /*
  *  sdefine.h,v 1.3 2001/06/14 18:16:08 ura Exp
- *  Canna: $Id: sdefine.h,v 1.3.4.2 2003/12/27 17:15:21 aida_s Exp $
+ *  Canna: $Id: sdefine.h,v 1.5 2004/04/25 18:19:27 aida_s Exp $
  */
 
 /*
@@ -143,15 +143,15 @@ struct kansuu
 #define OPTIONS     "hHPxXkcrlDnv"
 
 /* for message file */
-
+#ifndef CANNA
+#include "msg.h"
+#else /* CANNA */
 struct msg_cat { /* dummy */
   int dummy;
 };
-
 struct msg_cat *msg_open();
-#ifdef CANNA
 char *msg_get(struct msg_cat *cad, int n, char *msg, char *lang);
-#endif
+#endif /* CANNA */
 
 #define MSG_GET(no)     msg_get(cd, no, NULL, NULL)
 

@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: ulhinshi.c,v 1.3 2003/09/17 08:50:53 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: ulhinshi.c,v 1.4 2005/03/10 19:54:44 aida_s Exp $";
 #endif
 
 #include <errno.h>
@@ -74,6 +74,7 @@ static char *e_message[] = {
   /*18*/"（",
   /*19*/"）を登録しました",
   /*20*/"単語登録に失敗しました",
+  /*21*/"」で登録してください",
 #else
   /*0*/"\244\265\244\351\244\313\272\331\244\253\244\244\311\312\273\354\312\254\244\261\244\316\244\277\244\341\244\316\274\301\314\344\244\362\244\267\244\306\244\342\316\311\244\244\244\307\244\271\244\253?(y/n)",
        /* さらに細かい品詞分けのための質問をしても良いですか */
@@ -138,6 +139,9 @@ static char *e_message[] = {
 
   /*20*/"\303\261\270\354\305\320\317\277\244\313\274\272\307\324\244\267\244\336\244\267\244\277",
        /* 単語登録に失敗しました */
+
+  /*21*/"\244\257\244\353\241\327\244\307\305\320\317\277\244\267\244\306\244\257\244\300\244\265\244\244",
+       /* 」で登録してください */
 #endif
 };
 
@@ -304,6 +308,10 @@ mode_context env;
     if (tc->hcode[0]) {
       /* 品詞が決まったので、登録するユーザ辞書の指定を行う */
       return(dicTourokuDictionary(d, uuTDicExitCatch, uuTDicQuitCatch));
+    } else if(tc->genbuf[0]) {
+      /* 入力されたデータに誤りがあったので、
+	 メッセージを表示して読み入力に戻る */
+      return(dicTourokuTango(d, uuTTangoQuitCatch));
     }
   }
   return(retval);
@@ -328,6 +336,10 @@ mode_context env;
     if (tc->hcode[0]) {
       /* 品詞が決まったので、登録するユーザ辞書の指定を行う */
       return(dicTourokuDictionary(d, uuTDicExitCatch, uuTDicQuitCatch));
+    } else if(tc->genbuf[0]) {
+      /* 入力されたデータに誤りがあったので、
+	 メッセージを表示して読み入力に戻る */
+      return(dicTourokuTango(d, uuTTangoQuitCatch));
     }
   }
 
@@ -369,6 +381,10 @@ mode_context env;
   } else if(tc->hcode[0]) {
     /* 品詞が決まったので、登録するユーザ辞書の指定を行う */
     return(dicTourokuDictionary(d, uuTDicExitCatch, uuTDicQuitCatch));
+  } else if(tc->genbuf[0]) {
+    /* 入力されたデータに誤りがあったので、
+       メッセージを表示して読み入力に戻る */
+    return(dicTourokuTango(d, uuTTangoQuitCatch));
   }
 
   return(retval);
@@ -405,6 +421,10 @@ mode_context env;
   } else if(tc->hcode[0]) {
     /* 品詞が決まったので、登録するユーザ辞書の指定を行う */
     return(dicTourokuDictionary(d, uuTDicExitCatch, uuTDicQuitCatch));
+  } else if(tc->genbuf[0]) {
+    /* 入力されたデータに誤りがあったので、
+       メッセージを表示して読み入力に戻る */
+    return(dicTourokuTango(d, uuTTangoQuitCatch));
   }
 
   return(retval);
@@ -478,7 +498,7 @@ uiContext	d;
   if(tc->genbuf[0]) {
     /* 入力されたデータに誤りがあったので、
        メッセージを表示して読み入力に戻る */
-    clearYomi(d);
+    /* clearYomi(d); */ /* いらないはず */
     return(dicTourokuTango(d, uuTTangoQuitCatch));
   } else if(tc->qbuf[0] && cannaconf.grammaticalQuestion) {
     /* 細かい品詞分けのための質問をする */
@@ -532,6 +552,7 @@ uiContext	d;
 
   case KOYUMEISHI:
     EWStrcpy(tc->hcode, "#KK");
+    tc->katsuyou = 0;
     WSprintf(tc->qbuf, message[5], message[8], tc->tango_buffer);
     break;
     
@@ -614,23 +635,27 @@ uiContext	d;
 
   case TANKANJI:
     EWStrcpy(tc->hcode, "#KJ");
+    tc->katsuyou = 0;
     break;
 
   case SUSHI:
     EWStrcpy(tc->hcode, "#NN");
+    tc->katsuyou = 0;
     break;
 
   case RENTAISHI:
     EWStrcpy(tc->hcode, "#RT");
+    tc->katsuyou = 0;
     break;
 
   case SETSUZOKUSHI:  /* 接続詞・感動詞 */
     EWStrcpy(tc->hcode, "#CJ");
+    tc->katsuyou = 0;
     break;
 
   case SAHENMEISHI:
   case MEISHIN:
-    tc->katsuyou = 0;
+    /* tc->katsuyou = 0; */ /* いらないはず */
     WSprintf(tc->qbuf, message[5], message[7], tc->tango_buffer);
     break;
 
@@ -762,7 +787,7 @@ tourokuNo(d)
 uiContext	d;
 {
   tourokuContext tc = (tourokuContext)d->modec;
-  int ylen;
+  int ylen, tlen;
 
   tc->hcode[0] = 0;
   tc->qbuf[0] = 0;
@@ -785,14 +810,30 @@ uiContext	d;
 
   case RAGYODOSHI:
     ylen = tc->yomi_len;
+    tlen = tc->tango_len;
     if (ylen >= 2 && !(EWStrcmp(tc->yomi_buffer + ylen - 2, "\244\257\244\353"))) {   /* くる */
-      EWStrcpy(tc->hcode, "#KX");         /* 来る */
+      if (tlen >= 2 && !(EWStrcmp(tc->tango_buffer + tlen - 2, "\244\257\244\353"))) { /* くる */
+	EWStrcpy(tc->hcode, "#KX");         /* 来る */
+      } else if (tlen >= 2 && (!EWStrcmp(tc->tango_buffer + tlen - 2, "\315\350\244\353"))) { /* 来る */
+	WSprintf(tc->genbuf, message[5], message[21], tc->tango_buffer);
+	tc->genbuf[1 /* 「 */ + tlen - 2] = gyouU[0]; /* く */
+      } else {
+	WStrcpy(tc->genbuf, message[2]);
+      }
     }
     else if (ylen >=2 && !(EWStrcmp(tc->yomi_buffer + ylen - 2, "\244\271\244\353"))) { /* する */
-      EWStrcpy(tc->hcode, "#SX");         /* する */
+      if (tlen >= 2 && !(EWStrcmp(tc->tango_buffer + tlen - 2, "\244\271\244\353"))) { /* する */
+	EWStrcpy(tc->hcode, "#SX");         /* する */
+      } else {
+	WStrcpy(tc->genbuf, message[2]);
+      }
     }
     else if (ylen >=2 && !(EWStrcmp(tc->yomi_buffer + ylen - 2, "\244\272\244\353"))) {  /* ずる */
-      EWStrcpy(tc->hcode, "#ZX");         /* 準ずる */
+      if (tlen >= 2 && !(EWStrcmp(tc->tango_buffer + tlen - 2, "\244\272\244\353"))) { /* ずる */
+	EWStrcpy(tc->hcode, "#ZX");         /* 準ずる */
+      } else {
+	WStrcpy(tc->genbuf, message[2]);
+      }
     }
     else {
       tc->curHinshi = KAMISHIMO;
@@ -1023,7 +1064,14 @@ uiContext	d;
   wchar_t *WStraddbcpy();
 
   defineEnd(d);
-  if(tc->katsuyou || (EWStrncmp(tc->hcode, "#K5", 3) == 0)) {
+  if(EWStrcmp(tc->hcode, "#KX") == 0 ||
+      EWStrcmp(tc->hcode, "#SX") == 0 ||
+      EWStrcmp(tc->hcode, "#ZX") == 0) {
+    WStrncpy(ttmpbuf, tc->tango_buffer, tc->tango_len - 2);
+    ttmpbuf[tc->tango_len - 2] = (wchar_t)0;
+    WStrncpy(ktmpbuf, tc->yomi_buffer, tc->yomi_len - 2);
+    ktmpbuf[tc->yomi_len - 2] = 0;
+  } else if(tc->katsuyou || (EWStrncmp(tc->hcode, "#K5", 3) == 0)) {
     WStrncpy(ttmpbuf, tc->tango_buffer, tc->tango_len - 1);
     ttmpbuf[tc->tango_len - 1] = (wchar_t)0;
     WStrncpy(ktmpbuf, tc->yomi_buffer, tc->yomi_len - 1);

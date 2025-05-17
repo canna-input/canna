@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[] = "$Id: obind.c,v 1.4.2.1 2004/04/26 22:49:21 aida_s Exp $";
+static char rcsid[] = "$Id: obind.c,v 1.5 2004/03/29 22:11:17 aida_s Exp $";
 #endif
 
 #include "cannaconf.h"

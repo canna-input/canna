@@ -1,5 +1,5 @@
 #! /bin/sh
-# $Id: confwrapper,v 1.4.2.4 2004/05/19 15:39:22 aida_s Exp $
+# $Id: confwrapper,v 1.7 2004/05/19 15:06:37 aida_s Exp $
 # vim: set sw=2 ts=8:
 
 set -e

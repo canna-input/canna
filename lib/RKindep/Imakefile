@@ -1,4 +1,4 @@
-/* $Id: Imakefile,v 1.8 2003/09/25 06:30:22 aida_s Exp $ */
+/* $Id: Imakefile,v 1.9 2004/05/02 23:08:29 aida_s Exp $ */
 #include "../../Canna.conf"
 CANNAROOT = ../..
 DEFINES = 
@@ -18,6 +18,11 @@ DependTarget()
 .SUFFIXES: .exp .sub
 .exp.sub: ../canna/GSYM.awk
 	awk -f ../canna/GSYM.awk < $< > $@
+
+NormalProgramTarget(mkcrctab, mkcrctab.o,,,)
+crctab:: ProgramTargetName(mkcrctab)
+	echo '/* $$I''d$$ */' > crctab.c
+	./mkcrctab >> crctab.c
 
 includes:: $(SUBST)
 clean::

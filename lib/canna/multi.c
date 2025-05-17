@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char m_s_map_id[] = "@(#) 102.1 $Id: multi.c,v 1.2 2003/01/10 13:08:45 aida_s Exp $";
+static char m_s_map_id[] = "@(#) 102.1 $Id: multi.c,v 1.4 2007/08/08 14:54:33 aida_s Exp $";
 #endif /* lint */
 
 #include "canna.h"
@@ -60,14 +60,15 @@ int c;
   static char *keyCharMap[] = {               
     "space",    "DEL",      "Nfer",     "Xfer",     "Up",
     "Left",     "Right",    "Down",     "Insert",   "Rollup",
-    "Rolldown", "Home",     "HELP",     "KeyPad",   "S-nfer",
-    "S-xfer",   "S-up",     "S-left",   "S-right",  "S-down",
-    "C-nfer",   "C-xfer",   "C-up",     "C-left",   "C-right",
-    "C-down",   "F1",       "F2",       "F3",       "F4",
-    "F5",       "F6",       "F7",       "F8",       "F9",
-    "F10",      "PF1",      "PF2",      "PF3",      "PF4",
-    "PF5",      "PF6",      "PF7",      "PF8",      "PF9",
-    "PF10",
+    "Rolldown", "Home",     "HELP",     "KeyPad",   "End",
+    "S-nfer",   "S-xfer",   "S-up",     "S-left",   "S-right",
+    "S-down",   "C-nfer",   "C-xfer",   "C-up",     "C-left",
+    "C-right",  "C-down",   "F1",       "F2",       "F3",
+    "F4",       "F5",       "F6",       "F7",       "F8",
+    "F9",       "F10",      "PF1",      "PF2",      "PF3",
+    "PF4",      "PF5",      "PF6",      "PF7",      "PF8",
+    "PF9",      "PF10",     "Hiragana", "Katakana", "Han/Zen",
+    "Eisu",
   };
 
   if (c < 0x20) {
@@ -89,14 +90,14 @@ int c;
   }
   else if (c == 0x20)
     strcpy((char *)Gkey, keyCharMap[0]);
-  else if (c > 0x7e && c < 0x8c)
+  else if (c > 0x7e && c < 0x8d)
     strcpy((char *)Gkey, keyCharMap[c -0x7f +1]);
   else if (c > 0x8f && c < 0x9c)
-    strcpy((char *)Gkey, keyCharMap[c -0x90 +14]);
+    strcpy((char *)Gkey, keyCharMap[c -0x90 +15]);
   else if (c > 0xdf && c < 0xea)
-    strcpy((char *)Gkey, keyCharMap[c -0xe0 +26]);
-  else if (c > 0xef && c < 0xfa)
-    strcpy((char *)Gkey, keyCharMap[c -0xf0 +36]);
+    strcpy((char *)Gkey, keyCharMap[c -0xe0 +27]);
+  else if (c > 0xef && c < 0xfe)
+    strcpy((char *)Gkey, keyCharMap[c -0xf0 +37]);
   else
     return 0;
   return Gkey;
@@ -154,9 +155,11 @@ BYTE key;
     
   total_res = 0;
   for(; *p ; p++) {
+    int check;
     /* ２回目以降に以下のデータが失われている場合があるので入れ直す。 */
-    d->ch = (unsigned)(*(d->buffer_return) = (wchar_t)key);
-    d->nbytes = 1;
+    d->ch = (unsigned)key;
+    d->buffer_return[0] = key2wchar((unsigned)key, &check);
+    d->nbytes = check ? 1 : 0;
     res = _doFunc(d, (int)*p); /* 生の doFunc を呼ぶ。 */
 
     if (d->kanji_status_return->length >= 0) {

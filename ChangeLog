@@ -1,9 +1,138 @@
-2004-05-21 AIDA Shinra <shinra@j10n.org>
+2008-04-06 AIDA Shinra <shinra@j10n.org>
+	* lib/RKindep/cfuncs.c(RkiAltStrlcat): bugfix
 
-	* Canna 3.7p3 release.
-	* configure.ac: bump to 3.7p3
-	* canna/patchlevel.h: ditto
-	* CHANGES.jp: updated
+2008-04-06 AIDA Shinra <shinra@j10n.org>
+	* [Canna-dev 363]: old style sort options is no longer available
+	* Don't use the sort command. Implement necessary features into
+	  the mergeword and the pod. The forsort is no longer used but
+	  still installed for the backward compatibility.
+	* cmd/mergewd/mergewd.c: Reimplemented from scratch.
+	  New option "-s": sort the input before the merge.
+	* cmd/mkbindic/mkbindic.cpp: mergeword -s instead of forsort and sort
+	* dic/ideo/grammar/Imakefile: ditto
+	* dic/ideo/pubdic/pod.c: New sort options.
+	  New option "-P": sort by yomi and freq stably
+	  New option "-S": don't sort; output order is the same to the input
+	* dic/ideo/words/Imakefile: remove forsort, which is just a garbage
+	* dic/phono/Imakefile: ditto
+	* lib/RK/RKintern.h(euctous): declare here
+	* misc/zipcode/Imakefile: mergeword -s and pod -P instead of forsort
+	  and sort.
+	  (distclean): new target
+
+2007-08-08 AIDA Shinra <shinra@j10n.org>
+	* [Canna-dev 360]: romaji-yuusen bug
+	* Multiple bugfixes around kana input
+	* lib/canna/RKkana.c(RkwMapPhonogram): Don't pass non-ASCII characters
+	  to RkMapPhonogram as the 6th arg.
+	* lib/canna/RKroma.c (RkMapPhonogram): Handle sokuon in old dic case
+	  as romaji-yuusen feature expects.
+	  (RkMapRoma): Tweak for consistency with RkMapPhonogram's change.
+	* lib/canna/empty.c(EmptySelfInsert): Prevent crash in kana input.
+	* lib/canna/multi.c(_DoFuncSequence): Convert kana key to wchar.
+	* lib/canna/romaji.c(YomiInsert): Allow only ASCII and kana keys to be
+	  FunctionalInsert'ed.
+	  (makePhonoOnBuffer): Change the 3rd arg to wchar_t.
+	  (Yomisearchfunc): Try romaji-yuusen feature only for suitable keys
+	  for romaji-kana conversion.
+
+2006-04-02 AIDA Shinra <shinra@j10n.org>
+	* [Canna-dev 359]: Solaris + gcc
+	* canna/ccompat.h: On sun gcc uses vendor's as rather than gas.
+	* Canna.conf.dist: Set LD_RUN_PATH on Sun even if ModernElfLink == NO.
+	* ChangeLog(2005-01-01): remove a duplicate
+
+2006-03-31 AIDA Shinra <shinra@j10n.org>
+	* lib/RK/ncache.c(hash): consider negative pointer
+	* lib/canna/keydef.c(createHashKey): ditto
+
+2005-05-30 AIDA Shinra <shinra@j10n.org>
+	* ChangeLog(previous commit): gram.goto was changed
+
+2005-05-30 AIDA Shinra <shinra@j10n.org>
+	* canna/widedef.h: MacOS X 10.4 support
+	* server/util.c: The unused part was enabled by mistake. Disable it.
+	* dic/ideo/grammar/gram.goto: descrease the priority of "-ka-kara-na"
+
+2005-04-01 AIDA Shinra <shinra@j10n.org>
+	* dic/ideo/*: Sync with DIC_WORK branch.
+
+2005-03-11 AIDA Shinra <shinra@j10n.org>
+
+	* lib/RK/bun.c(RkwQueryDic): fixed a bug in the implementation of an
+	  unused protocol.
+
+2005-03-11 AIDA Shinra <shinra@j10n.org>
+
+	* #KX, #SX and #ZX was not correctly defined. A cancel in grammatical
+	  questions caused a wrong definition.
+	* lib/canna/ulhinshi.c(uuTHinshi2YesCatch): handle errors in
+	  grammatical questions
+	  (uuTHinshi2NoCatch): ditto
+	  (uuTHinshi1YesCatch): ditto
+	  (uuTHinshi1NoCatch): ditto
+	  (dicTourokuHinshiDelivery): no need to invoke clearYomi() here
+	  (makeHinshi): keep katsuyou flag correct
+	  (tourokuNo): fix #KX, #SX and #ZX handlings
+	  (tangoTouroku): trim last two characters from #KX, #SX and #ZX
+
+2005-01-04 AIDA Shinra <shinra@j10n.org>
+
+	* doc/lisp/canlisp.tex: style fix
+
+2005-01-01 AIDA Shinra <shinra@j10n.org>
+
+	* New canlisp feature: (load "nonexistent-file" t) returns no error.
+	* lib/canna/lisp.c(Lload): If a non-nil value is given as the second
+	  arg of "load", no error is raised even if a nonexistent file were
+	  loaded. If the second arg is omitted, nil is assumed.
+	* doc/lisp/canlisp.tex: describe the feature
+
+2004-11-21 AIDA Shinra <shinra@j10n.org>
+
+	* New CRC calculator was buggy.
+	* lib/RKindep/mkcrctab.c: create correct CRC table
+	* lib/RKindep/crctab.c: newly generated
+
+2004-11-21 AIDA Shinra <shinra@j10n.org>
+
+	* [Canna-dev 326]: toorudearou
+	* dic/ideo/grammar/gram.code: make "dearou" synonymous with "darou"
+
+2004-11-18 AIDA Shinra <shinra@j10n.org>
+
+	* [Canna-dev 323]: shiranasasugiru
+	* dic/ideo/grammar/gram.goto: new conjunction: nai+ sugiru
+
+2004-09-30 AIDA Shinra <shinra@j10n.org>
+
+	* [Canna-dev 320]: multi.c patch
+	* lib/canna/multic: End, Zenkaku/Hankaku key
+
+2004-09-30 AIDA Shinra <shinra@j10n.org>
+
+	* [Canna-dev 319]: Imakefile bug & #CN -> #CNS/#KK
+	* dic/ideo/words/Imakefile: TAB -> space
+	* dic/ideo/words/zipcode.t: #CN -> #CNS
+	* dic/ideo/words/jigyosyo.t: #CN -> #KK
+	* misc/zipcode/ken_all2canna.pl: #CN -> #CNS
+	* misc/zipcode/jigyosyo2canna.pl: #CN -> #KK
+	* canna/patchlevel.h: bump to 3.8devel2
+
+2004-08-06 AIDA Shinra <shinra@j10n.org>
+
+	* Introduce new zipcode dictionary made by Nakai san.
+	* dic/ideo/words/zipcode.t: added
+	* dic/ideo/words/jigyosyo.t: added
+	* dic/ideo/words/yubin.t: removed
+	* dic/ideo/words/dics.dir: added zipcode entries
+	* dic/ideo/words/obsolete.dir: ditto
+	* dic/ideo/words/Imakefile: create zipcode.cbd
+	* misc/zipcode/*: added
+	* COPYRIGHT: updated. zipcode.t and jigyosyo.t are in public domain.
+	  misc/zipcode/* are under GPL.
+	* cmd/mergewd/mergewd.c: False "too long line" message was printed.
+	  Fixed.
 
 2004-05-21 AIDA Shinra <shinra@j10n.org>
 
@@ -13,23 +142,17 @@
 	  "LD_LIBRARY_PATH=/usr/X11R6/lib cc".
 	* canuum/Imakefile: ditto
 
-2004-05-19 AIDA Shinra <shinra@j10n.org>
-
-	* Canna 3.7p2 release.
-	* configure.ac: bump to 3.7p2
-	* canna/patchlevel.h: ditto
-
 2004-05-05 AIDA Shinra <shinra@j10n.org>
 
-	* CHANGES.jp: fix a typo
+	* lib/RK/RKintern.h: use mmap
+	* lib/RK/context.c: include <sys/stat.h> for mkdir(2)
 
 2004-05-05 AIDA Shinra <shinra@j10n.org>
 
 	* COPYRIGHT: added
-	* CHANGES.jp: updated for 3.7p2
 	* RKCCONF.jp: warn about future change
 
-2004-05-05 AIDA Shinra <shinra@j10n.org>
+2004-05-04 AIDA Shinra <shinra@j10n.org>
 
 	* Merge Pubdic+-fix01 to make the license of pubdic more clear.
 	* dic/ideo/pubdic/pod.c: Remove #ifndef POD_WCHAR part.
@@ -38,36 +161,107 @@
 	* dic/ideo/pubdic/COPYRIGHT: added
 	* dic/ideo/pubdic/VERSION: added
 
-2004-04-27 AIDA Shinra <shinra@j10n.org>
+2004-05-03 AIDA Shinra <shinra@j10n.org>
+
+	* Reimplement CRC calculator to avoid old BSD license.
+	* lib/RKindep/cksum.c: reimplemented everything from FreeBSD
+	* lib/RKindep/crctab.c: added
+	* lib/RKindep/mkcrctab.c: added (but not compiled)
+	* lib/RKindep/Imakefile: mkcrctab rule
+
+2004-04-26 AIDA Shinra <shinra@j10n.org>
+
+	* Make it easy to share canuum code with original uum.
+	* canuum/commonhd.h: don't simply remove #include
+	* canuum/sdefine.h: ditto
+	* canuum/sheader.h: ditto
+	* canuum/configure.in(--with-term-libs): don't touch LIBS. support
+	  cross compilation.
+	* canuum/jhlp.c: don't simply remove #include
+	  (chld_handler): use _POSIX_VERSION to determine if we use union wait
+	  (throughlike): remove an unused functoin
+	* canuum/termcap.c(sr_set): check %p though it exists only in terminfo
+
+2004-04-25 AIDA Shinra <shinra@j10n.org>
+
+	* canuum/README.jp: updated
+	* canuum/canuum.jmn: Description about -[SJUsju] options were
+	  misleading or wrong.
+
+2004-04-25 AIDA Shinra <shinra@j10n.org>
+
+	* canuum/*: imported uum from FreeWnn (CVS HEAD, 2004-04-25)
+	* canuum/acconfig.h: removed because we use autoconf 2.59 now
+	* canuum/configure.in: autoconf 2.59
+	* canuum/jhlp.c: wnn_fd_set -> fd_set, WNN_FD_* -> FD_*
+	* mkrelease.sh: use autoconf 2.59 for canuum
+
+2004-04-13 AIDA Shinra <shinra@j10n.org>
+
+	* lib/RKC/conf.c(Lexer_next): an extra memchr() caused a crash
+	* canuum/jhlp.c(chld_handler): cygwin has union wait but WIF*() macros
+	  do not work if union wait is given
+
+2004-04-10 AIDA Shinra <shinra@j10n.org>
+
+	* [Canna-dev 297]: romaji-yuusen & canna-do-function
+	* lib/canna/romaji.c(Yomisearchfunc): override keymap only when no
+	  function is specified (i.e. not KC_DO, multisequence, ...)
+
+2004-04-10 AIDA Shinra <shinra@j10n.org>
+
+	* [Canna-dev 297]: sentou 1moji sentaku bug
+	* lib/canna/henkan.c(TbChooseChar): last character's attribute needs
+	  SENTOU flag
+
+2004-04-09 AIDA Shinra <shinra@j10n.org>
+
+	* confwrapper.sub: forgot to remove
+
+2004-04-09 AIDA Shinra <shinra@j10n.org>
 
 	* VENDOR_DEFINES which comes from X.Org's imake contains single
 	  quotes.
 	* confwrapper: generate cwenv.sh first and then run configure
 	* Imakefile: ditto
 	* canuum/Imakefile: ditto
-	* confwrapper.sub: removed
 	* Canna.conf.dist: DLLs need INSTBINFLAGS instead of INSTLIBFLAGS
 
-2004-04-27 AIDA Shinra <shinra@j10n.org>
+2004-04-08 AIDA Shinra <shinra@j10n.org>
 
-	* When delay-connect is t and KC_FINALIZE is used uilib gets into
-	  inconsistent state.
-	* lib/canna/commondata.c(mountnottry): added
-	* lib/canna/globnames: added mountnottry
-	* lib/canna/henkan.c(KanjiInit): mountnottry is now global symbol
-	  (KanjiFin): clear some variables
+	* server/misc.c(mysignal): added to prevent syscalls from restarting
+	* server/Imakefile: SIGNAL_DEFINES
+	* server/comm.c(ClientBuf): count temporary failures and close
+	  connection if too many errors happen
+	  (ClientBuf_recv): save errno before Dmsg
+	  (ClientBuf_send): ditto
+	  (EventMgr_run): ditto
 
-2004-04-27 AIDA Shinra <shinra@j10n.org>
+2004-03-30 AIDA Shinra <shinra@j10n.org>
 
-	* Merge trivial fixes (uilib, doc)
 	* lib/canna/obind.c(owcLookupKanji2): buffer_return is not char *
 	  but wchar_t *.
 	  (cannawc32): use canna_uint32_t
 	  (cannawc16): use canna_uint16_t
+
+2004-03-20 AIDA Shinra <shinra@j10n.org>
+
+	* lib/RKC/conf.c(read_pipe_with_errors): bug fix in no_exitstatus
+	  case (thanks to nanashi san)
+	  
+
+2004-03-15 AIDA Shinra <shinra@j10n.org>
+
+	* When delay-connect is t and KC_FINALIZE is used uilib gets into
+	  inconsistent state.
+	* lib/canna/commondata.c(mountnottry): added
+	* lib/canna/globnamed: added mountnottry
+	* lib/canna/henkan.c(KanjiInit): mountnottry is now global symbol
+	  (KanjiFin): clear some variables
+
+2004-03-15 AIDA Shinra <shinra@j10n.org>
+
 	* lib/canna/RKroma.c(RkMapPhonogram): KPDIC&&PTDIC -> KPDIC||PTDIC
-	* [Canna-dev 297]: sentou 1moji sentaku bug
-	* lib/canna/henkan.c(TbChooseChar): last character's attribute needs
-	  SENTOU flag
 	* [Canna-dev 290]: Documents
 	* doc/man/guide/tex/func.tex: Now renbun-continue is t by default.
 	* dic/ideo/grammar/gram.code: correct a comment
@@ -77,33 +271,30 @@
 	* [Canna:05898]: canna-parse is broken
 	* lib/canna/lisp.c(Lread): stop fclose(NULL)
 
-2004-04-27 AIDA Shinra <shinra@j10n.org>
+2004-03-15 AIDA Shinra <shinra@j10n.org>
 
-	* Merge trivial fixes (canuum, RKC and server)
-	* canuum/canuum.jmn: Description about -[SJUsju] options were
-	  misleading or wrong.
-	* canuum/jhlp.c(chld_handler): cygwin has union wait but WIF*() macros
-	  do not work if union wait is given
-	* canuum/termcap.c(sr_set): check %p though it exists only in terminfo
-	* lib/RKC/conf.c(read_pipe_with_errors): bug fix in no_exitstatus
-	  case (thanks to nanashi san)
-	  (Lexer_next): an extra memchr() caused a crash
- 	* lib/RKC/convert.c(RkcSendERequest): When communication fails, set
- 	  errno to EPIPE and close the socket in any case.
- 	* lib/RKC/wconvert.c(RkcSendWRequest): ditto
-	* server/misc.c(mysignal): added to prevent syscalls from restarting
-	* server/Imakefile: SIGNAL_DEFINES
-	* server/comm.c(ClientBuf): count temporary failures and close
-	  connection if too many errors happen
-	  (ClientBuf_recv): save errno before Dmsg
-	  (ClientBuf_send): ditto
-	  (EventMgr_run): ditto
+	* [Canna-dev 291]: Return from temporary mode after quit.
+	* lib/canna/chikuji.c(ChikujiYomiDeletePrevious): restoreFlags()
+	  (ChikjiMuhenkan): ditto
+	* lib/canna/empty.c(EmptyQuit): ditto
+	* lib/canna/romaji.c(YomiExit): ditto
+	  (YomiQuit): ditto
+	  (exitSupkey): ditto
 
-2004-01-02 AIDA Shinra <shinra@j10n.org>
+2004-03-15 AIDA Shinra <shinra@j10n.org>
 
-	* Canna 3.7p1 release.
-	* CHANGES.jp: updated
-	* canna/patchlevel.h: bump to 3.7p1
+	* [Canna-dev 292]: Problems when handling "bbb..."
+	* lib/canna/romaji.c(clearYomiContext): Clear yc->n_susp_chars.
+	  (KanaDeletePrevious): Tweak break-into-roman behaviour.
+	  Properly change rCurs and rStartp after deleting first kana.
+	  Change behaviour after deleting all unconverted romaji.
+	  (YomiDeleteNext): debug_yomi
+
+2004-01-29 AIDA Shinra <shinra@j10n.org>
+
+	* lib/RKC/convert.c(RkcSendERequest): When communication fails, set
+	  errno to EPIPE and close the socket in any case.
+	* lib/RKC/wconvert.c(RkcSendWRequest): ditto
 
 2003-12-29 AIDA Shinra <shinra@j10n.org>
 
@@ -122,42 +313,72 @@
 
 2003-12-28 AIDA Shinra <shinra@j10n.org>
 
-	* Sync with HEAD. All changes were fixes of bugs or portability
-	  problems, therefore I merged all of them.
+	* mkrelease.sh: always use autoconf 2.59
+	* configure.ac: add proper arguments of AC_INIT and RCSID
+	* ChangeLog: correct previous commit date
+
+2003-12-28 AIDA Shinra <shinra@j10n.org>
+
+	* confwrapper: Use var=`xx "yy"` instead of "`xx "yy"`". This IS
+	  more portable and does what we want.
+	* Imakefile: fix comment in accanna.h
+
+2003-12-25 AIDA Shinra <shinra@j10n.org>
+
+	* Imakefile: previous change was incomplete
+	* lib/RKindep/cfuncs.c: #ifndef HAVE_MALLOC -> #if !HAVE_MALLOC
+	* confwrapper: correct a harmless typo
+	* confwrapper.sub: avoid echo here
+
+2003-12-25 AIDA Shinra <shinra@j10n.org>
+
 	* CHANGES.jp: forgot IPv6 feature
+
+2003-12-25 AIDA Shinra <shinra@j10n.org>
+
+	* lib/RKindep/cfuncs.h: Newer autoconf defines HAVE_MALLOC to 0 but
+	  older undefines it. Accept both.
+
+2003-12-25 AIDA Shinra <shinra@j10n.org>
+
+	* Canna.conf.dist(CppSedMagic): Guard the use of XF86_VERSION_NUMERIC.
+	* confwrapper: Don't use shell function because AIX's /bin/sh
+	  does not support it.
+	* confwrapper.sub: added
+	* Imakefile: Follow confwrapper's change.
+	  #undef malloc in cannaconf.h.
+	  fix OS2Architecture.
+	* canuum/Imakefile: Follow confwrapper's change.
+
+2003-12-21 AIDA Shinra <shinra@j10n.org>
+
 	* Canna.conf.dist(CppSedMagic): Remove #pragma inserted by the
 	  default gcc-3.3 that ships with MacOS X 10.3. Recent snapshot
 	  of XFree86 specifies /usr/bin/cpp3 as CppCmd so we don't need
 	  redefine CppSedMagic.
-	* Imakefile: Use confwrapper. #undef malloc in cannaconf.h.
-	  Fix OS2Architecture.
-	* configure.ac: add proper arguments of AC_INIT and RCSID
-	* confwrapper: added to remove something like ` ` in CPPFLAGS
-	  and others
-	* confwrapper.sub: ditto
-	* mkrelease.sh: always use autoconf 2.59
-	* canuum/Imakefile: use confwrapper
-	* dic/ideo/pubdic/Imakefile: link libRKindep
+
+2003-12-20 AIDA Shinra <shinra@j10n.org>
+
+	* [Canna-dev 272] compile error on AIX
+	* confwrapper: added
+	* Imakefile: use confwrapper
+	* canuum/Imakefile: ditto
 	* lib/RKC/conf.c(Lexer_next): skip #pragma
 	  (host_str_defaults): put a dummy member
 	  (top_num_defaults): ditto
-	* lib/RKindep/cfuncs.c: #ifndef HAVE_MALLOC -> #if !HAVE_MALLOC
-	* lib/RKindep/cfuncs.h: Newer autoconf defines HAVE_MALLOC to 0 but
-	  older undefines it. Accept both.
 	* server/convert.c: Forward declaration of file scope array is not
 	  confirm to the standard. Fixed. Added some #ifdef USE_EUC_PROTOCOL.
 	* server/wconvert.c: ditto
+	* dic/ideo/pubdic/Imakefile: link libRKindep
 
 2003-12-13 AIDA Shinra <shinra@j10n.org>
 
 	* CHANGES.jp: modify description of old "security bug"
 
-
 2003-12-12 AIDA Shinra <shinra@j10n.org>
 
-	* Canna 3.7 release.
 	* CHANGES.jp: updated
-	* canna/patchlevel.h: bump to 3.7
+	* canna/patchlevel.h: bump to 3.8devel1
 
 2003-12-12 AIDA Shinra <shinra@j10n.org>
 
@@ -207,7 +428,7 @@
 	* server/comm.c: cleanuped
 	* lib/RK/RKintern.h: declare ustoeuc
 
-2003-10-10 AIDA Shinra <shinra@j10n.org>
+2003-10-09 AIDA Shinra <shinra@j10n.org>
 
 	* configure.ac: check arpa/inet.h
 	* canna/net.h: include <arpa/inet.h> if exists
@@ -1872,4 +2093,4 @@
 
 	* Virgin import of Canna3.5b2.
 
-$Id: ChangeLog,v 1.155.2.21 2004/05/19 15:47:33 aida_s Exp $
+$Id: ChangeLog,v 1.212 2008/04/05 17:29:57 aida_s Exp $

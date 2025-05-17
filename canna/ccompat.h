@@ -20,7 +20,7 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. 
  */
 
-/* $Id: ccompat.h,v 1.10 2003/09/25 07:38:11 aida_s Exp $ */
+/* $Id: ccompat.h,v 1.11 2006/04/02 11:54:31 aida_s Exp $ */
 
 #ifndef CCOMPAT_H
 #define CCOMPAT_H
@@ -78,7 +78,8 @@ extern int  errno;
 
 #ifdef __GNUC__
 # define UNUSED_SYMBOL __attribute__((__unused__))
-# ifdef __ELF__
+/* On sun gcc uses vendor's as rather than gas */
+# if defined(__ELF__) && !defined(sun)
 #  ifdef __STDC__
 #   define	WARN_REFERENCES(sym,msg)	\
 	__asm__(".section .gnu.warning." #sym);	\

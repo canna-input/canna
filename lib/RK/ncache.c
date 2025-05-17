@@ -21,13 +21,13 @@
  */
 
 /*
-static char rcsid[]="$Id: ncache.c,v 1.2 2003/09/17 08:50:52 aida_s Exp $";
+static char rcsid[]="$Id: ncache.c,v 1.3 2006/03/30 17:38:27 aida_s Exp $";
 */
 
 #include	"RKintern.h"
 
 #define	NCHASH		101
-#define	hash(x)		((int)((x)%NCHASH))
+#define	hash(x)		((unsigned int)(((unsigned long)(x))%NCHASH))
 
 static struct ncache	Nchash[NCHASH];
 static struct ncache	Ncfree;

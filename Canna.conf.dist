@@ -95,7 +95,7 @@
  *              そろっていないので #define しておいてください。
  */
 /*
- * $Id: Canna.conf.dist,v 1.23.2.4 2004/04/26 23:15:17 aida_s Exp $
+ * $Id: Canna.conf.dist,v 1.29 2006/04/02 11:54:31 aida_s Exp $
  */
 
 /* rootにならずにインストールする時はこれを定義して下さい */
@@ -312,6 +312,9 @@ SHLIBLDFLAGS = -G -z text
 USRLIBDIRPATH = $(libCannaDir)
 CCENVSETUP = LD_RUN_PATH=$(USRLIBDIRPATH)
 SOSYMLINK = true
+#elif defined(SunArchitecture)
+/* assuming Sun's X and imake */
+CCENVSETUP = LD_RUN_PATH=$(libCannaDir)
 #endif
 
 /*

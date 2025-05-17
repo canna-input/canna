@@ -1,6 +1,6 @@
 /*
- *  sheader.h,v 1.11 2002/06/22 13:26:21 hiroo Exp
- *  Canna: $Id: sheader.h,v 1.3 2003/01/04 07:31:02 aida_s Exp $
+ *  sheader.h,v 1.13 2003/05/11 18:29:24 hiroo Exp
+ *  Canna: $Id: sheader.h,v 1.5 2004/04/25 18:19:27 aida_s Exp $
  */
 
 /*
@@ -11,7 +11,7 @@
  *                 1987, 1988, 1989, 1990, 1991, 1992
  * Copyright OMRON Corporation. 1987, 1988, 1989, 1990, 1991, 1992, 1999
  * Copyright ASTEC, Inc. 1987, 1988, 1989, 1990, 1991, 1992
- * Copyright FreeWnn Project 1999, 2000, 2002
+ * Copyright FreeWnn Project 1999, 2000, 2002-2003
  *
  * Maintainer:  FreeWnn Project   <freewnn@tomo.gr.jp>
  *
@@ -34,8 +34,12 @@
  * header of standard i/o 
  **************************/
 
-#include "wnn_os.h"
+#ifndef CANNA
+#include "jslib.h"
+#else
 typedef int WNN_DIC_INFO; /* dummy */
+#endif
+#include "wnn_os.h"
 
 typedef struct _WnnEnv
 {
@@ -196,9 +200,14 @@ extern int (*default_code_trans[]) ();
 /* ============================================================
  *   extern function prototypes
  * ============================================================ */
+#ifndef CANNA
+#include "rk_spclval.h"
+#include "rk_fundecl.h"
+#include "wnn_string.h"
+#endif
 
 /* jhlp.c */
-extern void err (char *);
+extern void uum_err (char *);
 #if !(HAVE_SETENV)
   extern int setenv();
 #endif

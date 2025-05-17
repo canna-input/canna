@@ -2,3 +2,4 @@
 Makefile
 libRKindep.a
 *.sub
+mkcrctab

@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[] = "$Id: lisp.c,v 1.11.2.1 2004/04/26 22:49:21 aida_s Exp $";
+static char rcsid[] = "$Id: lisp.c,v 1.13 2005/01/01 14:44:25 aida_s Exp $";
 #endif
 
 /* 
@@ -2643,15 +2643,21 @@ Lload(n)
 int n;
 {
   list p, t;
-  FILE *instream, *fopen();
+  list noerror = NIL;
+  FILE *instream;
 
-  argnchk("load",1);
+  if (n != 1 && n != 2)
+    argnerr("load");
+  if (n == 2)
+    noerror = pop1();
   p = pop1();
   if ( !stringp(p) ) {
     error("load: illegal file name  ",p);
     /* NOTREACHED */
   }
   if ((instream = fopen(xstring(p), "r")) == (FILE *)NULL) {
+    if (noerror)
+      return NIL;
     error("load: file not found  ",p);
     /* NOTREACHED */
   }

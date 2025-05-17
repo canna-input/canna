@@ -1,4 +1,4 @@
-XCOMM $Id: Imakefile,v 1.4.2.1 2003/12/27 17:15:23 aida_s Exp $
+XCOMM $Id: Imakefile,v 1.5 2003/12/20 13:23:48 aida_s Exp $
 #include "../../../Canna.conf"
 
 #ifdef __EMX__

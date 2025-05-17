@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: empty.c,v 1.2 2003/09/17 08:50:53 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: empty.c,v 1.4 2007/08/08 14:54:33 aida_s Exp $";
 #endif /* lint */
 
 #include "canna.h"
@@ -64,7 +64,7 @@ uiContext d;
    うことで判断の材料にしている。本当はこんなことやりたくない。 */
 
   if (yc->next && yc->next->id == YOMI_CONTEXT &&
-      yomi_mode.keytbl[d->buffer_return[0]] == CANNA_FN_Kakutei) {
+     yomi_mode.keytbl[d->ch] == CANNA_FN_Kakutei) {
     d->status = EXIT_CALLBACK;
     if (d->cb->func[EXIT_CALLBACK] != NO_CALLBACK) {
       d->kanji_status_return->info &= ~KanjiThroughInfo; /* 仕事した */
@@ -161,8 +161,14 @@ static
 EmptyQuit(d)
 uiContext d;
 {
+  yomiContext yc = (yomiContext)d->modec;
   int res;
 
+  if (yc->savedFlags & CANNA_YOMI_MODE_SAVED) {
+    restoreFlags(yc);
+    currentModeInfo(d);
+    return 0;
+  }
   res = inEmptySelfInsert(d);
   d->status = QUIT_CALLBACK;
   if (d->cb->func[QUIT_CALLBACK] != NO_CALLBACK) {

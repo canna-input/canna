@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "$Id: convert.c,v 1.9.2.1 2004/04/26 21:48:37 aida_s Exp $";
+static char rcs_id[] = "$Id: convert.c,v 1.10 2004/01/29 10:43:27 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */

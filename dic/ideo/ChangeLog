@@ -1,3 +1,74 @@
+2005-03-11 AIDA Shinra <shinra@j10n.org>
+
+	* pubdic/a.p: "azuka-ru" -> "azu-karu"
+	* pubdic/t.p: fix "tsutomeru"
+
+2005-01-01 AIDA Shinra <shinra@j10n.org>
+
+	* pubdic/a.p: add 24 entries
+	* pubdic/a.p: change "osae" #KS -> #KSr
+	* pubdic/h.p: add 40 entries
+	* pubdic/h.p: change "biru" #JNSUC -> #CNSUC1
+	* pubdic/k.p: add 19 entries
+	* pubdic/k.p: change "gomaka" #S5 -> #S5r
+	* pubdic/m.p: add 9 entries
+	* pubdic/n.p: add 10 entries
+	* pubdic/r.p: add 3 entries
+	* pubdic/s.p: add 34 entries
+	* pubdic/t.p: add 46 entries
+	* pubdic/w.p: add 5 entries
+	* pubdic/y.p: add 5 entries
+
+2004-12-31 AIDA Shinra <shinra@j10n.org>
+
+	* pubdic/a.p: correct wrong #OKX entries
+	  - "otoroe" is #KSr
+	  - "obiyaka" is #S5
+	* pubdic/a.p: additional entries as hinshi other than #OKX
+	  - more "okawari" as #T30
+	  - "okangae", "okoge", "okobore", "osagari", "oshibori", "oshiriai",
+	    "otogame", "ohajiki" and "owarai" as #T35
+	  - "osonae", "otsukiai", "otsutome", "onegai", "omiai", "omukae" and
+	    "owakare" as #T30
+	* words/chimei.t: add 3 entries
+
+2004-11-24 AIDA Shinra <shinra@j10n.org>
+
+	* [Canna-dev 327]: patch from Sugano san
+	* pubdic/a.p: remove "ooi"
+	* pubdic/r.p: "ruen" -> "ryuuen"/"ryuusen"/"ryuuzen".
+
+2004-11-24 AIDA Shinra <shinra@j10n.org>
+
+	* dic/ideo/*: Catch up to HEAD.
+	  In particular, Pubdic+-fix01 and Nakai's zipcode dics are merged.
+
+2004-02-15 Toru TAKAMIZU <ttaka@earth.email.ne.jp>
+
+	* words/chimei.t: correct "zyoubansen" ([Canna-dev 288] from
+	  Shigemura-san).
+
+2004-01-22 AIDA Shinra <shinra@j10n.org>
+
+	* pubdic/a.p: correct okurigana of "osuberi"
+	* pubdic/s.p: correct okurigana of "suberu"
+
+2004-01-02 Toru TAKAMIZU <ttaka@earth.email.ne.jp>
+
+	* pubdic/k.p: fix "kaimen" kanji.
+	* pubdic/w.p: change the frequency of a "wata" entry to "0",
+	  so that a more frequent variant of "wata" can appear first
+	  when you type it.
+
+2003-12-29 Toru TAKAMIZU <ttaka@earth.email.ne.jp>
+
+	* pubdic/{h,k,m,n,r,s,t,y}: add entries including
+	  - many #KJ's for proper names
+	  - "boorupen", "kouo" and "yarikata" as #T35
+	  - "nokku" as #T30
+	  - and some others
+	* pubdic/m.p: change a #T35 "masu" into a #KJ
+
 2003-11-01 Toru TAKAMIZU <ttaka@earth.email.ne.jp>
 
 	* pubdic/k.p: remove an incorrect "kahi"([Canna-dev 260] from
@@ -274,4 +345,4 @@
 	* pubdic/s.p: remove 1 entry "sanpai" ("zanpai"'s wrong reading?)
 	* pubdic/t.p: add 14 entries (#T35 & #T30)
 
-$Header: /cvsroot/canna/canna/dic/ideo/ChangeLog,v 1.2.2.2 2003/12/27 17:15:23 aida_s Exp $
+$Header: /cvsroot/canna/canna/dic/ideo/ChangeLog,v 1.4 2005/04/01 04:27:02 aida_s Exp $

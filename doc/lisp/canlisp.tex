@@ -1,7 +1,7 @@
 \documentclass{jarticle}
 \usepackage{canna}
 
-% $Id: canlisp.tex,v 1.2 2003/09/17 01:22:01 aida_s Exp $
+% $Id: canlisp.tex,v 1.4 2005/01/04 05:32:33 aida_s Exp $
 
 \hyphenation{Uti-lisp}
 
@@ -1121,10 +1121,11 @@ s で示される環境変数の値を返す。返される値は文字列型のデータである。環
 quote 式は g{\it 1} 自身を値として返す。g{\it 1}〜g{\it n} は評価され
 ない。引数がまったく与えられない場合は nil が値となる。
 
-\subsubsection{({\bf load} 's)  SUBR}
+\subsubsection{({\bf load} 's ['g])  SUBR}
 
 load は s で示されるファイルを canlisp ファイルとして読み込み、その中
-に記述されている lisp 式を評価する。
+に記述されている lisp 式を評価する。省略可能な引数 g に nil 以外の
+値を渡すと、ファイルを開けなくてもエラーにならない。
 
 load 中に load を行うことも可能であり、入れこの深さは最大 20 までであ
 る。load 中 EOF になった時点で読み込みが終了し、元のファイルの処理に戻

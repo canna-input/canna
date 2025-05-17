@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: wconvert.c,v 1.11.2.2 2003/12/27 23:30:53 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: wconvert.c,v 1.13 2003/12/27 23:30:00 aida_s Exp $";
 #endif
 
 #define EXTPROTO 1

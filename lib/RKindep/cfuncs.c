@@ -24,7 +24,7 @@
 #include "ccompat.h"
 #include "RKindep/ecfuncs.h"
 
-RCSID("$Id: cfuncs.c,v 1.2.2.1 2003/12/27 17:15:24 aida_s Exp $");
+RCSID("$Id: cfuncs.c,v 1.4 2008/04/05 17:29:58 aida_s Exp $");
 
 #undef malloc
 #undef calloc
@@ -107,14 +107,14 @@ size_t size;
   const char *sp = src;
   char *dp = dst;
   char *dstend;
+  size_t initlen;
 
   dstend = dst + size; /* first dstend */
-  for (; dp < dstend; ++dp)
-    if (!*dp)
-      goto next;
-  /* dp == dstend */
-  goto last; /* should not happen */
-next:
+  for (; dp < dstend && *dp; ++dp)
+    ;
+  initlen = dp - dst;
+  if (dp == dstend)
+    goto last; /* should not happen */
   --dstend; /* second dstend */
   for (; dp < dstend && *src; ++dp, ++src)
     *dp = *src;
@@ -122,7 +122,7 @@ next:
 last:
   for (; *sp; ++sp)
     ;
-  return (dp - dst) + (sp - src);
+  return initlen + (sp - src);
 }
 #endif /* !HAVE_STRLCPY */
 

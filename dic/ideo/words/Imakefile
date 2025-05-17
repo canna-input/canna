@@ -1,26 +1,14 @@
-/* $Id: Imakefile,v 1.6 2003/09/27 06:18:39 aida_s Exp $ */
+/* $Id: Imakefile,v 1.9 2008/04/05 17:25:46 aida_s Exp $ */
 #include "../../../Canna.conf"
 
 #ifdef __EMX__
             CANNAROOT = ..\\..\\..
           CANNACMDDIR = $(CANNAROOT)\\cmd
-               FORCPP = $(CANNACMDDIR)\\forcpp\\forcpp.exe
-              FORSORT = $(CANNACMDDIR)\\forsort\\forsort.exe
-                 SORT = gsort
-                  SED = sed
-            SPLITWORD = $(CANNACMDDIR)\\splitwd\\splitword
-            MERGEWORD = $(CANNACMDDIR)\\mergewd\\mergeword
                CRXDIC = $(CANNACMDDIR)\\crxdic\\crxdic
                CRFREQ = $(CANNACMDDIR)\\crfreq\\crfreq
 #else
             CANNAROOT = ../../..
           CANNACMDDIR = $(CANNAROOT)/cmd
-               FORCPP = $(CANNACMDDIR)/forcpp/forcpp
-              FORSORT = $(CANNACMDDIR)/forsort/forsort
-                 SORT = sort
-                  SED = sed
-            SPLITWORD = $(CANNACMDDIR)/splitwd/splitword
-            MERGEWORD = $(CANNACMDDIR)/mergewd/mergeword
                CRXDIC = $(CANNACMDDIR)/crxdic/crxdic
                CRFREQ = $(CANNACMDDIR)/crfreq/crfreq
 #endif
@@ -29,41 +17,44 @@
          SAMPLESRCDIR = $(CANNADIR)/sample/src
 
 #ifdef USE_OBSOLETE_STYLE_FILENAME
-              TARGETS = iroha.d iroha.fq bushu.fq
+                  CBD = d
+                  CLD = fq
 #else
-              TARGETS = iroha.cbd iroha.cld bushu.cld 
+                  CBD = cbd
+                  CLD = cld
 #endif
           FUZOKUGODIC = ../grammar/cnj.bits
 #ifdef DIC_3_6_COMPAT
            COMPATFLAG = -c 3.0
 #endif
 
-AllTarget($(TARGETS))
+#define MakeBinDic(name,src,crfreqarg) \
+	$(CRXDIC) $(COMPATFLAG) -D $(FUZOKUGODIC) -m -o name.$(CBD) -n name src @@\
+	$(CRFREQ) crfreqarg -o name.$(CLD) name.$(CBD) name.mwd
 
-iroha.cbd iroha.cld: $(pubdicDir)/iroha.t bushu.cbd $(FUZOKUGODIC)
-	$(CRXDIC) $(COMPATFLAG) -D $(FUZOKUGODIC) -m -o iroha.cbd -n iroha $(pubdicDir)/iroha.t
-	$(CRFREQ) -div 512 -o iroha.cld iroha.cbd iroha.mwd
-	cat bushu.cbd >> iroha.cbd
+#define MasterBinDicTarget(name,src,crfreqarg,slaves)			@@\
+AllTarget(name.$(CBD) name.$(CLD))					@@\
+name.$(CBD) name.$(CLD): src $(FUZOKUGODIC) slaves			@@\
+	MakeBinDic(name,src,crfreqarg)					@@\
+	cat slaves >> name.$(CBD)					@@\
+clean::									@@\
+	$(RM) name.$(CBD) name.$(CLD)					@@\
+InstallMultipleFlags(name.$(CBD) name.$(CLD),$(CANNADICDIR),-m 644 $(cannaOwnerGroup))
 
-iroha.d iroha.fq: $(pubdicDir)/iroha.t bushu.d $(FUZOKUGODIC)
-	$(CRXDIC) $(COMPATFLAG) -D $(FUZOKUGODIC) -m -o iroha.d -n iroha $(pubdicDir)/iroha.t
-	$(CRFREQ) -div 512 -o iroha.fq iroha.d iroha.mwd
-	cat bushu.d >> iroha.d
+#define SlaveBinDicTarget(name,src,crfreqarg)				@@\
+AllTarget(name.$(CLD))							@@\
+name.$(CBD) name.$(CLD): src $(FUZOKUGODIC)				@@\
+	MakeBinDic(name,src,crfreqarg)					@@\
+clean::									@@\
+	$(RM) name.$(CBD) name.$(CLD)					@@\
+InstallMultipleFlags(name.$(CLD),$(CANNADICDIR),-m 644 $(cannaOwnerGroup))
 
-clean::
-	$(RM) $(TARGETS) bushu.cbd bushu.d
-
-bushu.cbd bushu.cld: bushu.t $(FUZOKUGODIC)
-	$(CRXDIC) $(COMPATFLAG) -D $(FUZOKUGODIC) -m -o bushu.cbd -n bushu bushu.t
-	$(CRFREQ) -o bushu.cld bushu.cbd bushu.mwd
-
-bushu.d bushu.fq: bushu.t $(FUZOKUGODIC)
-	$(CRXDIC) $(COMPATFLAG) -D $(FUZOKUGODIC) -m -o bushu.d -n bushu bushu.t
-	$(CRFREQ) -o bushu.fq bushu.d bushu.mwd
+MasterBinDicTarget(iroha,$(pubdicDir)/iroha.t,-div 512,bushu.$(CBD))
+SlaveBinDicTarget(bushu,bushu.t,)
+MasterBinDicTarget(zipcode,zipcode.t,,jigyosyo.$(CBD))
+SlaveBinDicTarget(jigyosyo,jigyosyo.t,)
 
 MakeDirectories(install,$(CANNADICDIR))
-
-InstallMultipleFlags($(TARGETS),$(CANNADICDIR),-m 0664 $(cannaOwnerGroup))
 
 #ifdef USE_OBSOLETE_STYLE_FILENAME
 InstallNamedNonExec(obsolete.dir,dics.dir,$(CANNADICDIR))

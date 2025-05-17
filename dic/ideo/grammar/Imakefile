@@ -1,35 +1,21 @@
-/* $Id: Imakefile,v 1.6 2003/09/27 06:18:38 aida_s Exp $ */
+/* $Id: Imakefile,v 1.7 2008/04/05 17:25:46 aida_s Exp $ */
 #include "../../../Canna.conf"
 
 #ifdef __EMX__
       CANNAROOT = ..\\..\\..
     CANNACMDDIR = $(CANNAROOT)\\cmd
-
-         FORCPP = $(CANNACMDDIR)\\forcpp\\forcpp
-        FORSORT = $(CANNACMDDIR)\\forsort\\forsort
-           SORT = gsort
-#else
-      CANNAROOT = ../../..
-    CANNACMDDIR = $(CANNAROOT)/cmd
-
-         FORCPP = $(CANNACMDDIR)/forcpp/forcpp
-        FORSORT = $(CANNACMDDIR)/forsort/forsort
-           SORT = sort
-#endif
-
-#ifdef __EMX__
         CRXGRAM = $(CANNACMDDIR)\\crxgram\\crxgram
          CRXDIC = $(CANNACMDDIR)\\crxdic\\crxdic
          CRFREQ = $(CANNACMDDIR)\\crfreq\\crfreq
           MERGE = $(CANNACMDDIR)\\mergewd\\mergeword
-        FORSORT = $(CANNACMDDIR)\\forsort\\forsort
          FORCPP = $(CANNACMDDIR)\\forcpp\\forcpp
 #else
+      CANNAROOT = ../../..
+    CANNACMDDIR = $(CANNAROOT)/cmd
         CRXGRAM = $(CANNACMDDIR)/crxgram/crxgram
          CRXDIC = $(CANNACMDDIR)/crxdic/crxdic
          CRFREQ = $(CANNACMDDIR)/crfreq/crfreq
           MERGE = $(CANNACMDDIR)/mergewd/mergeword
-        FORSORT = $(CANNACMDDIR)/forsort/forsort
          FORCPP = $(CANNACMDDIR)/forcpp/forcpp
 #endif
 
@@ -59,10 +45,7 @@ cnj.swd cnj.bits cnj.h cnj.mac: cpp.gram
 		$(CRXGRAM) -f cpp.gram
 
 fuzokugo.swd: cnj.swd
-	$(FORSORT) -7 < cnj.swd | \
-		$(SORT) | \
-		$(FORSORT) -8 | \
-		$(MERGE) > fuzokugo.swd
+	$(MERGE) -s cnj.swd > fuzokugo.swd
 
 fuzokugo.d: fuzokugo.swd cnj.bits
 	$(CRXDIC) $(COMPATFLAG) -g -s -o fuzokugo.d -D cnj.bits -n fuzokugo fuzokugo.swd

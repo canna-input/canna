@@ -19,7 +19,7 @@
 # OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
 # PERFORMANCE OF THIS SOFTWARE. 
 #
-# $Id: chimei.t,v 1.2 2003/09/27 06:18:39 aida_s Exp $
+# $Id: chimei.t,v 1.3 2005/04/01 04:27:03 aida_s Exp $
 あーかんそー #CN アーカンソー
 あいおいし #CNS 相生市
 あいおわ #CN アイオワ
@@ -255,6 +255,7 @@
 おうめし #CNS 青梅市
 おおいずみがくえん #CN 大泉学園
 おおいまちせん #CNS 大井町線
+おおえどせん #CNS 大江戸線
 おおかわし #CNS 大川市
 おおがきし #CNS 大垣市
 おおぎまち #CNS 扇町
@@ -714,7 +715,7 @@
 じょうせき #CN 城跡
 じょうとうく #CNS 城東区
 じょうなんく #CNS 城南区
-じょうばんせん #CNS 常盤線
+じょうばんせん #CNS 常磐線
 じょうようし #CNS 城陽市
 じょほーる #CN ジョホール
 じんぐうまえ #CN 神宮前
@@ -1066,6 +1067,8 @@
 にしさもあ #CN 西サモア
 にしだい #CN 西台
 にしどいつ #CN 西ドイツ
+にしとうきょう #CN 西東京
+にしとうきょうし #CNS 西東京市
 にしなりく #CNS 西成区
 にしにほん #CN 西日本
 にしのおもてし #CNS 西之表市

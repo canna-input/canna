@@ -37,7 +37,7 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 
-RCSID("$Id: conf.c,v 1.12.2.2 2004/04/26 21:48:37 aida_s Exp $");
+RCSID("$Id: conf.c,v 1.15 2004/04/13 13:19:15 aida_s Exp $");
 #define	MY_UINT32MAX 0xffffffffU
 #define UINT32_NUMLEN 10
 

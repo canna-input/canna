@@ -21,7 +21,7 @@
  */
 
 /* LINTLIBRARY */
-/* $Id: RKintern.h,v 1.15.2.2 2003/12/27 17:15:24 aida_s Exp $ */
+/* $Id: RKintern.h,v 1.18 2008/04/05 17:25:47 aida_s Exp $ */
 #ifndef		_RKintern_h
 #define		_RKintern_h
 
@@ -81,6 +81,9 @@ int	Rk_errno;
 #define RkSetErrno(number)
 #endif
 
+#ifndef HAVE_MMAP
+# define MMAP
+#endif
 #ifndef RK_DEBUG
 #define	RkDebug(fmt, p, q, r)
 #endif
@@ -1191,6 +1194,7 @@ int DDchmod pro((struct DD *, int));
 int DMchmod pro((struct DM *, int));
 int uslen pro((Wchar *));
 unsigned char *ustoeuc pro((Wchar *, int, unsigned char *, int));
+Wchar *euctous pro((unsigned char *, int, Wchar *, int));
 int _RkSubstYomi pro((struct RkContext *, int, int, Wchar *, int));
 int HowManyChars pro((Wchar *, int));
 int HowManyBytes pro((Wchar *, int));
