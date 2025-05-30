@@ -95,6 +95,15 @@ char	*arg;
     (void)fprintf(stderr, "#line %d %s: %s\n", lineNum, fileName, msg);
 }
 void
+alerti(fmt, arg)
+char	*fmt;
+int	arg;
+{
+    char	msg[256];
+    (void)sprintf(msg, fmt, arg);
+    (void)fprintf(stderr, "#line %d %s: %s\n", lineNum, fileName, msg);
+}
+void
 fatal(fmt, arg)
 char	*fmt;
 char	*arg;
@@ -418,7 +427,7 @@ enterMatrix(fp)
 		setVector(GetGramRow(&gram, r->rownum), s, op);
 		break;
 	    default:
-		alert("unknown operation %c", op);
+		alerti("unknown operation %c", op);
 		break;
 	    };
 	}

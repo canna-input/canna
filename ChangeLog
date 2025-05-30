@@ -1,3 +1,13 @@
+2025-05-31 AIDA Shinra <shinra@j10n.org>
+	* Minimal build fixes on modern platforms
+	* Canna.conf.dist: Updated Cygwin library rules
+	* canuum/config.guess: updated
+	* canuum/config.sub: updated
+	* cmd/crxgram/crxgram.c(alerti): added
+	* cmd/kpdic/kpdic.c(fatali): added
+	* lib/RKC/rkc.c(RkGetSimpleKanji): declare all arguments
+	* mkrelease.sh: use autoconf 2.69
+
 2008-04-06 AIDA Shinra <shinra@j10n.org>
 	* lib/RKindep/cfuncs.c(RkiAltStrlcat): bugfix
 

@@ -168,6 +168,13 @@ ErrDir  = DefErrDir
  */
 #define ModernElfLink NO /* experimental */
 
+#if defined(cygwinArchitecture)
+/* Cygwinで以前はDLLのファイル名を cygcanna-1.dll でなく
+ * libcanna.dll としていたので、そちらのファイル名のDLLも
+ * インストールしたい場合は定義してください */
+#define InstallObsoleteDLL
+#endif
+
 
 cannaOwner = bin
 cannaGroup = bin
@@ -178,11 +185,11 @@ cannaOwnerGroup =
 cannaOwnerGroup = -o $(cannaOwner) -g $(cannaGroup)
 #endif
 
-cannaDsoRev = 1.2
+cannaShLibMajor = 1
+cannaDsoRev = $(cannaShLibMajor).2
 
 #if defined(cygwinArchitecture)
-/* import libraryの方を指定しておく。DLL本体は/usr/X11R6/binに入る。 */
-sharedLibExtension = a
+sharedLibExtension = dll
 #elif defined(HPArchitecture) && !defined(LinuxArchitecture)
 sharedLibExtension = sl.$(cannaDsoRev)
 #elif defined(DarwinArchitecture)
@@ -252,11 +259,6 @@ DicDir   = $(cannaLibDir)/dic
 #if DoSharedLib == YES && defined(cygwinArchitecture)
 #define CYGWIN_DLL
 #endif
-#ifndef CYGWIN_DLL
-/* cygwinでは、imakeがimport libraryを*.dll.aでなく*.aにしてしまうため、
-   static libraryと共存できない */
-#define DoNormalLib YES
-#endif
 
 #define DoDebugLib NO
 #define DoProfileLib NO
@@ -271,7 +273,9 @@ DicDir   = $(cannaLibDir)/dic
 # endif
 # define LibraryTargetName(libname) libname.a
 #endif
-#if DoSharedLib
+#if DoSharedLib && defined(cygwinArchitecture)
+# define CannaDepLibraryName(libname) Concat(lib,libname.dll.a)
+#elif DoSharedLib
 # define CannaDepLibraryName(libname) Concat(lib,libname.$(sharedLibExtension))
 #else
 # define CannaDepLibraryName(libname) LibraryTargetName(libname)
@@ -301,6 +305,7 @@ DEPRKLIB = $(CANNAROOT)/lib/RK/LibraryTargetName(RK)
 RKLIB = -L$(CANNAROOT)/lib/RK -lRK
 DEPRKINDEPLIB = $(CANNAROOT)/lib/RKindep/LibraryTargetName(RKindep)
 RKINDEPLIB = -L$(CANNAROOT)/lib/RKindep -lRKindep
+XCOMM CDEBUGFLAGS = -Wno-deprecated-non-prototype -Wno-implicit-int -Wno-pointer-sign -Wno-parentheses -Wno-invalid-source-encoding -Wno-implicit-function-declaration -Wno-unused-variable
 LDOPTIONS = $(CDEBUGFLAGS) $(CCOPTIONS) $(LOCAL_LDFLAGS)
 #if ModernElfLink
 /* best effort */
@@ -315,6 +320,9 @@ SOSYMLINK = true
 #elif defined(SunArchitecture)
 /* assuming Sun's X and imake */
 CCENVSETUP = LD_RUN_PATH=$(libCannaDir)
+#endif
+#if defined(cygwinArchitecture)
+AR = ar cq
 #endif
 
 /*
@@ -542,23 +550,28 @@ install:: CannaLongShLib(libname,rev) 					@@\
 /* CannaInstallSharedLibrary */
 
 #elif defined(CYGWIN_DLL)
+# define CannaImplib(libname) Concat3(lib,libname,.dll.a)
+# define CannaDll(libname) Concat3(cyg,libname,-$(cannaShLibMajor).dll)
 /* libname-def.cppを作るのが面倒なのでXのSharedLibraryTargetを上書き */
 # define CannaSharedLibraryTarget(libname,rev,solist,down,up)		@@\
-AllTarget(Concat3(lib,libname,.dll))					@@\
+AllTarget(CannaImplib(libname) CannaDll(libname))			@@\
 									@@\
-Concat3(lib,libname,.dll):  solist					@@\
-	RemoveFile(LibraryTargetName(libname))				@@\
-	RemoveFile(Concat3(lib,libname,.dll))				@@\
-	gcc -shared -nostartfiles -Wl,--out-implib=Concat(lib,libname.a) -o Concat3(lib,libname,.dll) solist $(REQUIREDLIBS)	@@\
+CannaImplib(libname) CannaDll(libname):  solist				@@\
+	RemoveFile(CannaImplib(libname) CannaDll(libname))		@@\
+	gcc -shared -nostartfiles -Wl,--out-implib=CannaImplib(libname) -o CannaDll(libname) solist $(REQUIREDLIBS)	@@\
 									@@\
 clean::									@@\
-	RemoveFile(LibraryTargetName(libname))				@@\
-	RemoveFile(Concat3(lib,libname,.dll))
+	RemoveFile(CannaImplib(libname) CannaDll(libname))		@@\
 /* CannaSharedLibraryTarget */
-/* 4.3.0ではライブラリの命名が変更されているようなので古い命名を使う */
+# if defined(InstallObsoleteDLL)
+#  define DoIfObsoleteDLL(action) action
+# else
+#  define DoIfObsoleteDLL(action) /**/
+# endif
 # define CannaInstallSharedLibrary(libname,rev,dest)                    @@\
-InstallTarget(install,LibraryTargetName(libname),$(INSTLIBFLAGS),$(USRLIBDIR)) @@\
-InstallTarget(install,Concat3(lib,libname,.dll),$(INSTBINFLAGS),$(BINDIR))
+InstallTarget(install,CannaImplib(libname),$(INSTLIBFLAGS),dest) 	@@\
+InstallTarget(install,CannaDll(libname),$(INSTBINFLAGS),$(cannaBinDir))	@@\
+DoIfObsoleteDLL(InstallNamedTarget(install,CannaDll(libname),$(INSTBINFLAGS),$(cannaBinDir),Concat3(lib,libname,.dll)))
 /* CannaInstallSharedLibrary */
 
 #elif defined(RsArchitecture)
