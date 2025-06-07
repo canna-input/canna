@@ -1,11 +1,32 @@
-2025-06-06 AIDA Shinra <shinra@j10n.org>
+2025-06-08 AIDA Shinra <shinra@j10n.org>
+	* [Merged] from the SFJP trunk on 2008-04-06 (w/o zipcode dic):
+	* [Canna-dev 363]: old style sort options is no longer available
+	* Don't use the sort command. Implement necessary features into
+	  the mergeword and the pod. The forsort is no longer used but
+	  still installed for the backward compatibility.
+	* cmd/mergewd/mergewd.c: Reimplemented from scratch.
+	  New option "-s": sort the input before the merge.
+	* cmd/mkbindic/mkbindic.cpp: mergeword -s instead of forsort and sort
+	* dic/ideo/grammar/Imakefile: ditto
+	* dic/ideo/pubdic/pod.c: New sort options.
+	  New option "-P": sort by yomi and freq stably
+	  New option "-S": don't sort; output order is the same to the input
+	* dic/ideo/words/Imakefile: remove forsort, which is just a garbage
+	* dic/phono/Imakefile: ditto
+	* lib/RK/RKintern.h(euctous): declare here
+
+2025-06-08 AIDA Shinra <shinra@j10n.org>
 	* Minimal build fixes (tested on FreeBSD and Cygwin)
 	* [Merged] from SORUCEFORGE-JP-DEVEL branch on 2025-05-31:
 	* Canna.conf.dist: Updated Cygwin library rules
+	* accanna.h.in: regenerated
 	* canuum/config.guess: updated
+	* canuum/config.h.in: regenerated
 	* canuum/config.sub: updated
+	* canuum/configure: regenerated
 	* cmd/crxgram/crxgram.c(alerti): added
 	* cmd/kpdic/kpdic.c(fatali): added
+	* configure: regenerated
 	* lib/RKC/rkc.c(RkGetSimpleKanji): declare all arguments
 	* mkrelease.sh: use autoconf 2.69
 	* [Merged] from the SFJP trunk on 2006-04-02:

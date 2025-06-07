@@ -23,12 +23,12 @@
 #include <stdio.h>
 #include "ccompat.h"
 
-RCSID("$Id: pod.c,v 1.3.6.1 2004/05/04 22:04:43 aida_s Exp $");
+RCSID("$Id: pod.c,v 1.5 2008/04/05 17:25:46 aida_s Exp $");
 
 typedef unsigned short Wchar;
 
 static char *program;
-static int compare, ignore_hinshi_to_compare, sort_by_frequency, merge_sj3;
+static int compare, ignore_hinshi_to_compare, merge_sj3;
 static int merge_kind, wnn_type_output, canna_type_output, sj3_type_output;
 static int list_kinds;
 static int copy_frequency, extract_kana = 0;
@@ -64,6 +64,12 @@ static int hinshi_direction = INORDER; /* see above */
 # define WCG2 0x0080
 # define WCG3 0x8000
 # define WCMSK 0x8080
+
+static int diccompar();
+static int dichindocompar();
+static int dichindocompar2();
+static int dicserialcompar();
+static int (*dic_compare_func)() = &diccompar;
 
 int
 Mbstowcs(d, ss, n)
@@ -672,6 +678,7 @@ struct dicpack {
   int hindo;
   long kind;
   Wchar *extdata;
+  int serial; /* for stable sort */
   unsigned flags; /* SEE BELOW */
   struct dicpack *next;
 };
@@ -781,7 +788,7 @@ long kind, flags;
 	  if (p->hinshi) {
 	    p->hindo = hindo;
 	    *stat = CREATE;
-	    ndicentries++;
+	    p->serial = ndicentries++;
 	    p->kind = kind;
 	    p->extdata = (Wchar *)0;
 	    if (yom) free((char *)yom);
@@ -1193,6 +1200,39 @@ struct dicpack **p1, **p2;
   }
 }
 
+static int
+dichindocompar2(p1, p2)
+struct dicpack **p1, **p2;
+{
+  int n;
+  if (n = Wscmp((*p1)->yomi, (*p2)->yomi)) {
+    return n;
+  }
+  else if (n = ((*p2)->hindo - (*p1)->hindo)) {
+    return n;
+  }
+  else if (n = ((*p1)->serial - (*p2)->serial)) {
+    return n;
+  }
+  else { /* impossible */
+    return 0;
+  }
+}
+
+static int
+dicserialcompar(p1, p2)
+struct dicpack **p1, **p2;
+{
+  int n;
+
+  if (n = ((*p1)->serial - (*p2)->serial)) {
+    return n;
+  }
+  else { /* impossible */
+    return 0;
+  }
+}
+
 static void
 shrinkargs(argv, n, count)
 char **argv;
@@ -1296,7 +1336,17 @@ char *argv[];
 	break;
 
       case 'p':
-	sort_by_frequency = 1;
+	dic_compare_func = &dichindocompar;
+	shrinkargs(argv + i, 1, argc - i); argc -= 1;
+	break;
+
+      case 'P':
+	dic_compare_func = &dichindocompar2;
+	shrinkargs(argv + i, 1, argc - i); argc -= 1;
+	break;
+
+      case 'S':
+	dic_compare_func = &dicserialcompar;
 	shrinkargs(argv + i, 1, argc - i); argc -= 1;
 	break;
 
@@ -1416,12 +1466,7 @@ char *argv[];
 	pdic[j++] = p;
       }
     }
-    if (sort_by_frequency) {
-      qsort((char *)pdic, ndicentries, sizeof(struct dicpack *), dichindocompar);
-    }
-    else {
-      qsort((char *)pdic, ndicentries, sizeof(struct dicpack *), diccompar);
-    }
+    qsort((char *)pdic, ndicentries, sizeof(struct dicpack *), dic_compare_func);
     sortkind();
     showentry(pdic, ndicentries);
   }

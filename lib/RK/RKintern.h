@@ -1191,6 +1191,7 @@ int DDchmod pro((struct DD *, int));
 int DMchmod pro((struct DM *, int));
 int uslen pro((Wchar *));
 unsigned char *ustoeuc pro((Wchar *, int, unsigned char *, int));
+Wchar *euctous pro((unsigned char *, int, Wchar *, int));
 int _RkSubstYomi pro((struct RkContext *, int, int, Wchar *, int));
 int HowManyChars pro((Wchar *, int));
 int HowManyBytes pro((Wchar *, int));

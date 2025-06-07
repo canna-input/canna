@@ -4,23 +4,11 @@
 #ifdef __EMX__
             CANNAROOT = ..\\..\\..
           CANNACMDDIR = $(CANNAROOT)\\cmd
-               FORCPP = $(CANNACMDDIR)\\forcpp\\forcpp.exe
-              FORSORT = $(CANNACMDDIR)\\forsort\\forsort.exe
-                 SORT = gsort
-                  SED = sed
-            SPLITWORD = $(CANNACMDDIR)\\splitwd\\splitword
-            MERGEWORD = $(CANNACMDDIR)\\mergewd\\mergeword
                CRXDIC = $(CANNACMDDIR)\\crxdic\\crxdic
                CRFREQ = $(CANNACMDDIR)\\crfreq\\crfreq
 #else
             CANNAROOT = ../../..
           CANNACMDDIR = $(CANNAROOT)/cmd
-               FORCPP = $(CANNACMDDIR)/forcpp/forcpp
-              FORSORT = $(CANNACMDDIR)/forsort/forsort
-                 SORT = sort
-                  SED = sed
-            SPLITWORD = $(CANNACMDDIR)/splitwd/splitword
-            MERGEWORD = $(CANNACMDDIR)/mergewd/mergeword
                CRXDIC = $(CANNACMDDIR)/crxdic/crxdic
                CRFREQ = $(CANNACMDDIR)/crfreq/crfreq
 #endif
