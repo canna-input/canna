@@ -1,4 +1,15 @@
 2025-06-08 AIDA Shinra <shinra@j10n.org>
+	* Multiple bug fixes
+	* [Merged] from the SFJP trunk on 2008-04-06:
+	* lib/RKindep/cfuncs.c(RkiAltStrlcat): bugfix
+	* [Merged] from the SFJP trunk on 2006-06-31:
+	* lib/RK/ncache.c(hash): consider negative pointer
+	* lib/canna/keydef.c(createHashKey): ditto
+	* [Merged] from the SFJP trunk on 2005-03-11:
+	* lib/RK/bun.c(RkwQueryDic): fixed a bug in the implementation of an
+	  unused protocol.
+
+2025-06-08 AIDA Shinra <shinra@j10n.org>
 	* [Merged] from the SFJP trunk on 2008-04-06 (w/o zipcode dic):
 	* [Canna-dev 363]: old style sort options is no longer available
 	* Don't use the sort command. Implement necessary features into

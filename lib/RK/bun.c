@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[] = "$Id: bun.c,v 1.6 2003/09/21 10:16:49 aida_s Exp $";
+static char rcsid[] = "$Id: bun.c,v 1.7 2005/03/10 20:07:05 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */
@@ -1638,16 +1638,19 @@ RkwQueryDic(cx_num, dirname, dicname, status)
       (void)free((char *)buff);
       return NOTALC;
     }
-    if (!(cx = RkGetContext(new_cx_num))) {
-      (void)free((char *)buff);
-      return(-1);
-    }
   } else {
     if (!strcmp(dirname, (char *)SYSTEM_DDHOME_NAME))
       dirname = SYSTEM_DDHOME_NAME;
     else
       dirname = cx->ddpath[0]->dd_name;
-    new_cx_num = cx_num;
+    if ((new_cx_num = RkwDuplicateContext(cx_num)) < 0) {
+      (void)free((char *)buff);
+      return BADCONT;
+    }
+  }
+  if (!(cx = RkGetContext(new_cx_num))) {
+    (void)free((char *)buff);
+    return(-1);
   }
   if (!strcmp(dirname, (char *)SYSTEM_DDHOME_NAME)) {
     if (!(dm = _RkSearchDDP(cx->ddpath, dicname))) {

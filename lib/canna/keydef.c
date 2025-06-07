@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: keydef.c,v 1.2 2003/09/17 08:50:53 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: keydef.c,v 1.3 2006/03/30 17:38:27 aida_s Exp $";
 #endif /* lint */
 
 #include "canna.h"
@@ -444,12 +444,9 @@ static unsigned int
 createHashKey(data1, data2, which_seq)
 unsigned char *data1;
 unsigned char data2;
-int which_seq;
+unsigned int which_seq;
 {
-  unsigned int hashKey;
-
-  hashKey = (int)(((POINTERINT)data1 + (POINTERINT)data2) % which_seq);
-  return hashKey;
+  return (unsigned int)(((canna_uintptr_t)data1 + (canna_uintptr_t)data2) % which_seq);
 }
 
 /* 機能シーケンスを割り出す */
