@@ -1,3 +1,21 @@
+2025-06-06 AIDA Shinra <shinra@j10n.org>
+	* Minimal build fixes (tested on FreeBSD and Cygwin)
+	* [Merged] from SORUCEFORGE-JP-DEVEL branch on 2025-05-31:
+	* Canna.conf.dist: Updated Cygwin library rules
+	* canuum/config.guess: updated
+	* canuum/config.sub: updated
+	* cmd/crxgram/crxgram.c(alerti): added
+	* cmd/kpdic/kpdic.c(fatali): added
+	* lib/RKC/rkc.c(RkGetSimpleKanji): declare all arguments
+	* mkrelease.sh: use autoconf 2.69
+	* [Merged] from the SFJP trunk on 2006-04-02:
+	* [Canna-dev 359]: Solaris + gcc
+	* canna/ccompat.h: On sun gcc uses vendor's as rather than gas.
+	* Canna.conf.dist: Set LD_RUN_PATH on Sun even if ModernElfLink == NO.
+	* [Merged] from the SFJP trunk on 2025-05-30:
+	* canna/widedef.h: MacOS X 10.4 support
+	* server/util.c: The unused part was enabled by mistake. Disable it.
+
 2004-05-21 AIDA Shinra <shinra@j10n.org>
 
 	* Canna 3.7p3 release.

@@ -108,6 +108,18 @@ char	*arg;
     exit(1);
 }
 
+void
+fatali(fmt, arg)
+char	*fmt;
+int	arg;
+{
+    char	msg[256];
+    (void)sprintf(msg, fmt, arg);
+    (void)fprintf(stderr, gettxt("cannacmd:24", 
+		 "#line %d %s: (FATAL) %s\n"), lineNum, fileName, msg);
+    exit(1);
+}
+
 int
 getWORD(s, news, word, maxword)
 unsigned char	*s, **news;
@@ -296,7 +308,7 @@ main(argc, argv)
       else {
 	  freeallocs(roman, nKey);
 	  free((char *)roman);
-	  fatal(gettxt("cannacmd:26", 
+	  fatali(gettxt("cannacmd:26", 
 	       "More than %d romaji rules are given."), maxkey);
       }
       if ( getWORD(r, &r, roma, sizeof(roma)) ) {
@@ -344,7 +356,7 @@ main(argc, argv)
 		else {
 		  freeallocs(roman, maxkey);
 		  free((char *)roman);
-		  fatal("more than %d romaji rules are given.", maxkey);
+		  fatali("more than %d romaji rules are given.", maxkey);
 		}
 	      }
 	    }

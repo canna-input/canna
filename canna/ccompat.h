@@ -78,7 +78,8 @@ extern int  errno;
 
 #ifdef __GNUC__
 # define UNUSED_SYMBOL __attribute__((__unused__))
-# ifdef __ELF__
+/* On sun gcc uses vendor's as rather than gas */
+# if defined(__ELF__) && !defined(sun)
 #  ifdef __STDC__
 #   define	WARN_REFERENCES(sym,msg)	\
 	__asm__(".section .gnu.warning." #sym);	\

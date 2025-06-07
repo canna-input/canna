@@ -2729,7 +2729,7 @@ int cxnum, mode ;
 int
 RkGetSimpleKanji( cxnum, dicname, yomi, maxyomi, kanjis, maxkanjis, hinshis, maxhinshis )
 int cxnum, maxyomi, maxkanjis, maxhinshis ;
-unsigned char *yomi, *kanjis, *hinshis ;
+unsigned char *dicname, *yomi, *kanjis, *hinshis ;
 {
   Ushort cbuf[CBUFSIZE], cbuf2[CBIGBUFSIZE], cbuf3[CBIGBUFSIZE];
   int nkanji, len, i, j = 0, k = 0, l = 0, m = 0;
