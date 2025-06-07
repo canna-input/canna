@@ -25,7 +25,6 @@ static char rcsid[] = "$Id: obind.c,v 1.4.2.1 2004/04/26 22:49:21 aida_s Exp $";
 #endif
 
 #include "cannaconf.h"
-#define WARN_REFERENCES_EVAL(sym,msg) WARN_REFERENCES(sym,msg)
 
 #if SUPPORT_OLD_WCHAR
 
@@ -575,7 +574,6 @@ owcKanjiStatusWithValue *ksva;
   return  owcKanjiControl2(0, context, KC_CLOSEUICONTEXT, (BYTE *)ksva);
 }
 
-#define WARNSTR "warning: libcanna: using old wchar API; consider to use new one."
 #else /* !SUPPORT_OLD_WCHAR */
 
 #include "canna.h"
@@ -621,10 +619,6 @@ wcKanjiStatusWithValue *ksva;
   return  wc_unsupported();
 }
 
-#define WARNSTR "warning: libcanna: old API is disabled; consider to use new one."
 #endif /* !SUPPORT_OLD_WCHAR */
 
-WARN_REFERENCES_EVAL(wcKanjiString, WARNSTR);
-WARN_REFERENCES_EVAL(wcKanjiControl, WARNSTR);
-WARN_REFERENCES_EVAL(wcCloseKanjiContext, WARNSTR);
 /* vim: set sw=2: */

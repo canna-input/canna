@@ -76,35 +76,6 @@ extern int  errno;
 
 #include "RKindep/cfuncs.h"
 
-#ifdef __GNUC__
-# define UNUSED_SYMBOL __attribute__((__unused__))
-/* On sun gcc uses vendor's as rather than gas */
-# if defined(__ELF__) && !defined(sun)
-#  ifdef __STDC__
-#   define	WARN_REFERENCES(sym,msg)	\
-	__asm__(".section .gnu.warning." #sym);	\
-	__asm__(".asciz \"" msg "\"");	\
-	__asm__(".previous")
-#  else
-#   define	WARN_REFERENCES(sym,msg)	\
-	__asm__(".section .gnu.warning.sym"); \
-	__asm__(".asciz \"msg\"");	\
-	__asm__(".previous")
-#  endif	/* __STDC__ */
-# endif	/* __ELF__ */
-#endif	/* __GNUC__ */
-
-#ifndef WARN_REFERENCES
-# define WARN_REFERENCES(sym, msg) struct cannahack
-#endif
-#ifndef UNUSED_SYMBOL
-# define UNUSED_SYMBOL
-#endif
-
-#if !defined(lint) && !defined(__CODECENTER__)
-# define RCSID(id) static const char rcsid[] UNUSED_SYMBOL = id
-#else
-# define RCSID(id) struct cannahack
-#endif
+#define RCSID(id) struct cannahack
 
 #endif /* CCOMPAT_H */

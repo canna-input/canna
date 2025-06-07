@@ -1,4 +1,10 @@
 2025-06-08 AIDA Shinra <shinra@j10n.org>
+	* Remove some platform-specific build-time features
+	* canna/ccompat.h(WARN_REFERENCES): removed
+	  (RCSID): now no-op
+	* lib/canna/obind.c: don't use WARN_REFERENCES
+
+2025-06-08 AIDA Shinra <shinra@j10n.org>
 	* Multiple bug fixes
 	* [Merged] from the SFJP trunk on 2008-04-06:
 	* lib/RKindep/cfuncs.c(RkiAltStrlcat): bugfix
