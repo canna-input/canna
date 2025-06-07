@@ -1,4 +1,7 @@
 2025-06-08 AIDA Shinra <shinra@j10n.org>
+	* Rename .cvsignore to .gitignore
+
+2025-06-08 AIDA Shinra <shinra@j10n.org>
 	* Remove some platform-specific build-time features
 	* canna/ccompat.h(WARN_REFERENCES): removed
 	  (RCSID): now no-op
