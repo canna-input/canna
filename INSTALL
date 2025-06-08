@@ -37,18 +37,7 @@ imake on X11R6 to compile Canna.
      super user
 
        If you have any problem to compile Canna, mail to
-  canna-dev@lists.sourceforge.jp. Please report detailed errors.
-
-  There are thee mailing lists.
-
-  * Canna@nec.co.jp (users mailing list)
-    For more information, see:
-    http://www.nec.co.jp/canna/c-mail.html
-
-  * canna-dev@lists.sourceforge.jp (developers mailing list)
-  * canna-cvs@lists.sourceforge.jp (cvs commitlog list)
-    Mailman interface is available at:
-    http://sourceforge.jp/mail/?group_id=285
+  shinra@j10n.org. Please report detailed errors.
 
        Canna which contributed on X11R5 is Version 1.2.
 
@@ -569,5 +558,3 @@ That's all.
  * OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
  * PERFORMANCE OF THIS SOFTWARE. 
  */
-
-($Id: INSTALL,v 1.8 2003/09/25 15:24:31 aida_s Exp $)

@@ -39,28 +39,8 @@
      4. 運用
 
    『かんな』のコンパイル、インストールに関して何らかの問題があった場合、
-   canna-dev@lists.sourceforge.jpに御報告ください。その際、できれば
+   shinra@j10n.orgに御報告ください。その際、できれば
    詳しいエラーの様子などを報告していただけると助かります。
-
-   『かんな』には現在 3つのメーリングリストがあります。
-
-   ・Canna@nec.co.jp
-   NECのメーリングリストです。かつてはここで開発等も行われていましたが、
-   開発がsourceforge.jpに移ったので、当面はユーザー向けメーリングリスト
-   という位置づけとします。詳しい説明が
-   http://www.nec.co.jp/canna/c-mail.html
-   にあります。
-
-   ・canna-dev@lists.sourceforge.jp
-   開発用メーリングリストです。開発に参加したい方、バグ報告等をなさる方
-   はこちらをお使いください。
-
-   ・canna-cvs@lists.sourceforge.jp
-   CVSのcommitlogが送られます。購読専用です。
-
-   sourceforge.jpの2つのメーリングリストについては、
-   http://sourceforge.jp/mail/?group_id=285
-   にインターフェースがあります。
 
    X11R5 にコントリビューションした『かんな』は、物件自体にはバージョ
    ンが明記されていなかったのですが、Version 1.2 ということにします。
@@ -616,5 +596,3 @@ A.1  OS/2 をお使いの場合(この部分の記述は上野@日本アイ・ビー・エムに
  * OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
  * PERFORMANCE OF THIS SOFTWARE. 
  */
-
-($Id: INSTALL.jp,v 1.8 2003/09/25 15:24:31 aida_s Exp $)

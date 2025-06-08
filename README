@@ -1,7 +1,7 @@
-              CANNA Version 3.6, a Japanese input system
+              CANNA Version 3.7, a Japanese input system
 
                              Canna Project
-		     http://canna.sourceforge.jp/
+		       http://canna.github.io/
 
 0. Preface
 
@@ -265,7 +265,7 @@
 
   see README.ja.
 
-/* Copyright (c) 2003 Canna Project. All rights reserved.
+/* Copyright (c) 2003-2008,2025 Canna Project. All rights reserved.
  *
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without
@@ -309,4 +309,3 @@
  * PERFORMANCE OF THIS SOFTWARE. 
  */
 
-($Id: README,v 1.6 2003/09/25 15:24:31 aida_s Exp $)

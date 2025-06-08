@@ -1,7 +1,7 @@
 The whole distribution is under following license agreements. You must
 agree with both of them to use or distribute Canna.
 
-/* Copyright (c) 2002-2004 Canna Project. All rights reserved.
+/* Copyright (c) 2002-2004,2025 Canna Project. All rights reserved.
  *
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without
@@ -89,5 +89,3 @@ canuum/COPYRIGHT.
 
 Pubdic+ is distributed under so-called MIT license. See
 dic/ideo/pubdic/COPYRIGHT (in both Japanese and English).
-
-($Id: COPYRIGHT,v 1.1.2.1 2004/05/04 22:35:51 aida_s Exp $)

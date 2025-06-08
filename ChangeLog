@@ -1,4 +1,17 @@
 2025-06-08 AIDA Shinra <shinra@j10n.org>
+	* Canna 3.7p4 release.
+	* CHANGES.jp: updated for 3.7p4
+	* COPYRIGHT: updated
+	* INSTALL: updated; SFJP -> github
+	* INSTALL.jp: ditto
+	* README: ditto
+	* README.jp: ditto
+	* canuum/README.jp: ditto
+	* configure.ac: bump to 3.7p4
+	* canna/patchlevel.h: ditto
+	* doc/Imakefile: remove canna.sty in make clean
+
+2025-06-08 AIDA Shinra <shinra@j10n.org>
 	* Rename .cvsignore to .gitignore
 
 2025-06-08 AIDA Shinra <shinra@j10n.org>

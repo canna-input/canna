@@ -125,12 +125,18 @@ Canna 3.6から3.7までの新機能、重要な修正、仕様変更を述べます。なお、
   ライセンスの明確化が行われています。
 ・そのほか潜在的なバグの修正やドキュメントの訂正を行いました。
 
-2.2 Canna 3.7p3での変更点
+2.3 Canna 3.7p3での変更点
 ・FreeBSD, Solaris, AIXなどでmakeできない問題を修正しました。
+
+2.4 Canna 3.7p4での変更点
+・最近の処理系でmakeできない問題を修正しました。
+・sortコマンドの古いオプションに依存していた部分を修正しました。
+　それに伴いforsortコマンドは不要になりました(互換性のために残しています)。
+・そのほか潜在的なバグの修正を行いました。
 
 以上
 
-/* Copyright (c) 2003-2004 Canna Project. All rights reserved.
+/* Copyright (c) 2003-2008,2025 Canna Project. All rights reserved.
  *
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without
@@ -151,5 +157,3 @@ Canna 3.6から3.7までの新機能、重要な修正、仕様変更を述べます。なお、
  * CONTRACT, NEGLIGENCE OR OTHER TORTUOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. 
  */
-
-($Id: CHANGES.jp,v 1.6.2.7 2004/05/19 15:47:33 aida_s Exp $)

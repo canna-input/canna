@@ -9,4 +9,7 @@ LinkFileList(includes,canna.sty,man/guide/tex,../../..)
 LinkFileList(includes,canna.sty,lisp,..)
 LinkFileList(includes,canna.sty,intern,..)
 
+clean::
+	$(RM) man/guide/tex/canna.sty lisp/canna.sty intern/canna.sty
+
 depend::

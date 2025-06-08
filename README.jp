@@ -1,9 +1,9 @@
 
 
-             日本語入力システム『かんな』Version 3.6 について
+             日本語入力システム『かんな』Version 3.7 について
 
                              Canna Project
-		     http://canna.sourceforge.jp/
+		       http://canna.github.io/
 
 
 0. はじめる前に
@@ -276,8 +276,8 @@
   ました。素晴らしいソフトウェアを開発してくださいましたNECに感謝いたし
   ます。
 
-  また、現在『かんな』の開発や配布に必要なサービスのほとんどを提供して
-  下さっている、sourceforge.jpの皆さんに感謝を申し上げます。
+  また、2000年代に『かんな』の開発や配布に必要なサービスのほとんどを
+  提供して下さっていた、sourceforge.jpの皆さんに感謝を申し上げます。
 
   Debian GNU/Linuxのパッチからは、多くのコードを借用させていただきまし
   た。Debianの開発者の皆さん、特にパッケージメンテナの柳原良亮氏、石川
@@ -345,7 +345,7 @@
   スファイルなどをミラーしていただいています。各サイトの担当者の方々に
   感謝いたします。
 
-/* Copyright (c) 2002-2003 Canna Project. All rights reserved.
+/* Copyright (c) 2002-2008,2025 Canna Project. All rights reserved.
  *
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without
@@ -388,5 +388,3 @@
  * OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
  * PERFORMANCE OF THIS SOFTWARE. 
  */
-
-($Id: README.jp,v 1.4 2003/09/25 15:24:31 aida_s Exp $)
