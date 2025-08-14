@@ -1,5 +1,15 @@
 2025-08-14 AIDA Shinra <shinra@j10n.org>
 	* [Merged] from the SFJP trunk on 2004-03-15:
+	* [Canna-dev 291]: Return from temporary mode after quit.
+	* lib/canna/chikuji.c(ChikujiYomiDeletePrevious): restoreFlags()
+	  (ChikjiMuhenkan): ditto
+	* lib/canna/empty.c(EmptyQuit): ditto
+	* lib/canna/romaji.c(YomiExit): ditto
+	  (YomiQuit): ditto
+	  (exitSupkey): ditto
+
+2025-08-14 AIDA Shinra <shinra@j10n.org>
+	* [Merged] from the SFJP trunk on 2004-03-15:
 	* [Canna-dev 292]: Problems when handling "bbb..."
 	* lib/canna/romaji.c(clearYomiContext): Clear yc->n_susp_chars.
 	  (KanaDeletePrevious): Tweak break-into-roman behaviour.

@@ -2692,6 +2692,9 @@ int retval;
 
   RomajiClearYomi(d);
 
+  if (yc->savedFlags & CANNA_YOMI_MODE_SAVED) {
+    restoreFlags(yc);
+  }
   /* 確定してしまったら、読みがなくなるのでφモードに遷移する。 */
   restoreChikujiIfBaseChikuji(yc);
   d->current_mode = yc->curMode = yc->myEmptyMode;
@@ -3018,6 +3021,9 @@ uiContext d;
   /* 未確定文字列を削除する */
   RomajiClearYomi(d);
 
+  if (yc->savedFlags & CANNA_YOMI_MODE_SAVED) {
+    restoreFlags(yc);
+  }
   if (yc->left || yc->right) {
     removeCurrentBunsetsu(d, (tanContext)yc);
   }
@@ -3648,6 +3654,9 @@ mode_context env;
   /* 未確定文字列を削除する */
   RomajiClearYomi(d);
 
+  if (yc->savedFlags & CANNA_YOMI_MODE_SAVED) {
+    restoreFlags(yc);
+  }
   /* 未確定文字列が全くなくなったので、φモードに遷移する */
   restoreChikujiIfBaseChikuji(yc);
   d->current_mode = yc->curMode = yc->myEmptyMode;
