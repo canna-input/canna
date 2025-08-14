@@ -1,3 +1,12 @@
+2025-08-14 AIDA Shinra <shinra@j10n.org>
+	* [Merged] from the SFJP trunk on 2004-03-15:
+	* [Canna-dev 292]: Problems when handling "bbb..."
+	* lib/canna/romaji.c(clearYomiContext): Clear yc->n_susp_chars.
+	  (KanaDeletePrevious): Tweak break-into-roman behaviour.
+	  Properly change rCurs and rStartp after deleting first kana.
+	  Change behaviour after deleting all unconverted romaji.
+	  (YomiDeleteNext): debug_yomi
+
 2025-06-09 AIDA Shinra <shinra@j10n.org>
 	* Canna 3.7p4 release again.
 	* README: fixed URL to the official site

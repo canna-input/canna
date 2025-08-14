@@ -2628,6 +2628,7 @@ yomiContext yc;
   yc->englishtype = CANNA_ENG_KANA;
   yc->cStartp = yc->cRStartp = 0;
   yc->jishu_kEndp = 0;
+  yc->n_susp_chars = 0;
 }
 
 static int
@@ -2784,8 +2785,13 @@ uiContext d;
   }
   yc->last_rule = 0;
   howManyDelete = howFarToGoBackward(yc);
-  if (howManyDelete > 0 && (yc->generalFlags & CANNA_YOMI_BREAK_ROMAN)) {
-    yc->generalFlags &= ~CANNA_YOMI_BREAK_ROMAN;
+  if (howManyDelete > 0 && (yc->generalFlags & CANNA_YOMI_BREAK_ROMAN)
+      && (yc->kAttr[yc->kCurs] & SENTOU)) {
+    /*
+     * ローマ字1文字に対応する仮名を消した時はローマ字、仮名とも
+     * SENTOUフラグが1個減る。
+     * そうでないときはSENTOUフラグの個数は変わらない
+     */
     yc->rStartp = yc->rCurs - 1;
     while ( yc->rStartp > 0 && !(yc->rAttr[yc->rStartp] & SENTOU) ) {
       yc->rStartp--;
@@ -2794,16 +2800,23 @@ uiContext d;
     yc->kRStartp = yc->kCurs - 1;
     while ( yc->kRStartp > 0 && !(yc->kAttr[yc->kRStartp] & SENTOU) )
       yc->kRStartp--;
+    /* これ必ず真では? */
     prevflag = (yc->kAttr[yc->kRStartp] & SENTOU);
     kanaReplace(yc->kRStartp - yc->kCurs, 
 		yc->romaji_buffer + yc->rStartp,
 		yc->rCurs - yc->rStartp,
 		0);
+    /* ローマ字1文字に対応する仮名を消したときは最初からSENTOUである */
     yc->kAttr[yc->kRStartp] |= prevflag;
     yc->n_susp_chars = 0; /* とりあえずクリアしておく */
-    makePhonoOnBuffer(d, yc, (unsigned char)0, 0, 0);
+    makePhonoOnBuffer(d, yc, (wchar_t)0, 0, 0);
+    /* 以前は常にフラグを下げていたが、未変換ローマ字が残っているときは
+     * フラグを下げないことにする */
+    if (yc->kRStartp == yc->kCurs)
+      yc->generalFlags &= ~CANNA_YOMI_BREAK_ROMAN;
   }
   else {
+    yc->generalFlags &= ~CANNA_YOMI_BREAK_ROMAN;
     if ( yc->kAttr[yc->kCurs - howManyDelete] & HENKANSUMI ) {
       if (yc->kAttr[yc->kCurs - howManyDelete] & SENTOU) { 
 	/* ローマ字かな変換の先頭だったら */
@@ -2823,6 +2836,12 @@ uiContext d;
 	  yc->rEndp -= n;
 	}
 	else {
+	  /* 仮名のカーソル位置は先頭になるのでローマ字のカーソルも動かす*/
+	  while ( yc->rCurs > 0 && !(yc->rAttr[--yc->rCurs] & SENTOU) )
+	    ;
+	  if (yc->rCurs < yc->rStartp) {
+	    yc->rStartp = yc->rCurs;
+	  }
 	  yc->kAttr[yc->kCurs] |= SENTOU;
 	}
       }
@@ -2831,6 +2850,12 @@ uiContext d;
       romajiReplace(-howManyDelete, (wchar_t *)NULL, 0, 0);
     }
     kanaReplace(-howManyDelete, (wchar_t *)NULL, 0, 0);
+    if ((yc->rAttr[yc->rCurs] & SENTOU) && yc->kRStartp == yc->kCurs) {
+      /* 未変換のローマ字を消してしまったので、次に入力したローマ字は
+       * SENTOUになる方が自然だろう
+       */
+      yc->rStartp = yc->rCurs;
+    }
   }
   debug_yomi(yc);
   return(0);
@@ -2946,6 +2971,7 @@ uiContext d;
     currentModeInfo(d);
   }
   makeYomiReturnStruct(d);
+  debug_yomi(yc);
   return 0;
 }
 
