@@ -1,8 +1,12 @@
 .depend
 Makefile
+cfuncs.c
+cygcanna-*.dll
+file.c
 libcanna.a
 libcanna.so*
 libcanna.sl*
-libcanna.dll
+libcanna.dll*
 unshared
 sglobal.h
+strops.c

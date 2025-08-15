@@ -1,5 +1,7 @@
 .depend
 Makefile
+Makefile.bak
+Makefile.dep
 Canna.conf
 include
 cannaconf.h
@@ -13,3 +15,5 @@ autom4te.cache
 pubconf.h
 cwenv.sh
 cwlocal.sh
+*.exe
+*.o

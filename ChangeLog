@@ -1,3 +1,14 @@
+2025-08-15 AIDA Shinra <shinra@j10n.org>
+	* Canna 3.7p5 release again.
+	* CHANGES.jp: updated for 3.7p5
+	* configure.ac: bump to 3.7p5
+	* canna/patchlevel.h: ditto
+	* .gitignore: add more generated files
+	* lib/RKC/.gitignore: ditto
+	* lib/RKC16/.gitignore: ditto
+	* lib/canna/.gitignore: ditto
+	* lib/canna16/.gitignore: ditto
+
 2025-06-09 AIDA Shinra <shinra@j10n.org>
 	* Canna 3.7p4 release again.
 	* README: fixed URL to the official site

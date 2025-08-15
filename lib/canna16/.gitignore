@@ -1,9 +1,10 @@
 .depend
 Makefile
+cygcanna16-*.dll
 libcanna16.a
 libcanna16.so*
 libcanna16.sl*
-libcanna16.dll
+libcanna16.dll*
 unshared
 GSYM.awk
 globnames
