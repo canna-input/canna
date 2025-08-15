@@ -1,4 +1,9 @@
 2025-08-16 AIDA Shinra <shinra@j10n.org>
+	* [Merged] from the SFJP trunk on 2004-09-30:
+	* [Canna-dev 320]: multi.c patch
+	* lib/canna/multi.c: End, Zenkaku/Hankaku key
+
+2025-08-16 AIDA Shinra <shinra@j10n.org>
 	* [Merged] from the SFJP trunk on 2004-04-10:
 	* [Canna-dev 297]: romaji-yuusen & canna-do-function
 	* lib/canna/romaji.c(Yomisearchfunc): override keymap only when no

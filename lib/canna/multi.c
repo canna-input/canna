@@ -60,14 +60,15 @@ int c;
   static char *keyCharMap[] = {               
     "space",    "DEL",      "Nfer",     "Xfer",     "Up",
     "Left",     "Right",    "Down",     "Insert",   "Rollup",
-    "Rolldown", "Home",     "HELP",     "KeyPad",   "S-nfer",
-    "S-xfer",   "S-up",     "S-left",   "S-right",  "S-down",
-    "C-nfer",   "C-xfer",   "C-up",     "C-left",   "C-right",
-    "C-down",   "F1",       "F2",       "F3",       "F4",
-    "F5",       "F6",       "F7",       "F8",       "F9",
-    "F10",      "PF1",      "PF2",      "PF3",      "PF4",
-    "PF5",      "PF6",      "PF7",      "PF8",      "PF9",
-    "PF10",
+    "Rolldown", "Home",     "HELP",     "KeyPad",   "End",
+    "S-nfer",   "S-xfer",   "S-up",     "S-left",   "S-right",
+    "S-down",   "C-nfer",   "C-xfer",   "C-up",     "C-left",
+    "C-right",  "C-down",   "F1",       "F2",       "F3",
+    "F4",       "F5",       "F6",       "F7",       "F8",
+    "F9",       "F10",      "PF1",      "PF2",      "PF3",
+    "PF4",      "PF5",      "PF6",      "PF7",      "PF8",
+    "PF9",      "PF10",     "Hiragana", "Katakana", "Han/Zen",
+    "Eisu",
   };
 
   if (c < 0x20) {
@@ -89,14 +90,14 @@ int c;
   }
   else if (c == 0x20)
     strcpy((char *)Gkey, keyCharMap[0]);
-  else if (c > 0x7e && c < 0x8c)
+  else if (c > 0x7e && c < 0x8d)
     strcpy((char *)Gkey, keyCharMap[c -0x7f +1]);
   else if (c > 0x8f && c < 0x9c)
-    strcpy((char *)Gkey, keyCharMap[c -0x90 +14]);
+    strcpy((char *)Gkey, keyCharMap[c -0x90 +15]);
   else if (c > 0xdf && c < 0xea)
-    strcpy((char *)Gkey, keyCharMap[c -0xe0 +26]);
-  else if (c > 0xef && c < 0xfa)
-    strcpy((char *)Gkey, keyCharMap[c -0xf0 +36]);
+    strcpy((char *)Gkey, keyCharMap[c -0xe0 +27]);
+  else if (c > 0xef && c < 0xfe)
+    strcpy((char *)Gkey, keyCharMap[c -0xf0 +37]);
   else
     return 0;
   return Gkey;
