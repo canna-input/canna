@@ -1,4 +1,14 @@
 2025-08-16 AIDA Shinra <shinra@j10n.org>
+	* [Merged] from the SFJP trunk on 2005-01-04:
+	* doc/lisp/canlisp.tex: style fix
+	* [Merged] from the SFJP trunk on 2005-01-01:
+	* New canlisp feature: (load "nonexistent-file" t) returns no error.
+	* lib/canna/lisp.c(Lload): If a non-nil value is given as the second
+	  arg of "load", no error is raised even if a nonexistent file were
+	  loaded. If the second arg is omitted, nil is assumed.
+	* doc/lisp/canlisp.tex: describe the feature
+
+2025-08-16 AIDA Shinra <shinra@j10n.org>
 	* [Merged] from the SFJP trunk on 2007-08-08:
 	* [Canna-dev 360]: romaji-yuusen bug
 	* Multiple bugfixes around kana input
