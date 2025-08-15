@@ -1,6 +1,7 @@
 2025-08-15 AIDA Shinra <shinra@j10n.org>
-	* Canna 3.7p5 release again.
+	* Canna 3.7p5 release.
 	* CHANGES.jp: updated for 3.7p5
+	* Canna.conf.dist: static libraries were not built. fixed.
 	* configure.ac: bump to 3.7p5
 	* canna/patchlevel.h: ditto
 	* .gitignore: add more generated files
