@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcsid[]="@(#) 102.1 $Id: RKkana.c,v 1.3 2003/09/17 08:50:53 aida_s Exp $";
+static char rcsid[]="@(#) 102.1 $Id: RKkana.c,v 1.4 2007/08/08 14:54:33 aida_s Exp $";
 #endif
 
 /* LINTLIBRARY */
@@ -970,7 +970,7 @@ int maxdst, srclen, flags, *ulen, *dlen, *tlen, *rule;
   len = CNvW2E(src, srclen, cbuf1, CBUFSIZE);
   status = RkMapPhonogram(romaji, (unsigned char *)cbuf2, CBUFSIZE,
 			  (unsigned char *)cbuf1, len,
-			  (unsigned) key, flags,
+			  (unsigned) (WIsG0(key) ? key : 0), flags,
 			  &fulen, &fdlen, &ftlen, rule);
   tmpch = cbuf2[fdlen];
   cbuf2[fdlen] = '\0';

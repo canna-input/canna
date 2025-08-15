@@ -1,4 +1,21 @@
 2025-08-16 AIDA Shinra <shinra@j10n.org>
+	* [Merged] from the SFJP trunk on 2007-08-08:
+	* [Canna-dev 360]: romaji-yuusen bug
+	* Multiple bugfixes around kana input
+	* lib/canna/RKkana.c(RkwMapPhonogram): Don't pass non-ASCII characters
+	  to RkMapPhonogram as the 6th arg.
+	* lib/canna/RKroma.c (RkMapPhonogram): Handle sokuon in old dic case
+	  as romaji-yuusen feature expects.
+	  (RkMapRoma): Tweak for consistency with RkMapPhonogram's change.
+	* lib/canna/empty.c(EmptySelfInsert): Prevent crash in kana input.
+	* lib/canna/multi.c(_DoFuncSequence): Convert kana key to wchar.
+	* lib/canna/romaji.c(YomiInsert): Allow only ASCII and kana keys to be
+	  FunctionalInsert'ed.
+	  (makePhonoOnBuffer): Change the 3rd arg to wchar_t.
+	  (Yomisearchfunc): Try romaji-yuusen feature only for suitable keys
+	  for romaji-kana conversion.
+
+2025-08-16 AIDA Shinra <shinra@j10n.org>
 	* [Merged] from the SFJP trunk on 2004-09-30:
 	* [Canna-dev 320]: multi.c patch
 	* lib/canna/multi.c: End, Zenkaku/Hankaku key

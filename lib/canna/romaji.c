@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char rcs_id[] = "@(#) 102.1 $Id: romaji.c,v 1.10 2003/09/17 08:50:53 aida_s Exp $";
+static char rcs_id[] = "@(#) 102.1 $Id: romaji.c,v 1.14 2007/08/08 14:54:33 aida_s Exp $";
 #endif /* lint */
 
 #include "canna.h"
@@ -962,7 +962,7 @@ static BYTE charKind[] = {
 
   */
 
-static makePhonoOnBuffer();
+static makePhonoOnBuffer pro((uiContext, yomiContext, wchar_t, int, int));
 
 void
 restoreChikujiIfBaseChikuji(yc)
@@ -1018,22 +1018,19 @@ uiContext d;
   fitmarks(yc);
 
   if (0xa0 < d->ch && d->ch < 0xe0) {
-#ifdef USE_ROMKANATABLE_FOR_KANAKEY
-    key = d->buffer_return[0];
-#else
     if (yc->allowedChars == CANNA_NOTHING_RESTRICTED) {
+#ifdef USE_ROMKANATABLE_FOR_KANAKEY
+      key = d->buffer_return[0];
+#else
       return KanaYomiInsert(d); /* callback のチェックは KanaYomiInsert で! */
+#endif
     }
     else {
       return NothingChangedWithBeep(d);
     }
-#endif
-  }
-
-  /*   (d->ch & ~0x1f) == 0x1f < (unsigned char)d->ch */
-  if (!(d->ch & ~0x1f) && yc->allowedChars != CANNA_NOTHING_RESTRICTED
-      || (d->ch < 0x80 ? charKind[d->ch - 0x20] : 1) < yc->allowedChars) {
-    /* 前の行、USE_ROMKANATABLE_FOR_KANAKEY のときにまずい */
+  } else if (d->ch >= 0x80 /* カーソルキーなどはFunctionalInsertできない */ ||
+      (!(d->ch & ~0x1f) && yc->allowedChars != CANNA_NOTHING_RESTRICTED) ||
+      charKind[d->ch - 0x20] < yc->allowedChars) {
     /* 0x20 はコントロールキャラクタの分 */
     return NothingChangedWithBeep(d);
   }
@@ -1042,11 +1039,8 @@ uiContext d;
     /* allowed all 以外ではローマ字かな変換を行わない */
     wchar_t romanBuf[4]; /* ２バイトで十分だと思うけどね */
     int len;
-#ifdef USE_ROMKANATABLE_FOR_KANAKEY
-    wchar_t tempc = key ? key : (wchar_t)d->ch;
-#else
     wchar_t tempc = (wchar_t)d->ch;
-#endif
+
     romajiReplace(0, &tempc, 1, SENTOU);
 
     len = RkwCvtNone(romanBuf, 4, &tempc, 1);
@@ -1093,9 +1087,9 @@ uiContext d;
     kanaReplace(0, &tempc, 1, (yc->kRStartp == yc->kCurs) ? SENTOU : 0);
 
 #ifdef USE_ROMKANATABLE_FOR_KANAKEY
-    kugiri = makePhonoOnBuffer(d, yc, key ? key : (unsigned char)d->ch, 0, 0);
+    kugiri = makePhonoOnBuffer(d, yc, key ? key : (wchar_t)d->ch, 0, 0);
 #else
-    kugiri = makePhonoOnBuffer(d, yc, (unsigned char)d->ch, 0, 0);
+    kugiri = makePhonoOnBuffer(d, yc, (wchar_t)d->ch, 0, 0);
 #endif
 
     if (kugiri && autoconvert) {
@@ -1180,7 +1174,7 @@ static
 makePhonoOnBuffer(d, yc, key, flag, english)
 uiContext d;
 yomiContext yc;
-unsigned char key;
+wchar_t key;
 int flag, english;
 {
   int i, n, m, t, sm, henkanflag, prevflag, cond;
@@ -1282,7 +1276,7 @@ int flag, english;
 	  }
 	}
 	if (n == yc->kCurs - yc->kRStartp) {
-	  key = (unsigned char)0;
+	  key = (wchar_t)0;
 	}
       }
       else {
@@ -1390,7 +1384,7 @@ int flag, english;
 	}
 
 	/* ついでに次のローマ字かな変換用に key を考えてみる。 */
-	key = (unsigned char)yc->kana_buffer[yc->kRStartp + t];
+	key = yc->kana_buffer[yc->kRStartp + t];
       }
       else if (m > 0) { /* ローマ字とかなの対応を付けるための処理 */
 	int n_cor_keys = n -
@@ -1990,7 +1984,7 @@ int bsize;
 
   yc->generalFlags &= ~CANNA_YOMI_BREAK_ROMAN;
 
-  makePhonoOnBuffer(d, yc, (unsigned char)0, RK_FLUSH, 0);
+  makePhonoOnBuffer(d, yc, (wchar_t)0, RK_FLUSH, 0);
   yc->n_susp_chars = 0; /* 上の行で保証されるかも知れない */
   yc->last_rule = 0;
 
@@ -4251,7 +4245,7 @@ uiContext d;
 	kPos2rPos(yc, j, i, &yc->rStartp, &yc->rCurs);
 	yc->kRStartp = j;
 	yc->kCurs = i;
-	makePhonoOnBuffer(d, yc, (unsigned char)0, RK_FLUSH, 0);
+	makePhonoOnBuffer(d, yc, (wchar_t)0, RK_FLUSH, 0);
 	jishu_kEndp += yc->kCurs - i;
 	i = yc->kCurs;
       }
@@ -4351,14 +4345,13 @@ uiContext d;
       if (yc->kRStartp == yc->kCurs - 1) {
 	yc->kAttr[yc->kRStartp] |= SENTOU;
       }
-      makePhonoOnBuffer(d, yc,
-                          (unsigned char)yc->kana_buffer[yc->kCurs - 1], 0, 0);
+      makePhonoOnBuffer(d, yc, yc->kana_buffer[yc->kCurs - 1], 0, 0);
     }
     if (yc->kRStartp != yc->kEndp) {
       if (yc->kRStartp == yc->kCurs - 1) {
 	yc->kAttr[yc->kRStartp] |= SENTOU;
       }
-      makePhonoOnBuffer(d, yc, (unsigned char)0, RK_FLUSH, 0);
+      makePhonoOnBuffer(d, yc, (wchar_t)0, RK_FLUSH, 0);
     }
     break;
 
@@ -4615,9 +4608,26 @@ int fnum;
   }
 
   if (fnum == 0 && cannaconf.romaji_yuusen && yc) { /* もし、優先なら */
+    wchar_t nextroma;
+    
+    if (key < 0x80) {
+      nextroma = (wchar_t)key;
+    }
+#ifdef USE_ROMKANATABLE_FOR_KANAKEY
+    else if (0xa0 < key && key < 0xe0) {
+      int check;
+      nextroma = key2wchar(key, &check);
+      if (!check)
+	nextroma = (wchar_t)-1;
+    }
+#endif
+    else {
+      nextroma = (wchar_t)-1;
+    }
     len = yc->kCurs - yc->kRStartp;
     fnum = mode->keytbl[key];
-    if (fnum != CANNA_FN_FunctionalInsert && len > 0) {
+    if (fnum != CANNA_FN_FunctionalInsert && len > 0 &&
+	nextroma != (wchar_t)-1) {
       int n, m, t, flag, prevrule;
 #ifndef USE_MALLOC_FOR_BIG_ARRAY
       wchar_t kana[128], roma[128];
@@ -4639,10 +4649,10 @@ int fnum;
       flag = cannaconf.ignore_case ? RK_IGNORECASE : 0;
 
       WStrncpy(roma, yc->kana_buffer + yc->kRStartp, len);
-      roma[len++] = (wchar_t)key;
+      roma[len++] = nextroma;
     
       prevrule = yc->last_rule;
-      if ((RkwMapPhonogram(yc->romdic, kana, 128, roma, len, (wchar_t)key,
+      if ((RkwMapPhonogram(yc->romdic, kana, 128, roma, len, nextroma,
 			   flag | RK_SOKON, &n, &m, &t, &prevrule) &&
 	   n == len) || n == 0) {
 	/* RK_SOKON を付けるのは旧辞書用 */

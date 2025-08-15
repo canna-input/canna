@@ -21,7 +21,7 @@
  */
 
 #if !defined(lint) && !defined(__CODECENTER__)
-static char m_s_map_id[] = "@(#) 102.1 $Id: multi.c,v 1.2 2003/01/10 13:08:45 aida_s Exp $";
+static char m_s_map_id[] = "@(#) 102.1 $Id: multi.c,v 1.4 2007/08/08 14:54:33 aida_s Exp $";
 #endif /* lint */
 
 #include "canna.h"
@@ -155,9 +155,11 @@ BYTE key;
     
   total_res = 0;
   for(; *p ; p++) {
+    int check;
     /* ２回目以降に以下のデータが失われている場合があるので入れ直す。 */
-    d->ch = (unsigned)(*(d->buffer_return) = (wchar_t)key);
-    d->nbytes = 1;
+    d->ch = (unsigned)key;
+    d->buffer_return[0] = key2wchar((unsigned)key, &check);
+    d->nbytes = check ? 1 : 0;
     res = _doFunc(d, (int)*p); /* 生の doFunc を呼ぶ。 */
 
     if (d->kanji_status_return->length >= 0) {
