@@ -21,4 +21,4 @@
  */
 
 #define CANNA_MAJOR_MINOR 3007
-#define CANNA_PATCH_LEVEL "p4"
+#define CANNA_PATCH_LEVEL "p5"

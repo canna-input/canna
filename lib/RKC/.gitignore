@@ -1,7 +1,11 @@
 .depend
 Makefile
+cfuncs.c
+cygRKC-*.dll
+file.c
 libRKC.a
 libRKC.so*
 libRKC.sl*
-libRKC.dll
+libRKC.dll*
 unshared
+strops.c

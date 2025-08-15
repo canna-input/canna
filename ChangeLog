@@ -1,3 +1,15 @@
+2025-08-15 AIDA Shinra <shinra@j10n.org>
+	* [Merged] from STABLE-3.7 branch:
+	* CHANGES.jp: updated for 3.7p5
+	* Canna.conf.dist: static libraries were not built. fixed.
+	* configure.ac: bump to 3.7p5
+	* canna/patchlevel.h: ditto
+	* .gitignore: add more generated files
+	* lib/RKC/.gitignore: ditto
+	* lib/RKC16/.gitignore: ditto
+	* lib/canna/.gitignore: ditto
+	* lib/canna16/.gitignore: ditto
+
 2025-08-14 AIDA Shinra <shinra@j10n.org>
 	* [Merged] from the SFJP trunk on 2004-03-15:
 	* [Canna-dev 291]: Return from temporary mode after quit.
