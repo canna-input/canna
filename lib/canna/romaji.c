@@ -4614,11 +4614,9 @@ int fnum;
     yc = (yomiContext)0;
   }
 
-  if (cannaconf.romaji_yuusen && yc) { /* もし、優先なら */
+  if (fnum == 0 && cannaconf.romaji_yuusen && yc) { /* もし、優先なら */
     len = yc->kCurs - yc->kRStartp;
-    if (fnum == 0) {
-      fnum = mode->keytbl[key];
-    }
+    fnum = mode->keytbl[key];
     if (fnum != CANNA_FN_FunctionalInsert && len > 0) {
       int n, m, t, flag, prevrule;
 #ifndef USE_MALLOC_FOR_BIG_ARRAY

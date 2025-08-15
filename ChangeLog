@@ -1,3 +1,9 @@
+2025-08-16 AIDA Shinra <shinra@j10n.org>
+	* [Merged] from the SFJP trunk on 2004-04-10:
+	* [Canna-dev 297]: romaji-yuusen & canna-do-function
+	* lib/canna/romaji.c(Yomisearchfunc): override keymap only when no
+	  function is specified (i.e. not KC_DO, multisequence, ...)
+
 2025-08-15 AIDA Shinra <shinra@j10n.org>
 	* [Merged] from STABLE-3.7 branch:
 	* CHANGES.jp: updated for 3.7p5
@@ -103,7 +109,7 @@
 	* [Canna-dev 359]: Solaris + gcc
 	* canna/ccompat.h: On sun gcc uses vendor's as rather than gas.
 	* Canna.conf.dist: Set LD_RUN_PATH on Sun even if ModernElfLink == NO.
-	* [Merged] from the SFJP trunk on 2025-05-30:
+	* [Merged] from the SFJP trunk on 2005-05-30:
 	* canna/widedef.h: MacOS X 10.4 support
 	* server/util.c: The unused part was enabled by mistake. Disable it.
 
