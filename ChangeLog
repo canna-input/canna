@@ -1,3 +1,15 @@
+2025-08-18 AIDA Shinra <shinra@j10n.org>
+	* [Merged] from the SFJP trunk on 2004-11-21:
+	* New CRC calculator was buggy.
+	* lib/RKindep/mkcrctab.c: create correct CRC table
+	* lib/RKindep/crctab.c: newly generated
+	* [Merged] from the SFJP trunk on 2004-05-03:
+	* Reimplement CRC calculator to avoid old BSD license.
+	* lib/RKindep/cksum.c: reimplemented everything from FreeBSD
+	* lib/RKindep/crctab.c: added
+	* lib/RKindep/mkcrctab.c: added (but not compiled)
+	* lib/RKindep/Imakefile: mkcrctab rule
+
 2025-08-16 AIDA Shinra <shinra@j10n.org>
 	* [Merged] from the SFJP trunk on 2005-01-04:
 	* doc/lisp/canlisp.tex: style fix
