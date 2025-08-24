@@ -1,3 +1,6 @@
+2025-08-24 AIDA Shinra <shinra@j10n.org>
+	* COPYRIGHT: now free from the BSD 4-clause license
+
 2025-08-18 AIDA Shinra <shinra@j10n.org>
 	* [Merged] from the SFJP trunk on 2004-11-21:
 	* New CRC calculator was buggy.
