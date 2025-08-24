@@ -1,27 +1,4 @@
 /* config.h.in.  Generated from configure.in by autoheader.  */
-/* acconfig.h,v 1.4 2002/06/22 13:15:25 hiroo Exp */
-/* Canna: $Id: acconfig.h,v 1.3 2003/01/24 14:42:02 aida_s Exp $ */
-
-/* Define `socklen_t' to int if <sys/socket.h> does not define. */
-#undef socklen_t
-
-/* Define to `long' if <sys/types.h> does not define.  */
-#undef time_t
-
-/*
- * Defined if you allow creating a file in an arbitrary path
- * which is the traditional feature.
- */
-#undef WNN_ALLOW_UNSAFE_PATH
-
-/* Define if the signal function returns void. */
-#undef RETSIGTYPE_VOID
-
-/* Define when terminfo support found */
-#undef HAVE_TERMINFO
-
-/* Define when union wait exists */
-#undef HAVE_UNION_WAIT
 
 /* Define to 1 if the `getpgrp' function requires zero arguments. */
 #undef GETPGRP_VOID
@@ -137,6 +114,9 @@
 /* Define to 1 if you have the `socket' function. */
 #undef HAVE_SOCKET
 
+/* Define to 1 if the system has the type `socklen_t'. */
+#undef HAVE_SOCKLEN_T
+
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
 
@@ -188,6 +168,9 @@
 /* Define to 1 if you have the <termcap.h> header file. */
 #undef HAVE_TERMCAP_H
 
+/* Define when terminfo support found. */
+#undef HAVE_TERMINFO
+
 /* Define to 1 if you have the <termios.h> header file. */
 #undef HAVE_TERMIOS_H
 
@@ -197,8 +180,17 @@
 /* Define to 1 if you have the <term.h> header file. */
 #undef HAVE_TERM_H
 
+/* Define to 1 if the system has the type `union wait'. */
+#undef HAVE_UNION_WAIT
+
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
+
+/* Define to 1 if you have the <utmpx.h> header file. */
+#undef HAVE_UTMPX_H
+
+/* Define to 1 if you have the <utmp.h> header file. */
+#undef HAVE_UTMP_H
 
 /* Define to 1 if you have the `vsyslog' function. */
 #undef HAVE_VSYSLOG
@@ -242,5 +234,5 @@
 /* Define to `int' if <sys/types.h> does not define. */
 #undef mode_t
 
-/* Define to `long' if <sys/types.h> does not define. */
-#undef time_t
+/* Define missing socklen_t. */
+#undef socklen_t

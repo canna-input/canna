@@ -621,6 +621,7 @@ ac_includes_default="\
 
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
+WNNTERM_LIB
 EGREP
 GREP
 XMKMF
@@ -3869,11 +3870,11 @@ fi
 done
 
 
-for ac_header in fcntl.h sgtty.h syslog.h unistd.h \
+for ac_header in fcntl.h syslog.h unistd.h utmp.h utmpx.h \
 	sys/file.h sys/ioctl.h sys/time.h sys/types.h sys/param.h \
 	malloc.h strings.h memory.h \
-	curses.h ncurses.h term.h termio.h \
-	termcap.h sgtty.h sys/termio.h termios.h
+	curses.h ncurses.h sgtty.h term.h termio.h termios.h \
+	termcap.h sys/termio.h
 
 do :
   as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
@@ -3900,7 +3901,7 @@ fi
 if test -n "$with_term_libs"; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: $with_term_libs" >&5
 $as_echo "$with_term_libs" >&6; }
-  LIBS="$LIBS $with_term_libs"
+  WNNTERM_LIB="$with_term_libs"
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: automatic terminal library selection" >&5
 $as_echo "automatic terminal library selection" >&6; }
@@ -3957,8 +3958,8 @@ _ACEOF
 fi
 
     if test "x$olibs" != "x$LIBS"; then
-                        if test "$cross_compiling" = yes; then :
-  res="FAIL"
+                              if test "$cross_compiling" = yes; then :
+  res="OK"
 else
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
@@ -3977,20 +3978,30 @@ rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
   conftest.$ac_objext conftest.beam conftest.$ac_ext
 fi
 
+      LIBS="$olibs"
       if test "$res" = "OK"; then
+	WNNTERM_LIB="-l$libname"
 	break
       fi
       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $libname library is not usable" >&5
 $as_echo "$libname library is not usable" >&6; }
-      LIBS="$olibs"
     fi
   done
 fi
-if test "x$olibs" != "x$LIBS"; then
+have_terminfo=no
+if test "x$WNNTERM_LIB" != "x"; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether we talk terminfo" >&5
 $as_echo_n "checking whether we talk terminfo... " >&6; }
+  LIBS="$WNNTERM_LIB $olibs"
   if test "$cross_compiling" = yes; then :
-  as_fn_error $? "failed to compile test program." "$LINENO" 5
+  if test "x$ac_cv_header_term_h" = xyes; then
+	    { $as_echo "$as_me:${as_lineno-$LINENO}: result: probably yes -- you have term.h" >&5
+$as_echo "probably yes -- you have term.h" >&6; }
+	    have_terminfo=yes
+	else
+	    { $as_echo "$as_me:${as_lineno-$LINENO}: result: probably no -- you don't have term.h" >&5
+$as_echo "probably no -- you don't have term.h" >&6; }
+	fi
 else
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
@@ -4006,8 +4017,8 @@ if ac_fn_c_try_run "$LINENO"; then :
 $as_echo "no -- we are in termcap land" >&6; }
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes -- terminfo spoken here" >&5
-$as_echo "yes -- terminfo spoken here" >&6; }; $as_echo "#define HAVE_TERMINFO 1" >>confdefs.h
-
+$as_echo "yes -- terminfo spoken here" >&6; };
+	have_terminfo=yes
 fi
 rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
   conftest.$ac_objext conftest.beam conftest.$ac_ext
@@ -4017,6 +4028,13 @@ else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: none found" >&5
 $as_echo "none found" >&6; }
 fi
+if test "x$have_terminfo" = xyes; then
+
+$as_echo "#define HAVE_TERMINFO 1" >>confdefs.h
+
+fi
+LIBS="$olibs"
+
 
 ac_fn_c_check_type "$LINENO" "mode_t" "ac_cv_type_mode_t" "$ac_includes_default"
 if test "x$ac_cv_type_mode_t" = xyes; then :
@@ -4064,61 +4082,41 @@ $as_echo "#define TIME_WITH_SYS_TIME 1" >>confdefs.h
 
 fi
 
-ac_fn_c_check_type "$LINENO" "time_t" "ac_cv_type_time_t" "$ac_includes_default"
-if test "x$ac_cv_type_time_t" = xyes; then :
 
-else
+ac_fn_c_check_type "$LINENO" "socklen_t" "ac_cv_type_socklen_t" "
+#if HAVE_SYS_TYPES_H
+# include <sys/types.h>
+#endif
+#include <sys/socket.h>
+"
+if test "x$ac_cv_type_socklen_t" = xyes; then :
 
 cat >>confdefs.h <<_ACEOF
-#define time_t long
+#define HAVE_SOCKLEN_T 1
 _ACEOF
 
-fi
 
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for socklen_t" >&5
-$as_echo_n "checking for socklen_t... " >&6; }
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <sys/socket.h>
-_ACEOF
-if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
-  $EGREP "socklen_t" >/dev/null 2>&1; then :
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
 else
 
 $as_echo "#define socklen_t int" >>confdefs.h
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-
 fi
-rm -f conftest*
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for union wait" >&5
-$as_echo_n "checking for union wait... " >&6; }
-if test "$ac_cv_header_sys_wait_h" = yes; then
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
+ac_fn_c_check_type "$LINENO" "union wait" "ac_cv_type_union_wait" "
+#if HAVE_SYS_TYPES_H
+# include <sys/types.h>
+#endif
 #include <sys/wait.h>
+"
+if test "x$ac_cv_type_union_wait" = xyes; then :
+
+cat >>confdefs.h <<_ACEOF
+#define HAVE_UNION_WAIT 1
 _ACEOF
-if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
-  $EGREP "union wait" >/dev/null 2>&1; then :
-  $as_echo "#define HAVE_UNION_WAIT 1" >>confdefs.h
 
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-fi
-rm -f conftest*
 
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
 fi
+
 
 
 if test $ac_cv_c_compiler_gnu = yes; then
@@ -4265,7 +4263,7 @@ test $ac_cv_func_memcmp_working = no && case " $LIBOBJS " in
 esac
 
 
-for ac_func in wait3 setpgrp setsid dup2 killpg getpgid getpgrp
+for ac_func in getpgid getpgrp setpgrp wait3
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
@@ -4276,6 +4274,39 @@ _ACEOF
 
 fi
 done
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether getpgrp requires zero arguments" >&5
+$as_echo_n "checking whether getpgrp requires zero arguments... " >&6; }
+if ${ac_cv_func_getpgrp_void+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  # Use it with a single arg.
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+$ac_includes_default
+int
+main ()
+{
+getpgrp (0);
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  ac_cv_func_getpgrp_void=no
+else
+  ac_cv_func_getpgrp_void=yes
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_func_getpgrp_void" >&5
+$as_echo "$ac_cv_func_getpgrp_void" >&6; }
+if test $ac_cv_func_getpgrp_void = yes; then
+
+$as_echo "#define GETPGRP_VOID 1" >>confdefs.h
+
+fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether setpgrp takes no argument" >&5
 $as_echo_n "checking whether setpgrp takes no argument... " >&6; }
@@ -4317,43 +4348,22 @@ $as_echo "#define SETPGRP_VOID 1" >>confdefs.h
 
 fi
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether getpgrp requires zero arguments" >&5
-$as_echo_n "checking whether getpgrp requires zero arguments... " >&6; }
-if ${ac_cv_func_getpgrp_void+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  # Use it with a single arg.
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-$ac_includes_default
-int
-main ()
-{
-getpgrp (0);
-  ;
-  return 0;
-}
+for ac_func in setsid dup2 killpg
+do :
+  as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
+ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
+if eval test \"x\$"$as_ac_var"\" = x"yes"; then :
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
 _ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  ac_cv_func_getpgrp_void=no
-else
-  ac_cv_func_getpgrp_void=yes
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_func_getpgrp_void" >&5
-$as_echo "$ac_cv_func_getpgrp_void" >&6; }
-if test $ac_cv_func_getpgrp_void = yes; then
-
-$as_echo "#define GETPGRP_VOID 1" >>confdefs.h
-
-fi
+done
 
 
-for ac_func in random drand48 fchmod getopt \
-	gethostname select socket closesocket setsockopt send recv \
+for ac_func in random drand48 fchmod getopt killpg \
 	FD_SET \
+	gethostname select socket closesocket setsockopt send recv \
 	getdtablesize getrlimit syslog vsyslog setenv snprintf
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`

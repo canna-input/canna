@@ -1,6 +1,6 @@
 dnl
-dnl   configure.in,v 1.32 2002/09/01 17:48:19 hiroo Exp
-dnl   Canna: $Id: configure.in,v 1.8 2003/03/24 04:15:22 aida_s Exp $
+dnl   configure.in,v 1.39 2003/06/11 11:16:05 aono Exp
+dnl   Canna: $Id: configure.in,v 1.10 2004/04/25 18:19:27 aida_s Exp $
 dnl
 
 dnl
@@ -11,7 +11,7 @@ dnl Copyright Kyoto University Research Institute for Mathematical Sciences
 dnl                 1987, 1988, 1989, 1990, 1991, 1992
 dnl Copyright OMRON Corporation. 1987, 1988, 1989, 1990, 1991, 1992, 1999
 dnl Copyright ASTEC, Inc. 1987, 1988, 1989, 1990, 1991, 1992
-dnl Copyright FreeWnn Project 1999, 2000, 2001, 2002
+dnl Copyright FreeWnn Project 1999, 2000, 2001, 2002, 2003
 dnl 
 dnl Maintainer:  FreeWnn Project   <freewnn@tomo.gr.jp>
 dnl 
@@ -257,7 +257,8 @@ esac], unsafe_path=false)
 AC_SUBST(unsafe_path)
 
 if test ${unsafe_path} = true; then
-	AC_DEFINE(WNN_ALLOW_UNSAFE_PATH)
+	AC_DEFINE(WNN_ALLOW_UNSAFE_PATH, 1,
+		[Define to allow writing to other than JSERVERDIR.])
 fi
 ]) dnl not CANNA
 
@@ -267,77 +268,69 @@ dnl
 AC_PROG_CC
 
 ifdef([CANNA],,[
-dnl Use environment variable (if set). It will be overridden
-dnl in supported system though...
-CDEBUGFLAGS=${CDEBUGFLAGS:-"-O"}
+dnl System specific options
+dnl Now that we are using autoconf, CCOPTIONS should be nuked...
 case $host in
 *-*-linux*)
     CCOPTIONS="-Dlinux -D_POSIX_SOURCE -D_BSD_SOURCE"
-    CDEBUGFLAGS="-O2 -fno-strength-reduce"
     ;;
-*-*-freebsd*|*-*-netbsd*|*-*-openbsd*)
-    CDEBUGFLAGS="-O2 -fno-strength-reduce"
-    ;;
-*-*-bsdi*)
-    CDEBUGFLAGS="-O2 -fno-strength-reduce"
+*-*-darwin*)
+    # Unfortunately, autoconf (at least 2.57) does not recognize
+    # proper CPP. (Normal cpp-precomp nor auto-retrying in basic mode does
+    # not work with pubdic+ processing.) So define here ....
+    CPP=${CPP:-"gcc -E -no-cpp-precomp"}
     ;;
 *-*-sunos*)
       if test $GCC = yes; then
 	CCOPTIONS="-Dsun -Dsparc"
-        CDEBUGFLAGS=-O2
       else
         CCOPTIONS=""
-        CDEBUGFLAGS=-O4
       fi
       ;;
 *-*-solaris2.*)
     # Will 'solaris*' be OK?
       if test $GCC = yes; then
         CCOPTIONS="-Dsun -D`uname -p` -DSVR4 -DSYSV"
-        CDEBUGFLAGS=-O2
       else
         CCOPTIONS="-Xc -xF -xcg92 -Dsun -D`uname -p` -DSVR4 -DSYSV"
-        CDEBUGFLAGS=-O4
       fi
     ;;
 *-*-hpux*)
     if test $GCC = yes; then
         CCOPTIONS="-Dhpux -DSYSV"
-        CDEBUGFLAGS=-O2
     else
         CCOPTIONS="-Ae -Dhpux -DSYSV"
     fi
       ;;
 i[[34567]]86-pc-beos*)
 	CCOPTIONS="-DBEOS -D_POSIX_SOURCE -D_BSD_SOURCE"
-	CDEBUGFLAGS="-O2 -fno-strength-reduce"
 	;;
 powerpc-*-beos*)
 	CCOPTIONS="-DBEOS -D_POSIX_SOURCE -D_BSD_SOURCE"
 	;;
 *-*-aix*)
-    if test $GCC = yes; then
-      CDEBUGFLAGS=-O2
-    else
-      CDEBUGFLAGS=-O
-    fi
     CCOPTIONS="-DSYSV"
     ;;
 *)
-    AC_MSG_WARN("It is not reported if FreeWnn works on this system.  But continuing...")
-    AC_MSG_WARN([(It may or may not work if you set CCOPTIONS properly.)])
+dnl    AC_MSG_WARN("It is not reported if FreeWnn works on this system.  But continuing...")
+dnl    AC_MSG_WARN([(It may or may not work if you set CCOPTIONS properly.)])
     ;;
 esac
 
 dnl Checking if we use gcc or not
 if test $debug = true; then
     if test $GCC = yes; then
-      CDEBUGFLAGS="-g2 -Wall -fstack-check $CDEBUGFLAGS"
+      CDEBUGFLAGS=${CDEBUGFLAGS:-"-g2 -O2 -Wall -fstack-check"}
+    else
+      CDEBUGFLAGS=${CDEBUGFLAGS:-""}
     fi
     INSTPGMFLAGS=
 else
+    CDEBUGFLAGS=${CDEBUGFLAGS:-""}
     INSTPGMFLAGS="-s"
 fi
+AC_SUBST(CCOPTIONS)
+AC_SUBST(CDEBUGFLAGS)
 AC_SUBST(INSTPGMFLAGS)
 
 echo "Set CDEBUGFLAGS and CCOPTIONS to following:"
@@ -362,8 +355,6 @@ AC_PROG_MAKE_SET
 ifdef([CANNA],,[
 AC_PROG_LIBTOOL
 AC_SUBST(LIBTOOL_DEPS)
-AC_SUBST(CCOPTIONS)
-AC_SUBST(CDEBUGFLAGS)
 ])dnl not CANNA
 
 dnl Checks for libraries.
@@ -386,18 +377,15 @@ AC_PATH_X
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
 AC_HEADER_TIME
-AC_CHECK_HEADERS(fcntl.h sgtty.h syslog.h unistd.h \
+AC_CHECK_HEADERS(fcntl.h syslog.h unistd.h utmp.h utmpx.h \
 	sys/file.h sys/ioctl.h sys/time.h sys/types.h sys/param.h \
 	malloc.h strings.h memory.h \
-	curses.h ncurses.h term.h termio.h \
-	termcap.h sgtty.h sys/termio.h termios.h
+	curses.h ncurses.h sgtty.h term.h termio.h termios.h \
+	termcap.h sys/termio.h
 )
-dnl If you don't use ansidecl.h, use this (and modify Wnn/jserver/error.c)
-dnl AC_CHECK_HEADERS(stdarg.h varargs.h, break)
 
 dnl
 dnl Terminal library selection. (ported from vim6.1)
-dnl FIXME: cross compilation
 dnl
 olibs="$LIBS"
 AC_MSG_CHECKING(--with-term-libs argument)
@@ -405,7 +393,7 @@ AC_ARG_WITH(tlib,
 [  --with-term-libs=-lLIB    terminal library to be used ],)
 if test -n "$with_term_libs"; then
   AC_MSG_RESULT($with_term_libs)
-  LIBS="$LIBS $with_term_libs"
+  WNNTERM_LIB="$with_term_libs"
 else
   AC_MSG_RESULT([automatic terminal library selection])
   dnl  On HP-UX 10.10 termcap or termlib should be used instead of
@@ -423,65 +411,70 @@ else
       dnl It's possible that a library is found but it doesn't work
       dnl e.g., shared library that cannot be found
       dnl compile and run a test program to be sure
-      AC_TRY_RUN([
+      dnl If we are cross compiling, skip this test.
+      AC_RUN_IFELSE([
 #ifdef HAVE_TERMCAP_H
 # include <termcap.h>
 #endif
 main() {char *s; s=(char *)tgoto("%p1%d", 0, 1); exit(0); }],
-			  res="OK", res="FAIL", res="FAIL")
+			  res="OK", res="FAIL", res="OK")
+      LIBS="$olibs"
       if test "$res" = "OK"; then
+	WNNTERM_LIB="-l$libname"
 	break
       fi
       AC_MSG_RESULT($libname library is not usable)
-      LIBS="$olibs"
     fi
   done
 fi
-if test "x$olibs" != "x$LIBS"; then
+have_terminfo=no
+if test "x$WNNTERM_LIB" != "x"; then
   AC_MSG_CHECKING(whether we talk terminfo)
-  AC_TRY_RUN([
+  LIBS="$WNNTERM_LIB $olibs"
+  AC_RUN_IFELSE([
 #ifdef HAVE_TERMCAP_H
 # include <termcap.h>
 #endif
 main()
 {char *s; s=(char *)tgoto("%p1%d", 0, 1); exit(!strcmp(s==0 ? "" : s, "1")); }],
-	  AC_MSG_RESULT([no -- we are in termcap land]),
-	  AC_MSG_RESULT([yes -- terminfo spoken here]); AC_DEFINE(HAVE_TERMINFO),
-	  AC_MSG_ERROR(failed to compile test program.))
+	[AC_MSG_RESULT([no -- we are in termcap land])],
+	[AC_MSG_RESULT([yes -- terminfo spoken here]);
+	have_terminfo=yes],
+	[if test "x$ac_cv_header_term_h" = xyes; then
+	    AC_MSG_RESULT([probably yes -- you have term.h])
+	    have_terminfo=yes
+	else
+	    AC_MSG_RESULT([probably no -- you don't have term.h])
+	fi])
 else
   AC_MSG_RESULT(none found)
 fi
+if test "x$have_terminfo" = xyes; then
+    AC_DEFINE(HAVE_TERMINFO, 1, [Define when terminfo support found.])
+fi
+LIBS="$olibs"
+AC_SUBST(WNNTERM_LIB)
 
 dnl
 dnl Checks for typedefs, structures, and compiler characteristics.
 dnl
 AC_TYPE_MODE_T
 AC_HEADER_TIME
-AC_CHECK_TYPE(time_t, long)
 
-dnl
-dnl socklen_t は sys/socket.h や bits/socket.h で定義されているので、
-dnl AC_CHECK_TYPE では検出できない
-dnl
-AC_MSG_CHECKING(for socklen_t)
-AC_EGREP_CPP(socklen_t, [#include <sys/socket.h>], AC_MSG_RESULT(yes), 
-[ 
-AC_DEFINE(socklen_t, int)
-AC_MSG_RESULT(no)
-])
-dnl code below is for the same thing with autoconf 2.53
-dnl AC_CHECK_TYPES(socklen_t,,
-dnl 	AC_DEFINE(socklen_t, int),
-dnl	[INCLUDES = sys/socket.h])
-AC_MSG_CHECKING(for union wait)
-if test "$ac_cv_header_sys_wait_h" = yes; then
-  AC_EGREP_CPP(union wait, [#include <sys/wait.h>],
-  [AC_DEFINE(HAVE_UNION_WAIT)
-  AC_MSG_RESULT(yes)], 
-  [AC_MSG_RESULT(no)])
-else
-  AC_MSG_RESULT(no)
-fi
+dnl AC_CHECK_TYPES(time_t,,
+dnl	AC_DEFINE(time_t, long, [Define missing time_t.]),
+dnl		[INCLUDES = time.h])
+AC_CHECK_TYPES(socklen_t,,
+		AC_DEFINE(socklen_t, int, [Define missing socklen_t.]), [
+#if HAVE_SYS_TYPES_H
+# include <sys/types.h>
+#endif
+#include <sys/socket.h>])
+AC_CHECK_TYPES(union wait,,,[
+#if HAVE_SYS_TYPES_H
+# include <sys/types.h>
+#endif
+#include <sys/wait.h>])
 
 dnl
 dnl Checks for symbol
@@ -499,15 +492,16 @@ if test "$ac_cv_type_signal" = void; then
 fi
 
 AC_FUNC_MEMCMP
-AC_CHECK_FUNCS(wait3 setpgrp setsid dup2 killpg getpgid getpgrp)
-AC_FUNC_SETPGRP
+AC_CHECK_FUNCS(getpgid getpgrp setpgrp wait3)
 AC_FUNC_GETPGRP
+AC_FUNC_SETPGRP
+AC_CHECK_FUNCS(setsid dup2 killpg)
 dnl FreeWnn do not use the 3rd parameter of wait3().
 dnl AC_FUNC_WAIT3
 
-AC_CHECK_FUNCS(random drand48 fchmod getopt \
-	gethostname select socket closesocket setsockopt send recv \
+AC_CHECK_FUNCS(random drand48 fchmod getopt killpg \
 	FD_SET \
+	gethostname select socket closesocket setsockopt send recv \
 	getdtablesize getrlimit syslog vsyslog setenv snprintf)
 dnl for bcopy/index -> memcpy/strchr conversion (preparation):
 AC_CHECK_FUNCS(bcopy bzero bcmp index rindex \
@@ -519,6 +513,46 @@ JS_SUPPORTOBJS=
 AC_CHECK_FUNCS(mkdir vasprintf, ,
 [JS_SUPPORTOBJS="${JS_SUPPORTOBJS} ${ac_func}.o"])
 AC_SUBST(JS_SUPPORTOBJS)
+
+
+dnl
+dnl TCP Wrapper.
+dnl
+AC_MSG_CHECKING(whether to use libwrap)
+AC_ARG_WITH(libwrap,
+	[  --with-libwrap[=PATH]   Compile in libwrap (tcp_wrappers) support.],
+	[ case "$withval" in
+	  no)
+	    AC_MSG_RESULT(no)
+	    ;;
+	  yes)
+	    AC_MSG_RESULT(yes)
+	    AC_CHECK_LIB(wrap, request_init, [
+	      LIBS="-lwrap $LIBS"
+	      AC_DEFINE(HAVE_LIBWRAP, 1,
+			[Define libwrap (TCP Wrapper) support.]) ])
+	    CFLAGS="-DHAVE_LIBWRAP $CFLAGS"
+	    ;;
+	  *)
+	    AC_MSG_RESULT(yes)
+	    if test -d "$withval"; then
+	      WRAPINCLUDES="-I$withval"
+	      WRAPLIBS="-L$withval -lwrap"
+	    else
+	      WRAPINCLUDES="$withval"
+	    fi
+	    OLDLIBS="$LIBS"
+	    CFLAGS="-DHAVE_LIBWRAP $WRAPINCLUDES $CFLAGS"
+	    LIBS="$WRAPLIBS $LIBS"
+
+	    AC_TRY_LINK([ int allow_severity; int deny_severity; ],
+			[ hosts_access(); ],
+			[],
+			[ AC_MSG_ERROR(Could not find the $withval library. You must first install tcp_wrappers.) ])
+	    ;;
+	esac ],
+	AC_MSG_RESULT(no)
+)
 
 
 dnl

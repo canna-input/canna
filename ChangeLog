@@ -1,4 +1,25 @@
 2025-08-24 AIDA Shinra <shinra@j10n.org>
+	* [Merged] from the SFJP trunk on 2004-04-26:
+	* Make it easy to share canuum code with original uum.
+	* canuum/commonhd.h: don't simply remove #include
+	* canuum/sdefine.h: ditto
+	* canuum/sheader.h: ditto
+	* canuum/configure.in(--with-term-libs): don't touch LIBS. support
+	  cross compilation.
+	* canuum/jhlp.c: don't simply remove #include
+	  (chld_handler): use _POSIX_VERSION to determine if we use union wait
+	  (throughlike): remove an unused functoin
+	* canuum/termcap.c(sr_set): check %p though it exists only in terminfo
+	* [Merged] from the SFJP trunk on 2004-04-25:
+	* canuum/README.jp: updated
+	* [Merged] from the SFJP trunk on 2004-04-25:
+	* canuum/*: imported uum from FreeWnn (CVS HEAD, 2004-04-25)
+	* canuum/acconfig.h: removed because we use autoconf 2.59 now
+	* canuum/configure.in: autoconf 2.59
+	* canuum/jhlp.c: wnn_fd_set -> fd_set, WNN_FD_* -> FD_*
+	* mkrelease.sh: use autoconf 2.59 for canuum
+
+2025-08-24 AIDA Shinra <shinra@j10n.org>
 	* COPYRIGHT: now free from the BSD 4-clause license
 
 2025-08-18 AIDA Shinra <shinra@j10n.org>
