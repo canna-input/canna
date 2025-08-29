@@ -21,7 +21,7 @@
 #
 #	iroha.cbd
 #
-# $Id: dics.dir,v 1.5 2003/09/27 06:18:39 aida_s Exp $
+# $Id: dics.dir,v 1.6 2004/08/06 14:09:53 aida_s Exp $
 #
 fuzokugo.cbd(fuzokugo.swd)	-fuzokugo---
 iroha.cbd(iroha.mwd)		-iroha---
@@ -39,3 +39,7 @@ chimei.ctd(.mwd)		-chimei---
 kanasmpl.ctd(.mwd)		-kanasample---
 necgaiji.ctd(.mwd)		-necgaiji---
 software.ctd(.mwd)		-software---
+zipcode.cbd(zipcode.mwd)	-zipcode---
+zipcode.cbd(jigyosyo.mwd)	-jigyosyo---
+zipcode.cld(zipcode.mwd)	-zipcode---
+jigyosyo.cld(jigyosyo.mwd)	-jigyosyo---

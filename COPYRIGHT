@@ -50,3 +50,11 @@ canuum/COPYRIGHT.
 
 Pubdic+ is distributed under so-called MIT license. See
 dic/ideo/pubdic/COPYRIGHT (in both Japanese and English).
+
+The zipcode dictionaries dic/ideo/words/zipcode.t and
+dic/ideo/words/jigyosyo.t are generated from data available from JAPANPOST.
+Neither JAPANPOST nor Canna Project claim any copyright about the two files.
+
+The tools in misc/zipcode directory is distributed under GNU GPL.
+See misc/zipcode/README.jp and misc/zipcode/COPYING.
+

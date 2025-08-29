@@ -1,4 +1,28 @@
 2025-08-30 AIDA Shinra <shinra@j10n.org>
+	* [Merged] from the SFJP trunk on 2008-04-06 (zipcode dic part):
+	* misc/zipcode/Imakefile: mergeword -s and pod -P instead of forsort
+	  and sort.
+	  (distclean): new target
+	* [Merged] from the SFJP trunk on 2004-09-30:
+	* [Canna-dev 319]: Imakefile bug & #CN -> #CNS/#KK
+	* dic/ideo/words/Imakefile: TAB -> space
+	* dic/ideo/words/zipcode.t: #CN -> #CNS
+	* dic/ideo/words/jigyosyo.t: #CN -> #KK
+	* misc/zipcode/ken_all2canna.pl: #CN -> #CNS
+	* misc/zipcode/jigyosyo2canna.pl: #CN -> #KK
+	* [Merged] from the SFJP trunk on 2004-08-06:
+	* Introduce new zipcode dictionary made by Nakai san.
+	* dic/ideo/words/zipcode.t: added
+	* dic/ideo/words/jigyosyo.t: added
+	* dic/ideo/words/yubin.t: removed
+	* dic/ideo/words/dics.dir: added zipcode entries
+	* dic/ideo/words/obsolete.dir: ditto
+	* dic/ideo/words/Imakefile: create zipcode.cbd
+	* misc/zipcode/*: added
+	* COPYRIGHT: updated. zipcode.t and jigyosyo.t are in public domain.
+	  misc/zipcode/* are under GPL.
+
+2025-08-30 AIDA Shinra <shinra@j10n.org>
 	* canuum/freewnn-uum.files: remove acconfig.h
 
 2025-08-30 AIDA Shinra <shinra@j10n.org>

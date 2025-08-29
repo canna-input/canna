@@ -1,0 +1,54 @@
+/* $Id: Imakefile,v 1.2 2008/04/05 17:25:47 aida_s Exp $ */
+#include "../../Canna.conf"
+
+CANNAROOT = ../..
+INCLUDES = -I$(CANNAROOT)/include
+DEFINES = $(CANNA_DEFINES)
+
+CANNACMDDIR = $(CANNAROOT)/cmd
+MERGEWORD = $(CANNACMDDIR)/mergewd/mergeword
+POD = $(CANNAROOT)/dic/ideo/pubdic/pod
+
+AllTarget(zipcode.t jigyosyo.t)
+
+zipcode.p: zipcode.raw ProgramTargetName(zen2han) ken_all2canna.pl bracecut.pl
+	./zen2han zipcode.raw | perl ken_all2canna.pl | perl bracecut.pl > zipcodeT.p
+	$(POD) -P -2 zipcodeT.p > zipcode.p
+	$(RM) zipcodeT.p
+	@echo "zipcode.p:"
+	LANG=ja_JP.eucJP wc zipcode.p
+
+jigyosyo.t: jigyosyo.raw ProgramTargetName(zen2han) bracecut.pl
+	./zen2han jigyosyo.raw | perl jigyosyo2canna.pl > jigyosyo.spl
+	$(MERGEWORD) -s jigyosyo.spl > jigyosyo.t
+	$(RM) jigyosyo.spl
+
+zipcode.t: zipcode.p
+	$(POD) -P -i -2 zipcode.p > zipcode.spl
+	$(MERGEWORD) zipcode.spl > zipcode.t
+	$(RM) zipcode.spl
+
+zipcode.raw: ken_all.csv
+	nkf -S -e ken_all.csv > zipcode.raw
+
+jigyosyo.raw: jigyosyo.csv
+	nkf -S -e jigyosyo.csv > jigyosyo.raw
+
+download:
+	rm -rf ken_all.lzh jigyosyo.lzh ken_all.csv jigyosyo.csv
+	wget http://www.post.japanpost.jp/zipcode/dl/kogaki/lzh/ken_all.lzh
+	wget http://www.post.japanpost.jp/zipcode/dl/jigyosyo/lzh/jigyosyo.lzh
+	lha e ken_all.lzh
+	lha e jigyosyo.lzh
+	touch *.csv
+
+NormalProgramTarget(zen2han,zen2han.o,$(DEPRKINDEPLIB),$(RKINDEPLIB),)
+
+clean::
+	$(RM) *.raw *.spl *.p *.t
+
+distclean:: clean
+	$(RM) *.lzh *.csv
+
+DependTarget()
+LintTarget()

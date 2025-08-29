@@ -1,0 +1,9 @@
+.depend
+Makefile
+zen2han
+*.lzh
+*.csv
+*.raw
+*.spl
+*.p
+*.t

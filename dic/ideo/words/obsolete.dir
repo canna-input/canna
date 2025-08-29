@@ -21,7 +21,7 @@
 #
 #	iroha.d
 #
-# $Id: obsolete.dir,v 1.2 2002/10/20 04:10:29 aida_s Exp $
+# $Id: obsolete.dir,v 1.3 2004/08/06 14:09:53 aida_s Exp $
 #
 fuzokugo.d(fuzokugo.swd)	-fuzokugo---
 iroha.d(iroha.mwd)	-iroha---
@@ -38,3 +38,7 @@ chimei.t(.mwd)		-chimei---
 kanasmpl.t(.mwd)	-kanasample---
 necgaiji.t(.mwd)	-necgaiji---
 software.t(.mwd)	-software---
+zipcode.d(zipcode.mwd)		-zipcode---
+zipcode.d(jigyosyo.mwd)		-jigyosyo---
+zipcode.fq(zipcode.mwd)		-zipcode---
+jigyosyo.fq(jigyosyo.mwd)	-jigyosyo---
