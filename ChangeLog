@@ -1,4 +1,14 @@
 2025-08-30 AIDA Shinra <shinra@j10n.org>
+	* [Merged] from the SFJP trunk on 2005-05-30:
+	* dic/ideo/grammar/gram.goto: descrease the priority of "-ka-kara-na"
+	* [Merged] from the SFJP trunk on 2004-11-21:
+	* [Canna-dev 326]: toorudearou
+	* dic/ideo/grammar/gram.code: make "dearou" synonymous with "darou"
+	* [Merged] from the SFJP trunk on 2004-11-18:
+	* [Canna-dev 323]: shiranasasugiru
+	* dic/ideo/grammar/gram.goto: new conjunction: nai+ sugiru
+
+2025-08-30 AIDA Shinra <shinra@j10n.org>
 	* [Merged] from the SFJP trunk on 2005-03-11:
 	* #KX, #SX and #ZX was not correctly defined. A cancel in grammatical
 	  questions caused a wrong definition.

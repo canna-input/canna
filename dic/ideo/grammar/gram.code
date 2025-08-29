@@ -19,7 +19,7 @@
  * OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
  * PERFORMANCE OF THIS SOFTWARE. 
  *
- * $Id: gram.code,v 1.2.6.1 2004/04/26 22:49:21 aida_s Exp $
+ * $Id: gram.code,v 1.4 2004/11/21 04:51:24 aida_s Exp $
  */
 /*
  * gram.code: ワープロ用標準日本語文法
@@ -430,7 +430,7 @@ kd      ara     だら
 
 /* だ:断定 */
 ddar	o	だろ            /* 形動の語尾を兼ねる ? */
-	ou	だろう
+	ou	だろう/であろう
 ddat	_	だっ            /* 形動の語尾を兼ねる ? */
 ddemo	_	でも            /* 接続助詞 ? */
 dda1    _       だ              /* 形動の語尾を兼ねる ? */

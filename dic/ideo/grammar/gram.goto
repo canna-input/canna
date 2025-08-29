@@ -19,7 +19,7 @@
  * OTHER TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
  * PERFORMANCE OF THIS SOFTWARE. 
  *
- * $Id: gram.goto,v 1.3 2003/09/27 06:18:38 aida_s Exp $
+ * $Id: gram.goto,v 1.5 2005/05/29 15:32:18 aida_s Exp $
  */
 /*
  * gram.goto: 接続関係
@@ -752,7 +752,7 @@ kymi+	@T35
 kymi-	SUC
 
 nai+	ky kyku
-nai+	ysouda
+nai+	ysouda sugiru
 nainya+	BB Zna Znaa Znee Znee
 nainee+	@kyi dde3
 nainee- Fsura Zne Znee
@@ -1380,4 +1380,6 @@ kte2	k5e	znn	+
 JTNO	Fka	Fsika	-
 /* 〜なんとか */
 na	JTNN	Ftoka	-
+/* 〜かからな */
+Fka	Kkara	Zna	+
 #endif
