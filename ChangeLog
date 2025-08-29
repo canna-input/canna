@@ -1,4 +1,7 @@
 2025-08-30 AIDA Shinra <shinra@j10n.org>
+	* canuum/freewnn-uum.files: remove acconfig.h
+
+2025-08-30 AIDA Shinra <shinra@j10n.org>
 	* [Merged] from the SFJP trunk on 2005-05-30:
 	* dic/ideo/grammar/gram.goto: descrease the priority of "-ka-kara-na"
 	* [Merged] from the SFJP trunk on 2004-11-21:
