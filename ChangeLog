@@ -1,3 +1,17 @@
+2025-08-30 AIDA Shinra <shinra@j10n.org>
+	* [Merged] from the SFJP trunk on 2005-03-11:
+	* #KX, #SX and #ZX was not correctly defined. A cancel in grammatical
+	  questions caused a wrong definition.
+	* lib/canna/ulhinshi.c(uuTHinshi2YesCatch): handle errors in
+	  grammatical questions
+	  (uuTHinshi2NoCatch): ditto
+	  (uuTHinshi1YesCatch): ditto
+	  (uuTHinshi1NoCatch): ditto
+	  (dicTourokuHinshiDelivery): no need to invoke clearYomi() here
+	  (makeHinshi): keep katsuyou flag correct
+	  (tourokuNo): fix #KX, #SX and #ZX handlings
+	  (tangoTouroku): trim last two characters from #KX, #SX and #ZX
+
 2025-08-24 AIDA Shinra <shinra@j10n.org>
 	* [Merged] from the SFJP trunk on 2004-04-26:
 	* Make it easy to share canuum code with original uum.
