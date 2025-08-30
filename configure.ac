@@ -1,5 +1,5 @@
 # Process this file with autoconf to produce a configure script.
-AC_INIT([canna], [3.7p5], [shinra@j10n.org])
+AC_INIT([canna], [3.8devel2], [shinra@j10n.org])
 AC_CONFIG_SRCDIR([WHATIS.jp])
 AC_CONFIG_HEADER([accanna.h])
 

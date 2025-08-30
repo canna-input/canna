@@ -1,3 +1,9 @@
+2025-08-31 AIDA Shinra <shinra@j10n.org>
+	* Finished syncing with SFJP trunk.
+	* CHANGES.jp: updated
+	* configure.ac: bump to 3.8devel2
+	* canna/patchlevel.h: ditto
+
 2025-08-30 AIDA Shinra <shinra@j10n.org>
 	* [Merged] from the SFJP trunk on 2005-04-01:
 	* dic/ideo/*: Sync with DIC_WORK branch.
