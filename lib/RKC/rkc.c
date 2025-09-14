@@ -1541,8 +1541,9 @@ RkcConfigErrorProc handler;
 }
 
 #ifdef EXTENSION
-static
+static int
 CheckRemoteToolProtoVersion(mode)
+int mode;
 {
   if (!PROTOCOL && ProtocolMinor < 2) /* protocol version 1.2 */
     return -1;
@@ -1614,7 +1615,7 @@ char *dicname ;
 
 exp(int)
 RkwRemoveDic( cxnum, dicname, mode )
-int cxnum ;
+int cxnum, mode ;
 char *dicname ;
 {
     register RkcContext *cx = getCC( cxnum, NOCHECK ) ;
@@ -1673,7 +1674,7 @@ char *dirname,*dicname, *newdicname ;
 
 /* ここまで */
 
-static
+static int
 _RkwGetWordTextDic( cxnum, dirname, dicname, info, infolen )
 int cxnum, infolen ;
 unsigned char *dirname, *dicname;
@@ -1878,7 +1879,7 @@ RkcContext *cx;
 register int to;
 {
     register RkcBun *bun ;
-    register i;
+    register int i;
 
     for( i = 0; i < to; i++ ) {
 	bun = &cx->bun[ i ] ;
@@ -2192,6 +2193,7 @@ RkFinalize()
     RkwFinalize() ;
 }
 
+int
 RkKillServer()
 {
     return RkwKillServer();
@@ -2598,6 +2600,7 @@ RkStat *stat ;
 }
 
 #ifdef EXTENSION
+int
 RkListDic( cxnum, dirname, dicnames_return, size )
 int cxnum, size;
 unsigned char *dirname, *dicnames_return;
@@ -2613,13 +2616,16 @@ unsigned char *dicname;
   return RkwCreateDic(cxnum, (char *)dicname, mode);
 }
 
+int
 RkRemoveDic( cxnum, dicname, mode )
-int cxnum;
+int cxnum, mode;
 unsigned char *dicname;
+
 {
   return RkwRemoveDic(cxnum, (char *)dicname, mode);
 }
 
+int
 RkRenameDic( cxnum, dicname, newdicname, mode )
 int cxnum, mode;
 unsigned char *dicname, *newdicname;
@@ -2627,6 +2633,7 @@ unsigned char *dicname, *newdicname;
   return RkwRenameDic(cxnum, (char *)dicname, (char *)newdicname, mode);
 }
 
+int
 RkCopyDic(cxnum, dirname, dicname, newdicname, mode)
 int cxnum, mode;
 unsigned char *dirname, *dicname, *newdicname;
@@ -2660,11 +2667,11 @@ unsigned char *dirname, *dicname, *info;
 }
 
 #else
-RkListDic(){}
-RkCreateDic(){}
-RkRemoveDic(){}
-RkRenameDic(){}
-RkGetWordTextDic(){}
+int RkListDic(){}
+exp(int) RkCreateDic(){}
+int RkRemoveDic(){}
+int RkRenameDic(){}
+exp(int) RkGetWordTextDic(){}
 #endif /* EXTENSION */
 
 int

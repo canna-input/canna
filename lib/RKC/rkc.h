@@ -209,4 +209,4 @@ typedef struct {
 
 /* function prototypes .. */
 
-extern rkc_Connect_Iroha_Server pro((char *));
+extern int rkc_Connect_Iroha_Server pro((char *));
