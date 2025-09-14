@@ -124,7 +124,7 @@ extendTD(tdic, key, tw)
   return(tp + i);
 }
 
-static
+static int
 yomi_equal(x, y, n)
      Wrec *x, *y;
      int n;
@@ -228,7 +228,7 @@ defineTD(dm, tab, n, newTW, nlen)
   return extendTD(tab, key, newTW);
 }
 
-static
+static int
 enterTD(dm, td, gram, word)
      struct DM		*dm;
      struct TD		*td;

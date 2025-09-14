@@ -55,6 +55,10 @@ static struct RkContext	*CX;
 int fd_dic = -1;        /* mmap */
 #endif
 
+#ifdef HAVE_SYS_STAT_H
+#include <sys/stat.h>	/* mkdir */
+#endif
+
 #ifdef WINDOWS_STYLE_FILENAME
 #define DEFAULTGRAMDIC "/canna/fuzokugo.cbd"
 #endif

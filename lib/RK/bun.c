@@ -510,6 +510,7 @@ RkwRemoveBun(cx_num, mode)
 
 int RkwSubstYomi pro((int, int, int, Wchar *, int));
 
+int
 RkwSubstYomi(cx_num, ys, ye, yomi, newLen)
      int	cx_num;
      int	ys, ye;
@@ -1756,6 +1757,7 @@ RkwSync(cx_num, dicname)
 }
 
 /*ARGSUSED*/
+int
 RkwGetSimpleKanji(cxnum, dicname, yomi, maxyomi,
 		  kanjis, maxkanjis, hinshis, maxhinshis)
 int cxnum, maxyomi, maxkanjis, maxhinshis;

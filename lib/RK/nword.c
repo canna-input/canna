@@ -1217,7 +1217,7 @@ struct compRec {
     long			prio;
 };
 
-static compword pro((const struct compRec *, const struct compRec *));
+static int compword pro((const struct compRec *, const struct compRec *));
 
 static
 int

@@ -410,7 +410,7 @@ skip_space(src)
   return(src);
 }
 
-static
+static int
 skip_until_space(src, next)
 Wchar	*src, **next;
 {

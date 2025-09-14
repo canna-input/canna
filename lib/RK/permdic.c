@@ -364,7 +364,7 @@ _RkEql(a, b, n)
   return(1);
 }
 
-static
+static int
 readThisCache(dm, xdm, pgno, val, key, cur, ylen, nread, mc, nc, cf)
      struct DM		*dm;
      struct ND		*xdm;

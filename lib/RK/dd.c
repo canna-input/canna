@@ -218,6 +218,7 @@ struct DF	*
 _RkAllocDF(dd, lnk, type)
      struct DD		*dd;
      unsigned char	*lnk;
+     int		type;
 {
   struct DF	*f;
   struct DF	*fh = &dd->dd_files;
@@ -1194,6 +1195,7 @@ struct DM **qmp;
       0: bad
  */
 
+int
 DMcheck(spec, name)
 char *spec;
 char *name;

@@ -467,6 +467,7 @@ set_hdr_var(hd, n, var)
     return 0;
 }
 
+int
 _RkGetLink(dic, pgno, off, lvo, csn)
      struct ND	*dic;
      long	pgno;

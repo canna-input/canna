@@ -27,25 +27,25 @@ static char rcsid[]="$Id: dicsw.c,v 1.1.1.1 2002/10/19 08:27:45 aida_s Exp $";
 
 #include	"RKintern.h"
 
-extern _Rkpopen pro((struct DM *, char *, int, struct RkKxGram *));
-extern _Rkpclose pro((struct DM *, char *, struct RkKxGram *));
-extern _Rkpsearch
+extern int _Rkpopen pro((struct DM *, char *, int, struct RkKxGram *));
+extern int _Rkpclose pro((struct DM *, char *, struct RkKxGram *));
+extern int _Rkpsearch
   pro((struct RkContext *, struct DM *, Wchar *, int, struct nread *,
        int, int *));
-extern _Rkpio pro((struct DM *, struct ncache *, int));
-extern _Rkpctl
+extern int _Rkpio pro((struct DM *, struct ncache *, int));
+extern int _Rkpctl
   pro((struct DM *, struct DM *, int, Wchar *, struct RkKxGram *));
-extern _Rkpsync pro((struct RkContext *, struct DM *, struct DM *));
+extern int _Rkpsync pro((struct RkContext *, struct DM *, struct DM *));
 
-extern _Rktopen pro((struct DM *, char *, int, struct RkKxGram *));
-extern _Rktclose pro((struct DM *, char *, struct RkKxGram *));
-extern _Rktsearch
+extern int _Rktopen pro((struct DM *, char *, int, struct RkKxGram *));
+extern int _Rktclose pro((struct DM *, char *, struct RkKxGram *));
+extern int _Rktsearch
   pro((struct RkContext *, struct DM *, Wchar *, int, struct nread *,
        int, int *));
-extern _Rktio pro((struct DM *, struct ncache *, int));
-extern _Rktctl
+extern int _Rktio pro((struct DM *, struct ncache *, int));
+extern int _Rktctl
   pro((struct DM *, struct DM *, int, Wchar *, struct RkKxGram *));
-extern _Rktsync pro((struct RkContext *, struct DM *, struct DM *));
+extern int _Rktsync pro((struct RkContext *, struct DM *, struct DM *));
 
 struct RkDST 	_RkDST[] = {
 /* PERMDIC */ { _Rkpopen, _Rkpclose, _Rkpsearch, _Rkpio, _Rkpctl, _Rkpsync, },

@@ -320,6 +320,7 @@ int     mode;
   return ret;
 }
 
+int
 copyFile(src, dst)
 struct DM	*src;
 struct DM	*dst;
@@ -881,7 +882,7 @@ struct RkContext *cx;
   }
 }
 
-static
+static int
 GetLine(cx, gram, tdp, line, size)
      struct RkContext	*cx;
      struct RkKxGram	*gram;
