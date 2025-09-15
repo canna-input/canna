@@ -25,7 +25,7 @@ static char alphamap_id[] = "@(#) 102.1 $Id: alphamap.h,v 1.3 2003/09/17 08:50:5
 #endif /* lint */
 
 extern int JapaneseMode();
-extern DoFuncSequence(),UseOtherKeymap();
+extern int DoFuncSequence(), UseOtherKeymap();
 
 static struct funccfunc alpha_funcs[] = {
   {CANNA_FN_SelfInsert		,AlphaSelfInsert	},

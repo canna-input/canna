@@ -116,7 +116,7 @@ ichiranContext kc;
 /*
  * 記号一覧行を作る
  */
-static
+static int
 getKigoContext(d,
 	  everyTimeCallback, exitCallback, quitCallback, auxCallback)
 uiContext d;
@@ -169,7 +169,7 @@ uiContext d;
  * 引き数	RomeStruct
  * 戻り値	なし
  */
-static
+static void
 makeKigoGlineStatus(d)
 uiContext	d;
 {
@@ -224,7 +224,7 @@ uiContext	d;
  *		uiContext
  * 戻り値	正常終了時 0
  */
-static
+static int
 makeKigoInfo(d, headkouho)
 uiContext	d;
 int		headkouho;
@@ -296,7 +296,7 @@ int		headkouho;
  * 記号一覧                                                                  *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-static
+static int
 kigoIchiranExitCatch(d, retval, env)
      uiContext d;
      int retval;
@@ -312,7 +312,7 @@ kigoIchiranExitCatch(d, retval, env)
   return(retval);
 }
 
-static
+static int
 kigoIchiranQuitCatch(d, retval, env)
      uiContext d;
      int retval;
@@ -326,6 +326,10 @@ kigoIchiranQuitCatch(d, retval, env)
 }
 #endif /* NO_EXTEND_MENU */
 
+int makeKigoIchiran pro((uiContext, int)); /* kigo.c */
+extern int allocIchiranBuf pro((uiContext)); /* ichiran.c */
+
+int
 KigoIchiran(d)
 uiContext	d;
 {
@@ -353,6 +357,7 @@ uiContext	d;
  * 引き数	uiContext
  * 戻り値	正常終了時 0	異常終了時 -1
  */
+int
 makeKigoIchiran(d, major_mode)
 uiContext	d;
 int             major_mode;
@@ -419,7 +424,7 @@ int             major_mode;
   return(0);
 }
 
-static
+static int
 KigoNop(d)
 uiContext	d;
 {
@@ -437,7 +442,7 @@ uiContext	d;
  * 引き数	uiContext
  * 戻り値	正常終了時 0
  */
-static
+static int
 KigoForwardKouho(d)
 uiContext	d;
 {
@@ -470,7 +475,7 @@ uiContext	d;
  * 引き数	uiContext
  * 戻り値	正常終了時 0
  */
-static
+static int
 KigoBackwardKouho(d)
 uiContext	d;
 {
@@ -502,7 +507,7 @@ uiContext	d;
  * 引き数	uiContext
  * 戻り値	正常終了時 0
  */
-static
+static int
 KigoPreviousKouhoretsu(d)
 uiContext	d;
 {
@@ -533,7 +538,7 @@ uiContext	d;
  * 引き数	uiContext
  * 戻り値	正常終了時 0
  */
-static
+static int
 KigoNextKouhoretsu(d)
 uiContext	d;
 {
@@ -564,7 +569,7 @@ uiContext	d;
  * 引き数	uiContext
  * 戻り値	正常終了時 0
  */
-static
+static int
 KigoBeginningOfKouho(d)
 uiContext	d;
 {
@@ -586,7 +591,7 @@ uiContext	d;
  * 引き数	uiContext
  * 戻り値	正常終了時 0
  */
-static
+static int
 KigoEndOfKouho(d)
 uiContext	d;
 {
@@ -611,7 +616,7 @@ uiContext	d;
  * 引き数	uiContext
  * 戻り値	正常終了時 0
  */
-static
+static int
 KigoKakutei(d)
 uiContext	d;
 {
@@ -699,7 +704,7 @@ uiContext	d;
  * 引き数	uiContext
  * 戻り値	正常終了時 0
  */
-static
+static int
 KigoQuit(d)
 uiContext	d;
 {

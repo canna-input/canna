@@ -74,7 +74,7 @@ yomiContext yc;
   return;
 }
 
-extern NothingChanged pro((uiContext));
+extern int NothingChanged pro((uiContext));
 
 /*
   restoreChikujiYomi
@@ -204,6 +204,8 @@ doesSupportChikuji()
   return(a > 1);
 }
 
+extern int ToggleChikuji pro((uiContext, int)); /* kctrl.c */
+
 #ifndef NO_EXTEND_MENU
 int
 chikujiInit(d)
@@ -294,6 +296,7 @@ uiContext d;
   return(ret);
 }
 
+int
 ChikujiSubstYomi(d)
   uiContext d;
 {
@@ -444,7 +447,7 @@ chikuji_subst_yomi(d)
   return chikuji_restore_yomi(d);
 }
 
-static ChikujiTanExtend pro((uiContext));
+static int ChikujiTanExtend pro((uiContext));
 
 static int
 ChikujiTanExtend(d)
@@ -484,7 +487,7 @@ ChikujiTanExtend(d)
   return d->nbytes;
 }
 
-static ChikujiTanShrink pro((uiContext));
+static int ChikujiTanShrink pro((uiContext));
 
 static int
 ChikujiTanShrink(d)
@@ -530,7 +533,7 @@ ChikujiTanShrink(d)
   return d->nbytes;
 }
 
-static ChikujiYomiDeletePrevious pro((uiContext));
+static int ChikujiYomiDeletePrevious pro((uiContext));
 
 static int
 ChikujiYomiDeletePrevious(d)
@@ -627,7 +630,7 @@ ChikujiYomiDeletePrevious(d)
   return 0;
 }
 
-static ChikujiHenkan pro((uiContext));
+static int ChikujiHenkan pro((uiContext));
 
 static int
 ChikujiHenkan(d)
@@ -761,7 +764,7 @@ int (*fn)();
 
 extern int YomiInsert();
 
-static ChikujiHenkanNaive pro((uiContext));
+static int ChikujiHenkanNaive pro((uiContext));
 
 static int
 ChikujiHenkanNaive(d)
@@ -770,7 +773,7 @@ uiContext d;
   return generalNaive(d, YomiInsert);
 }
 
-static ChikujiHenkanOrNothing pro((uiContext));
+static int ChikujiHenkanOrNothing pro((uiContext));
 
 static int
 ChikujiHenkanOrNothing(d)
@@ -779,7 +782,7 @@ ChikujiHenkanOrNothing(d)
   return generalNaive(d, NothingChanged);
 }
 
-static ChikujiMuhenkan pro((uiContext));
+static int ChikujiMuhenkan pro((uiContext));
 
 static int
 ChikujiMuhenkan(d)

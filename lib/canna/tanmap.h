@@ -24,9 +24,9 @@
 static char tanmap_id[] = "@(#) 102.1 $Id: tanmap.h,v 1.1.1.1 2002/10/19 08:27:51 aida_s Exp $";
 #endif /* lint */
 
-extern TanKouhoIchiran pro((uiContext)), DoFuncSequence pro((uiContext));
-extern UseOtherKeymap pro((uiContext));
-extern YomiKakutei pro((uiContext)), TanBubunKakutei pro((uiContext));
+extern int TanKouhoIchiran pro((uiContext)), DoFuncSequence pro((uiContext));
+extern int UseOtherKeymap pro((uiContext));
+extern int YomiKakutei pro((uiContext)), TanBubunKakutei pro((uiContext));
 
 static struct funccfunc tan_funcs[] = {
   {CANNA_FN_FunctionalInsert	,TanKakuteiYomiInsert	},

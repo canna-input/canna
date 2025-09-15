@@ -173,7 +173,7 @@ initUlKeisenTable()
   return setWStrings(keisen_data, skeisen_data, UUKD_SZ);
 }
 
-static
+static int
 uuKigoExitDo(d, retval)
 uiContext d;
 int retval;
@@ -188,7 +188,7 @@ int retval;
   return(retval);
 }
 
-static
+static int
 uuKigoRExitCatch(d, retval, env)
 uiContext d;
 int retval;
@@ -205,7 +205,7 @@ mode_context env;
   return(uuKigoExitDo(d, retval));
 }
 
-static
+static int
 uuKigoGExitCatch(d, retval, env)
 uiContext d;
 int retval;
@@ -222,7 +222,7 @@ mode_context env;
   return(uuKigoExitDo(d, retval));
 }
 
-static
+static int
 uuKigoKExitCatch(d, retval, env)
 uiContext d;
 int retval;
@@ -239,6 +239,7 @@ mode_context env;
   return(uuKigoExitDo(d, retval));
 }
 
+int
 uuKigoGeneralExitCatch(d, retval, env)
 uiContext d;
 int retval;
@@ -257,7 +258,7 @@ mode_context env;
   return(uuKigoExitDo(d, retval));
 }
 
-static
+static int
 uuKigoQuitCatch(d, retval, env)
 uiContext d;
 int retval;
@@ -273,6 +274,9 @@ mode_context env;
   return prevMenuIfExist(d);
 }
 
+extern int getForIchiranContext pro((uiContext)); /* bushu.c */
+
+int
 uuKigoMake(d, allkouho, size, cur, mode, exitfunc, posp)
 uiContext d;
 wchar_t **allkouho;
@@ -349,6 +353,7 @@ uiContext	d;
  * ロシア文字の入力                                                          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+int
 kigoRussia(d)
 uiContext d;
 {
@@ -370,6 +375,7 @@ uiContext d;
  * ギリシャ文字の入力                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+int
 kigoGreek(d)
 uiContext d;
 {
@@ -391,6 +397,7 @@ uiContext d;
  * 罫線の入力                                                                *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+int
 kigoKeisen(d)
 uiContext d;
 {

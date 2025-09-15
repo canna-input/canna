@@ -74,6 +74,7 @@ uiContext d;
 /*
  * 候補一覧行を作る
  */
+int
 selectOnOff(d, buf, ck, nelem, bangomax, currentkouho, status,
 	  everyTimeCallback, exitCallback, quitCallback, auxCallback)
 uiContext d;
@@ -119,6 +120,8 @@ int (*quitCallback)(), (*auxCallback)();
   return(retval);
 }
 
+extern int allocIchiranBuf pro((uiContext)); /* ichiran.c */
+
 /*
  * 候補一覧行を表示用のデータをテーブルに作成する
  *
@@ -127,7 +130,7 @@ int (*quitCallback)(), (*auxCallback)();
  * 引き数	uiContext
  * 戻り値	正常終了時 0	異常終了時 -1
  */
-static
+static int
 makeOnOffIchiran(d, nelem, bangomax, currentkouho, status)
 uiContext d;
 int nelem, bangomax;
@@ -272,7 +275,7 @@ unsigned char *status;
  * 引き数	uiContext
  * 戻り値	正常終了時 0	異常終了時 -1
  */
-static
+static int
 OnOffSelect(d)
 uiContext d;
 {
@@ -304,7 +307,7 @@ uiContext d;
  * 引き数	uiContext
  * 戻り値	正常終了時 0	異常終了時 -1
  */
-static
+static int
 OnOffKakutei(d)
 uiContext d;
 {

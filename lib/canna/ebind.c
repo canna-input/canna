@@ -41,7 +41,7 @@ extern int howToReturnModeInfo;
 static wchar_t *inbuf = 0;
 static int inbufsize = 0;
 
-static
+static int
 StoreWCtoEUC(wbuf, wbuflen, wks, ebuf, maxebuf, ks, ch, nbytes)
 wchar_t *wbuf;
 int wbuflen;
@@ -187,6 +187,7 @@ int nbytes;
   return ret;
 }
 
+int
 XLookupKanji2(dpy, win, buffer_return, bytes_buffer, nbytes, functionalChar,
 	      kanji_status_return)
 unsigned int dpy, win;

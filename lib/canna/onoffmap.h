@@ -27,10 +27,10 @@ static char onoffmap_id[] = "@(#) 102.1 $Id: onoffmap.h,v 1.1.1.1 2002/10/19 08:
 #ifdef NO_EXTEND_MENU
 static struct funccfunc onoff_funcs[] = {{0, 0},};
 #else
-extern  DoFuncSequence(),UseOtherKeymap();
-extern  IchiranForwardKouho(), IchiranBackwardKouho(), IchiranNextKouhoretsu();
-extern  IchiranPreviousKouhoretsu(), IchiranBeginningOfKouho();
-extern  IchiranEndOfKouho(), IchiranQuit(), IchiranNop();
+extern  int DoFuncSequence(), UseOtherKeymap();
+extern  int IchiranForwardKouho(), IchiranBackwardKouho(), IchiranNextKouhoretsu();
+extern  int IchiranPreviousKouhoretsu(), IchiranBeginningOfKouho();
+extern  int IchiranEndOfKouho(), IchiranQuit(), IchiranNop();
 
 static struct funccfunc onoff_funcs[] = {
   {CANNA_FN_Forward		,IchiranForwardKouho		},

@@ -728,6 +728,7 @@ wchar_t *yomi, *kanjis, *hinshis;
 #define CANNA_SERVER_NAME_LEN 128
 static char iroha_server_name[CANNA_SERVER_NAME_LEN] = {0, 0};
 
+int
 RkSetServerName(s)
 char *s;
 {

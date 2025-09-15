@@ -101,7 +101,7 @@ initHinshiTable()
   return retval;
 }
 
-static
+static void
 clearTango(d)
 uiContext d;
 {
@@ -111,6 +111,7 @@ uiContext d;
   tc->tango_len = 0;
 }
 
+void
 clearYomi(d)
 uiContext d;
 {
@@ -120,7 +121,7 @@ uiContext d;
   tc->yomi_len = 0;
 }
 
-static
+static int
 clearTourokuContext(p)
 tourokuContext p;
 {
@@ -163,6 +164,7 @@ newTourokuContext()
   return tcxt;
 }
 
+int
 getTourokuContext(d)
 uiContext d;
 {
@@ -205,11 +207,13 @@ uiContext d;
 }
 
 
+extern int checkGLineLen pro((uiContext)); /* util.c */
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * 単語登録の単語の入力                                                      *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-static
+static int
 uuTTangoEveryTimeCatch(d, retval, env)
 uiContext d;
 int retval;
@@ -273,7 +277,7 @@ mode_context env;
   return retval;
 }
 
-static
+static int
 uuTTangoExitCatch(d, retval, env)
 uiContext d;
 int retval;
@@ -293,6 +297,7 @@ mode_context env;
   return(dicTourokuYomi(d));
 }
 
+int
 uuTTangoQuitCatch(d, retval, env)
 uiContext d;
 int retval;
@@ -307,7 +312,9 @@ mode_context env;
   return prevMenuIfExist(d);
 }
 
-static
+extern int _do_func_slightly pro((uiContext, int, mode_context, KanjiMode)); /* kctrl.c */
+
+static int
 uuT2TangoEveryTimeCatch(d, retval, env)
 uiContext d;
 int retval;
@@ -367,7 +374,7 @@ mode_context env;
 /************************************************
  *  単語登録モードを抜ける際に必要な処理を行う  *
  ************************************************/
-static
+static int
 uuT2TangoExitCatch(d, retval, nyc)
 uiContext d;
 int retval;
@@ -390,7 +397,7 @@ mode_context nyc;
   return retval;
 }
 
-static
+static int
 uuT2TangoQuitCatch(d, retval, env)
 uiContext d;
 int retval;
@@ -406,11 +413,14 @@ mode_context env;
   return(0);
 }
 
+extern int GLineNGReturn pro((uiContext)); /* util.c */
+int dicTourokuTango pro((uiContext, canna_callback_t)); /* uldefine.c */
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * 単語登録の辞書作成                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-static
+static int
 uuTMakeDicYesCatch(d, retval, env)
 uiContext d;
 int retval;
@@ -420,7 +430,7 @@ mode_context env;
   int err = 0, perr = 0;
   tourokuContext tc;
   wchar_t **dp;
-  extern defaultContext;
+  extern int defaultContext;
 
   popCallback(d); /* yesNo をポップ */
 
@@ -479,7 +489,7 @@ mode_context env;
   return(dicTourokuTango(d, uuTTangoQuitCatch));
 }
 
-static
+static int
 uuTMakeDicQuitCatch(d, retval, env)
 uiContext d;
 int retval;
@@ -493,7 +503,7 @@ mode_context env;
   return prevMenuIfExist(d);
 }
 
-static
+static int
 uuTMakeDicNoCatch(d, retval, env)
 uiContext d;
 int retval;
@@ -522,7 +532,7 @@ uiContext d;
   int nmudic; /* マウントされているユーザ辞書の数 */
   struct dicname *p;
   wchar_t **tourokup, **tp;
-  extern defaultContext;
+  extern int defaultContext;
 
   if(defaultContext < 0) {
     if((KanjiInit() < 0) || (defaultContext < 0)) {
@@ -565,6 +575,7 @@ uiContext d;
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /* 始めに呼ばれる関数 */
 
+int
 dicTouroku(d)
 uiContext d;
 {
@@ -592,7 +603,7 @@ uiContext d;
   return(dicTourokuTango(d, uuTTangoQuitCatch));
 }
 
-static
+static int
 dicTourokuDo(d)
 uiContext d;
 {
@@ -644,6 +655,8 @@ findUsrDic()
   return res;
 }
 
+extern int getYesNoContext pro((uiContext, canna_callback_t, canna_callback_t, canna_callback_t, canna_callback_t)); /* yesno.c */
+
 /* 
  * マウントされている辞書のチェック
  * ・カスタマイズファイルで単語登録用辞書として指定されていて、
@@ -653,7 +666,7 @@ findUsrDic()
  * ・カスタマイズファイルで単語登録用辞書として指定されていて、
  *   マウントされている辞書がない
  */
-static
+static int
 checkUsrDic(d)
 uiContext d;
 {
@@ -708,6 +721,7 @@ uiContext d;
   return(0);
 }
 
+int
 dicTourokuTango(d, quitfunc)
 uiContext d;
 canna_callback_t quitfunc;
@@ -753,14 +767,14 @@ canna_callback_t quitfunc;
   return(retval);
 }
 
-static
+static int
 dicTourokuTangoPre(d)
 uiContext d;
 {
   return dicTourokuTango(d, uuTTangoQuitCatch);
 }
 
-static
+static int
 acDicTourokuTangoPre(d, dn, dm) /* ac means "alert continuation" */
 uiContext d;
 int dn;
@@ -775,7 +789,7 @@ mode_context dm;
  * 単語登録の読みの入力                                                      *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-static
+static int
 uuTYomiEveryTimeCatch(d, retval, env)
 uiContext d;
 int retval;
@@ -829,7 +843,9 @@ mode_context env;
   return retval;
 }
 
-static
+int dicTourokuHinshi pro((uiContext)); /* uldefine.c */
+
+static int
 uuTYomiExitCatch(d, retval, env)
 uiContext d;
 int retval;
@@ -849,9 +865,9 @@ mode_context env;
   return(dicTourokuHinshi(d));
 }
 
-static uuTYomiQuitCatch pro((uiContext, int, mode_context));
+static int uuTYomiQuitCatch pro((uiContext, int, mode_context));
 
-static
+static int
 uuTYomiQuitCatch(d, retval, env)
 uiContext d;
 int retval;
@@ -866,14 +882,14 @@ mode_context env;
   return(dicTourokuTango(d, uuTTangoQuitCatch));
 }
 
-static
+static int
 dicTourokuYomi(d)
 uiContext d;
 {
   return(dicTourokuYomiDo(d, uuTYomiQuitCatch));
 }
 
-static
+static int
 acDicTourokuYomi(d, dn, dm)
 uiContext d;
 int dn;
@@ -884,7 +900,9 @@ mode_context dm;
   return dicTourokuYomi(d);
 }
 
-static
+extern int canna_alert pro((uiContext, char*, canna_callback_t)); /* util.c */
+
+static int
 dicTourokuYomiDo(d, quitfunc)
 uiContext d;
 canna_callback_t quitfunc;
@@ -924,7 +942,7 @@ canna_callback_t quitfunc;
  * 単語登録の品詞の選択                                                      *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-static
+static int
 uuTHinshiExitCatch(d, retval, env)
 uiContext d;
 int retval;
@@ -961,7 +979,7 @@ mode_context env;
   return(dicTourokuHinshiDelivery(d));
 }
 
-static
+static int
 uuTHinshiQuitCatch(d, retval, env)
 uiContext d;
 int retval;
@@ -983,6 +1001,10 @@ mode_context env;
   return(dicTourokuYomi(d));
 }
 
+extern int GLineNGReturnTK pro((uiContext)); /* util.c */
+extern int getForIchiranContext pro((uiContext)); /* bushu.c */
+
+int
 dicTourokuHinshi(d)
 uiContext d;
 {
@@ -1060,6 +1082,7 @@ uiContext d;
  * jrKanjiControl 用                                                         *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+int
 dicTourokuControl(d, tango, quitfunc)
 uiContext d;
 wchar_t *tango;

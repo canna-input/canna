@@ -89,6 +89,7 @@ mountContext mc;
 /*
  * 候補一覧行を作る
  */
+int
 getMountContext(d)
 uiContext d;
 {
@@ -150,7 +151,7 @@ char *s;
  * 辞書のマウント／アンマウント                                              *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-static
+static int
 uuMountExitCatch(d, retval, env)
 uiContext d;
 int retval;
@@ -159,7 +160,7 @@ mode_context env;
 {
   mountContext mc;
   int i, nmount = 0;
-  extern defaultContext;
+  extern int defaultContext;
   struct dicname *dp;
 
   killmenu(d);
@@ -295,7 +296,7 @@ mode_context env;
   return(0);
 }
 
-static
+static int
 uuMountQuitCatch(d, retval, env)
 uiContext d;
 int retval;
@@ -327,7 +328,7 @@ mode_context env;
  * │                  │ │  :   │
  * └─────────┘ └───┘
  */
-static
+static int
 getDicList(d)
 uiContext d;
 {
@@ -337,7 +338,7 @@ uiContext d;
   char *wptr, **Lp, **Mp;
   BYTE *sop, *snp, *soldp, *snewp;
   int dicLc, dicMc, i;
-  extern defaultContext;
+  extern int defaultContext;
 
   if((dicLbuf = malloc(ROMEBUFSIZE)) == (char *)NULL) {
 #ifndef CODED_MESSAGE
@@ -493,6 +494,9 @@ uiContext d;
   return(dicLc);
 }
 
+extern int selectOnOff(); /* onoff.c */
+
+int
 dicMount(d)
 uiContext d;
 {

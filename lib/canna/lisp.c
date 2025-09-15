@@ -39,9 +39,9 @@ static char *memtop;
 
 static int ncells = CELLSIZE;
 
-static initIS();
+static int initIS();
 static void finIS();
-static allocarea(), skipspaces(), zaplin(), isterm();
+static int allocarea(), skipspaces(), zaplin(), isterm();
 static void prins();
 static list mkatm(), read1(), ratom(), ratom2(), rstring();
 static int tyipeek(), tyi();
@@ -135,6 +135,11 @@ static list getatmz(char *);
 #else
 static list getatmz();
 #endif
+
+extern int changeModeName pro((int, char*)); /* mode.c */
+extern int changeKeyfunc pro((int, int, int, unsigned char*, unsigned char*)); /* keydef.c */
+extern int changeKeyfuncOfAll pro((int, int, unsigned char*, unsigned char*)); /* keydef.c */
+extern int RkwGetProtocolVersion pro((int*, int*)); /* engine.c */
 
 /*********************************************************************
  *                      wchar_t replace begin                        *
@@ -255,7 +260,7 @@ int
 YYparse_by_rcfilename(s)
 char *s;
 {
-  extern ckverbose;
+  extern int ckverbose;
   int retval = 0;
   FILE *f;
   FILE *saved_outstream;
@@ -333,6 +338,7 @@ int sig;
 
 */
 
+int
 parse_string(str)
 char *str;
 {
@@ -516,7 +522,7 @@ static int nseqtbl;		/* 状態の数。状態の数だけ表がある */
 static int nseq;
 static int seqline;
 
-static
+static int
 initIS()
 {
   SeqToID *p;
@@ -635,7 +641,7 @@ finIS() /* identifySequence に用いたメモリ資源を開放する */
 #define CONTINUE 1
 #define END	 0
 
-static
+static int
 identifySequence(c, val)
 unsigned c;
 int *val;
@@ -682,7 +688,7 @@ alloccell()
 
 /* うまく行かなかったら０を返す */
 
-static
+static int
 allocarea()
 {
   /* まずはセル領域 */
@@ -1031,7 +1037,7 @@ read1()
 /* skipping spaces function -
 	if eof read then return NO	*/
 
-static
+static int
 skipspaces()
 {
   int c;
@@ -1056,7 +1062,7 @@ skipspaces()
 /* skip reading until '\n' -
 	if eof read then return NO	*/
 
-static
+static int
 zaplin()
 {
 	int c;
@@ -1149,7 +1155,7 @@ ratom()
 /* read atom with the first one character -
 	check if the token is numeric or pure symbol & return proper value */
 
-static isnum();
+static int isnum();
 
 static list 
 ratom2(a)
@@ -1304,7 +1310,7 @@ rcharacter()
   return retval;
 }
 
-static isnum(name)
+static int isnum(name)
 char *name;
 {
 	if (*name == '-') {
@@ -1432,7 +1438,7 @@ char *s;
 /* isterm -
 	check if the character is terminating the lisp expression	*/
 
-static isterm(c)
+static int isterm(c)
 int  c;
 {
 	if (c <= ' ')
@@ -3299,7 +3305,7 @@ Ldefsym()
   int i, ncand, group;
   wchar_t cand[1024], *p, *mcand, **acand, key, xkey;
   int mcandsize;
-  extern nkeysup;
+  extern int nkeysup;
   extern keySupplement keysup[];
 
   form = sp[0];
@@ -4185,7 +4191,7 @@ static list Vnkouhobunsetsu(setp, arg) int setp; list arg;
 static list VProtoVer(setp, arg) int setp; list arg;
 {
 #ifndef STANDALONE
-  extern protocol_version;
+  extern int protocol_version;
 
   if (protocol_version < 0) {
     ObtainVersion();
@@ -4197,7 +4203,7 @@ static list VProtoVer(setp, arg) int setp; list arg;
 static list VServVer(setp, arg) int setp; list arg;
 {
 #ifndef STANDALONE
-  extern server_version;
+  extern int server_version;
 
   if (server_version < 0) {
     ObtainVersion();

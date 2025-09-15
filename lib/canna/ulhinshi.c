@@ -269,11 +269,13 @@ initGyouTable()
 }
 
 
+extern int dicTourokuHinshi pro((uiContext)); /* uldefine.c */
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * Ã±¸ìÅÐÏ¿¤ÎÉÊ»ìÁªÂò ¡ÁYes/No ¶¦ÄÌ Quit¡Á                                   *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-static
+static int
 uuTHinshiYNQuitCatch(d, retval, env)
 uiContext d;
 int retval;
@@ -285,11 +287,14 @@ mode_context env;
   return(dicTourokuHinshi(d));
 }
 
+int dicTourokuDictionary pro((uiContext, int(*)(), int(*)())); /* ulhinshi.c */
+extern int dicTourokuTango pro((uiContext, canna_callback_t)); /* uldefine.c */
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * Ã±¸ìÅÐÏ¿¤ÎÉÊ»ìÁªÂò ¡ÁYes/No Âè£²ÃÊ³¬ ¶¦ÄÌ¥³¡¼¥ë¥Ð¥Ã¥¯¡Á                   *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-static
+static int
 uuTHinshi2YesCatch(d, retval, env)
 uiContext d;
 int retval;
@@ -317,7 +322,7 @@ mode_context env;
   return(retval);
 }
 
-static
+static int
 uuTHinshi2NoCatch(d, retval, env)
 uiContext d;
 int retval;
@@ -346,11 +351,14 @@ mode_context env;
   return(retval);
 }
 
+extern int getYesNoContext pro((uiContext, canna_callback_t, canna_callback_t, canna_callback_t, canna_callback_t)); /* yesno.c */
+extern int GLineNGReturnTK pro((uiContext)); /* util.c */
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * Ã±¸ìÅÐÏ¿¤ÎÉÊ»ìÁªÂò ¡ÁYes/No Âè£±ÃÊ³¬ ¥³¡¼¥ë¥Ð¥Ã¥¯¡Á                       *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-static
+static int
 uuTHinshi1YesCatch(d, retval, env)
 uiContext d;
 int retval;
@@ -390,7 +398,7 @@ mode_context env;
   return(retval);
 }
 
-static
+static int
 uuTHinshi1NoCatch(d, retval, env)
 uiContext d;
 int retval;
@@ -434,7 +442,7 @@ mode_context env;
  * Ã±¸ìÅÐÏ¿¤ÎÉÊ»ìÊ¬¤±¤¹¤ë¡©                                                  *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-static
+static int
 uuTHinshiQYesCatch(d, retval, env)
 uiContext d;
 int retval;
@@ -462,7 +470,7 @@ mode_context env;
   return(retval);
 }
 
-static
+static int
 uuTHinshiQNoCatch(d, retval, env)
 uiContext d;
 int retval;
@@ -480,6 +488,7 @@ mode_context env;
 
 static int makeHinshi();
 
+int
 dicTourokuHinshiDelivery(d)
 uiContext	d;
 {
@@ -693,7 +702,7 @@ uiContext	d;
   return(0);
 }
 
-static
+static int
 tourokuYes(d)
 uiContext	d;
 {
@@ -782,7 +791,7 @@ uiContext	d;
   return(0);
 }
 
-static
+static int
 tourokuNo(d)
 uiContext	d;
 {
@@ -898,7 +907,7 @@ uiContext	d;
   return(0);
 }
 
-static
+static int
 makeDoushi(d)
 uiContext	d;
 {
@@ -933,13 +942,14 @@ uiContext	d;
       EWStrcpy( tc->hcode, "#W5" );     /* ¸À¤¦ */
       break;
     }
+    return(0);
 }    
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * ¼­½ñ¤Î°ìÍ÷                                                                *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-static
+static int
 uuTDicExitCatch(d, retval, env)
 uiContext d;
 int retval;
@@ -967,7 +977,7 @@ mode_context env;
   return(tangoTouroku(d));
 }
 
-static
+static int
 uuTDicQuitCatch(d, retval, env)
 uiContext d;
 int retval;
@@ -982,6 +992,9 @@ mode_context env;
   return(dicTourokuHinshi(d));
 }
 
+extern int getForIchiranContext pro((uiContext)); /* bushu.c */
+
+int
 dicTourokuDictionary(d, exitfunc, quitfunc)
 uiContext d;
 int (*exitfunc)();
@@ -1049,7 +1062,7 @@ int (*quitfunc)();
 /*
  * Ã±¸ìÅÐÏ¿¤ò¹Ô¤¦
  */
-static
+static int
 tangoTouroku(d)
 uiContext	d;
 {

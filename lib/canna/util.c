@@ -152,7 +152,7 @@ uiContext d;
  * 文字列からコラム幅を取っ手来る関数
  */
 
-static
+static int
 colwidth(s, len)
 wchar_t *s;
 int     len;
@@ -184,6 +184,7 @@ int     len;
 
  */
 
+int
 checkGLineLen(d)
 uiContext d;
 {
@@ -203,6 +204,7 @@ uiContext d;
 
  */
 
+int
 NothingChanged(d)
 uiContext d;
 {
@@ -213,6 +215,7 @@ uiContext d;
   return 0;
 }
 
+int
 NothingForGLine(d)
 uiContext d;
 {
@@ -232,6 +235,7 @@ CannaBeep()
   }
 }
 
+int
 NothingChangedWithBeep(d)
 uiContext d;
 {
@@ -239,6 +243,7 @@ uiContext d;
   return NothingChanged(d);
 }
 
+int
 NothingForGLineWithBeep(d)
 uiContext d;
 {
@@ -260,8 +265,8 @@ unsigned char ch;
 }
 #endif /* SOMEONE_USE_THIS */
 
-extern extractJishuString pro((yomiContext, wchar_t *,  wchar_t *,
-                               wchar_t **,  wchar_t **));
+extern int extractJishuString pro((yomiContext, wchar_t *,  wchar_t *,
+				   wchar_t **,  wchar_t **));
 
 /*
   extractSimpleYomiString -- yomiContext の読み部分だけを取り出す
@@ -530,7 +535,7 @@ int focused;
   return (int)(s - ss);
 }
 
-static
+static int
 extractString(str, s, e)
 wchar_t *str, *s, *e;
 {
@@ -716,6 +721,7 @@ char  *msg;
   makeGLineMessage(d, d->genbuf, len);
 }
 
+int
 setWStrings(ws, s, sz)
 wchar_t **ws;
 char **s;
@@ -788,7 +794,7 @@ showRomeStruct(dpy, win)
 unsigned int dpy, win;
 {
   uiContext d, keyToContext();
-  extern defaultContext;
+  extern int defaultContext;
   static int n = 0;
   int i;
   char buf[1024];
@@ -860,6 +866,7 @@ unsigned int dpy, win;
 
 extern char *jrKanjiError;
 
+int
 NoMoreMemory()
 {
   jrKanjiError = "\245\341\245\342\245\352\244\254\311\324\302\255\244\267\244\306\244\244\244\336\244\271\241\243";
@@ -867,6 +874,7 @@ NoMoreMemory()
   return NG;
 }
 
+int
 GLineNGReturn(d)
 uiContext d;
 {
@@ -878,6 +886,7 @@ uiContext d;
   return(0);
 }
 
+int
 GLineNGReturnFI(d)
 uiContext d;
 {
@@ -889,6 +898,7 @@ uiContext d;
 
 #ifndef NO_EXTEND_MENU
 
+int
 GLineNGReturnTK(d)
 uiContext d;
 {
@@ -1378,6 +1388,7 @@ WStringClose()
   nwsmemories = 0;
 }
 
+int
 WSfree(s)
      wchar_t *s;
 {
@@ -1481,6 +1492,7 @@ int *startp, *cursor, *endp,  bytes, len, attrmask;
     attr[begin] |= attrmask; */
 }
 
+int
 #ifdef __STDC__
 WToupper(wchar_t w)
 #else
@@ -1494,6 +1506,7 @@ wchar_t w;
     return(w);
 }
 
+int
 #ifdef __STDC__
 WTolower(wchar_t w)
 #else
@@ -1554,7 +1567,7 @@ confirmContext(d, yc)
 uiContext d;
 yomiContext yc;
 {
-  extern defaultContext;
+  extern int defaultContext;
 
   if (yc->context < 0) {
     if (d->contextCache >= 0) {
@@ -1587,7 +1600,7 @@ abandonContext(d, yc)
 uiContext d;
 yomiContext yc;
 {
-  extern defaultContext;
+  extern int defaultContext;
 
   if (yc->context >= 0) {
     if (d->contextCache >= 0) {
@@ -1616,7 +1629,7 @@ char *str;
 
 /* 以下メッセージを gline に出すための仕組み */
 
-static
+static int
 ProcAnyKey(d)
 uiContext d;
 {
@@ -1630,9 +1643,9 @@ uiContext d;
   return 0;
 }
 
-static wait_anykey_func pro((uiContext, KanjiMode, int, int, int));
+static int wait_anykey_func pro((uiContext, KanjiMode, int, int, int));
 
-static
+static int
 wait_anykey_func(d, mode, whattodo, key, fnum)
 uiContext d;
 KanjiMode mode;
@@ -1700,6 +1713,7 @@ canna_callback_t cnt;
 
  */
 
+int
 canna_alert(d, message, cnt)
 uiContext d;
 char *message;

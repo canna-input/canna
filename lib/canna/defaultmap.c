@@ -45,7 +45,7 @@ unsigned char f;
   return (int (*)())0;
 }
 
-static
+static int
 simpleUndefBehavior(d)
 uiContext d;
 {
@@ -82,6 +82,7 @@ uiContext d;
     }
 }
 
+int
 searchfunc(d, mode, whattodo, key, fnum)
 uiContext d;
 KanjiMode mode;
@@ -162,6 +163,7 @@ int fnum;
 
 /* 逐次読みモード用 */
 
+int
 CYsearchfunc(d, mode, whattodo, key, fnum)
 uiContext d;
 KanjiMode mode;

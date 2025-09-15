@@ -24,7 +24,7 @@
 static char ichiranmap_id[] = "@(#) 102.1 $Id: ichiranmap.h,v 1.2 2003/09/17 08:50:53 aida_s Exp $";
 #endif /* lint */
 
-extern  DoFuncSequence(),UseOtherKeymap();
+extern  int DoFuncSequence(), UseOtherKeymap();
 
 static struct funccfunc ichiran_funcs[] = {
   {CANNA_FN_FunctionalInsert	,IchiranBangoKouho		},

@@ -46,6 +46,7 @@ static int serverChangeDo();
  * サーバの切り離し                                                          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+int
 serverFin(d)
 uiContext d;
 {
@@ -69,13 +70,15 @@ uiContext d;
   return(retval);
 }
 
+extern int checkGLineLen pro((uiContext)); /* util.c */
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * サーバの切り換え                                                          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #ifndef STANDALONE
 
-static
+static int
 uuServerChangeEveryTimeCatch(d, retval, env)
 uiContext d;
 int retval;
@@ -132,7 +135,7 @@ mode_context env;
   return retval;
 }
 
-static
+static int
 uuServerChangeExitCatch(d, retval, env)
 uiContext d;
 int retval;
@@ -144,7 +147,7 @@ mode_context env;
   return(serverChangeDo(d, retval));
 }
 
-static
+static int
 uuServerChangeQuitCatch(d, retval, env)
 uiContext d;
 int retval;
@@ -159,13 +162,14 @@ mode_context env;
 extern exp(char *) RkwGetServerName();
 #endif /* STANDALONE */
 
+int
 serverChange(d)
 uiContext d;
 {
   int retval = 0;
   wchar_t *w;
   extern KanjiModeRec yomi_mode;
-  extern defaultContext;
+  extern int defaultContext;
   yomiContext yc = (yomiContext)d->modec;
 
 #ifndef STANDALONE
@@ -205,7 +209,7 @@ uiContext d;
 }
 		 
 #ifndef STANDALONE
-static
+static int
 serverChangeDo(d, len)
 uiContext d;
 int len;
@@ -214,7 +218,7 @@ int len;
   wchar_t newServerName[256];
   wchar_t w1[512];
   char tmpServName[256];
-  extern defaultContext;
+  extern int defaultContext;
   char *p;
 
   d->status = 0;

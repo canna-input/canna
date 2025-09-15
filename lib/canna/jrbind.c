@@ -110,6 +110,7 @@ unsigned int dpy, win;
 
 extern int kanjiControl pro((int, uiContext, caddr_t));
 
+int
 XwcLookupKanji2(dpy, win, buffer_return, nbuffer, nbytes, functionalChar,
 		kanji_status_return)
 unsigned int dpy, win;

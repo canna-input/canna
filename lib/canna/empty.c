@@ -33,7 +33,7 @@ extern KanjiModeRec yomi_mode, cy_mode;
  * 
  */
 
-static
+static int
 inEmptySelfInsert(d)
 uiContext d;
 {
@@ -49,9 +49,9 @@ uiContext d;
   return res;
 }
 
-static EmptySelfInsert pro((uiContext));
+static int EmptySelfInsert pro((uiContext));
 
-static
+static int
 EmptySelfInsert(d)
 uiContext d;
 {
@@ -78,9 +78,9 @@ uiContext d;
  *
  */
 
-static EmptyYomiInsert pro((uiContext));
+static int EmptyYomiInsert pro((uiContext));
 
-static
+static int
 EmptyYomiInsert(d)
 uiContext d;
 {
@@ -102,9 +102,9 @@ uiContext d;
   するなんてことは必要ないのではないのかなぁ。
  */
 
-static EmptyQuotedInsert pro((uiContext));
+static int EmptyQuotedInsert pro((uiContext));
 
-static
+static int
 EmptyQuotedInsert(d)
 uiContext d;
 {
@@ -119,9 +119,9 @@ uiContext d;
   AlphaSelfInsert -- 自分自身を確定文字列として返す関数。
  */
 
-static AlphaSelfInsert pro((uiContext));
+static int AlphaSelfInsert pro((uiContext));
 
-static
+static int
 AlphaSelfInsert(d)
 uiContext d;
 {
@@ -143,9 +143,9 @@ uiContext d;
   }
 }
 
-static AlphaNop pro((uiContext));
+static int AlphaNop pro((uiContext));
 
-static
+static int
 AlphaNop(d)
 uiContext d;
 {
@@ -155,9 +155,9 @@ uiContext d;
   return 0;
 }
 
-static EmptyQuit pro((uiContext));
+static int EmptyQuit pro((uiContext));
 
-static
+static int
 EmptyQuit(d)
 uiContext d;
 {
@@ -178,9 +178,9 @@ uiContext d;
   return res;
 }
 
-static EmptyKakutei pro((uiContext));
+static int EmptyKakutei pro((uiContext));
 
-static
+static int
 EmptyKakutei(d)
 uiContext d;
 {
@@ -195,9 +195,9 @@ uiContext d;
   return res;
 }
 
-static EmptyDeletePrevious pro((uiContext));
+static int EmptyDeletePrevious pro((uiContext));
 
-static
+static int
 EmptyDeletePrevious(d)
 uiContext d;
 {
@@ -227,7 +227,7 @@ int fnum;
   return (extraFunc *)0;
 }
 
-static
+static int
 UserMode(d, estruct)
 uiContext d;
 extraFunc *estruct;
@@ -259,7 +259,7 @@ extraFunc *estruct;
 }
 
 #ifndef NO_EXTEND_MENU /* continues to the bottom of this file */
-static
+static int
 UserSelect(d, estruct)
 uiContext d;
 extraFunc *estruct;
@@ -306,7 +306,7 @@ extraFunc *estruct;
                     curkigo, kigop->kigo_mode, uuKigoGeneralExitCatch, posp);
 }
   
-static
+static int
 UserMenu(d, estruct)
 uiContext d;
 extraFunc *estruct;
@@ -317,7 +317,7 @@ extraFunc *estruct;
 
 /* デフォルト以外のモード使用時に呼び出す関数を切り分ける */
 
-static
+static int
 ProcExtraFunc(d, fnum)
 uiContext d;
 int fnum;
@@ -342,6 +342,7 @@ int fnum;
   return NothingChangedWithBeep(d);
 }
 
+int
 getBaseMode(yc)
 yomiContext yc;
 {
@@ -390,6 +391,7 @@ yomiContext yc;
   currentModeInfo(d);
 }
 
+int
 EmptyBaseHira(d)
 uiContext d;
 {
@@ -404,6 +406,7 @@ uiContext d;
   return 0;
 }
 
+int
 EmptyBaseKata(d)
 uiContext d;
 {
@@ -421,6 +424,7 @@ uiContext d;
   return 0;
 }
 
+int
 EmptyBaseEisu(d)
 uiContext d;
 {
@@ -436,6 +440,7 @@ uiContext d;
   return 0;
 }
 
+int
 EmptyBaseZen(d)
 uiContext d;
 {
@@ -457,6 +462,7 @@ uiContext d;
   return 0;
 }
 
+int
 EmptyBaseHan(d)
 uiContext d;
 {
@@ -485,6 +491,7 @@ uiContext d;
   return 0;
 }
 
+int
 EmptyBaseKana(d)
 uiContext d;
 {
@@ -508,6 +515,7 @@ uiContext d;
   return 0;
 }
 
+int
 EmptyBaseKakutei(d)
 uiContext d;
 {
@@ -522,6 +530,7 @@ uiContext d;
   return 0;
 }
 
+int
 EmptyBaseHenkan(d)
 uiContext d;
 {
@@ -535,6 +544,8 @@ uiContext d;
   EmptyBaseModeInfo(d, yc);
   return 0;
 }
+
+extern int ToggleChikuji pro((uiContext, int)); /* kctrl.c */
 
 #ifndef NO_EXTEND_MENU
 static int
@@ -598,7 +609,7 @@ uiContext d;
 #ifndef STANDALONE /* This is not used in Windows environment 1996.7.30 kon */
   int retval = 0;
   char s[512];
-  extern defaultContext;
+  extern int defaultContext;
   yomiContext yc = (yomiContext)d->modec;
 
   if (yc->generalFlags & CANNA_YOMI_CHGMODE_INHIBITTED) {
@@ -731,7 +742,7 @@ uiContext d;
 {
   int retval = 0;
   char s[512];
-  extern defaultContext;
+  extern int defaultContext;
   yomiContext yc = (yomiContext)d->modec;
 
   if (yc->generalFlags & CANNA_YOMI_CHGMODE_INHIBITTED) {

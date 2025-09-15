@@ -24,8 +24,8 @@
 static char bunmap_id[] = "@(#) 102.1 $Id: bunmap.h,v 1.1.1.1 2002/10/19 08:27:48 aida_s Exp $";
 #endif /* lint */
 
-extern DoFuncSequence(),UseOtherKeymap();
-extern TanNop pro((uiContext)), YomiKakutei pro((uiContext));
+extern int DoFuncSequence(), UseOtherKeymap();
+extern int TanNop pro((uiContext)), YomiKakutei pro((uiContext));
 
 static struct funccfunc bun_funcs[] = {
   {CANNA_FN_FunctionalInsert	,BunSelfInsert		},

@@ -27,7 +27,7 @@ static char kigomap_id[] = "@(#) 102.1 $Id: kigomap.h,v 1.1.1.1 2002/10/19 08:27
 #ifdef NO_EXTEND_MENU
 static struct funccfunc kigo_funcs[] = {{0, 0},};
 #else
-extern DoFuncSequence(),UseOtherKeymap();
+extern int DoFuncSequence(), UseOtherKeymap();
 
 static struct funccfunc kigo_funcs[] = {
   {CANNA_FN_KigouMode		,KigoQuit		},

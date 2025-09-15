@@ -725,6 +725,7 @@ int		format;
 
 #define CBUFSIZE     512
 
+int
 RkwCvtHan(dst, maxdst, src, srclen)
 wchar_t *dst, *src;
 int maxdst, srclen;
@@ -761,6 +762,7 @@ int maxdst, srclen;
   return len;
 }
 
+int
 RkwCvtHira(dst, maxdst, src, srclen)
 wchar_t *dst, *src;
 int maxdst, srclen;
@@ -798,6 +800,7 @@ int maxdst, srclen;
   return len;
 }
   
+int
 RkwCvtKana(dst, maxdst, src, srclen)
 wchar_t *dst, *src;
 int maxdst, srclen;
@@ -834,7 +837,8 @@ int maxdst, srclen;
 #endif
   return len;
 }
-  
+
+int
 RkwCvtZen(dst, maxdst, src, srclen)
 wchar_t *dst, *src;
 int maxdst, srclen;
@@ -872,6 +876,7 @@ int maxdst, srclen;
   return len;
 }
 
+int
 RkwCvtNone(dst, maxdst, src, srclen)
 wchar_t *dst, *src;
 int maxdst, srclen;
@@ -886,6 +891,7 @@ int maxdst, srclen;
   return len;
 }
 
+int
 RkwMapRoma(romaji, dst, maxdst, src, srclen, flags, status)
 struct RkRxDic *romaji;
 wchar_t *dst, *src;
@@ -928,6 +934,7 @@ int maxdst, srclen, flags, *status;
   return len;
 }
 
+int
 #ifdef __STDC__
 RkwMapPhonogram(struct RkRxDic *romaji, wchar_t *dst, int maxdst,
 		wchar_t *src, int srclen, wchar_t key, int flags,
@@ -995,6 +1002,7 @@ int maxdst, srclen, flags, *ulen, *dlen, *tlen, *rule;
   return status;
 }
 
+int
 RkwCvtRoma(romaji, dst, maxdst, src, srclen, flags)
 struct RkRxDic *romaji;
 wchar_t *dst, *src;

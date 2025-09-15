@@ -39,6 +39,9 @@ static char rcs_id[] = "@(#) 102.1 $Id: hex.c,v 1.2 2003/01/10 13:08:44 aida_s E
 #define wchar_t cannawc
 
 static int quitHex();
+extern int checkGLineLen pro((uiContext)); /* util.c */
+extern int cvtAsHex pro((uiContext, wchar_t*, wchar_t*, int)); /* romaji.c */
+extern int convertAsHex pro((uiContext)); /* romaji.c */
 
 /* cfuncdef
 
@@ -46,7 +49,7 @@ static int quitHex();
 
  */
 
-static
+static int
 hexEveryTimeCatch(d, retval, env)
      uiContext d;
      int retval;
@@ -100,7 +103,7 @@ hexEveryTimeCatch(d, retval, env)
   return retval;
 }
 
-static
+static int
 exitHex(d, retval, env)
 uiContext d;
 int retval;
@@ -119,7 +122,7 @@ mode_context env;
   }
 }
 
-static
+static int
 quitHex(d, retval, env)
      uiContext d;
      int retval;
@@ -134,7 +137,7 @@ quitHex(d, retval, env)
 
 yomiContext GetKanjiString();
 
-static
+static int
 hexMode(d, major_mode)
 uiContext d;
 int major_mode;
@@ -162,6 +165,7 @@ int major_mode;
 
  */
 
+int
 HexMode(d)
 uiContext d;
 {

@@ -117,7 +117,7 @@ int mnum;
   return (newmode *)0;
 }
 
-extern nothermodes;
+extern int nothermodes;
 
 static wchar_t *
 modestr(mid)
@@ -227,6 +227,7 @@ uiContext d;
 
  */
 
+int
 JapaneseMode(d)
 uiContext d;
 {
@@ -242,6 +243,7 @@ uiContext d;
   return 0;
 }
 
+int
 AlphaMode(d)
 uiContext d;
 {
@@ -258,6 +260,7 @@ uiContext d;
   }
 }
 
+int
 HenkanNyuryokuMode(d)
 uiContext d;
 {
@@ -283,6 +286,7 @@ uiContext d;
   return 0;
 }
 
+int
 queryMode(d, arg)
 uiContext d;
 wchar_t *arg;
@@ -370,6 +374,7 @@ wchar_t *arg;
  *
  */
 
+int
 changeModeName(modeid, str)
 int modeid;
 char *str;

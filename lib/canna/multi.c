@@ -103,6 +103,7 @@ int c;
   return Gkey;
 }
 
+int
 UseOtherKeymap(d)
 uiContext d;
 {
@@ -128,7 +129,7 @@ uiContext d;
   return NothingForGLine(d);
 }
 
-static
+static int
 _DoFuncSequence(d, keytbl, key) /* 複数の機能の割り当て */
 uiContext d;
 BYTE *keytbl;
@@ -242,12 +243,14 @@ BYTE key;
   return total_res;
 }
 
+int
 DoFuncSequence(d) /* 複数の機能の割り当て */
 uiContext d;
 {
   return _DoFuncSequence(d, (BYTE *)NULL, (BYTE)NULL);
 }
 
+int
 multiSequenceFunc(d, mode, whattodo, key, fnum)
 uiContext d;
 KanjiMode mode;

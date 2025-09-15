@@ -28,6 +28,9 @@ static char rcsid[]="@(#) 102.1 $Id: RKroma.c,v 1.6 2007/08/08 14:54:33 aida_s E
 #include "canna.h"
 
 #include <fcntl.h>
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
 
 #define S2TOS(s2)	(((unsigned short)(s2)[0]<<8)|(s2)[1])
 #define L4TOL(l4)\

@@ -308,7 +308,7 @@ finExtMenu()
 }
 #endif /* NO_EXTEND_MENU */
 
-static
+static int
 makeUiUtilEchoStr(d)
 uiContext d;
 {
@@ -347,7 +347,7 @@ menustruct *tab;
  * UIユーティリティの一覧表示(FirstLine)                                     *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-static
+static int
 uuflExitCatch(d, retval, env)
 uiContext d;
 int retval;
@@ -413,6 +413,7 @@ mode_context env;
   return NothingChangedWithBeep(d); /* ここには来ないはず */
 }
 
+int
 prevMenuIfExist(d)
 uiContext d;
 {
@@ -429,7 +430,7 @@ uiContext d;
   }
 }
 
-static
+static int
 uuflQuitCatch(d, retval, env)
 uiContext d;
 int retval;
@@ -451,6 +452,7 @@ mode_context env;
   UiUtilMode -- UIユーティリティモードになるときに呼ばれる。
 
  */
+int
 UiUtilMode(d)
 uiContext d;
 {
@@ -507,6 +509,8 @@ menustruct *ms;
   }
   return (menuinfo *)0;
 }
+
+extern int getForIchiranContext pro((uiContext)); /* bushu.c */
 
 /*
  * showmenu -- メニューの表示

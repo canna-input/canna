@@ -24,8 +24,8 @@
 static char t_reimap_id[] = "@(#) 102.1 $Id: t_reimap.h,v 1.1.1.1 2002/10/19 08:27:51 aida_s Exp $";
 #endif	/* lint */
 
-extern DoFuncSequence pro((struct _uiContext *));
-extern UseOtherKeymap pro((struct _uiContext *));
+extern int DoFuncSequence pro((struct _uiContext *));
+extern int UseOtherKeymap pro((struct _uiContext *));
 
 static struct funccfunc tourokureibun_funcs[] = {
   {CANNA_FN_FunctionalInsert	,YesNo		},

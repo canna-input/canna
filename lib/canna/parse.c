@@ -53,9 +53,9 @@ static int DISPLAY_to_hostname();
 
 */
 
-extern ckverbose;
+extern int ckverbose;
 
-extern YYparse_by_rcfilename();
+extern int YYparse_by_rcfilename();
 
 /* cfuncdef
 
@@ -76,7 +76,7 @@ extern YYparse_by_rcfilename();
 #define OBSOLETE_FILEENVNAME "IROHAFILE"
 #define OBSOLETE_HOSTENVNAME "IROHAHOST"
 
-static
+static int
 make_initfilename()
 {
   if(!CANNA_initfilename) {
@@ -107,12 +107,14 @@ fit_initfilename()
   }
 }
 
+extern int clisp_init pro((void)); /* lisp.c */
+
 void
 parse()
 {
   char *p, *getenv();
   int n;
-  extern iroha_debug;
+  extern int iroha_debug;
   int home_canna_exist = 0;
   extern char *initFileSpecified;
   extern int auto_define;
@@ -342,8 +344,11 @@ parse()
 #endif
 }
 
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
 
-static
+static int
 DISPLAY_to_hostname(name, buf, bufsize)
 char *name, *buf;
 int bufsize;

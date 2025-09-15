@@ -91,6 +91,7 @@ static size_t
 wc32stowc16s(wc16s, wc32s, len)
 cannawc16 *wc16s;
 const cannawc32 *wc32s;
+int len;
 {
   unsigned int i;
   for (i = 0; i < len && wc32s[i]; i++) {
@@ -125,6 +126,7 @@ static size_t
 wc16stowc32s(wc32s, wc16s, len)
 cannawc32 *wc32s;
 const cannawc16 *wc16s;
+int len;
 {
   unsigned int i;
   for (i = 0; i < len && wc16s[i]; i++) {

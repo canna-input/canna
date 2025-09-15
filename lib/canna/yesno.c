@@ -65,6 +65,7 @@ coreContext qc;
 /*
  * 候補一覧行を作る
  */
+int
 getYesNoContext(d,
 	  everyTimeCallback, exitCallback, quitCallback, auxCallback)
 uiContext d;
@@ -134,7 +135,7 @@ uiContext	d;
 
 static int YesNo pro((uiContext));
 
-static
+static int
 YesNo(d)
 uiContext	d;
 {
@@ -154,7 +155,7 @@ uiContext	d;
 
 static int YesNoQuit pro((uiContext));
 
-static
+static int
 YesNoQuit(d)
 uiContext	d;
 {

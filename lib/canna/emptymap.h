@@ -24,22 +24,20 @@
 static char emptymap_id[] = "@(#) 102.1 $Id: emptymap.h,v 1.3 2003/09/17 08:50:53 aida_s Exp $";
 #endif /* lint */
 
-extern AlphaMode(), HenkanNyuryokuMode(), ZenHiraKakuteiMode();
-extern ZenKataKakuteiMode(), HanKataKakuteiMode(), ZenAlphaKakuteiMode();
-extern HanAlphaKakuteiMode(), KigoIchiran();
+extern int AlphaMode(), HenkanNyuryokuMode();
 #ifndef NO_EXTEND_MENU
-extern HexMode(), BushuMode();
+extern int HexMode(), BushuMode();
 #endif
-extern KigoIchiran(), UiUtilMode();
-extern YomiBaseHiraKataToggle(), YomiBaseZenHanToggle();
-extern YomiBaseKanaEisuToggle(), YomiBaseKakuteiHenkanToggle();
-extern YomiBaseRotateForw(), YomiBaseRotateBack();
-extern DoFuncSequence(),UseOtherKeymap(), YomiModeBackup();
-extern dicTouroku pro((uiContext)), dicSakujo pro((uiContext));
+extern int KigoIchiran(), UiUtilMode();
+extern int YomiBaseHiraKataToggle(), YomiBaseZenHanToggle();
+extern int YomiBaseKanaEisuToggle(), YomiBaseKakuteiHenkanToggle();
+extern int YomiBaseRotateForw(), YomiBaseRotateBack();
+extern int DoFuncSequence(), UseOtherKeymap(), YomiModeBackup();
+extern int dicTouroku pro((uiContext)), dicSakujo pro((uiContext));
 #ifndef NO_EXTEND_MENU
-extern kigoRussia(), kigoGreek(), kigoKeisen();
-extern dicMount(), serverChange(), serverFin();
-extern chikujiInit();
+extern int kigoRussia(), kigoGreek(), kigoKeisen();
+extern int dicMount(), serverChange(), serverFin();
+extern int chikujiInit();
 #endif
 
 #define NONE CANNA_FN_Undefined
