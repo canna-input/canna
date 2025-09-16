@@ -134,7 +134,7 @@ int n;
 #define probe(a, b, c)
 #endif /* !DEBUGPROTO */
 
-static
+static int
 GetFirstKouho(cxnum, start, end, val_return, buf, bufsize, bufp_return)
 int cxnum, start, end, *val_return, bufsize;
 Ushort *buf, **bufp_return;
@@ -218,7 +218,7 @@ BYTE *p;
   知っているような処理(who-> の部分)にしてしまった。(^^;)
  */
 
-static
+static int
 SendType1Reply(client, majo, mino, stat, majorv, minorv, curtime,
 	       nproto, protonames, protofreqs, nclients, ncontexts, who)
 ClientPtr client, *who;
@@ -357,7 +357,7 @@ char **protonames;
   return retval;
 }
 
-static
+static int
 SendType2Reply(client, majo, mino, stat)
 ClientPtr client;
 int majo, mino, stat;
@@ -371,7 +371,7 @@ int majo, mino, stat;
   return WriteClient(client, buf, sizeof(buf));
 }
 
-static
+static int
 SendType4Reply(client, majo, mino, stat, len, dat)
 ClientPtr client;
 int majo, mino, stat, len;
@@ -400,7 +400,7 @@ int *dat;
   return retval;
 }
 
-static
+static int
 SendType4XReply(client, majo, mino, val, s1, s2, len, dat)
 ClientPtr client;
 int majo, mino, val, len;
@@ -434,7 +434,7 @@ int *dat;
   return retval;
 }
 
-static
+static int
 SendType5Reply(client, majo, mino, context)
 ClientPtr client;
 int majo, mino, context;
@@ -448,7 +448,7 @@ int majo, mino, context;
   return WriteClient(client, buf, sizeof(buf));
 }
 
-static
+static int
 namesize(names, n)
 char *names;
 int n;
@@ -466,7 +466,7 @@ int n;
   return res + 1;
 }
 
-static
+static int
 unamesize(names, n)
 Ushort *names;
 int n;
@@ -484,7 +484,7 @@ int n;
   return res + 1;
 }
 
-static
+static int
 unamesize2(names)
 Ushort *names;
 {
@@ -498,7 +498,7 @@ Ushort *names;
   return res + 1;
 }
 
-static
+static int
 SendType6Reply(client, majo, mino, n, names, namelen)
 ClientPtr client;
 int majo, mino, n, namelen;
@@ -525,7 +525,7 @@ char *names;
   return retval;
 }
 
-static
+static int
 SendType7Reply(client, majo, mino, n, len, dat)
 ClientPtr client;
 int majo, mino, n, len;
@@ -553,7 +553,7 @@ Ushort *dat;
   return retval;
 }
 
-static
+static int
 SendType9Reply(client, majo, mino, val, len, dat)
 ClientPtr client;
 int majo, mino, val, len;
@@ -628,7 +628,7 @@ int proto;
   return buf;
 }
 
-static
+static int
 irw_finalize( clientp )
 ClientPtr *clientp ;
 {
@@ -710,7 +710,7 @@ addr_ok:
   return SendType2Reply(client, wKillServer, !EXTPROTO, 0);
 }
 
-static	
+static int
 irw_create_context( clientp )
 ClientPtr *clientp ;
 {
@@ -739,7 +739,7 @@ ClientPtr *clientp ;
   また、無効ならメッセージを出力する。
  */
 
-static
+static int
 validcontext(cxnum, client, proto)
 int cxnum, proto;
 ClientPtr client;
@@ -751,7 +751,7 @@ ClientPtr client;
   return 0;
 }
 
-static
+static int
 irw_duplicate_context( clientp )
 ClientPtr *clientp ;
 {
@@ -772,7 +772,7 @@ ClientPtr *clientp ;
     return SendType5Reply(client, wDuplicateContext, !EXTPROTO, retval);
 }
 
-static
+static int
 irw_close_context( clientp )
 ClientPtr *clientp ;
 {
@@ -787,7 +787,7 @@ ClientPtr *clientp ;
     return SendType2Reply(client, wCloseContext, !EXTPROTO, stat);
 }
 
-static
+static int
 irw_dictionary_list( clientp )
 ClientPtr *clientp ;
 {
@@ -807,7 +807,7 @@ ClientPtr *clientp ;
     return retval;
 }
 
-static
+static int
 irw_get_yomi( clientp )
 ClientPtr *clientp ;
 {
@@ -836,7 +836,7 @@ ClientPtr *clientp ;
     return retval;
 }
 
-static
+static int
 irw_define_dic( clientp )
 ClientPtr *clientp ;
 {
@@ -858,7 +858,7 @@ ClientPtr *clientp ;
     return SendType2Reply(client, wDefineWord, !EXTPROTO, stat);
 }
 
-static
+static int
 irw_delete_dic( clientp )
 ClientPtr *clientp ;
 {
@@ -880,7 +880,7 @@ ClientPtr *clientp ;
     return SendType2Reply(client, wDeleteWord, !EXTPROTO, stat);
 }
 
-static
+static int
 irw_get_dir_list( clientp )
 ClientPtr *clientp ;
 {
@@ -900,14 +900,14 @@ ClientPtr *clientp ;
     return retval;
 }
 
-static
+static int
 irw_mount_dictionary( clientp )
 ClientPtr *clientp ;
 {
     ClientPtr client = *clientp ;
     char *dicname ;
     int cxnum = Request.type15.context, stat = -1;
-    extern MMountFlag;
+    extern int MMountFlag;
 
     if (validcontext(cxnum, client, wMountDictionary)) {
 	dicname = Request.type15.dicname ;
@@ -919,7 +919,7 @@ ClientPtr *clientp ;
     return SendType2Reply(client, wMountDictionary, !EXTPROTO, stat);
 }
 
-static
+static int
 irw_umount_dictionary( clientp )
 ClientPtr *clientp ;
 {
@@ -936,7 +936,7 @@ ClientPtr *clientp ;
     return SendType2Reply(client, wUnmountDictionary, !EXTPROTO, stat);
 }
 
-static
+static int
 irw_rmount_dictionary( clientp )
 ClientPtr *clientp ;
 {
@@ -954,7 +954,7 @@ ClientPtr *clientp ;
     return SendType2Reply(client, wRemountDictionary, !EXTPROTO, stat);
 }
 
-static
+static int
 irw_mount_list( clientp )
 ClientPtr *clientp ;
 {
@@ -975,7 +975,7 @@ ClientPtr *clientp ;
     return retval;
 }
 
-static
+static int
 irw_convert( clientp )
 ClientPtr *clientp ;
 {
@@ -1011,7 +1011,7 @@ ClientPtr *clientp ;
     return retval;
 }
 
-static
+static int
 irw_convert_end( clientp )
 ClientPtr *clientp ;
 {
@@ -1055,7 +1055,7 @@ ClientPtr *clientp ;
     return SendType2Reply(client, wEndConvert, !EXTPROTO, stat);
 }
 
-static
+static int
 irw_get_kanjilist( clientp )
 ClientPtr *clientp ;
 {
@@ -1084,7 +1084,7 @@ ClientPtr *clientp ;
     return retval;
 }
 
-static
+static int
 irw_resize(clientp)
 ClientPtr *clientp ;
 {
@@ -1125,7 +1125,7 @@ ClientPtr *clientp ;
     return retval;
 }
 
-static
+static int
 irw_store_yomi( clientp )
 ClientPtr *clientp ;
 {
@@ -1163,7 +1163,7 @@ ClientPtr *clientp ;
     return ret;
 }
 
-static
+static int
 irw_query_extension( clientp )
 ClientPtr *clientp ;
 {
@@ -1334,7 +1334,7 @@ int dirlen;
 
 #ifdef EXTENSION
 
-static
+static int
 irw_list_dictionary( clientp )
 ClientPtr *clientp ;
 {
@@ -1391,7 +1391,7 @@ protoerr:
     return retval;
 }
 
-static
+static int
 irw_create_dictionary( clientp )
 ClientPtr *clientp ;
 {
@@ -1410,7 +1410,7 @@ ClientPtr *clientp ;
     return SendType2Reply(client, wCreateDictionary, EXTPROTO, stat);
 }
 
-static
+static int
 irw_chmod_dictionary( clientp )
 ClientPtr *clientp;
 {
@@ -1426,7 +1426,7 @@ ClientPtr *clientp;
   return SendType5Reply(client, wChmodDictionary, EXTPROTO, stat);
 }
 
-static
+static int
 irw_remove_dictionary( clientp )
 ClientPtr *clientp ;
 {
@@ -1445,7 +1445,7 @@ ClientPtr *clientp ;
     return SendType2Reply(client, wDeleteDictionary, EXTPROTO, stat);
 }
 
-static
+static int
 irw_rename_dictionary( clientp )
 ClientPtr *clientp ;
 {
@@ -1463,7 +1463,7 @@ ClientPtr *clientp ;
     return SendType2Reply(client, wRenameDictionary, EXTPROTO, stat);
 }
 
-static
+static int
 irw_copy_dictionary( clientp )
 ClientPtr *clientp;
 {
@@ -1486,7 +1486,7 @@ ClientPtr *clientp;
     return SendType2Reply(client, wCopyDictionary, EXTPROTO, stat);
 }
 
-static
+static int
 irw_get_word_text_dic( clientp )
 ClientPtr *clientp ;
 {
@@ -1553,7 +1553,7 @@ protoerr:
     return retval;
 }
 
-static
+static int
 irw_server_stat( clientp )
 ClientPtr *clientp ;
 {
@@ -1597,7 +1597,7 @@ ClientPtr *clientp ;
     return retval;
 }
 
-static
+static int
 irw_host_ctl( clientp )
 ClientPtr *clientp ;
 {
@@ -1644,7 +1644,7 @@ ClientPtr *clientp ;
     return( 0 ) ;
 }
 
-static
+static int
 irw_sync(clientp)
 ClientPtr *clientp;
 {
@@ -1659,7 +1659,7 @@ ClientPtr *clientp;
 }
 #endif /* EXTENSION */
 
-static
+static int
 irw_get_stat( clientp )
 ClientPtr *clientp ;
 {
@@ -1685,7 +1685,7 @@ ClientPtr *clientp ;
 			  (int *)&stat);
 }
 
-static
+static int
 irw_get_lex( clientp )
 ClientPtr *clientp ;
 {
@@ -1711,7 +1711,7 @@ ClientPtr *clientp ;
 }
 
 /* 逐次変換で使用する関数 */
-static
+static int
 irw_autoconv( clientp )
 ClientPtr *clientp ;
 {
@@ -1730,7 +1730,7 @@ ClientPtr *clientp ;
     return SendType2Reply(client, wAutoConvert, !EXTPROTO, stat);
 }
 
-static
+static int
 irw_subst_yomi( clientp )
 ClientPtr *clientp ;
 {
@@ -1760,7 +1760,7 @@ ClientPtr *clientp ;
     return ret;
 }
 
-static
+static int
 irw_flush_yomi( clientp )
 ClientPtr *clientp ;
 {
@@ -1813,7 +1813,7 @@ ClientPtr *clientp ;
     return ret;
 }
 
-static
+static int
 irw_get_last_yomi( clientp )
 ClientPtr *clientp ;
 {
@@ -1845,7 +1845,7 @@ ClientPtr *clientp ;
     return retval;
 }
 
-static
+static int
 irw_remove_yomi( clientp )
 ClientPtr *clientp ;
 {
@@ -1878,7 +1878,7 @@ ClientPtr *clientp ;
     return SendType2Reply(client, wRemoveYomi, !EXTPROTO, stat);
 }
 
-static
+static int
 irw_get_simple_kanji( clientp )
 ClientPtr *clientp;
 {
@@ -1914,7 +1914,7 @@ ClientPtr *clientp;
     return retval;
 }
 
-static
+static int
 irw_query_dictionary( clientp )
 ClientPtr *clientp ;
 {
@@ -1980,7 +1980,7 @@ ClientPtr *clientp ;
   return retval;
 }
 
-static
+static int
 irw_get_hinshi( clientp )
 ClientPtr *clientp ;
 {
@@ -2010,7 +2010,7 @@ ClientPtr *clientp ;
     return retval;
 }
 
-static
+static int
 irw_store_range( clientp )
 ClientPtr *clientp ;
 {
@@ -2042,7 +2042,7 @@ ClientPtr *clientp ;
     return ret;
 }
 
-static
+static int
 irw_set_locale( clientp )
 ClientPtr *clientp ;
 {
@@ -2060,7 +2060,7 @@ ClientPtr *clientp ;
     return SendType2Reply(client, wSetLocale, !EXTPROTO, stat);
 }
 
-static
+static int
 irw_set_app_name( clientp )
 ClientPtr *clientp;
 {
@@ -2083,7 +2083,7 @@ ClientPtr *clientp;
     return SendType2Reply(client, wSetApplicationName, !EXTPROTO, stat);
 }
 							/* S000:begin */
-static
+static int
 irw_notice_group_name(clientp)
 ClientPtr *clientp;
 {
@@ -2112,7 +2112,7 @@ ClientPtr *clientp;
   return SendType2Reply(client, wNoticeGroupName, !EXTPROTO, stat);
 }
 							/* S000:begin */
-static
+static int
 irw_through( clientp )
 ClientPtr *clientp;
 {
@@ -2232,7 +2232,7 @@ BYTE *buf ;
     return( 0 ) ;
 }
 
-static
+static int
 ProcWideReq1(buf)
 BYTE *buf ;
 /* ARGSUSED */
@@ -2245,7 +2245,7 @@ BYTE *buf ;
     return( 0 ) ;
 }
 
-static
+static int
 ProcWideReq2(buf)
 BYTE *buf ;
 {
@@ -2259,7 +2259,7 @@ BYTE *buf ;
     return( 0 ) ;
 }
 
-static
+static int
 ProcWideReq3(buf)
 BYTE *buf ;
 {
@@ -2275,7 +2275,7 @@ BYTE *buf ;
     return( 0 ) ;
 }
 
-static
+static int
 ProcWideReq4(buf)
 BYTE *buf ;
 {
@@ -2309,7 +2309,7 @@ BYTE *buf ;
     return( 0 ) ;
 }
 
-static
+static int
 ProcWideReq5(buf)
 BYTE *buf ;
 {
@@ -2327,7 +2327,7 @@ BYTE *buf ;
     return( 0 ) ;
 }
 							/* S000:begin */
-static
+static int
 ProcWideReq6(buf)
 BYTE *buf ;
 {
@@ -2345,7 +2345,7 @@ BYTE *buf ;
     return( 0 ) ;
 }
 
-static
+static int
 ProcWideReq7(buf)
 BYTE *buf ;
 {
@@ -2363,7 +2363,7 @@ BYTE *buf ;
     return( 0 ) ;
 }
 
-static
+static int
 ProcWideReq8(buf)
 BYTE *buf ;
 {
@@ -2383,7 +2383,7 @@ BYTE *buf ;
     return( 0 ) ;
 }
 
-static
+static int
 ProcWideReq9(buf)
 BYTE *buf ;
 {
@@ -2403,7 +2403,7 @@ BYTE *buf ;
     return( 0 ) ;
 }
 
-static
+static int
 ProcWideReq10(buf)
 BYTE *buf ;
 {
@@ -2433,7 +2433,7 @@ BYTE *buf ;
     return( 0 ) ;
 }
 
-static
+static int
 ProcWideReq11(buf)
 BYTE *buf ;
 {
@@ -2471,7 +2471,7 @@ BYTE *buf ;
     return( 0 ) ;
 }
 
-static
+static int
 ProcWideReq12(buf)
 BYTE *buf ;
 {
@@ -2508,7 +2508,7 @@ BYTE *buf ;
     return( 0 ) ;
 }
 
-static
+static int
 ProcWideReq13(buf)
 BYTE *buf ;
 {
@@ -2556,7 +2556,7 @@ BYTE *buf ;
     return( 0 ) ;
 }
 
-static
+static int
 ProcWideReq14(buf)
 BYTE *buf ;
 {
@@ -2587,7 +2587,7 @@ BYTE *buf ;
     return( 0 ) ;
 }
 
-static
+static int
 ProcWideReq15(buf)
 BYTE *buf ;
 {
@@ -2610,7 +2610,7 @@ BYTE *buf ;
     return( 0 ) ;
 }
 
-static
+static int
 ProcWideReq17(buf)
 BYTE *buf ;
 {
@@ -2642,7 +2642,7 @@ BYTE *buf ;
 }
 
 #ifdef EXTENSION
-static
+static int
 ProcWideReq18(buf)
 BYTE *buf ;
 {
@@ -2663,7 +2663,7 @@ BYTE *buf ;
 }
 #endif /* EXTENSION */
 
-static
+static int
 ProcWideReq19(buf)
 BYTE *buf ;
 {
@@ -2686,7 +2686,7 @@ BYTE *buf ;
     return( 0 ) ;
 }							/* S000:end */
 /* Copy Dic のため */
-static
+static int
 ProcWideReq20(buf)
 BYTE *buf ;
 {

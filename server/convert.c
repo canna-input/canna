@@ -1606,6 +1606,7 @@ int size ;
 
 #endif /* USE_EUC_PROTOCOL */
 
+int
 ProcReq2( buf, size )
 char *buf ;
 int size ;

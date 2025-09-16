@@ -35,6 +35,7 @@ const char *CallFuncName;
 int (*CallFunc) pro((ClientPtr *clientp));
 
 
+int
 main(argc, argv)
 int argc ;			
 char *argv[] ;
