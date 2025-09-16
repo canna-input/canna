@@ -582,7 +582,7 @@ const char   *hostname;
     int i;
 #else
     const struct hostent *hent;
-    const char *const *haddrp;
+    char **haddrp;
     struct in_addr numaddr;
 #endif
 
