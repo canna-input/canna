@@ -1517,7 +1517,7 @@ int *rep;
   }
 }
 
-static short
+static int
 RecvType6Reply(buf, mxi, n) /* GetDictionaryList */
 BYTE *buf;
 int mxi, *n;
