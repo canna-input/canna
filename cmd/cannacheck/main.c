@@ -33,7 +33,7 @@ static char rcs_id[] = "@(#) 102.1 $Id: main.c,v 1.6.2.2 2003/12/27 17:15:21 aid
 
 int IROHA_verbose = 0;
   
-main(argc, argv,envp)
+int main(argc, argv,envp)
 int argc;
 char *argv[], *envp[];
 {

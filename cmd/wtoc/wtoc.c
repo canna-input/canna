@@ -138,7 +138,7 @@ int read_hinshi( fp, taiou )
 } 
 
 /* ╫пно */
-wtoi_write( fp, yomi, hinshi, kouho, hindo )
+void wtoi_write( fp, yomi, hinshi, kouho, hindo )
      FILE	*fp;
      uchar   *yomi, *hinshi, *kouho;
      int	hindo;
@@ -165,7 +165,7 @@ int suuji(kazu)
   return(atoi(kazu));
 }
 
-main(argc,argv)
+int main(argc,argv)
      int  argc;
      char *argv[]; 
 {

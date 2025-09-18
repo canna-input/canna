@@ -477,6 +477,7 @@ char **args;
   }
 }
 
+void
 doDelete(argn, args)
 int argn;
 char **args;
@@ -498,6 +499,7 @@ char **args;
   }
 }
 
+int
 main(argn, args)
 int	argn;
 char	**args;

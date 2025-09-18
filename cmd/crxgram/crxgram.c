@@ -560,6 +560,7 @@ enterNeg(fp)
 }
 #endif /* LOGIC_HACK */
 
+int
 main (argc, argv)
   int argc;
   char *argv [];

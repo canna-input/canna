@@ -83,6 +83,7 @@ static char *default_hinshi[] = {
   ""
 };
 
+int
 ask_default_hinshi_size()
 {
   int i;
@@ -146,6 +147,7 @@ int    size, fsize;
 }
 
 /* 品詞ファイル読み込み */
+int
 read_hinshi(fp, taiou)
 FILE  *fp;
 char *taiou[MAXHINSHI];
@@ -183,6 +185,7 @@ char *iroha_hinshi;
 }
 
 /* 出力 */
+void
 itow_write(fp, yomi, hinshi, kouho, hindo)
 FILE  *fp;
 char *yomi, *hinshi, *kouho, *hindo;
@@ -190,6 +193,7 @@ char *yomi, *hinshi, *kouho, *hindo;
   fprintf( fp, "%s %s %s %s \n", yomi, kouho, hinshi, hindo);
 }
 
+int
 main(argc, argv)
 int  argc;
 char *argv[]; 

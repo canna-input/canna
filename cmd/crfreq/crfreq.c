@@ -99,6 +99,7 @@ usage()
   exit(1);
 }
 
+int
 main(argc, argv)
   int argc;
   char *argv[];

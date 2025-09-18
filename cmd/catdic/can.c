@@ -41,6 +41,9 @@ static char rcs[] = "@(#) 112.1 $Id: can.c,v 1.4 2003/02/01 19:34:20 aida_s Exp 
 #ifdef __EMX__
 #include <netdb.h>
 #endif
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
 
 #if defined(__STDC__) || defined(SVR4)
 #include <locale.h>
@@ -78,9 +81,32 @@ extern  void Message();
 #endif
 
 
-extern	RkDeleteLine();
-extern	RkDefineLine();
-extern	rmDitionary();
+/* lib/RKC/rkc.c */
+extern	int RkwGetProtocolVersion pro((int*, int*));
+extern	int RkKillServer pro((void));
+extern	int RkListDic pro((int, unsigned char*, unsigned char*, int));
+extern	int RkCreateDic pro((int, unsigned char*, int));
+extern	int RkRemoveDic pro((int, unsigned char*, int));
+extern	int RkRenameDic pro((int, unsigned char*, unsigned char*, int));
+extern	int RkCopyDic pro((int, unsigned char*, unsigned char*, unsigned char*, int));
+extern	int RkGetWordTextDic pro((int, unsigned char*, unsigned char*, unsigned char*, int));
+extern	int RkChmodDic pro((int, unsigned char*, int));
+
+/* Rkdelline.c */
+extern	int RkDeleteLine pro((int, char*, char*));
+
+/* rutil.c */
+extern	int RkDefineLine pro((int, unsigned char*, char*));
+extern	int CopyDic pro((int, unsigned char*, unsigned char*, unsigned char*, int));
+extern	int PrintMessage pro((int, unsigned char*));
+extern	int makeDictionary pro((int, unsigned char*, int));
+extern	int rmDictionary pro((int, unsigned char*, int));
+
+/* can.c */
+int DownLoadDic pro((FILE*, unsigned char*));
+int renameDictionary pro((int, char*, char*, int));
+int scan_opt pro((int, char**, int*));
+void shrink_opt pro((int, char*[], int));
 
 char            init[RECSZ], *Progname;
 unsigned char	*r_dic;
@@ -558,6 +584,7 @@ write_chk()
 }
 
 /* mkdic mvdic  でオーバライトする時 write権があるかをチェックする */
+int
 ovwrite_chk(dicname,mode)
 char *dicname;
 int mode;
@@ -616,6 +643,7 @@ Addwords(fp)
     return (ret);
 }
 
+void
 add_main (argc,argv)
 int   argc  ;
 char  **argv;
@@ -627,7 +655,7 @@ char  **argv;
     is_display = FALSE;
     hinshi = NULL ;
 
-    scan_opt(argc,argv,&argv);
+    scan_opt(argc,argv,&argc);
 
     if (opt_i || opt_u || opt_s || opt_fq||opt_std||opt_myg||opt_g) usage();
     if (opt_dic2 != NULL) usage();
@@ -669,6 +697,7 @@ char  **argv;
 /*                        catdic                              */
 /**************************************************************/
 
+void
 cat_main(argc,argv)
 int   argc  ;
 char  **argv;
@@ -788,6 +817,7 @@ char  **argv;
     exit(0);
 }
 
+int
 DownLoadDic(fp, dirname)
 FILE          *fp;
 unsigned char *dirname;
@@ -839,6 +869,7 @@ unsigned char *dirname;
 /*                        cpdic                               */
 /**************************************************************/
 
+void
 cp_main(argc,argv)
 int   argc  ;
 char  **argv;
@@ -1000,6 +1031,7 @@ char  **argv;
 /*                        delwords                            */
 /**************************************************************/
 
+void
 del_main (argc,argv)
 int   argc  ;
 char  **argv;
@@ -1054,6 +1086,7 @@ char  **argv;
 /**************************************************************/
 
 /* 辞書リストを作成します。 */
+void
 ls_main(argc,argv)
 int   argc  ;
 char  **argv;
@@ -1271,6 +1304,7 @@ Upload(fp, flag)
     return (ret);
 }
 
+void
 mk_main (argc,argv)
 int   argc  ;
 char  **argv;
@@ -1364,6 +1398,7 @@ char  **argv;
 /*                        mvdic                               */
 /**************************************************************/
 
+void
 mv_main(argc,argv)
 int   argc  ;
 char  **argv;
@@ -1418,6 +1453,7 @@ char  **argv;
   exit(ret);    
 }
 
+int
 renameDictionary(cn, dicname1, dicname2, force)
 int cn;
 char *dicname1;
@@ -1507,6 +1543,7 @@ int force;
 /*                        rmdic                               */
 /**************************************************************/
 
+void
 rm_main(argc,argv)
 int   argc  ;
 char  **argv;
@@ -1567,6 +1604,7 @@ char  **argv;
 /*                    chmoddic                                          */
 /************************************************************************/
 
+void
 ch_main(argc,argv)
 int   argc  ;
 char  **argv;
@@ -1621,6 +1659,7 @@ char  **argv;
 /*                    syncdic                                           */
 /************************************************************************/
 
+void
 sy_main(argc,argv)
 int   argc  ;
 char  **argv;
@@ -1658,6 +1697,7 @@ char  **argv;
 /*                    cannakill              94.08.11                   */
 /************************************************************************/
 
+void
 kill_main(argc,argv)
 int   argc  ;
 char  **argv;
@@ -1732,6 +1772,7 @@ char  **argv;
     exit(0);
 }
 
+void
 can_ver()
 {
     rk_init();
@@ -1749,7 +1790,7 @@ can_ver()
 /************************************************************************/
 static struct  command {
 	char *name ;
-	int  (*func) pro((int, char **));
+	void  (*func) pro((int, char **));
 	int  cmd_code ;
 }	commands[] = {
 	{"addwords",add_main,1},
@@ -1773,6 +1814,7 @@ static struct  command {
 };
 #define  NCOMMANDS    (sizeof(commands) / sizeof(struct command))
 
+int
 main(argc,argv)
 int argc ;
 char **argv ; 
@@ -1810,6 +1852,7 @@ char **argv ;
 
 /*  オプションのチェック 
     辞書名以外のオプションはチェック後 argv から取り除く   */
+int
 scan_opt(argc,argv,argcp)
 int  argc ,*argcp; 
 char **argv ; 
@@ -2013,6 +2056,7 @@ char    **p ;
 }
 
 /*  argv のオプションを n 個分前に詰める */
+void
 shrink_opt(argc,argv,n)
 int  argc, n ; 
 char  *argv[] ;

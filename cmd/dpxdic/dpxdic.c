@@ -343,7 +343,7 @@ compit(a, b)
   return(-1);
 }
 
-static
+static int
 show_nid(gram, dic, yomi, n, ptr)
      struct RkKxGram	*gram;
      struct ND		*dic;
@@ -457,6 +457,7 @@ getdic(dic, filenm, dmnm)
   return(loadDic(dic));
 }
 
+int
 main (argc, argv)
   int argc;
   char *argv [];

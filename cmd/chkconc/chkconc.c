@@ -21,6 +21,7 @@ usage()
   exit(1);
 }
 
+int
 main(ac, av)
     int ac;
     char *av[];

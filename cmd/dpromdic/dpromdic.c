@@ -44,6 +44,7 @@ extern char *gettxt();
 extern struct RkRxDic  *RkwOpenRoma() ;
 void printch();
 
+int
 main(argc, argv)
 int	argc;
 char	**argv;

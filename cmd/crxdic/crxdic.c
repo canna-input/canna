@@ -1173,6 +1173,7 @@ parse_arg(argc, argv)
     usage();
 }
 
+int
 getp(nd)
      struct node	*nd;
 {
@@ -1190,6 +1191,7 @@ getp(nd)
   return(n);
 }
 
+int
 main (argc, argv)
      int	argc;
      char	**argv;

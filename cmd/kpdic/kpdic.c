@@ -232,6 +232,7 @@ struct roman	*p, *q;
     return ((int)*s) - ((int)*t);
 }
 
+int
 main(argc, argv)
   int    argc ;
   char **argv ; 

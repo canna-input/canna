@@ -47,7 +47,7 @@ char	*hd	= "0123456789abcdef";
 
 /* #define	ESC	'@'*/
 #define	ESC 033	
-e2j()
+void e2j()
 {
     unsigned	c;
     int		kin = 0;
@@ -71,7 +71,7 @@ e2j()
     };
 }
 
-j2e()
+void j2e()
 {
     unsigned	c;
     int		kin = 0;
@@ -103,7 +103,7 @@ int sig;
   exit(1);
 }
 
-main(n, args)
+int main(n, args)
 int	n;
 char	*args[];
 {

@@ -35,6 +35,10 @@ static char rcs[] = "@(#) 112.1 $Id: rutil.c,v 1.3.2.2 2003/12/27 17:15:21 aida_
 #define CANNA_NEW_WCHAR_AWARE
 #include <canna/RK.h>
 
+#ifdef __STDC__
+#define USE_VARARGS
+#endif
+
 #ifdef USE_VARARGS
 #ifdef __STDC__
 #include <stdarg.h>
@@ -49,6 +53,10 @@ static char rcs[] = "@(#) 112.1 $Id: rutil.c,v 1.3.2.2 2003/12/27 17:15:21 aida_
 #include <locale.h>
 #endif
 
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+
 #ifdef SVR4
 extern  char *gettxt();
 #else
@@ -58,8 +66,17 @@ extern  char *gettxt();
 #define  BUFLEN  1024        /* add 91.11.21. */ 
 #define  ERR_VALUE  1
 
-extern int RkGetWordTextDic();
+/* lib/RKC/rkc.c */
+extern int RkCreateDic pro((int, unsigned char*, int));
+extern int RkRemoveDic pro((int, unsigned char*, int));
+extern int RkGetWordTextDic pro((int, unsigned char*, unsigned char*, unsigned char*, int));
+
+/* can.c */
 extern char init[];
+
+/* rutil.c */
+void PrintMessage pro((int, unsigned char*));
+int rmDictionary pro((int, unsigned char*, int));
 
 static char  msg_mem[80];
 static char  msg_abnls[80];
@@ -91,6 +108,7 @@ msg_set(){
 
 }
 
+int
 RkDefineLine(cx_num, name, line)
 int cx_num;
 unsigned char *name;
@@ -193,6 +211,7 @@ main()
 }
 #endif /* TEST_DEFINEDIC */
 
+int
 CopyDic(cx_num, dirname, dicname1, dicname2, mode)
 int            cx_num;
 unsigned char  *dirname;
@@ -258,6 +277,7 @@ int            mode ;
   return 0; 
 }
 
+void
 PrintMessage(ret, dicname)
 int            ret;
 unsigned char  *dicname;
@@ -303,6 +323,7 @@ unsigned char  *dicname;
   }
 }
 
+int
 makeDictionary(cn, dicname, mode)
 int cn;
 unsigned char *dicname;
