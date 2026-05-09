@@ -1,4 +1,7 @@
 2026-05-09 AIDA Shinra <shinra@j10n.org>
+	* canuum/jhlp.c: set _XOPEN_SOURCE >= 600 on Linux for posix_openpt
+
+2026-05-09 AIDA Shinra <shinra@j10n.org>
 	* Remove forsort program, which is unused since Canna 3.7p4.
 	* cmd/Imakefile(SUBDIRS): don't build forsort
 	* cmd/catdic/cannacmd.jpn: remove messages for forsort
