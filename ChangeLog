@@ -1,4 +1,9 @@
 2026-05-06 AIDA Shinra <shinra@j10n.org>
+	* canuum/jhlp.c(open_ttyp): don't call I_PUSH when using posix_openpt
+	* canuum/printf.c: more portable PRINTF/FPRINTF
+	* canuum/sheader.h: ditto
+
+2026-05-06 AIDA Shinra <shinra@j10n.org>
 	* Use posix_openpt(3) instead of libspt.
 	* canuum/README.jp: no longer mention libspt
 	* canuum/Imakefile: don't link libspt

@@ -212,8 +212,13 @@ extern void uum_err (char *);
 #endif
 
 /* printf.c */
+#if defined(__STDC__) && defined(HAVE_SNPRINTF)
+extern void FPRINTF (FILE *fp, const char *fmt, ...);
+extern void PRINTF (const char *fmt, ...);
+#else
 extern void FPRINTF ();
 extern void PRINTF ();
+#endif
 
 /* to be classified */
 extern void b_s_off_raw (void);

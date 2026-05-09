@@ -44,6 +44,38 @@ char_q_len (x)
   return ((*char_q_len_func) (x));
 }
 
+#if defined(__STDC__) && defined(HAVE_SNPRINTF)
+#include <stdarg.h>
+static void
+VFPRINTF(FILE *file, const char *format, va_list ap)
+{
+  char buf2[512];
+
+  vsnprintf(buf2, sizeof buf2, format, ap);
+  cursor_colum += eu_columlen ((unsigned char *)buf2);
+  puteustring (buf2, file);
+}
+
+void
+FPRINTF(FILE *file, const char *format, ...)
+{
+  va_list ap;
+
+  va_start(ap, format);
+  VFPRINTF(file, format, ap);
+  va_end(ap);
+}
+
+void
+PRINTF(const char *format, ...)
+{
+  va_list ap;
+
+  va_start(ap, format);
+  VFPRINTF(stdout, format, ap);
+  va_end(ap);
+}
+#else /* !__STDC__ || !HAVE_SNPRINTF */
 void
 fprintf (file, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13)
      FILE *file;
@@ -56,6 +88,15 @@ fprintf (file, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13)
 
   puteustring (buf2, file);
 }
+
+void
+printf (format, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13)
+     char *format;
+     char *x3, *x4, *x5, *x6, *x7, *x8, *x9, *x10, *x11, *x12, *x13;
+{
+  fprintf (stdout, format, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13);
+}
+#endif /* !__STDC__ && !HAVE_SNPRINTF*/
 
 void
 puteustring (buf2, file)
@@ -71,15 +112,6 @@ puteustring (buf2, file)
     {
       putc (*c, file);
     }
-}
-
-void
-printf (format, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13)
-     char *format;
-     char *x3, *x4, *x5, *x6, *x7, *x8, *x9, *x10, *x11, *x12, *x13;
-{
-  fprintf (stdout, format, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13);
-
 }
 
 #define W_BUFLEN 32

@@ -1861,11 +1861,11 @@ open_ttyp ()
 #endif /* !USE_LINUX_TERM && !USE_LIBSPT && !HAVE_POSIX_OPENPT */
 #if defined(USE_LIBSPT)
   spt_init_slavefd(spth, ttypfd);
-#elif defined(I_PUSH) && defined(SVR4)
+#elif !defined(HAVE_POSIX_OPENPT) && defined(I_PUSH) && defined(SVR4)
   ioctl(ttypfd, I_PUSH, "ptem");
   ioctl(ttypfd, I_PUSH, "ldterm");
   ioctl(ttypfd, I_PUSH, "ttcompat");
-#endif
+#endif /* !USE_LIBSPT && !HAVE_POSIX_OPENPT && I_PUSH && SVR4 */
 	
   /*
    * We save terminal settings in main() instead of here.
