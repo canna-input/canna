@@ -1,4 +1,14 @@
 2026-05-09 AIDA Shinra <shinra@j10n.org>
+	* Canna 3.8 release.
+	* CHANGES.jp: updated for 3.8
+	* COPYRIGHT: updated
+	* README: ditto
+	* README.jp: ditto
+	* configure.ac: bump to 3.8
+	* canna/patchlevel.h: ditto
+	* canuum/README.jp: ditto
+
+2026-05-09 AIDA Shinra <shinra@j10n.org>
 	* canuum/jhlp.c: set _XOPEN_SOURCE >= 600 on Linux for posix_openpt
 
 2026-05-09 AIDA Shinra <shinra@j10n.org>

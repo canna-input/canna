@@ -137,9 +137,48 @@ Canna 3.6から3.7までの新機能、重要な修正、仕様変更を述べます。なお、
 2.5 Canna 3.7p5での変更点
 ・3.7p4で静的ライブラリが構築されなくなってしまっていたのを修正しました。
 
+3. Canna 3.8までの主要な変更点
+
+Canna 3.7p5から3.8までの新機能、重要な修正、仕様変更を述べます。
+
+3.1 重要な変更点
+・Yukihiro Nakai 氏の手による郵便番号辞書 (zipcode.t, jigyosyo.t) を
+　導入しました。これに伴い従来の郵便番号辞書 (yubin.t) を削除しました。
+　
+3.2 設定、カスタマイズに関する変更
+・カスタマイズファイル (.canna) に
+  (load "nonexistent-file" t)
+  と記述することで、あるカスタマイズファイルが存在すればロードし、
+  存在しなければエラーとせずスキップすることができるようにしました。
+  
+3.3 ユーザーインターフェース、ローマ字仮名変換に関する変更
+・一段動詞やサ変動詞が正しく単語登録できない問題を修正しました。
+・romaji-yuusen カスタマイズ変数が t に設定されているときに
+　異常な動作を起こすことがあるのを修正しました。
+・bbb... のようなローマ字を入力してから Ctrl-H で削除したときに
+　不適切な結果になるのを修正しました。
+
+3.4 仮名漢字変換に関する変更
+・Toru Takamizu 氏の手による辞書の改良を取り入れました。
+・「知らなさすぎる」「通るであろう」が変換できるようにしました。
+・その他、単語の追加や品詞の見直しなどを行いました。
+・辞書ファイルのチェックサムが正しく生成されない不具合を修正しました。
+
+3.5 コンパイル、インストールに関する変更
+・canuumがlibsptライブラリに依存しなくなりました。
+  http://www.j10n.org/libspt/
+  からダウンロードできます。詳しくは、canuum/README.jpを参照してください。
+・gcc-14 でコンパイルできない問題を修正しました。
+・forsort プログラムを削除しました。
+
+3.6 その他
+・canuumのベースとするuumを2004年4月25日時点のCVS先端のものに更新しました。
+・宣伝条項付きBSDライセンスのコードが Canna 3.7 で混入したのを削除しました。
+
+
 以上
 
-/* Copyright (c) 2003-2008,2025 Canna Project. All rights reserved.
+/* Copyright (c) 2003-2008,2025-2026 Canna Project. All rights reserved.
  *
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without

@@ -1,6 +1,6 @@
 
 
-             日本語入力システム『かんな』Version 3.7 について
+             日本語入力システム『かんな』Version 3.8 について
 
                              Canna Project
 		    https://canna-input.github.io/
@@ -16,7 +16,7 @@
 1. はじめに
 
   本ディレクトリより下にありますファイルは日本語入力システム『かんな』
-  Version 3.6 を構成するファイルです。『かんな』は日本語入力のための統
+  Version 3.8 を構成するファイルです。『かんな』は日本語入力のための統
   一的なユーザインタフェースを提供します。
 
   ※注: 『かんな』は開発コード『いろは』で開発された日本語入力システム
@@ -345,7 +345,7 @@
   スファイルなどをミラーしていただいています。各サイトの担当者の方々に
   感謝いたします。
 
-/* Copyright (c) 2002-2008,2025 Canna Project. All rights reserved.
+/* Copyright (c) 2002-2008,2025-2026 Canna Project. All rights reserved.
  *
  * Permission to use, copy, modify, distribute and sell this software
  * and its documentation for any purpose is hereby granted without
