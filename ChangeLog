@@ -1,4 +1,11 @@
-2026-05-06 AIDA Shinra <shinra@j10n.org>
+2026-05-09 AIDA Shinra <shinra@j10n.org>
+	* Remove forsort program, which is unused since Canna 3.7p4.
+	* cmd/Imakefile(SUBDIRS): don't build forsort
+	* cmd/catdic/cannacmd.jpn: remove messages for forsort
+	* cmd/forsort/*: removed
+	* doc/man/guide/tex/server.tex: no longer mention forsort
+
+2026-05-09 AIDA Shinra <shinra@j10n.org>
 	* canuum/jhlp.c(open_ttyp): don't call I_PUSH when using posix_openpt
 	* canuum/printf.c: more portable PRINTF/FPRINTF
 	* canuum/sheader.h: ditto

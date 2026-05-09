@@ -1,4 +1,0 @@
-#include "../../Canna.conf"
-#define SimpleCommand
-#define TargetName forsort
-#include "../cmd.tmpl"
