@@ -293,7 +293,7 @@ extern int jutil ();
 extern int kakutei ();
 extern int kana_in ();
 extern int kana_in_w_char_msg ();
-extern int keyin1 ();
+extern int keyin1 pro((int (*)(void), char *));
 extern int kk ();
 extern void kk_cursor_invisible ();
 extern void kk_cursor_normal ();
