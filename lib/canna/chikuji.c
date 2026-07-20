@@ -748,7 +748,7 @@ moveToChikujiYomiMode(d)
 static int
 generalNaive(d, fn)
 uiContext d;
-int (*fn)();
+int (*fn) pro((uiContext));
 {
   if ((((yomiContext)d->modec)->generalFlags) &
       (CANNA_YOMI_HANKAKU | CANNA_YOMI_ROMAJI | CANNA_YOMI_BASE_HANKAKU)) {
