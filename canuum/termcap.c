@@ -249,7 +249,7 @@ remove (p, ob)
   return (r);
 }
 
-static void strascii ();
+static void strascii (char *, const char *);
 static int decfline (char *);
 
 int
@@ -542,26 +542,30 @@ cursor_normal_raw ()
 
 static void
 strascii (dest, str)
-     unsigned char *dest, *str;
+     char *dest;
+     const char *str;
 {
-  for (; *str; str++)
+  unsigned char *udest = (unsigned char *) dest;
+  const unsigned char *ustr = (const unsigned char *) str;
+
+  for (; *ustr; ustr++)
     {
-      if (*str >= ' ')
+      if (*ustr >= ' ')
         {
-          *dest++ = *str;
+          *udest++ = *ustr;
         }
-      else if (*str == '\033')
+      else if (*ustr == '\033')
         {
-          *dest++ = '\\';
-          *dest++ = 'E';
+          *udest++ = '\\';
+          *udest++ = 'E';
         }
       else
         {
-          *dest++ = '^';
-          *dest++ = *str + '@';
+          *udest++ = '^';
+          *udest++ = *ustr + '@';
         }
     }
-  *dest = '\0';
+  *udest = '\0';
 }
 
 #endif /* TERMCAP */

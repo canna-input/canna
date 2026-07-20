@@ -1006,7 +1006,7 @@ RkwGetWordTextDic(cx_num, dirname, dicname, info, infolen)
 	return NOENT;
       }
     } else {
-      if (!(dm = _RkSearchUDDP(new_cx->ddpath, dicname))) {
+      if (!(dm = _RkSearchUDDP(new_cx->ddpath, (char *)dicname))) {
 	if(dirname[0] != '\0') {
 	  RkwCloseContext(new_cx_num);
 	}

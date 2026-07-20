@@ -1059,7 +1059,7 @@ Wchar			*_RkGetKanji
 
 	struct DM	*_RkSearchDDQ pro((struct DD **, char *, int));
 	struct DM	*_RkSearchDDP pro((struct DD **, char *));
-	struct DM	*_RkSearchUDDP();
+	struct DM	*_RkSearchUDDP pro((struct DD **, char *));
 	struct DM	*_RkSearchDDMEM pro((struct DD **, char *));
 
 	int		_RkIsinDDP();
@@ -1069,7 +1069,7 @@ void			_RkFreeDDP pro((struct DD **));
 
 struct DM		*DMcreate pro((struct DD *, char *));
 int			DMremove pro((struct DM *));
-int			DMrename();
+int			DMrename pro((struct DM *, char *));
 
 int			_RkMountMD
   pro((struct RkContext *, struct DM *, struct DM *, int, int));

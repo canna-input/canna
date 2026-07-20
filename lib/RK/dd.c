@@ -1102,9 +1102,9 @@ _RkSearchDDQ(ddp, name, type)
 struct DM	*
 _RkSearchUDDP(ddp, name)
      struct DD		**ddp;
-     unsigned char	*name;
+     char		*name;
 {
-  struct DM	*dm = _RkSearchDDP(ddp, (char *)name);
+  struct DM	*dm = _RkSearchDDP(ddp, name);
     
   if (dm && STRCMP(dm->dm_file->df_direct->dd_name, SYSTEM_DDHOME_NAME)) {
     return dm;
@@ -1335,7 +1335,7 @@ DMremove(dm)
 int
 DMrename(dm, nickname)
      struct DM		*dm;
-     unsigned char	*nickname;
+     char		*nickname;
 {
   struct DF	*df = dm->dm_file;
   struct DDT	*ddt = dm->dm_line;
