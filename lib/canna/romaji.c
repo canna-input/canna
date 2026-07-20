@@ -330,7 +330,7 @@ OpenRoma(table)
 char *table;
 {
   struct RkRxDic *retval = (struct RkRxDic *)0, *RkwOpenRoma();
-  char *p, *getenv();
+  char *p;
 #ifndef USE_MALLOC_FOR_BIG_ARRAY
   char rdic[1024];
 #else

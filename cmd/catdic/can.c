@@ -28,6 +28,7 @@
 #define CANNA_NEW_WCHAR_AWARE
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <signal.h>
 #include <canna/RK.h>
 #include <ctype.h>
@@ -511,7 +512,7 @@ searchgroup()
 static char *
 searchuname()
 {
-    char *username = NULL, *getenv(), *getlogin() ;
+    char *username = NULL ;
     
     struct passwd *pass = getpwuid( getuid() ) ;
     if ( pass ) username = pass->pw_name ;
@@ -699,7 +700,7 @@ cat_main(argc,argv)
 int   argc  ;
 char  **argv;
 {
-    FILE *fopen(), *fp = stdout;
+    FILE *fp = stdout;
     unsigned char dirname[RECSZ*2];  /* ユーザ名または"iroha"またはNULL*/
     unsigned char filename[RECSZ*2]; /* ファイル名またはNULL */
     static int  i , errflg ;

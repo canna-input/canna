@@ -24,6 +24,7 @@
 #include "canna.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <fcntl.h>
 
 /*********************************************************************
@@ -109,7 +110,7 @@ extern int clisp_init pro((void)); /* lisp.c */
 void
 parse()
 {
-  char *p, *getenv();
+  char *p;
   int n;
   extern int iroha_debug;
   int home_canna_exist = 0;

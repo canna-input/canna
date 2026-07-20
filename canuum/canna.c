@@ -52,6 +52,7 @@
 #include "sdefine.h"
 #include "sheader.h"
 #include "wnn_config.h"
+#include <stdlib.h>
 #if defined(__STDC__) || defined(__cplusplus)
 # define pro(x) x
 #else
@@ -1037,7 +1038,6 @@ register char *lang;
 char *
 get_kbd_env() /* originally defined in wnnrc_op.c */
 {
-  extern char *getenv();
   return getenv("TERM");
 }
 

@@ -108,7 +108,7 @@ getTermData ()
   char *pter;
   char *sr_set ();
   char *j;
-  extern char *getenv (), *get_kbd_env ();
+  extern char *get_kbd_env ();
 
 
 #ifdef DCUREOR

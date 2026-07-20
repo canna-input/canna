@@ -152,7 +152,7 @@ const char *const *errors;
 int
 KanjiInit()
 {
-  char *ptr, *getenv(), *kodmesg = ""/* 辞書の種別毎のメッセージ */;
+  char *ptr, *kodmesg = ""/* 辞書の種別毎のメッセージ */;
   int con;
   struct dicname *stp;
   extern struct dicname *kanjidicnames;

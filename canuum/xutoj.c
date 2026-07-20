@@ -478,7 +478,6 @@ get_cswidth_name (lang)
 {
   register cswidth_name_struct *p;
   register char *name;
-  extern char *getenv ();
 
   if (!lang || !*lang)
     {

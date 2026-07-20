@@ -51,6 +51,7 @@ SOFTWARE.
 /* LINTLIBRARY */
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "sglobal.h"
 #include "rkcw.h"
@@ -346,7 +347,7 @@ char **list ;
 {
     char work[ MAX_HOSTNAME ];
     const char *hostp ;
-    char **listp = list, *getenv();
+    char **listp = list;
     exp(char *) RkwGetServerName();
     FILE *hostfp ;
     

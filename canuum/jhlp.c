@@ -1671,8 +1671,8 @@ exec_cmd (argv)
  */
 int
 setenv (var, value, overwrite)
-     char *var;
-     char *value;
+     const char *var;
+     const char *value;
      int  overwrite;
 {
   extern char **environ;

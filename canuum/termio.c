@@ -48,8 +48,6 @@
 #ifdef putchar
 #undef putchar
 #endif
-extern int putchar ();
-
 extern char Term_Name[];
 extern char *Term_UnderScoreStart;
 extern char *Term_UnderScoreEnd;

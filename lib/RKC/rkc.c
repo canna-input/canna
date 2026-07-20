@@ -260,7 +260,7 @@ FindLogname()
   if (uinfo)
     return uinfo->uname;
   else {
-    char *username = NULL, *getenv(), *getlogin();
+    char *username = NULL;
   
     struct passwd *pass = getpwuid(getuid());
     if( pass )
