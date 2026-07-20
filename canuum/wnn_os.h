@@ -131,7 +131,7 @@
 #  define SIGCHLD SIGCLD
 #endif
 
-typedef RETSIGTYPE (*intfnptr) ();
+typedef RETSIGTYPE (*intfnptr) (int);
 
 /* Temporally place the number of filedescripters hack here. */
 #if HAVE_GETDTABLESIZE

@@ -156,7 +156,7 @@ extern char *ttyname ();
 static void save_signals ();
 static void restore_signals ();
 
-static RETSIGTYPE terminate_handler ();
+static RETSIGTYPE terminate_handler (int);
 static void do_end (void), open_pty (void), open_ttyp (void), do_main (void);
 static void exec_cmd (char **);
 static void parse_options (int, char **);
@@ -392,7 +392,7 @@ main (argc, argv)
   switch (init_uum ())
     {                           /* initialize of kana-kanji henkan */
     case -1:
-      terminate_handler ();
+      terminate_handler (0);
       break;
     case -2:
       epilogue ();
@@ -1101,7 +1101,8 @@ j_term_p_init (ttypfd)
 /** signal SIGCHLD を受けた後の処理をする。*/
 /* *INDENT-OFF* */
 RETSIGTYPE
-chld_handler ()
+chld_handler (signo)
+     int signo;
 /* *INDENT-ON* */
 {
 #ifdef HAVE_WAIT3
@@ -1161,7 +1162,8 @@ chld_handler ()
 
 /** signal SIGTERM を受けた時の処理をする。*/
 static RETSIGTYPE
-terminate_handler ()
+terminate_handler (signo)
+     int signo;
 {
   signal (SIGCHLD, SIG_IGN);
   epilogue_no_close ();
@@ -1176,7 +1178,8 @@ terminate_handler ()
 #ifdef  SIGWINCH
 /* *INDENT-OFF* */
 RETSIGTYPE
-resize_handler ()
+resize_handler (signo)
+     int signo;
 /* *INDENT-ON* */
 {
   re_signal (SIGWINCH, resize_handler);
