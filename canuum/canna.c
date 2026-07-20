@@ -332,11 +332,17 @@ set_screen_vars_default() /* originally defined in basic_op.c */
 
 /* canna routines */
 
+static int
+canuum_beep (void)
+{
+  ring_bell ();
+  return 0;
+}
+
 int init_uum() /* originally defined in prologue.c */
 {
   char **msg, *p;
   extern char *prog;
-  extern void ring_bell();
   void registerkeys(), cannakeydef();
 
   for (p = prog ; *p ; p++) { /* use basename */
@@ -356,7 +362,7 @@ int init_uum() /* originally defined in prologue.c */
 
   wcKanjiControl(0, KC_INITIALIZE, (char *)&msg);
   registerkeys();
-  jrBeepFunc = (int (*)())ring_bell;
+  jrBeepFunc = canuum_beep;
   if (msg) {
     for (; *msg; msg++) {
       puteustring(*msg, stdout);
