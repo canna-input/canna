@@ -4201,8 +4201,8 @@ uiContext d;
   int len, srclen, i, pos;
   BYTE jishu, jishu_case, head = 1;
   int jishu_kEndp, jishu_rEndp;
-  int (*func1)(), (*func2)();
-  int RkwCvtZen(), RkwCvtKana(), RkwCvtHira(), RkwCvtHan();
+  int (*func1)(wchar_t *, int, wchar_t *, int);
+  int (*func2)(wchar_t *, int, wchar_t *, int);
   long savedgf;
   wchar_t *buf, *p;
 #ifndef USE_MALLOC_FOR_BIG_ARRAY
