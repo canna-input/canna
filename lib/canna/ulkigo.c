@@ -275,7 +275,7 @@ uiContext d;
 wchar_t **allkouho;
 int size, *posp;
 char cur, mode;
-int (*exitfunc)();
+canna_callback_t exitfunc;
 {
   forichiranContext fc;
   ichiranContext ic;

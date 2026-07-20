@@ -491,8 +491,6 @@ uiContext d;
   return(dicLc);
 }
 
-extern int selectOnOff(); /* onoff.c */
-
 int
 dicMount(d)
 uiContext d;

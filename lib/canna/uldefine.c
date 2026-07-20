@@ -409,7 +409,6 @@ mode_context env;
 }
 
 extern int GLineNGReturn pro((uiContext)); /* util.c */
-int dicTourokuTango pro((uiContext, canna_callback_t)); /* uldefine.c */
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * 単語登録の辞書作成                                                        *

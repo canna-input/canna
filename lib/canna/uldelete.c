@@ -931,7 +931,6 @@ mode_context env;
   return dicSakujoTango(d);
 }
 
-extern int selectOnOff(); /* onoff.c */
 extern int getMountContext pro((uiContext)); /* ulmount.c */
 
 static int

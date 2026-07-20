@@ -263,7 +263,6 @@ extraFunc *estruct;
 {
   int curkigo = 0, *posp = (int *)0;
   kigoIchiran *kigop = (kigoIchiran *)0;
-  extern int uuKigoGeneralExitCatch(), uuKigoMake();
   selectinfo *selinfo = (selectinfo *)0, *info;
   yomiContext yc = (yomiContext)d->modec;
 

@@ -284,7 +284,6 @@ mode_context env;
   return(dicTourokuHinshi(d));
 }
 
-int dicTourokuDictionary pro((uiContext, int(*)(), int(*)())); /* ulhinshi.c */
 extern int dicTourokuTango pro((uiContext, canna_callback_t)); /* uldefine.c */
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -994,8 +993,8 @@ extern int getForIchiranContext pro((uiContext)); /* bushu.c */
 int
 dicTourokuDictionary(d, exitfunc, quitfunc)
 uiContext d;
-int (*exitfunc)();
-int (*quitfunc)();
+canna_callback_t exitfunc;
+canna_callback_t quitfunc;
 {
   tourokuContext tc = (tourokuContext)d->modec;
   forichiranContext fc;

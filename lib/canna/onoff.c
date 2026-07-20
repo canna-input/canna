@@ -80,8 +80,8 @@ int *ck;
 int nelem, bangomax;
 int currentkouho;
 unsigned char *status;
-int (*everyTimeCallback)(), (*exitCallback)();
-int (*quitCallback)(), (*auxCallback)();
+canna_callback_t everyTimeCallback, exitCallback;
+canna_callback_t quitCallback, auxCallback;
 {
   extern KanjiModeRec onoff_mode;
   ichiranContext oc;

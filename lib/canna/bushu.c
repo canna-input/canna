@@ -38,8 +38,10 @@ extern int errno;
 
 extern int uuslQuitCatch();
 extern int uuslIchiranQuitCatch();
-static int bushuHenkan(), makeBushuIchiranQuit();
-static int vBushuExitCatch(), bushuQuitCatch();
+static int bushuHenkan pro((uiContext, int, int, int, canna_callback_t));
+static int makeBushuIchiranQuit pro((uiContext, int));
+static int vBushuExitCatch pro((uiContext, int, mode_context));
+static int bushuQuitCatch pro((uiContext, int, mode_context));
 
 
 #define	BUSHU_SZ	150
@@ -644,7 +646,7 @@ static int
 bushuHenkan(d, flag, ext, cur, quitfunc)
 uiContext	d;
 int             flag, ext, cur;
-int             (*quitfunc) pro((uiContext, int, mode_context));
+canna_callback_t quitfunc;
 {
   forichiranContext fc;
   ichiranContext ic;

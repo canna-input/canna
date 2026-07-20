@@ -1057,6 +1057,12 @@ extern int UseOtherKeymap pro((uiContext));
 extern int owcListCallback pro((char *, int, wchar_t **, int, int *));
 #endif
 
+/* onoff.c */
+extern int selectOnOff
+  pro((uiContext, wchar_t **, int *, int, int, int, unsigned char *,
+       canna_callback_t, canna_callback_t, canna_callback_t,
+       canna_callback_t));
+
 /* parse.c */
 #ifdef BINARY_CUSTOM
 extern int binparse pro((void));
@@ -1132,16 +1138,24 @@ extern void popTourokuMode pro((uiContext));
 extern int uuTTangoQuitCatch pro((uiContext, int, mode_context));
 extern wchar_t **getUserDicName pro((uiContext));
 extern int dicTouroku pro((uiContext));
+extern int dicTourokuTango pro((uiContext, canna_callback_t));
 extern int dicTourokuHinshi pro((uiContext));
+extern int dicTourokuControl
+  pro((uiContext, wchar_t *, canna_callback_t));
 
 /* uldelete.c */
 extern void freeDic pro((tourokuContext));
 extern void freeAndPopTouroku pro((uiContext));
 
 /* ulhinshi.c */
+extern int dicTourokuDictionary
+  pro((uiContext, canna_callback_t, canna_callback_t));
 extern int dicTourokuHinshiDelivery pro((uiContext));
 
 /* ulkigo.c */
+extern int uuKigoGeneralExitCatch pro((uiContext, int, mode_context));
+extern int uuKigoMake
+  pro((uiContext, wchar_t **, int, char, char, canna_callback_t, int *));
 extern int kigoRussia pro((uiContext));
 extern int kigoGreek pro((uiContext));
 extern int kigoKeisen pro((uiContext));
