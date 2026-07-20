@@ -2150,7 +2150,7 @@ size_t len;
 const char *username;
 const char *hostname;
 {
-    int (* ReqCallFunc)() ;
+    int (* ReqCallFunc) pro((BYTE *)) ;
     BYTE *p = data;
     register wReq1 *req = &Request.type1 ;
     const char *username0 = username ? username : null;
