@@ -64,11 +64,11 @@ static int hinshi_direction = INORDER; /* see above */
 # define WCG3 0x8000
 # define WCMSK 0x8080
 
-static int diccompar();
-static int dichindocompar();
-static int dichindocompar2();
-static int dicserialcompar();
-static int (*dic_compare_func)() = &diccompar;
+static int diccompar(const void *, const void *);
+static int dichindocompar(const void *, const void *);
+static int dichindocompar2(const void *, const void *);
+static int dicserialcompar(const void *, const void *);
+static int (*dic_compare_func)(const void *, const void *) = &diccompar;
 
 int
 Mbstowcs(d, ss, n)
@@ -1159,9 +1159,10 @@ int n;
 }
 
 static int
-diccompar(p1, p2)
-struct dicpack **p1, **p2;
+diccompar(v1, v2)
+const void *v1, *v2;
 {
+  struct dicpack *const *p1 = v1, *const *p2 = v2;
   int n;
   if (n = Wscmp((*p1)->yomi, (*p2)->yomi)) {
     return n;
@@ -1178,9 +1179,10 @@ struct dicpack **p1, **p2;
 }
 
 static int
-dichindocompar(p1, p2)
-struct dicpack **p1, **p2;
+dichindocompar(v1, v2)
+const void *v1, *v2;
 {
+  struct dicpack *const *p1 = v1, *const *p2 = v2;
   int n;
   if (n = Wscmp((*p1)->yomi, (*p2)->yomi)) {
     return n;
@@ -1200,9 +1202,10 @@ struct dicpack **p1, **p2;
 }
 
 static int
-dichindocompar2(p1, p2)
-struct dicpack **p1, **p2;
+dichindocompar2(v1, v2)
+const void *v1, *v2;
 {
+  struct dicpack *const *p1 = v1, *const *p2 = v2;
   int n;
   if (n = Wscmp((*p1)->yomi, (*p2)->yomi)) {
     return n;
@@ -1219,9 +1222,10 @@ struct dicpack **p1, **p2;
 }
 
 static int
-dicserialcompar(p1, p2)
-struct dicpack **p1, **p2;
+dicserialcompar(v1, v2)
+const void *v1, *v2;
 {
+  struct dicpack *const *p1 = v1, *const *p2 = v2;
   int n;
 
   if (n = ((*p1)->serial - (*p2)->serial)) {

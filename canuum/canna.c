@@ -1126,10 +1126,12 @@ static int nsequences = 0, seqsize = 0;
 
 static int
 compar(p, q)
-SeqToID *p, *q;
-{	
-  char *s = p->seq;
-  char *t = q->seq;
+     const void *p, *q;
+{
+  const SeqToID *pp = p;
+  const SeqToID *qq = q;
+  const char *s = pp->seq;
+  const char *t = qq->seq;
 
   while ( *s == *t )
     if ( *s )

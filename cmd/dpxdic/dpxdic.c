@@ -331,10 +331,13 @@ show_nip(gram, dic, yomi, n, p, pg)
 
 int
 compit(a, b)
-     unsigned char *a;
-     unsigned char *b;
+     const void *a;
+     const void *b;
 {
-  if (*a > *b || ((*a == *b) && *(a+1) >= *(b+1))) {
+  const unsigned char *aa = a;
+  const unsigned char *bb = b;
+
+  if (*aa > *bb || ((*aa == *bb) && *(aa+1) >= *(bb+1))) {
     return(1);
   }
   return(-1);
@@ -357,8 +360,7 @@ show_nid(gram, dic, yomi, n, ptr)
 
   p = ptr;
   wc = bst2_to_s(p); p += 5;
-  qsort((char *)p, (unsigned)wc, 5, 
-        (int (*) pro((const void *, const void *)))compit);
+  qsort((char *)p, (unsigned)wc, 5, compit);
   for (i = 0; i < wc; i++) {
     Wchar	w;
     
