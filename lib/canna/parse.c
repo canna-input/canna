@@ -41,7 +41,7 @@ extern char *CANNA_initfilename;
 
 static char CANNA_rcfilename[BUF_LEN] = "";
 
-static void DISPLAY_to_hostname();
+static void DISPLAY_to_hostname pro((char *, char *, int));
 
 /* cfuncdef
 
@@ -53,7 +53,6 @@ static void DISPLAY_to_hostname();
 
 extern int ckverbose;
 
-extern int YYparse_by_rcfilename();
 
 /* cfuncdef
 
@@ -112,10 +111,8 @@ parse()
 {
   char *p;
   int n;
-  extern int iroha_debug;
   int home_canna_exist = 0;
   extern char *initFileSpecified;
-  extern int auto_define;
 #ifndef USE_MALLOC_FOR_BIG_ARRAY
   char buf[256];
 #else

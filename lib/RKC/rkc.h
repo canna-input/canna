@@ -61,8 +61,13 @@ typedef struct _RkcContext {
     short	    maxyomi;
 } RkcContext ;
 
-extern int ushort2euc(), euc2ushort(), ushort2wchar(), wchar2ushort(),
-    wcharstrlen(), ushortstrlen(), ushortstrcpy() ;
+extern int ushort2euc pro((Ushort *, int, char *, int));
+extern int euc2ushort pro((char *, int, Ushort *, int));
+extern int ushort2wchar pro((Ushort *, int, cannawc *, int));
+extern int wchar2ushort pro((cannawc *, int, Ushort *, int));
+extern int wcharstrlen pro((cannawc *));
+extern int ushortstrlen pro((Ushort *));
+extern int ushortstrcpy pro((Ushort *, Ushort *));
 
 typedef long (*initialize_t) pro((char *));
 typedef int (*finalize_t) pro((void));

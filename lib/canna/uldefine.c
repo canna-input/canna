@@ -37,8 +37,6 @@
 extern int errno;
 #endif
 
-exp(int) RkwCreateDic();
-
 static int dicTourokuDo pro((uiContext)),
            checkUsrDic pro((uiContext)),
            dicTourokuYomi pro((uiContext)),
@@ -606,7 +604,6 @@ uiContext d;
 {
   tourokuContext tc;
   wchar_t **up;
-  wchar_t **getUserDicName();
 
   d->status = 0;
 
@@ -840,7 +837,6 @@ mode_context env;
   return retval;
 }
 
-int dicTourokuHinshi pro((uiContext)); /* uldefine.c */
 
 static int
 uuTYomiExitCatch(d, retval, env)

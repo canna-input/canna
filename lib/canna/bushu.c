@@ -36,8 +36,6 @@ extern int errno;
 #endif
 #define wchar_t cannawc
 
-extern wchar_t *WString();
-
 extern int uuslQuitCatch();
 extern int uuslIchiranQuitCatch();
 static int bushuHenkan(), makeBushuIchiranQuit();
@@ -656,8 +654,6 @@ int             (*quitfunc) pro((uiContext, int, mode_context));
   int nelem, currentkouho, nbunsetsu, length, retval = 0;
   extern int defaultBushuContext;
   
-  wchar_t **getIchiranList();
-
   if(flag) {
     yomi = (wchar_t *)bushu_key[cur];
     length = WStrlen(yomi);

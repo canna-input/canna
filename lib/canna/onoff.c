@@ -35,7 +35,7 @@
 #ifndef NO_EXTEND_MENU
 #define ICHISIZE 9
 
-static int makeOnOffIchiran();
+static int makeOnOffIchiran pro((uiContext, int, int, int, unsigned char *));
 
 static wchar_t *black;
 static wchar_t *white;
@@ -86,7 +86,6 @@ int (*quitCallback)(), (*auxCallback)();
   extern KanjiModeRec onoff_mode;
   ichiranContext oc;
   int retval = 0;
-  ichiranContext newIchiranContext();
 
   if(pushCallback(d, d->modec,
 	everyTimeCallback, exitCallback, quitCallback, auxCallback) == 0) {
@@ -116,8 +115,6 @@ int (*quitCallback)(), (*auxCallback)();
   }
   return(retval);
 }
-
-extern int allocIchiranBuf pro((uiContext)); /* ichiran.c */
 
 /*
  * 候補一覧行を表示用のデータをテーブルに作成する

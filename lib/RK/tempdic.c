@@ -609,7 +609,6 @@ _Rktsearch(cx, dm, key, n, nread, maxcache, cf)
      int		maxcache;
      int		*cf;
 {
-  Wchar		uniqAlnum();
   struct TD	*xdm = (struct TD *)dm->dm_td;
   int		nc = 0;
   int		i, j;

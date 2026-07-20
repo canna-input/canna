@@ -157,8 +157,14 @@ static void save_signals ();
 static void restore_signals ();
 
 static RETSIGTYPE terminate_handler ();
-static void do_end (), open_pty (), open_ttyp (), do_main (), exec_cmd (), parse_options (), setsize (), get_rubout (), usage (), change_size (), default_usage ();
-static void j_term_save (), j_term_restore (), j_term_p_init (int);
+static void do_end (void), open_pty (void), open_ttyp (void), do_main (void);
+static void exec_cmd (char **);
+static void parse_options (int, char **);
+static void setsize (void), get_rubout (void);
+static void usage (char *);
+static void change_size (void), default_usage (void);
+static void j_term_save (void), j_term_restore (void);
+static void j_term_p_init (int);
 
 /** еседеє */
 int
@@ -174,7 +180,6 @@ main (argc, argv)
   char *server_env;
   char errprefix[1024] = "error";
   int i;
-  extern char *get_server_env ();
 
   prog = argv[0];
   flow_control = FLOW_CONTROL;
@@ -1837,7 +1842,7 @@ char *ttypnm = "/dev/tty";
 #endif /* sgi */
 
 #ifndef sgi
-static void ptyname ();
+static void ptyname (char *, char *, int);
 #endif
 #endif /* !USE_LIBSPT && !HAVE_POSIX_OPENPT */
 
@@ -2086,6 +2091,7 @@ ioctl_off ()
 static void
 ptyname (b, pty, no)
      char *b, *pty;
+     int no;
 {
 /*
  * Change pseudo-devices.

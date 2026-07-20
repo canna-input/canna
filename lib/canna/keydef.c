@@ -38,9 +38,12 @@ extern int multiSequenceFunc
   pro((struct _uiContext *, struct _kanjiMode *, int, int, int));
 
 static void undefineKeyfunc pro((unsigned char *, unsigned));
-static int regist_key_hash(), copyMultiSequence();
-static void freeMultiSequence();
-static void clearAllFuncSequence(), clearAllKeySequence();
+static int regist_key_hash
+  pro((unsigned char *, unsigned char *, unsigned char *));
+static int copyMultiSequence pro((unsigned char, KanjiMode, KanjiMode));
+static void freeMultiSequence pro((unsigned char, KanjiMode));
+static void clearAllFuncSequence pro((void));
+static void clearAllKeySequence pro((void));
 
 #define NONE 0
 #define ACTHASHTABLESIZE 64
@@ -83,8 +86,9 @@ static KanjiMode ModeTbl[CANNA_MODE_MAX_REAL_MODE] = {
   &cb_mode,           /* ChikujiHenkanMode  逐次の時の変換の部分         */
 };
 
-unsigned char *actFromHash();
-static void regist_act_hash();
+unsigned char *actFromHash pro((unsigned char *, unsigned char));
+static void regist_act_hash
+  pro((unsigned char *, unsigned char, unsigned char *));
 
 static unsigned char *
 duplicatekmap(kmap)

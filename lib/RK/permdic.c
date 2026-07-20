@@ -36,7 +36,6 @@
 #define df_fdes	df_extdata.var
 
 extern	unsigned	_RkCalcLVO();
-extern	Wchar		uniqAlnum();
 
 #ifdef MMAP
 /* If you compile with Visual C++, then please comment out the next 3 lines. */

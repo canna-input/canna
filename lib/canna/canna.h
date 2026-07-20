@@ -890,7 +890,12 @@ extern int enterAdjustMode pro((uiContext, yomiContext));
 extern int leaveAdjustMode pro((uiContext, yomiContext));
 extern void popForIchiranMode pro((uiContext));
 
+/* bushu.c */
+extern int BushuMode pro((uiContext));
+extern int getForIchiranContext pro((uiContext));
+
 /* chikuji.c */
+extern int chikujiInit pro((uiContext));
 extern void clearHenkanContext pro((yomiContext));
 extern int ChikujiSubstYomi pro((uiContext));
 extern int ChikujiTanDeletePrevious pro((uiContext));
@@ -921,6 +926,7 @@ extern int EmptyBaseHan pro((uiContext));
 extern int EmptyBaseKana pro((uiContext));
 extern int EmptyBaseKakutei pro((uiContext));
 extern int EmptyBaseHenkan pro((uiContext));
+extern extraFunc *FindExtraFunc pro((int));
 
 /* engine.c */
 extern int RkSetServerName pro((char *));
@@ -932,6 +938,7 @@ extern void close_engine pro((void));
 extern int KanjiInit pro((void));
 extern int KanjiFin pro((void));
 extern void freeTanContext pro((tanContext));
+extern yomiContext newFilledYomiContext pro((mode_context, KanjiMode));
 extern int TanBubunMuhenkan pro((uiContext));
 extern int prepareHenkanMode pro((uiContext));
 extern int doHenkan pro((uiContext, int, wchar_t *));
@@ -962,11 +969,17 @@ extern int TbBackward pro((uiContext));
 extern int TbBeginningOfLine pro((uiContext));
 extern int TbEndOfLine pro((uiContext));
 
+/* hex.c */
+extern int HexMode pro((uiContext));
+
 /* ichiran.c */
 extern int initIchiran pro((void));
+extern ichiranContext newIchiranContext pro((void));
+extern int allocIchiranBuf pro((uiContext));
 extern void makeGlineStatus pro((uiContext));
 extern void freeIchiranBuf pro((ichiranContext));
 extern void freeGetIchiranList pro((wchar_t **));
+extern wchar_t **getIchiranList pro((int, int *, int *));
 extern int selectOne
   pro((uiContext, wchar_t **, int *, int, int, unsigned, int, int,
        canna_callback_t, canna_callback_t, canna_callback_t,canna_callback_t));
@@ -1001,6 +1014,7 @@ extern int initRomeStruct pro((uiContext, int));
 extern void freeRomeStruct pro((uiContext));
 extern struct bukRec *internContext
   pro((unsigned int, unsigned int, uiContext));
+extern uiContext keyToContext pro((unsigned int, unsigned int));
 extern void rmContext pro((unsigned int, unsigned int));
 extern void addWarningMesg pro((char *));
 extern int escapeToBasicStat pro((uiContext, int));
@@ -1020,6 +1034,7 @@ extern int KigoIchiran pro((uiContext));
 
 /* lisp.c */
 extern void clisp_fin pro((void));
+extern int YYparse_by_rcfilename pro((char *));
 extern int parse_string pro((char *));
 extern void clisp_main pro((void));
 
@@ -1032,6 +1047,7 @@ extern int JapaneseMode pro((uiContext));
 extern int AlphaMode pro((uiContext));
 extern int HenkanNyuryokuMode pro((uiContext));
 extern int queryMode pro((uiContext, wchar_t *));
+extern int changeModeName pro((int, char *));
 
 /* multi.c */
 extern int UseOtherKeymap pro((uiContext));
@@ -1109,7 +1125,14 @@ extern int showmenu pro((uiContext, menustruct *));
 #endif
 
 /* uldefine.c */
+extern int initHinshiTable pro((void));
+extern void clearYomi pro((uiContext));
+extern int getTourokuContext pro((uiContext));
+extern void popTourokuMode pro((uiContext));
 extern int uuTTangoQuitCatch pro((uiContext, int, mode_context));
+extern wchar_t **getUserDicName pro((uiContext));
+extern int dicTouroku pro((uiContext));
+extern int dicTourokuHinshi pro((uiContext));
 
 /* uldelete.c */
 extern void freeDic pro((tourokuContext));
@@ -1118,8 +1141,18 @@ extern void freeAndPopTouroku pro((uiContext));
 /* ulhinshi.c */
 extern int dicTourokuHinshiDelivery pro((uiContext));
 
+/* ulkigo.c */
+extern int kigoRussia pro((uiContext));
+extern int kigoGreek pro((uiContext));
+extern int kigoKeisen pro((uiContext));
+
 /* ulmount.c */
 extern void popMountMode pro((uiContext));
+extern int dicMount pro((uiContext));
+
+/* ulserver.c */
+extern int serverChange pro((uiContext));
+extern int serverFin pro((uiContext));
 
 /* util.c */
 extern void GlineClear pro((uiContext));

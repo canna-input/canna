@@ -759,7 +759,6 @@ int (*fn)();
   }
 }
 
-extern int YomiInsert();
 
 static int ChikujiHenkanNaive pro((uiContext));
 

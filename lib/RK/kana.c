@@ -988,8 +988,6 @@ RkwCvtSuuji(dst, maxdst, src, maxsrc, format)
 /* ワイドキャラクタ対応関数 */
 
 #define CBUFSIZE     512
-unsigned char	*ustoeuc();
-Wchar		*euctous();
 
 int RkwCvtHan pro((Wchar *, int, Wchar *, int));
 

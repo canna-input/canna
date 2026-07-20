@@ -45,8 +45,6 @@ static void	dumpXQH(), dumpXQ();
 #define rk_debug(file, fmt, a, b, c)
 #endif
 
-extern	void	usncopy();
-
 static void
 clearWord(w, bb)			/* make word empty */
      struct nword	*w;
@@ -178,9 +176,6 @@ _RkFreeBunq(st)			/* freeWord = derefWord + killWord */
   bunq->nb_flags = (unsigned short)0;
   return;
 }
-
-extern unsigned	searchRut();
-extern int	entryRut();
 
 static
 struct nword	*
@@ -1919,7 +1914,6 @@ _RkSubstYomi(cx, ys, ye, yomi, newLen)
      int		newLen;
 {
   struct nstore		*st = cx->store;
-  extern struct nstore	*_RkReallocBunStorage();
   struct nbun	*bun;
   struct nqueue		*xq;
   struct nword		**xqh;
@@ -2092,7 +2086,6 @@ doLearn(cx, thisW)
       unsigned long	offset;
       int		i;
       int		current;
-      unsigned long	_RkGetOffset();
 
       cx->time = _RkGetTick(1);
       if (thisCache->nc_flags & NC_ERROR)

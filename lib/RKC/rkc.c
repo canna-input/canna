@@ -1705,7 +1705,7 @@ wchar_t *info;
   }
   else {
     if( !info ) {
-      return ushort2wchar(rkc.cbuf, len, rkc.buffer, BUFSIZE);
+      return ushort2wchar(rkc.cbuf, len, rkc.wbuf, CBUFSIZE);
     }
     else if( infolen <= 0 )
       return 0;
@@ -1968,8 +1968,8 @@ char *dicname;
     k += ushort2wchar(cbuf2 + j, ushortstrlen(cbuf2 + j),
 		   kanjis + k, maxkanjis - k) + 1;
     j += ushortstrlen(cbuf2 + j) + 1;
-    l += ushort2euc(cbuf3 + m, ushortstrlen(cbuf3 + m),
-		   hinshis + l, maxhinshis - l) + 1;
+    l += ushort2wchar(cbuf3 + m, ushortstrlen(cbuf3 + m),
+		     hinshis + l, maxhinshis - l) + 1;
     m += ushortstrlen(cbuf3 + m) + 1;
   }
   kanjis[k] = hinshis[l] = (wchar_t)0;

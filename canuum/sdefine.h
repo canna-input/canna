@@ -148,7 +148,7 @@ struct kansuu
 struct msg_cat { /* dummy */
   int dummy;
 };
-struct msg_cat *msg_open();
+struct msg_cat *msg_open(char *, char *, char *);
 char *msg_get(struct msg_cat *cad, int n, char *msg, char *lang);
 #endif /* CANNA */
 

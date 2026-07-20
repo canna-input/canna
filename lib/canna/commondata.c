@@ -39,7 +39,7 @@ int defaultBushuContext = -1;
  * の時はその時で考えましょう。
  */
      
-struct RkRxDic *romajidic, *englishdic, *RkwOpenRoma();
+struct RkRxDic *romajidic, *englishdic;
 
 /* 未定義キー打鍵時の処理のしかた */
 

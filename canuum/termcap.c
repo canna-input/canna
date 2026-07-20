@@ -96,6 +96,8 @@ static char TermData[1024];
 
 int cursor_state;
 
+char *sr_set (char **, int, int);
+
 #ifdef DCUREOR
 FILE *debugc;
 #endif
@@ -106,9 +108,7 @@ getTermData ()
 {
   char *name;
   char *pter;
-  char *sr_set ();
   char *j;
-  extern char *get_kbd_env ();
 
 
 #ifdef DCUREOR
@@ -250,7 +250,7 @@ remove (p, ob)
 }
 
 static void strascii ();
-static int decfline ();
+static int decfline (char *);
 
 int
 set_TERMCAP ()

@@ -23,14 +23,6 @@
 
 #define BUNPOU_DISPLAY
 
-extern int TanKouhoIchiran(), TanKatakana();
-extern int TanPrintBunpou();
-extern int TanMuhenkan(), TanBubunKakutei(), TanHankaku();
-extern int TanHiragana(), TanRomaji(), TanZenkaku();
-extern int TanForwardBunsetsu(), TanBackwardBunsetsu();
-extern int TanNextKouho(), TanPreviousKouho();
-extern int TanBeginningOfBunsetsu(), TanEndOfBunsetsu(), TanBubunMuhenkan();
-extern int TanUpper(), TanCapitalize(), TanDeletePrevious();
 extern int TanKanaRotate pro((uiContext)), TanRomajiRotate pro((uiContext));
 extern int TanCaseRotateForward pro((uiContext));
 
@@ -48,7 +40,6 @@ static struct funccfunc cy_funcs[] = {
   {0				, 0				},
 };
 
-extern int searchfunc(), CYsearchfunc(), Yomisearchfunc();
 extern BYTE default_kmap[];
 
 KanjiModeRec cy_mode = {

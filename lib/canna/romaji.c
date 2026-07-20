@@ -329,7 +329,7 @@ static struct RkRxDic *
 OpenRoma(table)
 char *table;
 {
-  struct RkRxDic *retval = (struct RkRxDic *)0, *RkwOpenRoma();
+  struct RkRxDic *retval = (struct RkRxDic *)0;
   char *p;
 #ifndef USE_MALLOC_FOR_BIG_ARRAY
   char rdic[1024];
@@ -2564,7 +2564,7 @@ int
 YomiKakutei(d)
 uiContext d;
 {
-  yomiContext yc = (yomiContext)d->modec, newFilledYomiContext();
+  yomiContext yc = (yomiContext)d->modec;
   tanContext leftmost;
   int len, res;
   wchar_t *s = d->buffer_return, *e = s + d->n_buffer;

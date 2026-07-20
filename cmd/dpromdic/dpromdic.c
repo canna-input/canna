@@ -38,8 +38,7 @@ extern char *gettxt();
 #endif
 # include	<canna/RK.h>
 
-extern struct RkRxDic  *RkwOpenRoma() ;
-void printch();
+void printch(char);
 
 int
 main(argc, argv)

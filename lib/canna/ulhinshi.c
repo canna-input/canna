@@ -483,7 +483,7 @@ mode_context env;
  * Ã±¸ìÅÐÏ¿¤ÎÉÊ»ìÁªÂò                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-static int makeHinshi();
+static int makeHinshi pro((uiContext));
 
 int
 dicTourokuHinshiDelivery(d)
@@ -1071,7 +1071,6 @@ uiContext	d;
   char dicname[1024];
   extern int defaultContext;
   int linecnt;
-  wchar_t *WStraddbcpy();
 
   defineEnd(d);
   if(EWStrcmp(tc->hcode, "#KX") == 0 ||

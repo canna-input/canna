@@ -68,12 +68,8 @@ extern  char *gettxt();
 #define SIGVAL void
 #endif
 
-#ifdef USE_VARARGS
 #ifdef __STDC__
-extern  void Message(char *,...);
-#else
-extern  void Message();
-#endif
+extern  void Message pro((const char *,...));
 #else
 extern  void Message();
 #endif

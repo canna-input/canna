@@ -761,7 +761,7 @@ putsjw (x)
 }
 
 static int oj_mode = ASCII;     /* 出力時のｊｉｓコードのモード */
-static int jtosj ();
+static int jtosj (unsigned, unsigned);
 extern int eujis_to_iujis ();
 
 /* convert JIS code to shift-JIS code */

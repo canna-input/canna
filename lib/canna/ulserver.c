@@ -37,7 +37,7 @@ extern int errno;
 #endif
 #define wchar_t cannawc
 
-static int serverChangeDo();
+static int serverChangeDo pro((uiContext, int));
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * サーバの切り離し                                                          *
@@ -156,7 +156,6 @@ mode_context env;
   return prevMenuIfExist(d);
 }
 
-extern exp(char *) RkwGetServerName();
 #endif /* STANDALONE */
 
 int

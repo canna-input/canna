@@ -21,9 +21,6 @@
  */
 
 
-extern int JapaneseMode();
-extern int DoFuncSequence(), UseOtherKeymap();
-
 static struct funccfunc alpha_funcs[] = {
   {CANNA_FN_SelfInsert		,AlphaSelfInsert	},
   {CANNA_FN_JapaneseMode	,JapaneseMode		},

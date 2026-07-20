@@ -21,7 +21,6 @@
  */
 
 
-extern int DoFuncSequence(), UseOtherKeymap();
 extern int TanNop pro((uiContext)), YomiKakutei pro((uiContext));
 
 static struct funccfunc bun_funcs[] = {

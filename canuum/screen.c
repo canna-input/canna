@@ -97,7 +97,8 @@ static int oldmaxcol = 0; /** redraw sita tokini doko made mae ni kaita data ga 
 #define MARJIN 1                /* カーソルが右端からこれだけの所にくれば、次の画面に行く */
 
 static void t_cont_line_note ();
-static int find_character_on_that_col (), set_vst ();
+static int find_character_on_that_col (int, int);
+static int set_vst (void);
 
 void
 throw (x)

@@ -33,8 +33,6 @@
 #define wchar_t cannawc
 
 #ifndef NO_EXTEND_MENU
-extern int uiUtilIchiranTooSmall();
-
 static
 char *srussia_data[] = 
 {
@@ -270,8 +268,6 @@ mode_context env;
 
   return prevMenuIfExist(d);
 }
-
-extern int getForIchiranContext pro((uiContext)); /* bushu.c */
 
 int
 uuKigoMake(d, allkouho, size, cur, mode, exitfunc, posp)

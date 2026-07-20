@@ -63,7 +63,7 @@ static int bold_mode_fun = 0;
 int
 openTermData ()
 {
-  char *cp, *get_kbd_env ();
+  char *cp;
   int status;
   int k;
   char lcode[10];

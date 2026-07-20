@@ -38,7 +38,6 @@
 #endif
 
 #define	STRCMP(d, s)	strcmp((char *)(d), (char *)(s))
-extern	void	usncopy();
 
 #ifdef RK_LOG
 #include	<stdio.h>
@@ -64,7 +63,7 @@ Wchar *yomi;
     struct nword *words[RK_CONC_NMAX], **p, *wp;
     int msg_idx = 0;
     char *hinsi;
-    Wchar *kanji, *_RkGetKanji();
+    Wchar *kanji;
     unsigned char *ekanji, *ustoeuc();
 
     for (wp = w, p = words; wp; wp = wp->nw_left) 
@@ -1137,7 +1136,7 @@ unsigned long mode;
 struct RkContext *cx;
 {
   struct nword	*lw;
-  Wchar		*y, *_RkGetKanji();
+  Wchar		*y;
   RkLex		lex;
   
   lw = cw->nw_left;

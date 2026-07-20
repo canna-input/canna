@@ -35,8 +35,8 @@
 extern int WToupper pro((wchar_t));
 static void setInhibitInformation pro((yomiContext));
 static void jishuAdjustRome pro((uiContext)), jishuAdjustRome pro((uiContext));
-static int JishuZenkaku();
-static int JishuHankaku();
+static int JishuZenkaku pro((uiContext));
+static int JishuHankaku pro((uiContext));
 
 /* yc->jishu_kc          何の文字種か
  * d->jishu_rEndp
@@ -648,7 +648,6 @@ uiContext d;
   }
 }
 
-static int JishuZenkaku pro((uiContext));
 
 static int
 JishuZenkaku(d) /* 全角変換 */
@@ -684,7 +683,6 @@ uiContext d;
   return 0;
 }
 
-static int JishuHankaku pro((uiContext));
 
 static int
 JishuHankaku(d) /* 半角変換 */
