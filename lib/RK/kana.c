@@ -488,11 +488,7 @@ RkCvtNone(unsigned char *dst, int maxdst, unsigned char *src, int maxsrc)
 
 #ifdef USE_SJIS_TEXT_DIC
 canna_export(int)
-SJistowcs(wc_return, maxwc, sj, maxsj)
-Wchar *wc_return;
-int maxwc;
-char *sj;
-int maxsj;
+SJistowcs(Wchar *wc_return, int maxwc, char *sj, int maxsj)
 {
     Wchar *e = wc_return, *ee = wc_return + maxwc;
     unsigned char	*s = (unsigned char *)sj;
@@ -946,9 +942,6 @@ RkwCvtSuuji(Wchar *dst, int maxdst, Wchar *src, int maxsrc, int format)
 /* ワイドキャラクタ対応関数 */
 
 #define CBUFSIZE     512
-unsigned char	*ustoeuc();
-Wchar		*euctous();
-
 int RkwCvtHan(Wchar *, int, Wchar *, int);
 
 int
