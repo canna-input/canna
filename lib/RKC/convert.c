@@ -56,9 +56,7 @@ extern unsigned int ServerTimeout ;
 #ifdef LESS_SPACE_IS_IMPORTANT
 #undef LTOL4
 static void
-LTOL4(l, p)
-int l;
-BYTE *p;
+LTOL4(int l, BYTE *p)
 {
   p[0] = (l >> 24) & 0xff;
   p[1] = (l >> 16) & 0xff;
@@ -67,8 +65,8 @@ BYTE *p;
 }
 
 #undef L4TOL
-L4TOL(p)
-BYTE *p;
+static long
+L4TOL(BYTE *p)
 {
   return (((((p[0] << 8) | p[1]) << 8) | p[2]) << 8) | p[3];
 }
@@ -203,9 +201,9 @@ RkcSendERequest(const BYTE *Buffer, int size)
     register int write_stat;
     register const BYTE *bufindex;
 #ifdef SIGNALRETURNSINT
-    static int (*Sig)();
+    static sig_ret_type (*Sig)(int);
 #else /* !SIGNALRETURNSINT */
-    static void (*Sig)();
+    static sig_ret_type (*Sig)(int);
 #endif /* !SIGNALRETURNSINT */
     struct timeval timeout, timeout2;
     rki_fd_set wfds, wfds2;
@@ -974,7 +972,6 @@ rkc_get_kanji_list(register RkcContext *cx)
   return -1;
 }
 
-extern int _RkwGetYomi();
 
 static int
 resizeStore(int n, BYTE *data, int datalen, BYTE *contex, int v, int u)

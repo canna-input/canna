@@ -1347,10 +1347,7 @@ RkcConfMgr_set_number(RkcConfMgr *cx, ConfItem item, unsigned int val)
 }
 
 int
-RkcConfMgr_set_yesno(cx, item, val)
-RkcConfMgr *cx;
-ConfItem item;
-int val;
+RkcConfMgr_set_yesno(RkcConfMgr *cx, ConfItem item, int val)
 {
   ConfRec *target;
 

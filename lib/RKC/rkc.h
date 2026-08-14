@@ -61,8 +61,6 @@ typedef struct _RkcContext {
     short	    maxyomi;
 } RkcContext ;
 
-extern int ushort2euc(), euc2ushort(), ushort2wchar(), wchar2ushort(),
-    wcharstrlen(), ushortstrlen(), ushortstrcpy() ;
 
 typedef long (*initialize_t)(char *);
 typedef int (*finalize_t)(void);
@@ -202,4 +200,65 @@ typedef struct {
 
 /* function prototypes .. */
 
-extern int rkc_Connect_Iroha_Server(char *);
+/* convert.c */
+int rkc_initialize(char *);
+int rkc_finalize(void);
+int rkc_create_context(void);
+int rkc_duplicate_context(RkcContext *);
+int rkc_close_context(RkcContext *);
+int rkc_dictionary_list(RkcContext *, char *, int);
+int rkc_define_dic(RkcContext *, char *, Ushort *);
+int rkc_delete_dic(RkcContext *, char *, Ushort *);
+int rkc_mount_dictionary(RkcContext *, char *, int);
+int rkc_remount_dictionary(RkcContext *, char *, int);
+int rkc_umount_dictionary(RkcContext *, char *);
+int rkc_mount_list(RkcContext *, char *, int);
+int rkc_convert(RkcContext *, Ushort *, int, int);
+int rkc_convert_end(RkcContext *, int);
+int rkc_get_kanji_list(RkcContext *);
+int rkc_resize(RkcContext *, int);
+int rkc_store_yomi(RkcContext *, Ushort *, int);
+int rkc_get_yomi(RkcContext *, Ushort *);
+int rkc_get_stat(RkcContext *, RkStat *);
+int rkc_get_lex(RkcContext *, int, RkLex *);
+int rkc_autoconv(RkcContext *, int, int);
+int rkc_subst_yomi(RkcContext *, int, int, int, Ushort *, int);
+int rkc_flush_yomi(RkcContext *);
+int rkc_get_last_yomi(RkcContext *, Ushort *, int);
+int rkc_remove_bun(RkcContext *, int);
+int rkc_get_simple_kanji(RkcContext *, char *, Ushort *, int, Ushort *, int, Ushort *, int);
+int rkc_query_dic(RkcContext *, char *, char *, struct DicInfo *);
+int rkc_get_hinshi(RkcContext *, Ushort *, int);
+int rkc_store_range(RkcContext *, Ushort *, int);
+int rkc_set_locale(RkcContext *, char *);
+int rkc_sync(RkcContext *, char *);
+int rkc_set_app_name(RkcContext *, char *);
+int rkc_notice_group_name(RkcContext *, char *);
+int rkc_chmod_dic(RkcContext *, char *, int);
+int rkc_through(RkcContext *, int, char *, int, int);
+
+/* rkc.c */
+int _RkwGetYomi(RkcContext *, Ushort *, int);
+int G070_RkcGetServerFD(void);
+int G069_RkcConnectIrohaServer(char *);
+int RkThrough(int, int, unsigned char *, int, int);
+
+/* wconvert.c */
+int rkc_Connect_Iroha_Server(char *);
+int rkcw_get_server_info(int *, int *);
+BYTE *copyS8(BYTE *, BYTE *, int);
+
+/* wutil.c */
+int ushort2eucsize(Ushort *, int);
+int ushort2euc(Ushort *, int, char *, int);
+int eucchars(unsigned char *, int);
+int euc2ushort(char *, int, Ushort *, int);
+int Wineuc2ushort(char *, int, Ushort *, int);
+int wchar2ushort(cannawc *, int, Ushort *, int);
+int ushort2wchar(Ushort *, int, cannawc *, int);
+int Winushort2wchar(Ushort *, int, cannawc *, int);
+int wcharstrlen(cannawc *);
+int ushortstrlen(Ushort *);
+int ushortstrcpy(Ushort *, Ushort *);
+int ushortstrncpy(Ushort *, Ushort *, int);
+
