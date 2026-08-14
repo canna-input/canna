@@ -21,10 +21,10 @@
  */
 
 
-extern int DoFuncSequence pro((uiContext)), UseOtherKeymap pro((uiContext));
-extern int TbForward pro((uiContext)), TbBackward pro((uiContext));
-extern int TbBeginningOfLine pro((uiContext)), TbEndOfLine pro((uiContext));
-extern int YomiKakutei pro((uiContext));
+extern int DoFuncSequence(uiContext), UseOtherKeymap(uiContext);
+extern int TbForward(uiContext), TbBackward(uiContext);
+extern int TbBeginningOfLine(uiContext), TbEndOfLine(uiContext);
+extern int YomiKakutei(uiContext);
 
 static struct funccfunc jishu_funcs[] = {
   {CANNA_FN_FunctionalInsert	,JishuYomiInsert	},

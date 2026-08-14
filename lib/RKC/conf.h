@@ -46,15 +46,15 @@ typedef enum {
 extern RkcErrorBuf rkc_errors;
 extern RkcConfMgr rkc_config;
 
-extern void rkc_configure pro((void));
-extern void rkc_config_fin pro((void));
-const char *const *RkcErrorBuf_get pro((RkcErrorBuf *cx));
-const char *RkcConfMgr_get_string pro((const RkcConfMgr *cx,
-      ConfItem item, const char *hostname));
-unsigned int RkcConfMgr_get_number pro((const RkcConfMgr *cx,
-      ConfItem item, const char *hostname));
-int RkcConfMgr_get_yesno pro((const RkcConfMgr *cx,
-      ConfItem item, const char *hostname));
+extern void rkc_configure(void);
+extern void rkc_config_fin(void);
+const char *const *RkcErrorBuf_get(RkcErrorBuf *cx);
+const char *RkcConfMgr_get_string(const RkcConfMgr *cx,
+      ConfItem item, const char *hostname);
+unsigned int RkcConfMgr_get_number(const RkcConfMgr *cx,
+      ConfItem item, const char *hostname);
+int RkcConfMgr_get_yesno(const RkcConfMgr *cx,
+      ConfItem item, const char *hostname);
 
 #endif /* CONF_H */
 /* vim: set sw=2: */

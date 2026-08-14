@@ -64,16 +64,16 @@ extern  char *gettxt();
 #define  ERR_VALUE  1
 
 /* lib/RKC/rkc.c */
-extern int RkCreateDic pro((int, unsigned char*, int));
-extern int RkRemoveDic pro((int, unsigned char*, int));
-extern int RkGetWordTextDic pro((int, unsigned char*, unsigned char*, unsigned char*, int));
+extern int RkCreateDic(int, unsigned char*, int);
+extern int RkRemoveDic(int, unsigned char*, int);
+extern int RkGetWordTextDic(int, unsigned char*, unsigned char*, unsigned char*, int);
 
 /* can.c */
 extern char init[];
 
 /* rutil.c */
-void PrintMessage pro((int, unsigned char*));
-int rmDictionary pro((int, unsigned char*, int));
+void PrintMessage(int, unsigned char*);
+int rmDictionary(int, unsigned char*, int);
 
 static char  msg_mem[80];
 static char  msg_abnls[80];
@@ -85,7 +85,7 @@ static char  msg_cnt[80];
 static int   msg_flg = 0 ; 
 
 static void
-msg_set(){
+msg_set(void){
     
     if (msg_flg == 1 ) return ; 
     (void)strcpy(msg_mem,gettxt("cannacmd:186", "No more memory.\n"));
@@ -106,10 +106,7 @@ msg_set(){
 }
 
 int
-RkDefineLine(cx_num, name, line)
-int cx_num;
-unsigned char *name;
-char *line;
+RkDefineLine(int cx_num, unsigned char *name, char *line)
 {
   unsigned int linelen = strlen(line);
   int yomilen, yomihinshilen = 0;
@@ -178,16 +175,15 @@ char *line;
 }
 
 #ifdef TEST_DEFINEDIC
-RkDefineDic(cx_num, name, word)
-int cx_num;
-char *name;
-char *word;
+int
+RkDefineDic(int cx_num, char *name, char *word)
 {
   printf("☆単語の定義(辞書:%s) \"%s\"\n", name, word);
   return 0;
 }
 
-main()
+int
+main(void)
 {
   char buf[2048], *p;
   int c;
@@ -209,12 +205,7 @@ main()
 #endif /* TEST_DEFINEDIC */
 
 int
-CopyDic(cx_num, dirname, dicname1, dicname2, mode)
-int            cx_num;
-unsigned char  *dirname;
-unsigned char  *dicname1;
-unsigned char  *dicname2;
-int            mode ;
+CopyDic(int cx_num, unsigned char *dirname, unsigned char *dicname1, unsigned char *dicname2, int mode)
 {
   register int i = 0;
   int ret;
@@ -275,9 +266,7 @@ int            mode ;
 }
 
 void
-PrintMessage(ret, dicname)
-int            ret;
-unsigned char  *dicname;
+PrintMessage(int ret, unsigned char *dicname)
 {
   msg_set();
   switch (ret) {
@@ -321,10 +310,7 @@ unsigned char  *dicname;
 }
 
 int
-makeDictionary(cn, dicname, mode)
-int cn;
-unsigned char *dicname;
-int mode ;
+makeDictionary(int cn, unsigned char *dicname, int mode)
 {
   char ans[79];
   int ret = 0;
@@ -554,10 +540,7 @@ int mode ;
 }
 
 int
-rmDictionary(cn, dicname,mode)
-int cn;
-unsigned  char *dicname;
-int  mode ;
+rmDictionary(int cn, unsigned char *dicname, int mode)
 {
   int ret = 0;
   static int  majv , minv ,bak ;     /* add 91.11.21 */
@@ -690,8 +673,7 @@ int  mode ;
 #ifndef USE_VARARGS
 /* VARARGS */
 void
-Message(fmt, a, b, c, d, e, f, g, h, i, j)
-char *fmt;
+Message(char *fmt, int a, int b, int c, int d, int e, int f, int g, int h, int i, int j)
 /* ARGSUSED *//* d 以降は引数領域確保のためのダミー引数(不要？) */
 {
     (void)fprintf(stderr, fmt, a, b, c);

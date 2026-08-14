@@ -86,8 +86,7 @@ static int current_engine = -1;
 #ifdef DL
 
 static char *
-extoken(s, next_return)
-char *s, **next_return;
+extoken(char *s, char **next_return)
 {
   register char *p = s, ch;
   char *res;
@@ -112,8 +111,7 @@ char *s, **next_return;
 }
 
 struct engines *
-getengines(nengines)
-int *nengines;
+getengines(int *nengines)
 {
   FILE *f;
   char *ename, *lib, *p;
@@ -186,8 +184,7 @@ int *nengines;
 }
 
 static
-useEngine(libname)
-char *libname;
+useEngine(char *libname)
 {
   if (dlh) {
     dlclose(dlh);
@@ -215,8 +212,7 @@ char *libname;
 #else /* !DL */
 
 static
-useEngine(libname)
-struct rkfuncs *libname;
+useEngine(struct rkfuncs *libname)
 {
   Rk = libname;
   return 0;
@@ -225,8 +221,7 @@ struct rkfuncs *libname;
 #endif /* !DL */
 
 static
-switch_engine(engine)
-char *engine;
+switch_engine(char *engine)
 {
   int i;
 
@@ -265,8 +260,8 @@ char *engine;
 static char *server_host = (char *)0;
 static char *server_engine = (char *)0;
 
-RkSetServerName(s)
-char *s;
+int
+RkSetServerName(char *s)
 {
   if (server_host) {
     free(server_host);
@@ -315,398 +310,320 @@ char *s;
 /* RK functions */
 
 char *
-RkGetServerHost()
+RkGetServerHost(void)
 {
   return server_host;
 }
 
 char *
-RkGetServerEngine()
+RkGetServerEngine(void)
 {
   return server_engine;
 }
 
 int
-RkwGetProtocolVersion(map, mip)
-int *map, *mip;
+RkwGetProtocolVersion(int *map, int *mip)
 {
   return Rk ? (*Rk->GetProtocolVersion)(map, mip) : -1;
 }
 
 char *
-RkwGetServerName()
+RkwGetServerName(void)
 {
   return Rk ? (*Rk->GetServerName)() : (char *)0;
 }
 
 int
-RkwGetServerVersion(map, mip)
-int *map, *mip;
+RkwGetServerVersion(int *map, int *mip)
 {
   return Rk ? (*Rk->GetServerVersion)(map, mip) : -1;
 }
 
 int
-RkwInitialize(host)
-char *host;
+RkwInitialize(char *host)
 {
   return Rk ? (*Rk->Initialize)(host) : -1;
 }
 
 void
-RkwFinalize()
+RkwFinalize(void)
 {
   if (Rk) (*Rk->Finalize)();
 }
 
 int
-RkwCreateContext()
+RkwCreateContext(void)
 {
   return Rk ? (*Rk->CreateContext)() : -1;
 }
 
 int
-RkwDuplicateContext(cn)
-int cn;
+RkwDuplicateContext(int cn)
 {
   return Rk ? (*Rk->DuplicateContext)(cn) : -1;
 }
 
 int
-RkwCloseContext(cn)
-int cn;
+RkwCloseContext(int cn)
 {
   return Rk ? (*Rk->CloseContext)(cn) : -1;
 }
 
 int
-RkwSetDicPath(cn, path)
-int cn;
-char *path;
+RkwSetDicPath(int cn, char *path)
 {
   return Rk ? (*Rk->SetDicPath)(cn, path) : -1;
 }
 
 int
-RkwCreateDic(cn, dic, mode)
-int cn, mode;
-char *dic;
+RkwCreateDic(int cn, char *dic, int mode)
 {
   return Rk ? (*Rk->CreateDic)(cn, dic, mode) : -1;
 }
 
 int
-RkwGetDicList(cn, buf, maxbuf)
-int cn, maxbuf;
-char *buf;
+RkwGetDicList(int cn, char *buf, int maxbuf)
 {
   return Rk ? (*Rk->GetDicList)(cn, buf, maxbuf) : -1;
 }
 
 int
-RkwGetMountList(cn, buf, maxbuf)
-int cn, maxbuf;
-char *buf;
+RkwGetMountList(int cn, char *buf, int maxbuf)
 {
   return Rk ? (*Rk->GetMountList)(cn, buf, maxbuf) : -1;
 }
 
 int
-RkwMountDic(cn, dic, f)
-int cn, f;
-char *dic;
+RkwMountDic(int cn, char *dic, int f)
 {
   return Rk ? (*Rk->MountDic)(cn, dic, f) : -1;
 }
 
 int
-RkwRemountDic(cn, dic, where)
-int cn, where;
-char *dic;
+RkwRemountDic(int cn, char *dic, int where)
 {
   return Rk ? (*Rk->RemountDic)(cn, dic, where) : -1;
 }
 
 int
-RkwUnmountDic(cn, dic)
-int cn;
-char *dic;
+RkwUnmountDic(int cn, char *dic)
 {
   return Rk ? (*Rk->UnmountDic)(cn, dic) : -1;
 }
 
 int
-RkwDefineDic(cn, dic, word)
-int cn;
-char *dic;
-wchar_t *word;
+RkwDefineDic(int cn, char *dic, wchar_t *word)
 {
   return Rk ? (*Rk->DefineDic)(cn, dic, word) : -1;
 }
 
 int
-RkwDeleteDic(cn, dic, word)
-int cn;
-char *dic;
-wchar_t *word;
+RkwDeleteDic(int cn, char *dic, wchar_t *word)
 {
   return Rk ? (*Rk->DeleteDic)(cn, dic, word) : -1;
 }
 
 int
-RkwGetHinshi(cn, buf, maxbuf)
-int cn, maxbuf;
-wchar_t *buf;
+RkwGetHinshi(int cn, wchar_t *buf, int maxbuf)
 {
   return Rk ? (*Rk->GetHinshi)(cn, buf, maxbuf) : -1;
 }
 
 int
-RkwGetKanji(cn, buf, maxbuf)
-int cn, maxbuf;
-wchar_t *buf;
+RkwGetKanji(int cn, wchar_t *buf, int maxbuf)
 {
   return Rk ? (*Rk->GetKanji)(cn, buf, maxbuf) : -1;
 }
 
 int
-RkwGetYomi(cn, buf, maxbuf)
-int cn, maxbuf;
-wchar_t *buf;
+RkwGetYomi(int cn, wchar_t *buf, int maxbuf)
 {
   return Rk ? (*Rk->GetYomi)(cn, buf, maxbuf) : -1;
 }
 
 int
-RkwGetLex(cn, buf, maxbuf)
-int cn, maxbuf;
-RkLex *buf;
+RkwGetLex(int cn, RkLex *buf, int maxbuf)
 {
   return Rk ? (*Rk->GetLex)(cn, buf, maxbuf) : -1;
 }
 
 int
-RkwGetStat(cn, buf)
-int cn;
-RkStat *buf;
+RkwGetStat(int cn, RkStat *buf)
 {
   return Rk ? (*Rk->GetStat)(cn, buf) : -1;
 }
 
 int
-RkwGetKanjiList(cn, buf, maxbuf)
-int cn, maxbuf;
-wchar_t *buf;
+RkwGetKanjiList(int cn, wchar_t *buf, int maxbuf)
 {
   return Rk ? (*Rk->GetKanjiList)(cn, buf, maxbuf) : -1;
 }
 
 int
-RkwFlushYomi(cn)
-int cn;
+RkwFlushYomi(int cn)
 {
   return Rk ? (*Rk->FlushYomi)(cn) : -1;
 }
 
 int
-RkwGetLastYomi(cn, buf, maxbuf)
-int cn, maxbuf;
-wchar_t *buf;
+RkwGetLastYomi(int cn, wchar_t *buf, int maxbuf)
 {
   return Rk ? (*Rk->GetLastYomi)(cn, buf, maxbuf) : -1;
 }
 
 int
-RkwRemoveBun(cn, mode)
-int cn, mode;
+RkwRemoveBun(int cn, int mode)
 {
   return Rk ? (*Rk->RemoveBun)(cn, mode) : -1;
 }
 
 int
-RkwSubstYomi(cn, s, e, yomi, len)
-int cn, s, e, len;
-wchar_t *yomi;
+RkwSubstYomi(int cn, int s, int e, wchar_t *yomi, int len)
 {
   return Rk ? (*Rk->SubstYomi)(cn, s, e, yomi, len) : -1;
 }
 
 int
-RkwBgnBun(cn, yomi, len, f)
-int cn, len, f;
-wchar_t *yomi;
+RkwBgnBun(int cn, wchar_t *yomi, int len, int f)
 {
   return Rk ? (*Rk->BgnBun)(cn, yomi, len, f) : -1;
 }
 
 int
-RkwEndBun(cn, mode)
-int cn, mode;
+RkwEndBun(int cn, int mode)
 {
   return Rk ? (*Rk->EndBun)(cn, mode) : -1;
 }
 
 int
-RkwGoTo(cn, where)
-int cn, where;
+RkwGoTo(int cn, int where)
 {
   return Rk ? (*Rk->GoTo)(cn, where) : -1;
 }
 
 int
-RkwLeft(cn)
-int cn;
+RkwLeft(int cn)
 {
   return Rk ? (*Rk->Left)(cn) : -1;
 }
 
 int
-RkwRight(cn)
-int cn;
+RkwRight(int cn)
 {
   return Rk ? (*Rk->Right)(cn) : -1;
 }
 
 int
-RkwNext(cn)
-int cn;
+RkwNext(int cn)
 {
   return Rk ? (*Rk->Next)(cn) : -1;
 }
 
 int
-RkwPrev(cn)
-int cn;
+RkwPrev(int cn)
 {
   return Rk ? (*Rk->Prev)(cn) : -1;
 }
 
 int
-RkwNfer(cn)
-int cn;
+RkwNfer(int cn)
 {
   return Rk ? (*Rk->Nfer)(cn) : -1;
 }
 
 int
-RkwXfer(cn, knum)
-int cn, knum;
+RkwXfer(int cn, int knum)
 {
   return Rk ? (*Rk->Xfer)(cn, knum) : -1;
 }
 
 int
-RkwResize(cn, len)
-int cn, len;
+RkwResize(int cn, int len)
 {
   return Rk ? (*Rk->Resize)(cn, len) : -1;
 }
 
 int
-RkwEnlarge(cn)
-int cn;
+RkwEnlarge(int cn)
 {
   return Rk ? (*Rk->Enlarge)(cn) : -1;
 }
 
 int
-RkwShorten(cn)
-int cn;
+RkwShorten(int cn)
 {
   return Rk ? (*Rk->Shorten)(cn) : -1;
 }
 
 int
-RkwStoreYomi(cn, yomi, len)
-int cn, len;
-wchar_t *yomi;
+RkwStoreYomi(int cn, wchar_t *yomi, int len)
 {
   return Rk ? (*Rk->StoreYomi)(cn, yomi, len) : -1;
 }
 
 int
-RkwSetAppName(cn, name)
-int cn;
-char *name;
+RkwSetAppName(int cn, char *name)
 {
   return Rk ? (*Rk->SetAppName)(cn, name) : -1;
 }
 
 int
-RkwSync(cn, name)
-int cn;
-char *name;
+RkwSync(int cn, char *name)
 {
   return Rk ? (*Rk->SyncDic)(cn, name) : -1;
 }
 
 int
-RkwSetUserInfo(user, group, topdir)
-char *user, *group, *topdir;
+RkwSetUserInfo(char *user, char *group, char *topdir)
 {
   return Rk ? (*Rk->SetUserInfo)(user, group, topdir) : -1;
 }
 
 int
-RkwListDic(cn, dirname, names, size)
-int cn, size;
-char *dirname, *names;
+RkwListDic(int cn, char *dirname, char *names, int size)
 {
   return Rk ? (*Rk->ListDic)(cn, dirname, names, size) : -1;
 }
 
-RkwCopyDic(cn, dir, from, to, mode)
-int cn, mode;
-char *dir, *from, *to;
+int
+RkwCopyDic(int cn, char *dir, char *from, char *to, int mode)
 {
   return Rk ? (*Rk->CopyDic)(cn, dir, from, to, mode) : -1;
 }
 
-RkwRemoveDic(cn, dicname, mode)
-int cn, mode;
-char *dicname;
+int
+RkwRemoveDic(int cn, char *dicname, int mode)
 {
   return Rk ? (*Rk->RemoveDic)(cn, dicname, mode) : -1;
 }
 
-RkwRenameDic(cn, from, to, mode)
-int cn, mode;
-char *from, *to;
+int
+RkwRenameDic(int cn, char *from, char *to, int mode)
 {
   return Rk ? (*Rk->RenameDic)(cn, from, to, mode) : -1;
 }
 
-RkwChmodDic(cn, dicname, mode)
-int cn, mode;
-char *dicname;
+int
+RkwChmodDic(int cn, char *dicname, int mode)
 {
   return Rk ? (*Rk->ChmodDic)(cn, dicname, mode) : -1;
 }
 
-RkwQueryDic(cn, dir, dic, stat)
-int cn;
-char *dir, *dic;
-struct DicInfo *stat;
+int
+RkwQueryDic(int cn, char *dir, char *dic, struct DicInfo *stat)
 {
   return Rk ? (*Rk->QueryDic)(cn, dir, dic, stat) : -1;
 }
 
 int
-RkwGetWordTextDic(cx_num, dirname, dicname, info, infolen)
-int cx_num, infolen;
-unsigned char *dirname, *dicname;
-wchar_t *info;
+RkwGetWordTextDic(int cx_num, unsigned char *dirname, unsigned char *dicname, wchar_t *info, int infolen)
 {
   return 
     Rk ? (*Rk->GetWordTextDic)(cx_num, dirname, dicname, info, infolen) : -1;
 }
 
 int
-RkwGetSimpleKanji(cxnum, dicname, yomi, maxyomi,
-		  kanjis, maxkanjis, hinshis, maxhinshis)
-int cxnum, maxyomi, maxkanjis, maxhinshis;
-char *dicname;
-wchar_t *yomi, *kanjis, *hinshis;
+RkwGetSimpleKanji(int cxnum, char *dicname, wchar_t *yomi, int maxyomi, wchar_t *kanjis, int maxkanjis, wchar_t *hinshis, int maxhinshis)
 {
   return
     Rk ? (*Rk->GetSimpleKanji)(cxnum, dicname, yomi, maxyomi, kanjis,
@@ -726,8 +643,7 @@ wchar_t *yomi, *kanjis, *hinshis;
 static char iroha_server_name[CANNA_SERVER_NAME_LEN] = {0, 0};
 
 int
-RkSetServerName(s)
-char *s;
+RkSetServerName(char *s)
 {
   if (s) {
     (void)strncpy(iroha_server_name, s, CANNA_SERVER_NAME_LEN - 1);
@@ -739,7 +655,7 @@ char *s;
 }
 
 char *
-RkGetServerHost()
+RkGetServerHost(void)
 {
   if (iroha_server_name[0]) {
     return iroha_server_name;
@@ -751,7 +667,7 @@ RkGetServerHost()
 #endif /* !ENGINE_SWITCH */
 
 void
-close_engine()
+close_engine(void)
 {
 #ifdef ENGINE_SWITCH
 #ifdef DL

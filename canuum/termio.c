@@ -48,7 +48,6 @@
 #ifdef putchar
 #undef putchar
 #endif
-extern int putchar ();
 
 extern char Term_Name[];
 extern char *Term_UnderScoreStart;
@@ -63,7 +62,7 @@ extern char *Term_BoldOutEnd;
 static int bold_mode_fun = 0;
 
 int
-openTermData ()
+openTermData(void)
 {
   char *cp, *get_kbd_env ();
   int status;
@@ -173,86 +172,86 @@ openTermData ()
 
 
 void
-closeTermData ()
+closeTermData(void)
 {
   resetterm ();
   reset_shell_mode ();
 }
 
 void
-set_keypad_on ()
+set_keypad_on(void)
 {
   tputs (keypad_xmit, 1, putchar);
 }
 
 void
-set_keypad_off ()
+set_keypad_off(void)
 {
   tputs (keypad_local, 1, putchar);
 }
 
 void
-set_scroll_region (start, end)
-     int start, end;
+set_scroll_region(int start, int end)
 {
   tputs (tparm (change_scroll_region, start, end, 4, 5, 6, 7, 8, 9, 10),
 	  1, putchar);
 }
 
 void
-clr_end_screen ()
+clr_end_screen(void)
 {
   tputs (clr_eos, 1, putchar);
 }
 
 
-void
-clr_screen ()
+#ifdef unused
+static void
+clr_screen(void)
 {
   tputs (clear_screen, lines, putchar);
   Term_ClrScreen = clear_screen;
 }
 
-void
-clr_line1 ()
+static void
+clr_line1(void)
 {
   tputs (clr_eol, 1, putchar);
   Term_ClrEofLine = clr_eol;
 }
+#endif
 
 void
-throw_cur_raw (col, row)
-     int col, row;
+throw_cur_raw(int col, int row)
 {
   tputs (tparm (cursor_address, row, col, 4, 5, 6, 7, 8, 9, 10), 1, putchar);
 }
 
 void
-h_r_on_raw ()
+h_r_on_raw(void)
 {
   tputs (enter_standout_mode, 1, putchar);
 }
 
 void
-h_r_off_raw ()
+h_r_off_raw(void)
 {
   tputs (exit_standout_mode, 1, putchar);
 }
 
 void
-u_s_on_raw ()
+u_s_on_raw(void)
 {
   tputs (enter_underline_mode, 1, putchar);
 }
 
 void
-u_s_off_raw ()
+u_s_off_raw(void)
 {
   tputs (exit_underline_mode, 1, putchar);
 }
 
 void
-b_s_on_raw ()
+b_s_on_raw(void)
 {
   if (bold_mode_fun)
     tputs (enter_bold_mode, 1, putchar);
@@ -261,7 +260,7 @@ b_s_on_raw ()
 }
 
 void
-b_s_off_raw ()
+b_s_off_raw(void)
 {
   if (bold_mode_fun)
     tputs (exit_attribute_mode, 1, putchar);
@@ -270,32 +269,32 @@ b_s_off_raw ()
 }
 
 void
-ring_bell ()
+ring_bell(void)
 {
   tputs (bell, 1, putchar);
   flush ();
 }
 
 void
-save_cursor_raw ()
+save_cursor_raw(void)
 {
   tputs (save_cursor, 1, putchar);
 }
 
 void
-restore_cursor_raw ()
+restore_cursor_raw(void)
 {
   tputs (restore_cursor, 1, putchar);
 }
 
 void
-cursor_invisible_raw ()
+cursor_invisible_raw(void)
 {
   tputs (cursor_invisible, 1, putchar);
 }
 
 void
-cursor_normal_raw ()
+cursor_normal_raw(void)
 {
   tputs (cursor_normal, 1, putchar);
 }

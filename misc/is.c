@@ -37,6 +37,8 @@
 /* #define USED_AS_LIBRARY /* ライブラリとしてコンパイルする */
 
 #include <canna/keydef.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 typedef struct {
   int id;
@@ -118,8 +120,8 @@ static int seqline;
 
  */
 
-static
-initIS()
+static int
+initIS(void)
 {
   SeqToID *p;
   char *s;
@@ -209,8 +211,8 @@ initIS()
   return 0;
 }
 
-static
-finIS() /* identifySequence に用いたメモリ資源を開放する */
+static void
+finIS(void) /* identifySequence に用いたメモリ資源を開放する */
 {
   int i;
 
@@ -233,10 +235,8 @@ finIS() /* identifySequence に用いたメモリ資源を開放する */
 #define CONTINUE 1
 #define END	 0
 
-static
-identifySequence(c, val)
-char c;
-int *val;
+static int
+identifySequence(int c, int *val)
 {
   int nextline;
 
@@ -259,11 +259,14 @@ int *val;
 }
 
 #ifndef USED_AS_LIBRARY
-main()
+static void printchar(int c);
+
+int
+main(void)
 {
   int c, code;
 
-  initIS(2); /* 2 は VT コンパチターミナル */
+  initIS();
 
   c = getchar();
 
@@ -297,9 +300,8 @@ main()
   finIS();
 }
 
-static
-printchar(c)
-char c;
+static void
+printchar(int c)
 {
   if (c < 0x20) {
     if (c == '\n' || c == '\t' || c == '\b') {

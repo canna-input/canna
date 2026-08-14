@@ -54,8 +54,7 @@
  */
 
 char *
-RkiBasename(path)
-const char *path;
+RkiBasename(const char *path)
 {
   char *p = strrchr(path, '/');
   return p ? p + 1 : (char *)path;

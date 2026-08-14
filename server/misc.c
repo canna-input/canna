@@ -60,9 +60,9 @@
 #define ACCESS_FILE "/etc/hosts.canna"
 #endif
 
-static void FatalError pro((const char *f));
-static int CreateAccessControlList pro((void));
-static void FreeAccessControlList pro((void));
+static void FatalError(const char *f);
+static int CreateAccessControlList(void);
+static void FreeAccessControlList(void);
 
 
 #ifdef DEBUG
@@ -105,7 +105,7 @@ static int caught_signal = 0;
 static int openlog_done = 0;
 static int rkw_initialize_done = 0;
 
-static void Reset();
+static RETSIGTYPE Reset(int);
 
 #ifdef INET6
 #define USAGE "Usage: cannaserver [-p num] [-l num] [-u userid] [-syslog] [-inet] [-inet6] [-d] [dichome]"
@@ -113,17 +113,15 @@ static void Reset();
 #define USAGE "Usage: cannaserver [-p num] [-l num] [-u userid] [-syslog] [-inet] [-d] [dichome]"
 #endif
 static void
-Usage()
+Usage(void)
 {
   FatalError(USAGE);
 }
 
-extern void getserver_version pro((void));
+extern void getserver_version(void);
 
 void
-EarlyInit ( argc, argv )
-int argc;
-char *argv[];	
+EarlyInit(int argc, char *argv[])	
 {
     char *ddname = (char *)NULL;
     char buf[ MAXDATA ];
@@ -283,9 +281,7 @@ char *argv[];
 }
 
 static void
-mysignal(sig, func)
-int sig;
-RETSIGTYPE (*func) pro((int));
+mysignal(int sig, RETSIGTYPE (*func)(int))
 {
 #ifdef SA_RESTART
     struct sigaction new_action;
@@ -304,7 +300,7 @@ RETSIGTYPE (*func) pro((int));
 }
 
 int
-BecomeDaemon ()
+BecomeDaemon(void)
 {
     int     parent, parentid;
 
@@ -330,7 +326,7 @@ BecomeDaemon ()
 }
 
 void
-CloseServer()
+CloseServer(void)
 {
 #ifdef HAVE_SYSLOG
     if (Syslog && openlog_done) {
@@ -342,8 +338,7 @@ CloseServer()
 }
 /* 初期化に失敗した場合に呼ぶ。EventMgr_run()まで来たら呼ばないこと。 */
 static void
-FatalError(f)
-    const char *f;
+FatalError(const char *f)
 {
     fprintf(stderr,"%s\n", f);
     CloseServer();
@@ -355,26 +350,6 @@ FatalError(f)
 
 #ifdef DEBUG
 
-#ifndef USE_VARARGS
-
-/* VARARGS */
-void
-Dmsg( Pri, f, s0, s1, s2, s3, s4, s5, s6, s7, s8 )
-int Pri ;
-const char *f;
-const char *s0, *s1, *s2, *s3, *s4, *s5, *s6, *s7, *s8 ;
-{
-    if (!ServerLogFp)
-	ServerLogFp = stderr;
-    if ( LogLevel >= Pri ) {
-	fprintf(ServerLogFp , f, s0, s1, s2, s3, s4, s5, s6, s7, s8 );
-	fflush( ServerLogFp ) ;
-    }
-}
-
-#else /* USE_VARARGS */
-
-#ifdef __STDC__
 void
 Dmsg(int Pri, const char *f, ...)
 {
@@ -391,74 +366,14 @@ Dmsg(int Pri, const char *f, ...)
   }
   va_end(ap);
 }
-#else
-void
-Dmsg(Pri, f, va_alist)
-int Pri;
-const char *f;
-va_dcl
-{
-  va_list ap;
-  const char *args[MAXARGS];
-  int argno = 0;
-
-  va_start(ap);
-
-  while (++argno < MAXARGS && (args[argno] = va_arg(ap, const char *)))
-    ;
-  args[MAXARGS - 1] = (const char *)0;
-  va_end(ap);
-
-  if (!ServerLogFp) {
-    ServerLogFp = stderr;
-  }
-  if (LogLevel >= Pri) {
-    fprintf(ServerLogFp, f, args[0], args[1], args[2], args[3], args[4],
-	    args[5], args[6], args[7], args[8]);
-    fflush(ServerLogFp);
-  }
-}
-#endif /* !__STDC__ */
-#endif /* USE_VARARGS */
 #endif
 
-#ifndef USE_VARARGS
-void
-PrintMsg( f, s0, s1, s2, s3, s4, s5, s6, s7, s8 )
-const char *f;
-const char *s0, *s1, *s2, *s3, *s4, *s5, *s6, *s7, *s8 ;
-{
-    ir_time_t Time ;
-    char    *date ;
-
-#ifdef HAVE_SYSLOG
-    if (Syslog) {
-      syslog(LOG_WARNING, f, s0, s1, s2, s3, s4, s5, s6, s7, s8);
-    } else
-#endif
-    {
-      Time = time( NULL ) ;
-      date = (char *)ctime( &Time ) ;
-      date[24] = '\0' ;
-      fprintf( stderr, "%s :", date ) ;
-      fprintf( stderr, f, s0, s1, s2, s3, s4, s5, s6, s7, s8 );
-      fflush( stderr ) ;
-    }
-}
-#else /* USE_VARARGS */
-
-#if !defined(__STDC__) || (defined(HAVE_SYSLOG) && !defined(HAVE_VSYSLOG))
+#if defined(HAVE_SYSLOG) && !defined(HAVE_VSYSLOG)
 # define READ_ALL_ARGS
 #endif
 
 void
-#ifdef __STDC__
 PrintMsg(const char *f, ...)
-#else
-PrintMsg(f, va_alist)
-const char *f;
-va_dcl
-#endif
 {
   va_list ap;
 #ifdef READ_ALL_ARGS
@@ -468,11 +383,7 @@ va_dcl
   ir_time_t Time;
   char    *date;
 
-#ifdef __STDC__
   va_start(ap, f);
-#else
-  va_start(ap);
-#endif
 
 #ifdef READ_ALL_ARGS
   while (++argno < MAXARGS && (args[argno] = va_arg(ap, const char *)))
@@ -505,11 +416,9 @@ va_dcl
   }
   va_end(ap);
 }
-#endif /* USE_VARARGS */
 
 void
-nomem_msg(where)
-const char *where;
+nomem_msg(const char *where)
 {
   if (where)
     PrintMsg("%s: out of memory\n", where);
@@ -518,8 +427,7 @@ const char *where;
 }
 
 static RETSIGTYPE
-Reset(sig)
-int	sig;
+Reset(int sig)
 {
     caught_signal = sig;
 #ifdef SIGNALRETURNSINT
@@ -528,7 +436,7 @@ int	sig;
 }
 
 int
-CheckSignal()
+CheckSignal(void)
 {
     if( caught_signal == SIGTERM ) {
 	PrintMsg( "Cannaserver Terminated\n" ) ;
@@ -541,8 +449,7 @@ CheckSignal()
 }
 
 static int
-AddrAreEqual(x, y)
-const Address *x, *y;
+AddrAreEqual(const Address *x, const Address *y)
 {
     int res = 0;
     if (x->family != y->family)
@@ -569,8 +476,7 @@ const Address *x, *y;
 }
 
 AddrList *
-GetAddrListFromName(hostname)
-const char   *hostname;
+GetAddrListFromName(const char *hostname)
 {
     AddrList *res = NULL;
 #ifdef INET6
@@ -674,9 +580,7 @@ fail:
 }
 
 AddrList *
-SearchAddrList(list, addrp)
-const AddrList *list;
-const Address *addrp;
+SearchAddrList(const AddrList *list, const Address *addrp)
 {
     for (; list; list = list->next)
       if (AddrAreEqual(&list->addr, addrp))
@@ -685,8 +589,7 @@ const Address *addrp;
 }
 
 void
-FreeAddrList(list)
-AddrList *list;
+FreeAddrList(AddrList *list)
 {
     while(list) {
       AddrList *next = list->next;
@@ -696,7 +599,7 @@ AddrList *list;
 }
 
 static int
-CreateAccessControlList()
+CreateAccessControlList(void)
 {
     char   buf[BUFSIZE];
     char   *wp, *p ;
@@ -809,7 +712,7 @@ CreateAccessControlList()
 }
 
 static void
-FreeAccessControlList() 
+FreeAccessControlList(void)
 {
     ACLPtr  wp, tailp = (ACLPtr)NULL;
 
@@ -833,9 +736,7 @@ FreeAccessControlList()
 }
 
 int
-CheckAccessControlList(hostaddrp, username)
-Address *hostaddrp;
-const char *username;
+CheckAccessControlList(Address *hostaddrp, const char *username)
 {
   int i;
   char *userp;
@@ -867,7 +768,7 @@ const char *username;
 }
 
 int
-NumberAccessControlList()
+NumberAccessControlList(void)
 {
   ACLPtr wp;
   int n;
@@ -879,9 +780,7 @@ NumberAccessControlList()
 }
 
 int
-SetDicHome( client, cxnum )
-ClientPtr client ;
-int cxnum ;
+SetDicHome(ClientPtr client, int cxnum)
 {
     char dichome[ 256 ] ;
 
@@ -920,9 +819,7 @@ int cxnum ;
 }
 
 ClientPtr *
-get_all_other_clients(self, count)
-ClientPtr self;
-size_t *count;
+get_all_other_clients(ClientPtr self, size_t *count)
 {
     EventMgrIterator curr, end;
     ClientPtr *res, *p;
@@ -955,7 +852,7 @@ size_t *count;
 }
 
 void
-AllSync()
+AllSync(void)
 {
     EventMgrIterator curr, end;
 
@@ -975,7 +872,7 @@ AllSync()
 }
 
 void
-DetachTTY()
+DetachTTY(void)
 {
   char    errfile[ERRSIZE];
   int     errfd;

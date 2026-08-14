@@ -42,9 +42,7 @@ extern struct RkRxDic  *RkwOpenRoma() ;
 void printch();
 
 int
-main(argc, argv)
-int	argc;
-char	**argv;
+main(int argc, char **argv)
 {
   char *filename;
   struct RkRxDic *rdic;
@@ -120,8 +118,7 @@ char	**argv;
 }
 
 void
-printch(s)
-      char s ;
+printch(int s)
 {
 	switch(s) {
 	  case '\''   :

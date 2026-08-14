@@ -59,7 +59,7 @@ struct tagUserTable {
 UserTable *global_user_table = NULL;
 
 UserTable *
-UserTable_new()
+UserTable_new(void)
 {
   UserTable *obj = malloc(sizeof(UserTable));
 
@@ -71,17 +71,14 @@ UserTable_new()
 }
 
 void
-UserTable_delete(obj)
-UserTable *obj;
+UserTable_delete(UserTable *obj)
 {
   free(obj->entries);
   free(obj);
 }
 
 static int
-UserTable_register(obj, username)
-UserTable *obj;
-const char *username;
+UserTable_register(UserTable *obj, const char *username)
 {
   int usr_no;
   
@@ -118,9 +115,7 @@ const char *username;
 }
 
 static void
-UserTable_unregister(obj, usr_no)
-UserTable *obj;
-int usr_no;
+UserTable_unregister(UserTable *obj, int usr_no)
 {
   UserEntry *ent = obj->entries + usr_no;
   assert(usr_no >= 0 && usr_no < obj->n_entries);
@@ -134,9 +129,7 @@ int usr_no;
 }
 
 static int
-CheckVersion( data, client )
-char *data ;
-ClientPtr client ;
+CheckVersion(char *data, ClientPtr client)
 {
   char *logname ;
   int clienthi, clientlo ;
@@ -176,8 +169,7 @@ ClientPtr client ;
 }
 
 static void
-free_client_rec(client)
-ClientPtr client;
+free_client_rec(ClientPtr client)
 {
   int *contexts;
   int i;
@@ -202,10 +194,7 @@ ClientPtr client;
 }
 
 int
-open_session(clientp, name, client_buf)
-ClientPtr *clientp;
-char *name;
-ClientBuf *client_buf;
+open_session(ClientPtr *clientp, char *name, ClientBuf *client_buf)
 {
   int cxnum = -1, eff_lo, stat = -1;
 
@@ -276,9 +265,7 @@ fail:
 }
 
 void
-close_session(clientp, notify)
-ClientPtr *clientp;
-int notify;
+close_session(ClientPtr *clientp, int notify)
 {
   ClientPtr client = *clientp;
 
@@ -293,10 +280,7 @@ int notify;
 }
 
 void
-ClientStat(client, type, request_Type, return_date)
-ClientPtr client ;
-int request_Type, type;
-char *return_date ;
+ClientStat(ClientPtr client, int type, int request_Type, char *return_date)
 {
   static ir_time_t set_time ; /* サーバを使用した時間を測る基点 */
   ir_time_t  cur_time ;

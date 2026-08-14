@@ -31,8 +31,8 @@ extern int TanForwardBunsetsu(), TanBackwardBunsetsu();
 extern int TanNextKouho(), TanPreviousKouho();
 extern int TanBeginningOfBunsetsu(), TanEndOfBunsetsu(), TanBubunMuhenkan();
 extern int TanUpper(), TanCapitalize(), TanDeletePrevious();
-extern int TanKanaRotate pro((uiContext)), TanRomajiRotate pro((uiContext));
-extern int TanCaseRotateForward pro((uiContext));
+extern int TanKanaRotate(uiContext), TanRomajiRotate(uiContext);
+extern int TanCaseRotateForward(uiContext);
 
 #define NONE CANNA_FN_Undefined
 

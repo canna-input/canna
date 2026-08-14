@@ -34,7 +34,7 @@ extern int errno;
  *
  */
 static coreContext
-newYesNoContext()
+newYesNoContext(void)
 {
   coreContext ccxt;
 
@@ -53,8 +53,7 @@ newYesNoContext()
 }
 
 static void
-freeYesNoContext(qc)
-coreContext qc;
+freeYesNoContext(coreContext qc)
 {
   free(qc);
 }
@@ -63,11 +62,7 @@ coreContext qc;
  * 候補一覧行を作る
  */
 int
-getYesNoContext(d,
-	  everyTimeCallback, exitCallback, quitCallback, auxCallback)
-uiContext d;
-canna_callback_t everyTimeCallback, exitCallback;
-canna_callback_t quitCallback, auxCallback;
+getYesNoContext(uiContext d, canna_callback_t everyTimeCallback, canna_callback_t exitCallback, canna_callback_t quitCallback, canna_callback_t auxCallback)
 {
   extern KanjiModeRec tourokureibun_mode;
   coreContext qc;
@@ -96,8 +91,7 @@ canna_callback_t quitCallback, auxCallback;
 }
 
 static void
-popYesNoMode(d)
-uiContext d;
+popYesNoMode(uiContext d)
 {
   coreContext qc = (coreContext)d->modec;
 
@@ -113,8 +107,7 @@ uiContext d;
  */
 
 static
-YesNoNop(d)
-uiContext	d;
+YesNoNop(uiContext d)
 {
   /* currentModeInfo でモード情報が必ず返るようにダミーのモードを入れておく */
   d->majorMode = d->minorMode = CANNA_MODE_AlphaMode;
@@ -130,11 +123,10 @@ uiContext	d;
  * auxCallback ...       n が入力された
  */
 
-static int YesNo pro((uiContext));
+static int YesNo(uiContext);
 
 static int
-YesNo(d)
-uiContext	d;
+YesNo(uiContext d)
 {
   if((d->ch == 'y') || (d->ch == 'Y')) {
     popYesNoMode(d);
@@ -150,11 +142,10 @@ uiContext	d;
   return(0);
 }
 
-static int YesNoQuit pro((uiContext));
+static int YesNoQuit(uiContext);
 
 static int
-YesNoQuit(d)
-uiContext	d;
+YesNoQuit(uiContext d)
 {
   int retval = 0;
 

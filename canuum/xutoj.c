@@ -165,15 +165,14 @@ static DesignateTable KSC_designate[] = {
 #endif /* KOREAN */
 
 #if defined(JAPANESE) || defined(CHINESE) || defined(KOREAN)
-static w_char tmp_w_buf[1000];
+static unsigned char tmp_w_buf[1000*sizeof(w_char)]; /* actually w_char */
 #endif
 
 static void
-set_gn (dg)
-     DesignateTable *dg;
+set_gn(DesignateTable *dg)
 {
-  register char *p = (char *) dg->code;
-  register int len = 1, gn = 0;
+  char *p = (char *) dg->code;
+  int len = 1, gn = 0;
 
   if (!strcmp (p, "$B"))
     {                           /* JIS */
@@ -197,11 +196,10 @@ set_gn (dg)
 }
 
 static int
-check_designate (ec, eend, ret_buf)
-     unsigned char *ec, *eend, **ret_buf;
+check_designate(unsigned char *ec, unsigned char *eend, unsigned char **ret_buf)
 {
-  register unsigned char *c = ec;
-  register int i, j, ok = 0;
+  unsigned char *c = ec;
+  int i, j, ok = 0;
 
   *ret_buf = NULL;
   for (i = save_seq_len; c < eend; c++)
@@ -235,11 +233,10 @@ check_designate (ec, eend, ret_buf)
 }
 
 int
-flush_designate (buf)
-     w_char *buf;
+flush_designate(w_char *buf)
 {
-  register w_char *c = buf;
-  register int i;
+  w_char *c = buf;
+  int i;
 
   if (pending_esc)
     {
@@ -258,20 +255,17 @@ flush_designate (buf)
   return ((char *) c - (char *) buf);
 }
 
-int
-extc_to_intc (intc, extc, esiz)
-     w_char *intc;
-     unsigned char *extc;
-     int esiz;
+static int
+extc_to_intc(unsigned char *intc, unsigned char *extc, int esiz)
 {
   unsigned char *eend = extc + esiz;
-  register unsigned char *ec = extc;
-  register w_char *ic = intc;
-  register int LorR = 0, i;
+  unsigned char *ec = extc;
+  w_char *ic = (w_char *)intc;
+  int LorR = 0, i;
   w_char tmp;
   int ret, len;
   unsigned char *ret_buf;
-  register unsigned char *p;
+  unsigned char *p;
 
   for (; ec < eend; ec++)
     {
@@ -383,22 +377,18 @@ extc_to_intc (intc, extc, esiz)
 }
 
 int
-through (x, y, z)
-     char *x, *y;
-     int z;
+through(unsigned char *x, const unsigned char *y, int z)
 {
   bcopy (y, x, z);
   return z;
 }
 
-int
-ibit8_to_ebit8 (ebit8, ibit8, ibsiz)
-     unsigned char *ebit8;
-     w_char *ibit8;
-     int ibsiz;
+#ifdef unused
+static int
+ibit8_to_ebit8(unsigned char *ebit8, unsigned char *ibit8, int ibsiz)
 {
-  register unsigned char *eb = ebit8;
-  register w_char *ib = ibit8;
+  unsigned char *eb = ebit8;
+  w_char *ib = (w_char *)ibit8;
 
   for (; ibsiz > 0; ibsiz -= sizeof (w_char))
     {
@@ -406,11 +396,11 @@ ibit8_to_ebit8 (ebit8, ibit8, ibsiz)
     }
   return ((char *) eb - (char *) ebit8);
 }
+#endif /* unused */
 
 /** cswidth functions **/
 unsigned int
-create_cswidth (s)
-     char *s;
+create_cswidth(char *s)
 {
   char tmp[2];
   int cs = 0, css = 0, i;
@@ -451,9 +441,8 @@ create_cswidth (s)
   return (css);
 }
 
-void
-set_cswidth (id)
-     register unsigned int id;
+static void
+set_cswidth(unsigned int id)
 {
   _etc_cs[CS1] = (id >> 20) & 0xf;
   _etc_cs[CS2] = (id >> 12) & 0xf;
@@ -472,12 +461,12 @@ static cswidth_name_struct cs_width_name[] = {
   {NULL, NULL}
 };
 
-char *
-get_cswidth_name (lang)
-     register char *lang;
+#ifdef unused
+static char *
+get_cswidth_name(char *lang)
 {
-  register cswidth_name_struct *p;
-  register char *name;
+  cswidth_name_struct *p;
+  char *name;
   extern char *getenv ();
 
   if (!lang || !*lang)
@@ -506,16 +495,15 @@ get_cswidth_name (lang)
   return (NULL);
 }
 
-int
-get_cswidth (cs)
-     int cs;
+static int
+get_cswidth(int cs)
 {
   return (_etc_cs[cs]);
 }
+#endif /* unused */
 
 int
-get_cswidth_by_char (c)
-     register unsigned char c;
+get_cswidth_by_char(int c)
 {
   if (c < SS2 || (c < 0xa0 && c > SS3))
     return (1);
@@ -526,20 +514,19 @@ get_cswidth_by_char (c)
   return (_etc_cs[CS1]);
 }
 
-int
-get_cs_mask (cs)
-     int cs;
+#ifdef unused
+static int
+get_cs_mask(int cs)
 {
   return (cs_mask[cs]);
 }
 
-int
-columnlen (eeuc)
-     unsigned char *eeuc;
+static int
+columnlen(unsigned char *eeuc)
 {
-  register int n = 0;
-  register unsigned char *c, x;
-  register int cs_id;
+  int n = 0;
+  unsigned char *c, x;
+  int cs_id;
 
   for (c = eeuc; *c;)
     {
@@ -562,12 +549,11 @@ columnlen (eeuc)
 }
 
 int
-columnlen_w (ieuc)
-     w_char *ieuc;
+columnlen_w(w_char *ieuc)
 {
-  register int n = 0;
-  register w_char *c, x;
-  register int cs_id, mask;
+  int n = 0;
+  w_char *c, x;
+  int cs_id, mask;
 
   for (c = ieuc; *c; c++)
     {
@@ -585,18 +571,16 @@ columnlen_w (ieuc)
     }
   return (n);
 }
+#endif /* unused */
 
-int
-ieuc_to_eeuc (eeuc, ieuc, iesiz)
-     unsigned char *eeuc;
-     w_char *ieuc;
-     int iesiz;
+static int
+ieuc_to_eeuc(unsigned char *eeuc, unsigned char *ieuc, int iesiz)
 {
-  register int x;
-  register w_char *ie;
-  register unsigned char *ee;
-  register int cs_id, mask, non_limit = 0;
-  ie = ieuc;
+  int x;
+  w_char *ie;
+  unsigned char *ee;
+  int cs_id, mask, non_limit = 0;
+  ie = (w_char *)ieuc;
   ee = eeuc;
 
   if (iesiz == -1)
@@ -628,17 +612,14 @@ ieuc_to_eeuc (eeuc, ieuc, iesiz)
 }
 
 
-int
-eeuc_to_ieuc (ieuc, eeuc, eesiz)
-     w_char *ieuc;
-     unsigned char *eeuc;
-     register int eesiz;
+static int
+eeuc_to_ieuc(unsigned char *ieuc, unsigned char *eeuc, int eesiz)
 {
-  register unsigned char x;
-  register w_char *ie;
-  register unsigned char *ee;
-  register int cs_id, non_limit = 0;
-  ie = ieuc;
+  unsigned char x;
+  w_char *ie;
+  unsigned char *ee;
+  int cs_id, non_limit = 0;
+  ie = (w_char *)ieuc;
   ee = eeuc;
 
   if (eesiz == -1)
@@ -675,13 +656,11 @@ eeuc_to_ieuc (ieuc, eeuc, eesiz)
   return ((char *) ie - (char *) ieuc);
 }
 
-#ifdef nodef
-void
-wnn_delete_ss2 (s, n)
-     register unsigned int *s;
-     register int n;
+#ifdef unused
+static void
+wnn_delete_ss2(unsigned int *s, int n)
 {
-  register unsigned int x;
+  unsigned int x;
 
   for (; n != 0 && (x = *s); n--, s++)
     {
@@ -694,11 +673,9 @@ wnn_delete_ss2 (s, n)
 #endif
 
 void
-wnn_delete_w_ss2 (s, n)
-     register w_char *s;
-     register int n;
+wnn_delete_w_ss2(w_char *s, int n)
 {
-  register w_char x;
+  w_char x;
 
   for (; n != 0 && (x = *s); n--, s++)
     {
@@ -707,10 +684,9 @@ wnn_delete_w_ss2 (s, n)
     }
 }
 
-#ifdef nodef
-int
-wnn_byte_count (in)
-     register int in;
+#ifdef unused
+static int
+wnn_byte_count(int in)
 {
   return (((in < 0xa0 && in != 0x00 && in != 0x8e) || in == 0xff) ? 1 : 2);
 }
@@ -733,42 +709,35 @@ static unsigned char *sj;
 static unsigned char tmp_buf[2000];
 
 static void
-putj (x)
-     int x;
+putj(int x)
 {
   *j++ = x;
 }
 
 static void
-puteu (x)
-     int x;
+puteu(int x)
 {
   *eu++ = x;
 }
 
 static void
-putsj (x)
-     int x;
+putsj(int x)
 {
   *sj++ = x;
 }
 
 static void
-putsjw (x)
-     int x;
+putsjw(int x)
 {
   *sj++ = x >> 8;
   *sj++ = x;
 }
 
 static int oj_mode = ASCII;     /* 出力時のｊｉｓコードのモード */
-static int jtosj ();
-extern int eujis_to_iujis ();
 
 /* convert JIS code to shift-JIS code */
 static int
-jtosj (high, low)
-     unsigned high, low;
+jtosj(unsigned high, unsigned low)
 {
   if (high & 1)
     low += 0x1f;
@@ -784,8 +753,7 @@ jtosj (high, low)
 
 /* convert shift-JIS to JIS code */
 static int
-sjtoj (high, low)
-     register unsigned high, low;
+sjtoj(unsigned high, unsigned low)
 {
   high -= (high <= 0x9f) ? 0x71 : 0xb1;
   high = high * 2;
@@ -805,9 +773,7 @@ sjtoj (high, low)
 }
 
 static void
-jis_change_mode (mode, new_mode)
-     int *mode;
-     int new_mode;
+jis_change_mode(int *mode, int new_mode)
 {
   if (*mode == new_mode)
     return;
@@ -854,15 +820,15 @@ jis_change_mode (mode, new_mode)
 #ifdef  JIS7
 /*      内部 U-jis を 7bit jis コードに変換します
         文字列の長さを返します                  */
-extern int
-iujis_to_jis (jis, iujis, iusiz)
-     unsigned char *jis;        /*      jisコードになったものをおくbuf  */
-     w_char *iujis;             /*      iujisコードのものをおいてくるbuf */
-     int iusiz;                 /*      iujis の大きさ                  */
+int
+iujis_to_jis(
+	unsigned char *jis,        /*      jisコードになったものをおくbuf  */
+	unsigned char *iujis,     /*      iujisコードのものをおいてくるbuf */
+	int iusiz                 /*      iujis の大きさ                  */)
 {
   int x;
   j = jis;
-  iu = iujis;
+  iu = (w_char *)iujis;
   for (; iusiz > 0; iusiz -= sizeof (w_char))
     {
       x = *iu++;
@@ -896,15 +862,15 @@ iujis_to_jis (jis, iujis, iusiz)
 
 /*      内部 U-jis を 8bit jis コードに変換します
         文字列の長さを返します                  */
-extern int
-iujis_to_jis8 (jis, iujis, iusiz)
-     unsigned char *jis;        /*      jisコードになったものをおくbuf  */
-     w_char *iujis;             /*      iujisコードのものをおいてくるbuf */
-     int iusiz;                 /*      iujis の大きさ                  */
+int
+iujis_to_jis8(
+	unsigned char *jis,        /*      jisコードになったものをおくbuf  */
+	unsigned char *iujis,     /*      iujisコードのものをおいてくるbuf */
+	int iusiz                 /*      iujis の大きさ                  */)
 {
   int x;
   j = jis;
-  iu = iujis;
+  iu = (w_char *)iujis;
   for (; iusiz > 0; iusiz -= sizeof (w_char))
     {
       x = *iu++;
@@ -939,9 +905,7 @@ iujis_to_jis8 (jis, iujis, iusiz)
 #ifdef  JIS7
 /*      外部 U-jis を 7bit jis コードに変換します       */
 extern int
-eujis_to_jis (jis, eujis, eusiz)
-     unsigned char *jis, *eujis;
-     int eusiz;
+eujis_to_jis(unsigned char *jis, unsigned char *eujis, int eusiz)
 {
   static int kanji1 = 0;
   static char kanji1_code = 0;
@@ -1013,10 +977,8 @@ eujis_to_jis (jis, eujis, eusiz)
 #endif /* JIS7 */
 
 /*      外部 U-jis を 8bit jis コードに変換します       */
-extern int
-eujis_to_jis8 (jis, eujis, eusiz)
-     unsigned char *jis, *eujis;
-     int eusiz;
+int
+eujis_to_jis8(unsigned char *jis, unsigned char *eujis, int eusiz)
 {
   static int kanji1 = 0;
   static unsigned char kanji1_code = 0;
@@ -1092,11 +1054,8 @@ eujis_to_jis8 (jis, eujis, eusiz)
 }
 
 /*      内部 U-jis を 外部 U-jis コードに変換します     */
-extern int
-iujis_to_eujis (eujis, iujis, iusiz)
-     unsigned char *eujis;
-     w_char *iujis;
-     int iusiz;
+int
+iujis_to_eujis(unsigned char *eujis, unsigned char *iujis, int iusiz)
 {
   static int first = 0;
   static unsigned int cswidth_id;
@@ -1111,9 +1070,7 @@ iujis_to_eujis (eujis, iujis, iusiz)
 }
 
 int
-jis_to_eujis (eujis, jis, jsiz)
-     unsigned char *eujis, *jis;
-     int jsiz;
+jis_to_eujis(unsigned char *eujis, unsigned char *jis, int jsiz)
 {
   int len;
 
@@ -1129,12 +1086,12 @@ jis_to_eujis (eujis, jis, jsiz)
 /*      外部 U-jis を S-jis コードに変換します
         文字列の長さを返します                  */
 extern int
-eujis_to_sjis (sjis, eujis, eusiz)
-     unsigned char *sjis;       /*      sjisコードになったものをおくbuf */
-     unsigned char *eujis;      /*      eujisコードのものをおいてくるbuf */
-     int eusiz;                 /*      eujis の大きさ                  */
+eujis_to_sjis(
+	unsigned char *sjis,       /*      sjisコードになったものをおくbuf */
+	unsigned char *eujis,      /*      eujisコードのものをおいてくるbuf */
+	int eusiz                 /*      eujis の大きさ                  */)
 {
-  register int x;
+  int x;
   int save = 0;
   sj = sjis;
   eu = eujis;
@@ -1181,15 +1138,15 @@ eujis_to_sjis (sjis, eujis, eusiz)
 
 /*      内部 U-jis を S-jis コードに変換します
         文字列の長さを返します                  */
-extern int
-iujis_to_sjis (sjis, iujis, iusiz)
-     unsigned char *sjis;       /*      sjisコードになったものをおくbuf */
-     w_char *iujis;             /*      iujisコードのものをおいてくるbuf */
-     int iusiz;                 /*      iujis の大きさ                  */
+int
+iujis_to_sjis(
+	unsigned char *sjis,       /*      sjisコードになったものをおくbuf */
+	unsigned char *iujis,     /*      iujisコードのものをおいてくるbuf */
+	int iusiz                 /*      iujis の大きさ                  */)
 {
-  register int x;
+  int x;
   sj = sjis;
-  iu = iujis;
+  iu = (w_char *)iujis;
   for (; iusiz > 0; iusiz -= sizeof (w_char))
     {
       if ((x = *iu++) & 0xff00)
@@ -1212,15 +1169,15 @@ iujis_to_sjis (sjis, iujis, iusiz)
 }
 
 int
-sjis_to_iujis (iujis, sjis, ssiz)
-     w_char *iujis;             /* iujisコードになったものをおくbuf */
-     unsigned char *sjis;       /* sjisコードのものをおいてくるbuf */
-     int ssiz;                  /* sjis の大き */
+sjis_to_iujis(
+	unsigned char *iujis,     /* iujisコードになったものをおくbuf */
+	unsigned char *sjis,       /* sjisコードのものをおいてくるbuf */
+	int ssiz                  /* sjis の大き */)
 {
-  register int x;
+  int x;
   int save = 0;
   sj = sjis;
-  iu = iujis;
+  iu = (w_char *)iujis;
   if (save && ssiz > 0)
     {
       *iu++ = (sjtoj (save, *sj++) | 0x8080);
@@ -1250,12 +1207,12 @@ sjis_to_iujis (iujis, sjis, ssiz)
 }
 
 int
-sjis_to_eujis (eujis, sjis, ssiz)
-     unsigned char *eujis;      /*      eujisコードになったものをおくbuf        */
-     unsigned char *sjis;       /*      sjisコードのものをおいてくるbuf */
-     int ssiz;                  /*      sjis の大きさ                   */
+sjis_to_eujis(
+	unsigned char *eujis,      /*      eujisコードになったものをおくbuf        */
+	unsigned char *sjis,       /*      sjisコードのものをおいてくるbuf */
+	int ssiz                  /*      sjis の大きさ                   */)
 {
-  register int x;
+  int x;
   unsigned char *sj;
   int save = 0;
   sj = sjis;
@@ -1294,9 +1251,7 @@ sjis_to_eujis (eujis, sjis, ssiz)
 
 #ifdef  JIS7
 int
-sjis_to_jis (jis, sjis, siz)
-     unsigned char *jis, *sjis;
-     int siz;
+sjis_to_jis(unsigned char *jis, unsigned char *sjis, int siz)
 {
   int len;
   len = sjis_to_eujis (tmp_buf, sjis, siz);
@@ -1305,9 +1260,7 @@ sjis_to_jis (jis, sjis, siz)
 #endif /* JIS7 */
 
 int
-sjis_to_jis8 (jis, sjis, siz)
-     unsigned char *jis, *sjis;
-     int siz;
+sjis_to_jis8(unsigned char *jis, unsigned char *sjis, int siz)
 {
   int len;
   len = sjis_to_eujis (tmp_buf, sjis, siz);
@@ -1315,19 +1268,14 @@ sjis_to_jis8 (jis, sjis, siz)
 }
 
 int
-jis_to_iujis (iujis, jis, jsiz)
-     w_char *iujis;
-     unsigned char *jis;
-     int jsiz;
+jis_to_iujis(unsigned char *iujis, unsigned char *jis, int jsiz)
 {
   designate = JIS_designate;
   return (extc_to_intc (iujis, jis, jsiz));
 }
 
 int
-jis_to_sjis (sjis, jis, siz)
-     unsigned char *sjis, *jis;
-     int siz;
+jis_to_sjis(unsigned char *sjis, unsigned char *jis, int siz)
 {
   int len;
   len = jis_to_iujis (tmp_w_buf, jis, siz);
@@ -1335,10 +1283,7 @@ jis_to_sjis (sjis, jis, siz)
 }
 
 int
-eujis_to_iujis (iujis, eujis, eusiz)
-     w_char *iujis;
-     unsigned char *eujis;
-     int eusiz;
+eujis_to_iujis(unsigned char *iujis, unsigned char *eujis, int eusiz)
 {
   static int first = 0;
   static unsigned int cswidth_id;
@@ -1465,11 +1410,9 @@ code definition determined by "which".  If so, it returns 1. And otherwise
 it returns 0)
 */
 static int
-_is_hanzi (code, which)
-     w_char code;
-     int which;
+_is_hanzi(w_char code, int which)
 {
-  register unsigned char high, low;
+  unsigned char high, low;
 
   if (which == CNS_TO_BIG5)
     {
@@ -1562,12 +1505,10 @@ _is_hanzi (code, which)
    The result Hanzi code is always returned.
 */
 static unsigned int
-_convert (code, which)
-     register w_char code;
-     int which;
+_convert(w_char code, int which)
 {
   unsigned int qu, wei;         /* counting from   1 ------     */
-  register unsigned int location;       /* counting from   0 ----       */
+  unsigned int location;       /* counting from   0 ----       */
   unsigned int loc_wei;         /* counting from   0 ----       */
   int plant;
 
@@ -1859,13 +1800,10 @@ _convert (code, which)
 
 #ifdef  ECNS_IS_UCNS
 int
-ecns_to_icns (icns, ucns, siz)
-     w_char *icns;
-     unsigned char *ucns;
-     int siz;
+ecns_to_icns(unsigned char *icns, unsigned char *ucns, int siz)
 {
-  register w_char *i = icns;
-  register unsigned char *u = ucns, *uend = ucns + siz, x;
+  w_char *i = (w_char *)icns;
+  unsigned char *u = ucns, *uend = ucns + siz, x;
   static w_char local_pending = (w_char) 0;
   static unsigned char shift_mode = '\0';
 
@@ -1939,13 +1877,10 @@ ecns_to_icns (icns, ucns, siz)
 }
 
 int
-icns_to_ecns (ucns, icns, siz)
-     unsigned char *ucns;
-     w_char *icns;
-     int siz;
+icns_to_ecns(unsigned char *ucns, unsigned char *icns, int siz)
 {
-  register unsigned char *u = ucns;
-  register w_char *i = icns, w;
+  unsigned char *u = ucns;
+  w_char *i = (w_char *)icns, w;
 
   for (; siz > 0; siz -= sizeof (w_char))
     {
@@ -1979,16 +1914,13 @@ static int oc_mode = ASCII;
 static unsigned char *cns;
 
 static void
-putcns (x)
-     unsigned char x;
+putcns(int x)
 {
   *cns++ = x;
 }
 
 static void
-cns_change_mode (mode, new_mode)
-     int *mode;
-     int new_mode;
+cns_change_mode(int *mode, int new_mode)
 {
   if (*mode == new_mode)
     return;
@@ -2017,23 +1949,17 @@ cns_change_mode (mode, new_mode)
 }
 
 int
-ecns_to_icns (icns, ecns, siz)
-     w_char *icns;
-     unsigned char *ecns;
-     int siz;
+ecns_to_icns(unsigned char *icns, unsigned char *ecns, int siz)
 {
   designate = CNS_designate;
   return (extc_to_intc (icns, ecns, siz));
 }
 
 int
-icns_to_ecns (ecns, icns, siz)
-     unsigned char *ecns;
-     w_char *icns;
-     int siz;
+icns_to_ecns(unsigned char *ecns, w_char *icns, int siz)
 {
-  register int i = siz;
-  register w_char *ic, x;
+  int i = siz;
+  w_char *ic, x;
   cns = ecns;
 
   for (; i > 0; i -= sizeof (w_char))
@@ -2063,14 +1989,11 @@ icns_to_ecns (ecns, icns, siz)
 #endif /* ECNS_IS_UCNS */
 
 int
-icns_to_big5 (big5, icns, siz)
-     unsigned char *big5;
-     w_char *icns;
-     int siz;
+icns_to_big5(unsigned char *big5, unsigned char *icns, int siz)
 {
-  register unsigned char *d = big5;
-  register w_char *s = icns;
-  register int i = siz;
+  unsigned char *d = big5;
+  w_char *s = (w_char *)icns;
+  int i = siz;
   short code_out;               /* Buffering one two-byte code  */
 
   if (d == NULL || s == NULL)
@@ -2107,9 +2030,7 @@ icns_to_big5 (big5, icns, siz)
 }
 
 int
-ecns_to_big5 (big5, ecns, siz)
-     unsigned char *big5, *ecns;
-     int siz;
+ecns_to_big5(unsigned char *big5, unsigned char *ecns, int siz)
 {
   int len;
   len = ecns_to_icns (tmp_w_buf, ecns, siz);
@@ -2117,13 +2038,10 @@ ecns_to_big5 (big5, ecns, siz)
 }
 
 int
-big5_to_icns (icns, big5, siz)
-     w_char *icns;
-     unsigned char *big5;
-     int siz;
+big5_to_icns(unsigned char *icns, unsigned char *big5, int siz)
 {
-  register w_char *d = icns;
-  register unsigned char *s = big5;
+  w_char *d = icns;
+  unsigned char *s = big5;
   unsigned char *send = s + siz;
   unsigned short code_in;       /* Buffering one two-byte code  */
 
@@ -2159,9 +2077,7 @@ big5_to_icns (icns, big5, siz)
 }
 
 int
-big5_to_ecns (ecns, big5, siz)
-     unsigned char *ecns, *big5;
-     int siz;
+big5_to_ecns(unsigned char *ecns, unsigned char *big5, int siz)
 {
   int len;
   len = big5_to_icns (tmp_w_buf, big5, siz);
@@ -2169,10 +2085,7 @@ big5_to_ecns (ecns, big5, siz)
 }
 
 int
-iugb_to_eugb (eugb, iugb, siz)
-     unsigned char *eugb;
-     w_char *iugb;
-     int siz;
+iugb_to_eugb(unsigned char *eugb, unsigned char *iugb, int siz)
 {
   static int first = 0;
   static unsigned int cswidth_id;
@@ -2187,10 +2100,7 @@ iugb_to_eugb (eugb, iugb, siz)
 }
 
 int
-eugb_to_iugb (iugb, eugb, siz)
-     w_char *iugb;
-     unsigned char *eugb;
-     int siz;
+eugb_to_iugb(unsigned char *iugb, unsigned char *eugb, int siz)
 {
   static int first = 0;
   static unsigned int cswidth_id;
@@ -2215,19 +2125,15 @@ static w_char *iuk;
 static unsigned char *euk;
 
 static void
-putks (x)
-     int x;
+putks(int x)
 {
   *ks++ = x;
 }
 
 static int oks_mode = ASCII;    /* 出力時のKSCコードのモード */
-extern int euksc_to_iuksc ();
 
 static void
-ksc_change_mode (mode, new_mode)
-     int *mode;
-     int new_mode;
+ksc_change_mode(int *mode, int new_mode)
 {
   if (*mode == new_mode)
     return;
@@ -2256,14 +2162,14 @@ ksc_change_mode (mode, new_mode)
 /*      内部 U-ksc を ksc コードに変換します
         文字列の長さを返します                  */
 extern int
-iuksc_to_ksc (ksc, iuksc, iusiz)
-     unsigned char *ksc;        /*      kscコードになったものをおくbuf  */
-     w_char *iuksc;             /*      iukscコードのものをおいてくるbuf */
-     int iusiz;                 /*      iuksc の大きさ                  */
+iuksc_to_ksc(
+	unsigned char *ksc,        /*      kscコードになったものをおくbuf  */
+	unsigned char *iuksc,     /*      iukscコードのものをおいてくるbuf */
+	int iusiz                 /*      iuksc の大きさ                  */)
 {
   int x;
   ks = ksc;
-  iuk = iuksc;
+  iuk = (w_char *)iuksc;
   for (; iusiz > 0; iusiz -= sizeof (w_char))
     {
       x = *iuk++;
@@ -2286,9 +2192,7 @@ iuksc_to_ksc (ksc, iuksc, iusiz)
 
 /*      外部 U-ksc を ksc コードに変換します    */
 extern int
-euksc_to_ksc (ksc, euksc, eusiz)
-     unsigned char *ksc, *euksc;
-     int eusiz;
+euksc_to_ksc(unsigned char *ksc, unsigned char *euksc, int eusiz)
 {
   static int kanji1 = 0;
   static unsigned char kanji1_code = 0;
@@ -2344,10 +2248,7 @@ euksc_to_ksc (ksc, euksc, eusiz)
 
 /*      内部 U-ksc を 外部 U-ksc コードに変換します     */
 extern int
-iuksc_to_euksc (euksc, iuksc, iusiz)
-     unsigned char *euksc;
-     w_char *iuksc;
-     int iusiz;
+iuksc_to_euksc(unsigned char *euksc, unsigned char *iuksc, int iusiz)
 {
   static int first = 0;
   static unsigned int cswidth_id;
@@ -2362,9 +2263,7 @@ iuksc_to_euksc (euksc, iuksc, iusiz)
 }
 
 int
-ksc_to_euksc (euksc, ksc, jsiz)
-     unsigned char *euksc, *ksc;
-     int jsiz;
+ksc_to_euksc(unsigned char *euksc, unsigned char *ksc, int jsiz)
 {
   int len;
 
@@ -2374,20 +2273,14 @@ ksc_to_euksc (euksc, ksc, jsiz)
 }
 
 int
-ksc_to_iuksc (iuksc, ksc, jsiz)
-     w_char *iuksc;
-     unsigned char *ksc;
-     int jsiz;
+ksc_to_iuksc(unsigned char *iuksc, unsigned char *ksc, int jsiz)
 {
   designate = KSC_designate;
   return (extc_to_intc (iuksc, ksc, jsiz));
 }
 
 int
-euksc_to_iuksc (iuksc, euksc, eusiz)
-     w_char *iuksc;
-     unsigned char *euksc;
-     int eusiz;
+euksc_to_iuksc(unsigned char *iuksc, unsigned char *euksc, int eusiz)
 {
   static int first = 0;
   static unsigned int cswidth_id;

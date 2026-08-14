@@ -105,8 +105,7 @@ extern int errno;
  * 戻り値	なし
  */
 void
-GlineClear(d)
-uiContext d;
+GlineClear(uiContext d)
 {
   d->kanji_status_return->info |= KanjiGLineInfo;
   d->kanji_status_return->gline.line = (wchar_t *)NULL;
@@ -122,8 +121,7 @@ uiContext d;
  */
 
 static void
-Gline2echostr(d)
-uiContext d;
+Gline2echostr(uiContext d)
 {
   d->kanji_status_return->echoStr =
     d->kanji_status_return->gline.line;
@@ -137,8 +135,7 @@ uiContext d;
 }
 
 void
-echostrClear(d)
-uiContext d;
+echostrClear(uiContext d)
 {
   d->kanji_status_return->echoStr = (wchar_t *)NULL;
   d->kanji_status_return->length =
@@ -150,9 +147,7 @@ uiContext d;
  */
 
 static int
-colwidth(s, len)
-wchar_t *s;
-int     len;
+colwidth(wchar_t *s, int len)
 {
   int ret = 0;
   wchar_t *es = s + len;
@@ -182,8 +177,7 @@ int     len;
  */
 
 int
-checkGLineLen(d)
-uiContext d;
+checkGLineLen(uiContext d)
 {
   if (d->kanji_status_return->info & KanjiGLineInfo) {
     if (colwidth(d->kanji_status_return->gline.line,
@@ -202,8 +196,7 @@ uiContext d;
  */
 
 int
-NothingChanged(d)
-uiContext d;
+NothingChanged(uiContext d)
 {
   d->kanji_status_return->length = -1; /* 変わらない。 */
   d->kanji_status_return->revPos 
@@ -213,8 +206,7 @@ uiContext d;
 }
 
 int
-NothingForGLine(d)
-uiContext d;
+NothingForGLine(uiContext d)
 {
   d->kanji_status_return->length = -1; /* 変わらない。 */
   d->kanji_status_return->revPos 
@@ -223,9 +215,9 @@ uiContext d;
 }
 
 void
-CannaBeep()
+CannaBeep(void)
 {
-  extern int (*jrBeepFunc) pro((void));
+  extern int (*jrBeepFunc)(void);
 
   if (jrBeepFunc) {
     jrBeepFunc();
@@ -233,16 +225,14 @@ CannaBeep()
 }
 
 int
-NothingChangedWithBeep(d)
-uiContext d;
+NothingChangedWithBeep(uiContext d)
 {
   CannaBeep();
   return NothingChanged(d);
 }
 
 int
-NothingForGLineWithBeep(d)
-uiContext d;
+NothingForGLineWithBeep(uiContext d)
 {
   CannaBeep();
   return NothingForGLine(d);
@@ -250,8 +240,8 @@ uiContext d;
 
 #ifdef SOMEONE_USE_THIS
 /* 誰も使っていないみたい。 */
-Insertable(ch)
-unsigned char ch;
+int
+Insertable(int ch)
 {
   if ((0x20 <= ch && ch <= 0x7f) || (0xa0 <= ch && ch <= 0xff)) {
     return 1;
@@ -262,8 +252,8 @@ unsigned char ch;
 }
 #endif /* SOMEONE_USE_THIS */
 
-extern int extractJishuString pro((yomiContext, wchar_t *,  wchar_t *,
-				   wchar_t **,  wchar_t **));
+extern int extractJishuString(yomiContext, wchar_t *,  wchar_t *,
+				   wchar_t **,  wchar_t **);
 
 /*
   extractSimpleYomiString -- yomiContext の読み部分だけを取り出す
@@ -278,16 +268,11 @@ extern int extractJishuString pro((yomiContext, wchar_t *,  wchar_t *,
      focused -- indicates yc is focused or not
  */
 
-static int extractSimpleYomiString
-  pro((yomiContext, wchar_t *, wchar_t *, wchar_t **, wchar_t **,
-       wcKanjiAttributeInternal *, int));
+static int extractSimpleYomiString(yomiContext, wchar_t *, wchar_t *, wchar_t **, wchar_t **,
+       wcKanjiAttributeInternal *, int);
 
 static int
-extractSimpleYomiString(yc, s, e, sr, er, pat, focused)
-yomiContext yc;
-wchar_t *s, *e, **sr, **er;
-wcKanjiAttributeInternal *pat;
-int focused;
+extractSimpleYomiString(yomiContext yc, wchar_t *s, wchar_t *e, wchar_t **sr, wchar_t **er, wcKanjiAttributeInternal *pat, int focused)
 {
   int len = yc->kEndp - yc->cStartp;
 
@@ -359,17 +344,11 @@ int focused;
      focused -- focus is on this yc.
  */
 
-static int extractKanjiString
-  pro((yomiContext, wchar_t *, wchar_t *, int, wchar_t **, wchar_t **,
-       wcKanjiAttributeInternal *, int));
+static int extractKanjiString(yomiContext, wchar_t *, wchar_t *, int, wchar_t **, wchar_t **,
+       wcKanjiAttributeInternal *, int);
 
 static int
-extractKanjiString(yc, s, e, b, sr, er, pat, focused)
-yomiContext yc;
-wchar_t *s, *e, **sr, **er;
-int b;
-wcKanjiAttributeInternal *pat;
-int focused;
+extractKanjiString(yomiContext yc, wchar_t *s, wchar_t *e, int b, wchar_t **sr, wchar_t **er, wcKanjiAttributeInternal *pat, int focused)
 {
   wchar_t *ss = s;
   int i, len, nbun;
@@ -467,17 +446,11 @@ int focused;
      focused -- The yc is now focused.
  */
 
-static int extractYomiString
-  pro((yomiContext, wchar_t *, wchar_t *, int, wchar_t **, wchar_t **,
-       wcKanjiAttributeInternal *, int));
+static int extractYomiString(yomiContext, wchar_t *, wchar_t *, int, wchar_t **, wchar_t **,
+       wcKanjiAttributeInternal *, int);
 
 static int
-extractYomiString(yc, s, e, b, sr, er, pat, focused)
-yomiContext yc;
-wchar_t *s, *e, **sr, **er;
-int b;
-wcKanjiAttributeInternal *pat;
-int focused;
+extractYomiString(yomiContext yc, wchar_t *s, wchar_t *e, int b, wchar_t **sr, wchar_t **er, wcKanjiAttributeInternal *pat, int focused)
 {
   int autoconvert = yc->generalFlags & CANNA_YOMI_CHIKUJI_MODE, len;
   wchar_t *ss = s;
@@ -533,8 +506,7 @@ int focused;
 }
 
 static int
-extractString(str, s, e)
-wchar_t *str, *s, *e;
+extractString(wchar_t *str, wchar_t *s, wchar_t *e)
 {
   int len;
 
@@ -559,9 +531,7 @@ wchar_t *str, *s, *e;
  */
 
 int
-extractTanString(tan, s, e)
-tanContext tan;
-wchar_t *s, *e;
+extractTanString(tanContext tan, wchar_t *s, wchar_t *e)
 {
   return extractString(tan->kanji, s, e);
 }
@@ -576,9 +546,7 @@ wchar_t *s, *e;
  */
 
 int
-extractTanYomi(tan, s, e)
-tanContext tan;
-wchar_t *s, *e;
+extractTanYomi(tanContext tan, wchar_t *s, wchar_t *e)
 {
   return extractString(tan->yomi, s, e);
 }
@@ -593,17 +561,13 @@ wchar_t *s, *e;
  */
 
 int
-extractTanRomaji(tan, s, e)
-tanContext tan;
-wchar_t *s, *e;
+extractTanRomaji(tanContext tan, wchar_t *s, wchar_t *e)
 {
   return extractString(tan->roma, s, e);
 }
 
 void
-makeKanjiStatusReturn(d, yc)
-uiContext d;
-yomiContext yc;
+makeKanjiStatusReturn(uiContext d, yomiContext yc)
 {
   int len;
   wchar_t *s = d->genbuf, *e = s + ROMEBUFSIZE, *sr, *er, *sk, *ek;
@@ -686,10 +650,7 @@ yomiContext yc;
  * 次の入力があったときに消えるようにフラグを設定する
  */
 void
-makeGLineMessage(d, msg, sz)
-uiContext d;
-wchar_t *msg;
-int sz;
+makeGLineMessage(uiContext d, wchar_t *msg, int sz)
 {
   static wchar_t messbuf[MESSBUFSIZE];
   int len = sz < MESSBUFSIZE ? sz : MESSBUFSIZE - 1;
@@ -708,9 +669,7 @@ int sz;
 }
 
 void
-makeGLineMessageFromString(d, msg)
-uiContext d;
-char  *msg;
+makeGLineMessageFromString(uiContext d, char *msg)
 {
   int len;
 
@@ -719,10 +678,7 @@ char  *msg;
 }
 
 int
-setWStrings(ws, s, sz)
-wchar_t **ws;
-char **s;
-int sz;
+setWStrings(wchar_t **ws, char **s, int sz)
 {
   int f = sz;
   wchar_t *WString();
@@ -737,17 +693,16 @@ int sz;
 }
 
 #ifdef DEBUG
-dbg_msg(fmt, x, y, z)
-char *fmt;
-int x, y, z;
+int
+dbg_msg(char *fmt, int x, int y, int z)
 {
   if (iroha_debug) {
     fprintf(stderr, fmt, x, y, z);
   }
 }
 
-checkModec(d)
-uiContext d;
+int
+checkModec(uiContext d)
 {
   coreContext c;
   struct callback *cb;
@@ -787,8 +742,8 @@ uiContext d;
 
 static char pbufstr[] = " o|do?b%";
 
-showRomeStruct(dpy, win)
-unsigned int dpy, win;
+int
+showRomeStruct(unsigned int dpy, unsigned int win)
 {
   uiContext d, keyToContext();
   extern int defaultContext;
@@ -864,7 +819,7 @@ unsigned int dpy, win;
 extern char *jrKanjiError;
 
 int
-NoMoreMemory()
+NoMoreMemory(void)
 {
   jrKanjiError = "\245\341\245\342\245\352\244\254\311\324\302\255\244\267\244\306\244\244\244\336\244\271\241\243";
                 /* メモリが不足しています。 */
@@ -872,8 +827,7 @@ NoMoreMemory()
 }
 
 int
-GLineNGReturn(d)
-uiContext d;
+GLineNGReturn(uiContext d)
 {
   int len;
   len = MBstowcs(d->genbuf, jrKanjiError, ROMEBUFSIZE);
@@ -884,8 +838,7 @@ uiContext d;
 }
 
 int
-GLineNGReturnFI(d)
-uiContext d;
+GLineNGReturnFI(uiContext d)
 {
   popForIchiranMode(d);
   popCallback(d);
@@ -896,10 +849,9 @@ uiContext d;
 #ifndef NO_EXTEND_MENU
 
 int
-GLineNGReturnTK(d)
-uiContext d;
+GLineNGReturnTK(uiContext d)
 {
-  extern void popTourokuMode pro((uiContext));
+  extern void popTourokuMode(uiContext);
   popTourokuMode(d);
   popCallback(d);
   GLineNGReturn(d);
@@ -909,10 +861,8 @@ uiContext d;
 #endif /* NO_EXTEND_MENU */
 
 #ifdef USE_COPY_ATTRIBUTE
-copyAttribute(dest, src, n)
-     BYTE	*dest;
-     BYTE	*src;
-     int	n;
+int
+copyAttribute(BYTE *dest, BYTE *src, int n)
 {
   if (dest > src && dest < src + n) {
     dest += n;
@@ -935,8 +885,7 @@ int fail_malloc = 0;
 #undef malloc
 
 char *
-debug_malloc(n)
-int n;
+debug_malloc(int n)
 {
   if (fail_malloc)
     return (char *)0;
@@ -951,8 +900,7 @@ int n;
  */
 
 int
-WStrlen(ws)
-wchar_t *ws;
+WStrlen(wchar_t *ws)
 {
   int res = 0;
   while (*ws++) {
@@ -962,8 +910,7 @@ wchar_t *ws;
 }
 
 wchar_t *
-WStrcpy(ws1, ws2)
-wchar_t *ws1, *ws2;
+WStrcpy(wchar_t *ws1, wchar_t *ws2)
 {
   wchar_t *ws;
   int cnt, len;
@@ -989,9 +936,7 @@ wchar_t *ws1, *ws2;
 }
 
 wchar_t *
-WStrncpy(ws1, ws2, cnt)
-wchar_t *ws1, *ws2;
-int cnt;
+WStrncpy(wchar_t *ws1, wchar_t *ws2, int cnt)
 {
   wchar_t *ws;
 
@@ -1013,9 +958,7 @@ int cnt;
 }
 
 wchar_t *
-WStraddbcpy(ws1, ws2, cnt)
-wchar_t	*ws1, *ws2;
-int cnt;
+WStraddbcpy(wchar_t *ws1, wchar_t *ws2, int cnt)
 {
   wchar_t *strp = ws1, *endp = ws1 + cnt - 1;
 
@@ -1032,8 +975,7 @@ int cnt;
 }
 
 wchar_t *
-WStrcat(ws1, ws2)
-wchar_t *ws1, *ws2;
+WStrcat(wchar_t *ws1, wchar_t *ws2)
 {
   wchar_t *ws;
 
@@ -1046,8 +988,7 @@ wchar_t *ws1, *ws2;
 }
 
 int
-WStrcmp(w1, w2)
-wchar_t *w1, *w2;
+WStrcmp(wchar_t *w1, wchar_t *w2)
 {
   while (*w1 && *w1 == *w2) {
     w1++;
@@ -1057,9 +998,7 @@ wchar_t *w1, *w2;
 }
 
 int
-WStrncmp(w1, w2, n)
-wchar_t *w1, *w2;
-int n;
+WStrncmp(wchar_t *w1, wchar_t *w2, int n)
 {
   if (n == 0) return(0);
   while (--n && *w1 && *w1 == *w2) {
@@ -1151,10 +1090,7 @@ wchar_t wc;
 }
 
 int
-CANNA_mbstowcs(dest, src, destlen)
-wchar_t *dest;
-char *src;
-int destlen;
+CANNA_mbstowcs(wchar_t *dest, char *src, int destlen)
 {
   register int i, j;
   register unsigned ec;
@@ -1219,10 +1155,7 @@ int destlen;
 }
 
 int
-CNvW2E(src, srclen, dest, destlen)
-wchar_t *src;
-char *dest;
-int srclen, destlen;
+CNvW2E(wchar_t *src, int srclen, char *dest, int destlen)
 {
   register int i, j;
 
@@ -1286,10 +1219,7 @@ int srclen, destlen;
 }
 
 int
-CANNA_wcstombs(dest, src, destlen)
-char *dest;
-wchar_t *src;
-int destlen;
+CANNA_wcstombs(char *dest, wchar_t *src, int destlen)
 {
   return CNvW2E(src, WStrlen(src), dest, destlen);
 }
@@ -1321,14 +1251,13 @@ static int nwsmemories = 0;
 #define WSBLOCKSIZE 128
 
 int
-WStringOpen()
+WStringOpen(void)
 {
   return 0;
 }
 
 wchar_t *
-WString(s)
-char *s;
+WString(char *s)
 {
   int i, len;
   wchar_t *temp, **wm;
@@ -1374,7 +1303,7 @@ char *s;
 }
 
 void
-WStringClose()
+WStringClose(void)
 {
   int i;
 
@@ -1387,8 +1316,7 @@ WStringClose()
 }
 
 int
-WSfree(s)
-     wchar_t *s;
+WSfree(wchar_t *s)
 {
   int	i;
   wchar_t **t;
@@ -1452,10 +1380,7 @@ WSfree(s)
 */
 
 void
-generalReplace(buf, attr, startp, cursor, endp, bytes, rplastr, len, attrmask)
-wchar_t *buf, *rplastr;
-BYTE *attr;
-int *startp, *cursor, *endp,  bytes, len, attrmask; 
+generalReplace(wchar_t *buf, BYTE *attr, int *startp, int *cursor, int *endp, int bytes, wchar_t *rplastr, int len, int attrmask)
 { 
   int idou, begin, end, i; 
   int cursorMove;
@@ -1535,9 +1460,7 @@ wchar_t w;
  */
 
 wchar_t
-key2wchar(key, check)
-int key;
-int *check;
+key2wchar(int key, int *check)
 {
   *check = 1; /* Success as default */
   if (161 <= key && key <= 223) { /* カタカナの範囲だったら */
@@ -1561,9 +1484,7 @@ int *check;
 }
 
 int
-confirmContext(d, yc)
-uiContext d;
-yomiContext yc;
+confirmContext(uiContext d, yomiContext yc)
 {
   extern int defaultContext;
 
@@ -1594,9 +1515,7 @@ yomiContext yc;
 }
 
 int
-abandonContext(d, yc)
-uiContext d;
-yomiContext yc;
+abandonContext(uiContext d, yomiContext yc)
 {
   extern int defaultContext;
 
@@ -1613,9 +1532,7 @@ yomiContext yc;
 }
 
 int
-makeRkError(d, str)
-uiContext d;
-char *str;
+makeRkError(uiContext d, char *str)
 {
   if (errno == EPIPE) {
     jrKanjiPipeError();
@@ -1628,8 +1545,7 @@ char *str;
 /* 以下メッセージを gline に出すための仕組み */
 
 static int
-ProcAnyKey(d)
-uiContext d;
+ProcAnyKey(uiContext d)
 {
   coreContext cc = (coreContext)d->modec;
 
@@ -1641,15 +1557,10 @@ uiContext d;
   return 0;
 }
 
-static int wait_anykey_func pro((uiContext, KanjiMode, int, int, int));
+static int wait_anykey_func(uiContext, KanjiMode, int, int, int);
 
 static int
-wait_anykey_func(d, mode, whattodo, key, fnum)
-uiContext d;
-KanjiMode mode;
-int whattodo;
-int key;
-int fnum;
+wait_anykey_func(uiContext d, KanjiMode mode, int whattodo, int key, int fnum)
 /* ARGSUSED */
 {
   switch (whattodo) {
@@ -1670,12 +1581,10 @@ static KanjiModeRec canna_message_mode = {
 };
 
 static void
-cannaMessageMode(d, cnt)
-uiContext d;
-canna_callback_t cnt;
+cannaMessageMode(uiContext d, canna_callback_t cnt)
 {
   coreContext cc;
-  extern coreContext newCoreContext pro((void));
+  extern coreContext newCoreContext(void);
 
 
   cc = newCoreContext();
@@ -1713,10 +1622,7 @@ canna_callback_t cnt;
  */
 
 int
-canna_alert(d, message, cnt)
-uiContext d;
-char *message;
-canna_callback_t cnt;
+canna_alert(uiContext d, char *message, canna_callback_t cnt)
 {
   d->nbytes = 0;
 
@@ -1726,7 +1632,7 @@ canna_callback_t cnt;
 }
 
 char *
-KanjiInitError()
+KanjiInitError(void)
 {
   return "\244\253\244\312\264\301\273\372\312\321\264\271\245\265"
     "\241\274\245\320\244\310\304\314\277\256\244\307\244\255\244\336"

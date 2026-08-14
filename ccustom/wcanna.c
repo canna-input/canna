@@ -45,7 +45,7 @@ extern int kouho_threshold, gramaticalQuestion;
 extern int kCount,kojin,chikuji,nKouhoBunsetsu;
 extern int abandonIllegalPhono, hexCharacterDefiningStyle,allowNextInput;
 extern int indexhankaku,ignorecase,romajiyuusen,autosync,nkeysuu,quicklyescape;
-extern char *mode_mei[], null_mode[];
+extern char *mode_mei[], *null_mode[];
 extern char *mode_ichiran2[], *mode_ichiran3[];
 extern char *allKey[], *alphaKey[], *yomiganaiKey[];
 extern char *yomiKey[], *jishuKey[], *tankouhoKey[];
@@ -61,7 +61,8 @@ extern int NzenHiraKeyFunc, NzenKataKeyFunc, NzenAlphaKeyFunc;
 extern int NhanKataKeyFunc, NhanAlphaKeyFunc;
 
 #ifdef NEWGEN
-init_mode_mei()
+int
+init_mode_mei(void)
 {
   int i;
   for (i = 0; i < 40; i++) {
@@ -70,7 +71,8 @@ init_mode_mei()
   }
 }
 
-free_mode_mei()
+int
+free_mode_mei(void)
 {
   int i;
   for (i = 0; i < 40; i++) {
@@ -82,8 +84,7 @@ free_mode_mei()
 #endif /* NEWGEN */
 
 char *
-toTnil(suuji)
-int suuji;
+toTnil(int suuji)
 {
   if (suuji == ON)
     return "t";
@@ -94,9 +95,7 @@ int suuji;
 }
 
 static void
-printkey(f, key)
-FILE *f;
-unsigned char key;
+printkey(FILE *f, int key)
 {
   if ((unsigned)('A' - '@') <= (unsigned)key &&
       (unsigned)key <= (unsigned)('Z' - '@')) {
@@ -253,9 +252,7 @@ unsigned char key;
 }
 
 static void
-chkeyfn(f, actbuff, keybuff)
-FILE *f;
-unsigned char *actbuff, *keybuff;
+chkeyfn(FILE *f, unsigned char *actbuff, unsigned char *keybuff)
 {
   unsigned char *p;
 
@@ -279,9 +276,7 @@ unsigned char *actbuff, *keybuff;
 }
 
 static void
-chkeyrest(f, actbuff, keybuff)
-FILE *f;
-unsigned char *actbuff, *keybuff;
+chkeyrest(FILE *f, unsigned char *actbuff, unsigned char *keybuff)
 {
   unsigned char *p;
 
@@ -299,9 +294,7 @@ unsigned char *actbuff, *keybuff;
 }
 
 char *
-print_acbuff(f, acts, keys)
-FILE *f;
-unsigned char *acts, *keys;
+print_acbuff(FILE *f, unsigned char *acts, unsigned char *keys)
 {
   if (keys[0] == CANNA_KEY_Undefine) {
     fprintf(f, "(%s", S_GUnbindKey);
@@ -314,9 +307,8 @@ unsigned char *acts, *keys;
   return 0;
 }
 
-print_cbuff(f, acts, keys)
-FILE *f;
-unsigned char *acts, *keys;
+int
+print_cbuff(FILE *f, unsigned char *acts, unsigned char *keys)
 {
   /* (set-key mode "keysequence" 'function)
      (set-key mode "keysequence" (sequence 'function1 'function2 ...)) */
@@ -333,9 +325,7 @@ unsigned char *acts, *keys;
 }
 
 static void
-mode_style(f, mode, display, isnull)
-FILE *f;
-char *mode, *display, *isnull;
+mode_style(FILE *f, char *mode, char *display, char *isnull)
 {
   if (!isnull) {
     if (display) {
@@ -347,8 +337,8 @@ char *mode, *display, *isnull;
   }
 }
 
-write_canna(f)
-FILE *f;
+int
+write_canna(FILE *f)
 {
   int i;
   char romkana[255];

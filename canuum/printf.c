@@ -31,83 +31,63 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdarg.h>
 #include "commonhd.h"
 #include "sdefine.h"
 #include "sheader.h"
 
 extern int cursor_colum;
 
-int
-char_q_len (x)
-     w_char x;
+static int
+char_q_len(w_char x)
 {
   return ((*char_q_len_func) (x));
 }
 
-#if defined(__STDC__) && defined(HAVE_SNPRINTF)
-#include <stdarg.h>
-static void
+static int
 VFPRINTF(FILE *file, const char *format, va_list ap)
 {
   char buf2[512];
+  int r;
 
-  vsnprintf(buf2, sizeof buf2, format, ap);
+  r = vsnprintf(buf2, sizeof buf2, format, ap);
   cursor_colum += eu_columlen ((unsigned char *)buf2);
   puteustring (buf2, file);
+  return r;
 }
 
-void
+int
 FPRINTF(FILE *file, const char *format, ...)
 {
   va_list ap;
+  int r;
 
   va_start(ap, format);
-  VFPRINTF(file, format, ap);
+  r = VFPRINTF(file, format, ap);
   va_end(ap);
+  return r;
 }
 
-void
+int
 PRINTF(const char *format, ...)
 {
   va_list ap;
+  int r;
 
   va_start(ap, format);
-  VFPRINTF(stdout, format, ap);
+  r = VFPRINTF(stdout, format, ap);
   va_end(ap);
-}
-#else /* !__STDC__ || !HAVE_SNPRINTF */
-void
-fprintf (file, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13)
-     FILE *file;
-     char *x2, *x3, *x4, *x5, *x6, *x7, *x8, *x9, *x10, *x11, *x12, *x13;
-{
-  char buf2[512];
-
-  sprintf (buf2, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13);
-  cursor_colum += eu_columlen ((unsigned char *)buf2);
-
-  puteustring (buf2, file);
+  return r;
 }
 
 void
-printf (format, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13)
-     char *format;
-     char *x3, *x4, *x5, *x6, *x7, *x8, *x9, *x10, *x11, *x12, *x13;
+puteustring(char *buf2, FILE *file)
 {
-  fprintf (stdout, format, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13);
-}
-#endif /* !__STDC__ && !HAVE_SNPRINTF*/
+  unsigned char buf[512];
+  int len;
+  unsigned char *c;
 
-void
-puteustring (buf2, file)
-     char *buf2;
-     FILE *file;
-{
-  char buf[512];
-  register int len;
-  register char *c;
-
-  len = (*code_trans[(file_code << 2) | tty_c_flag]) (buf, buf2, strlen (buf2) + 1);
+  len = (*code_trans[(file_code << 2) | tty_c_flag]) (buf, (unsigned char *)buf2, strlen (buf2) + 1);
   for (c = buf, len--; len > 0; len--, c++)
     {
       putc (*c, file);
@@ -119,8 +99,7 @@ static w_char w_buf[W_BUFLEN];
 static int w_maxbuf = 0;
 
 int
-w_putchar (w)
-     w_char w;
+w_putchar(w_char w)
 {
   w_char wch = w;
   w_char tmp_wch[10];
@@ -165,8 +144,7 @@ w_putchar (w)
 }
 
 void
-putchar_norm (c)
-     int c;
+putchar_norm(int c)
 {
   push_hrus ();
   putchar1 (c);
@@ -174,8 +152,7 @@ putchar_norm (c)
 }
 
 void
-putchar1 (c)
-     int c;
+putchar1(int c)
 {
   putchar (c);
   flush ();
@@ -183,13 +160,13 @@ putchar1 (c)
 }
 
 void
-flushw_buf ()
+flushw_buf(void)
 {
-  register char *c;
-  register int len;
+  unsigned char *c;
+  int len;
 
-  static char buf[W_BUFLEN * 8];
-  len = (*code_trans[(internal_code << 2) | tty_c_flag]) (buf, w_buf, sizeof (w_char) * w_maxbuf);
+  static unsigned char buf[W_BUFLEN * 8];
+  len = (*code_trans[(internal_code << 2) | tty_c_flag]) (buf, (unsigned char *)w_buf, sizeof (w_char) * w_maxbuf);
   for (c = buf; len > 0; len--, c++)
     {
       putchar (*c);
@@ -198,9 +175,8 @@ flushw_buf ()
   flush ();
 }
 
-extern char *wnn_perror ();
 void
-errorkeyin ()
+errorkeyin(void)
 {
   push_cursor ();
   throw_c (0);

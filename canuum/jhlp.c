@@ -153,18 +153,31 @@ extern int optind;
 extern char *ttyname ();
 #endif /* !HAVE_UNISTD_H */
 
-static void save_signals ();
-static void restore_signals ();
+static int j_term_init(void);
+static void save_signals(void);
+static void restore_signals(void);
 
-static RETSIGTYPE terminate_handler ();
-static void do_end (), open_pty (), open_ttyp (), do_main (), exec_cmd (), parse_options (), setsize (), get_rubout (), usage (), change_size (), default_usage ();
-static void j_term_save (), j_term_restore (), j_term_p_init (int);
+static RETSIGTYPE chld_handler(int sig);
+static RETSIGTYPE resize_handler(int sig);
+static RETSIGTYPE terminate_handler(int sig);
+static void do_end(void);
+static void open_pty(void);
+static void open_ttyp(void);
+static void do_main(void);
+static void exec_cmd(char **argv);
+static void parse_options(int argc, char **argv);
+static void setsize(void);
+static void get_rubout(void);
+static void usage (char *optstr);
+static void change_size(void);
+static void default_usage(void);
+static void j_term_save(void);
+static void j_term_restore(void);
+static void j_term_p_init(int ttypfd);
 
 /** メイン */
 int
-main (argc, argv)
-     int argc;
-     char **argv;
+main(int argc, char **argv)
 {
 
   char *name;
@@ -174,7 +187,6 @@ main (argc, argv)
   char *server_env;
   char errprefix[1024] = "error";
   int i;
-  extern char *get_server_env ();
 
   prog = argv[0];
   flow_control = FLOW_CONTROL;
@@ -387,7 +399,7 @@ main (argc, argv)
   switch (init_uum ())
     {                           /* initialize of kana-kanji henkan */
     case -1:
-      terminate_handler ();
+      terminate_handler (SIGINT);
       break;
     case -2:
       epilogue ();
@@ -441,7 +453,7 @@ main (argc, argv)
  */
 
 static int
-do_h_opt ()
+do_h_opt(void)
 {
   henkan_off_flag = 1;
   defined_by_option |= OPT_WAKING_UP_MODE;
@@ -449,7 +461,7 @@ do_h_opt ()
 }
 
 static int
-do_H_opt ()
+do_H_opt(void)
 {
   henkan_off_flag = 0;
   defined_by_option |= OPT_WAKING_UP_MODE;
@@ -458,42 +470,42 @@ do_H_opt ()
 
 #ifdef  JAPANESE
 int
-do_u_opt ()
+do_u_opt(void)
 {
   pty_c_flag = J_EUJIS;
   return 0;
 }
 
 int
-do_j_opt ()
+do_j_opt(void)
 {
   pty_c_flag = J_JIS;
   return 0;
 }
 
 int
-do_s_opt ()
+do_s_opt(void)
 {
   pty_c_flag = J_SJIS;
   return 0;
 }
 
 int
-do_U_opt ()
+do_U_opt(void)
 {
   tty_c_flag = J_EUJIS;
   return 0;
 }
 
 int
-do_J_opt ()
+do_J_opt(void)
 {
   tty_c_flag = J_JIS;
   return 0;
 }
 
 int
-do_S_opt ()
+do_S_opt(void)
 {
   tty_c_flag = J_SJIS;
   return 0;
@@ -502,28 +514,28 @@ do_S_opt ()
 
 #ifdef  CHINESE
 int
-do_b_opt ()
+do_b_opt(void)
 {
   pty_c_flag = C_BIG5;
   return 0;
 }
 
 int
-do_t_opt ()
+do_t_opt(void)
 {
   pty_c_flag = C_ECNS11643;
   return 0;
 }
 
 int
-do_B_opt ()
+do_B_opt(void)
 {
   tty_c_flag = C_BIG5;
   return 0;
 }
 
 int
-do_T_opt ()
+do_T_opt(void)
 {
   tty_c_flag = C_ECNS11643;
   return 0;
@@ -532,14 +544,14 @@ do_T_opt ()
 
 #ifdef KOREAN
 int
-do_u_opt ()
+do_u_opt(void)
 {
   pty_c_flag = K_EUKSC;
   return 0;
 }
 
 int
-do_U_opt ()
+do_U_opt(void)
 {
   tty_c_flag = K_EUKSC;
   return 0;
@@ -547,14 +559,14 @@ do_U_opt ()
 #endif /* KOREAN */
 
 static int
-do_P_opt ()
+do_P_opt(void)
 {
   sleep (20);
   return 0;
 }
 
 static int
-do_x_opt ()
+do_x_opt(void)
 {
   flow_control = 0;
   defined_by_option |= OPT_FLOW_CTRL;
@@ -562,7 +574,7 @@ do_x_opt ()
 }
 
 static int
-do_X_opt ()
+do_X_opt(void)
 {
   flow_control = 1;
   defined_by_option |= OPT_FLOW_CTRL;
@@ -570,7 +582,7 @@ do_X_opt ()
 }
 
 static int
-do_k_opt ()
+do_k_opt(void)
 {
   strncpy(uumkey_name_in_uumrc, optarg, PATHNAMELEN-1);
   uumkey_name_in_uumrc[PATHNAMELEN-1] = '\0';
@@ -583,7 +595,7 @@ do_k_opt ()
 }
 
 static int
-do_c_opt ()
+do_c_opt(void)
 {
   strncpy(convkey_name_in_uumrc, optarg, PATHNAMELEN-1);
   convkey_name_in_uumrc[PATHNAMELEN-1] = '\0';
@@ -596,7 +608,7 @@ do_c_opt ()
 }
 
 static int
-do_r_opt ()
+do_r_opt(void)
 {
   strncpy(rkfile_name_in_uumrc, optarg, PATHNAMELEN-1);
   rkfile_name_in_uumrc[PATHNAMELEN-1] = '\0';
@@ -609,14 +621,14 @@ do_r_opt ()
 }
 
 static int
-do_l_opt ()
+do_l_opt(void)
 {
   conv_lines = atoi (optarg);
   return 0;
 }
 
 static int
-do_D_opt ()
+do_D_opt(void)
 {
   strncpy(def_servername, optarg, PATHNAMELEN-1);
   def_servername[PATHNAMELEN-1] = '\0';
@@ -629,7 +641,7 @@ do_D_opt ()
 }
 
 static int
-do_n_opt ()
+do_n_opt(void)
 {
   strncpy(username, optarg, PATHNAMELEN-1);
   username[PATHNAMELEN-1] = '\0';
@@ -641,7 +653,7 @@ do_n_opt ()
 }
 
 static int
-do_v_opt ()
+do_v_opt(void)
 {
   defined_by_option |= OPT_VERBOSE;
   return 0;
@@ -664,15 +676,13 @@ static int (*do_opt[]) () =
 };
 
 static void
-parse_options (argc, argv)
-     int argc;
-     char **argv;
+parse_options(int argc, char **argv)
 {
-  register int c;
-  register char *default_getoptstr = GETOPTSTR;
-  register char *default_ostr = OPTIONS;
+  int c;
+  char *default_getoptstr = GETOPTSTR;
+  char *default_ostr = OPTIONS;
   char ostr[64];
-  register char *p;
+  char *p;
 
   strcpy (ostr, default_getoptstr);
   strcat (ostr, lang_db->getoptstr);
@@ -712,7 +722,7 @@ static int local_mode_sv;
 
 
 static void
-get_rubout ()
+get_rubout(void)
 {
 #ifdef nodef
   if (savetmio.sg_erase == UNDEF_STTY)
@@ -728,8 +738,8 @@ get_rubout ()
 #endif
 }
 
-int
-j_term_init ()
+static int
+j_term_init(void)
 {
   struct sgttyb buf;
 
@@ -745,7 +755,7 @@ j_term_init ()
 }
 
 static void
-j_term_save ()
+j_term_save(void)
 {
   ioctl (ttyfd, TIOCGETC, &tcharsv);
   ioctl (ttyfd, TIOCGLTC, &ltcharsv);
@@ -763,7 +773,7 @@ j_term_save ()
 }
 
 static void
-j_term_restore ()
+j_term_restore(void)
 {
   ioctl (ttyfd, TIOCSETP, &savetmio);
 #ifdef SET_PASS8
@@ -772,8 +782,7 @@ j_term_restore ()
 }
 
 static void
-j_term_p_init (ttypfd)
-  int ttypfd;
+j_term_p_init(int ttypfd)
 {
   int word;
   ioctl (ttypfd, TIOCSETC, &tcharsv);
@@ -818,8 +827,7 @@ j_term_p_init (ttypfd)
 struct TERMIO savetmio;
 
 static void
-set_default_termio (terms)
-  struct TERMIO *terms;
+set_default_termio (struct TERMIO *terms)
 {
   bzero (terms, sizeof *terms);
   terms->c_iflag = IGNBRK | ICRNL | IXON;
@@ -866,7 +874,7 @@ struct auxtermio auxterm = {
 #endif /* defined(uniosu) */
 
 static void
-get_rubout ()
+get_rubout(void)
 {
   if (savetmio.c_cc[VERASE] == UNDEF_STTY)
     {
@@ -878,8 +886,8 @@ get_rubout ()
     }
 }
 
-int
-j_term_init ()
+static int
+j_term_init(void)
 {
   struct TERMIO buf1;
 #if defined(uniosu)
@@ -979,7 +987,7 @@ j_term_init ()
 }
 
 static void
-j_term_save ()
+j_term_save(void)
 {
   if (GET_TERMATTR (ttyfd, &savetmio) < 0)
     {
@@ -995,7 +1003,7 @@ j_term_save ()
 }
 
 static void
-j_term_restore ()
+j_term_restore(void)
 {
   if (SET_TERMATTR (ttyfd, &savetmio) < 0)
     {
@@ -1013,8 +1021,7 @@ j_term_restore ()
 }
 
 static void
-j_term_p_init (ttypfd)
-  int ttypfd;
+j_term_p_init(int ttypfd)
 {
   struct TERMIO buf1;
 #if defined(uniosu)
@@ -1094,10 +1101,9 @@ j_term_p_init (ttypfd)
 #endif /* USE_TERMIO || USE_TERMIOS */
 
 /** signal SIGCHLD を受けた後の処理をする。*/
-/* *INDENT-OFF* */
-RETSIGTYPE
-chld_handler ()
-/* *INDENT-ON* */
+/* ARGSUSED */
+static RETSIGTYPE 
+chld_handler(int sig)
 {
 #ifdef HAVE_WAIT3
 #if !defined(_POSIX_VERSION) && defined(HAVE_UNION_WAIT) /* older way */
@@ -1155,8 +1161,9 @@ chld_handler ()
 }
 
 /** signal SIGTERM を受けた時の処理をする。*/
-static RETSIGTYPE
-terminate_handler ()
+/* ARGSUSED */
+static RETSIGTYPE 
+terminate_handler(int sig)
 {
   signal (SIGCHLD, SIG_IGN);
   epilogue_no_close ();
@@ -1169,10 +1176,9 @@ terminate_handler ()
 }
 
 #ifdef  SIGWINCH
-/* *INDENT-OFF* */
-RETSIGTYPE
-resize_handler ()
-/* *INDENT-ON* */
+/* ARGSUSED */
+static RETSIGTYPE 
+resize_handler(int sig)
 {
   re_signal (SIGWINCH, resize_handler);
   change_size ();
@@ -1190,7 +1196,7 @@ fd_set sel_ptn;
 int ptyfd = -1;
 
 static void
-do_main ()
+do_main(void)
 {
 #ifndef CANNA
   unsigned char *buf;
@@ -1236,8 +1242,8 @@ do_main ()
 
 unsigned char keyin0 ();
 
-int
-keyin2 ()
+static int
+keyin2(void)
 {
   int total, ret;
   unsigned char in;
@@ -1259,23 +1265,22 @@ keyin2 ()
 
 /** convert_key nomi okonau key-in function */
 int
-conv_keyin (inkey)
-     char *inkey;
+conv_keyin(char *inkey)
 {
   return keyin1 (keyin2, inkey);
 }
 
 /** キー入力関数 1 */
 int
-keyin ()
+keyin(void)
 {
   char inkey[16];
   return (conv_keyin (inkey));
 }
 
 /** キー入力関数 2 */
-unsigned char
-keyin0 ()
+unsigned char 
+keyin0(void)
 {
   static unsigned char buf[BUFSIZ];
   static unsigned char outbuf[BUFSIZ];
@@ -1422,8 +1427,8 @@ keyin0 ()
 #if defined(uniosu)
 /** pty から ioctl がかかった時の処理 */
 int
-arrange_ioctl (jflg)
-     int jflg;                  /* jtermio の j_flg の変換フラグがオフの時 0 オンの時 1 */
+arrange_ioctl(
+	int jflg                  /* jtermio の j_flg の変換フラグがオフの時 0 オンの時 1 */)
 {
   struct jtermio jbuf1;
   struct TERMIO frombuf;
@@ -1497,8 +1502,7 @@ arrange_ioctl (jflg)
 int ttypfd = -1;
 
 static void
-exec_cmd (argv)
-     char **argv;
+exec_cmd(char **argv)
 {
   int i;
 #if defined(USE_LIBSPT) && !defined(USE_LINUX_TERM)
@@ -1670,10 +1674,7 @@ exec_cmd (argv)
  * The 3rd parameter is ignored. It is added for compatibility only.
  */
 int
-setenv (var, value, overwrite)
-     char *var;
-     char *value;
-     int  overwrite;
+setenv(char *var, char *value, int overwrite)
 {
   extern char **environ;
   char **newenv;
@@ -1731,8 +1732,7 @@ euc_set (eucioc, ttyfd)
 }
 
 static void
-set_euc_term (ttyfd)
-     int ttyfd;
+set_euc_term(int ttyfd)
 {
   eucioc_t eucioc;
 
@@ -1757,8 +1757,7 @@ set_euc_term (ttyfd)
 
 #ifdef nec_ews_svr2
 static void
-set_jterm (ttyfd, ttypfd)
-     int ttyfd, ttypfd;
+set_jterm(int ttyfd, int ttypfd)
 {
   struct jtermio buf;
 
@@ -1779,8 +1778,7 @@ set_jterm (ttyfd, ttypfd)
 
 #ifdef sony
 static void
-set_sony_jterm(ttyfd, ttypfd)
-int ttyfd, ttypfd;
+set_sony_jterm(int ttyfd, int ttypfd)
 {
 #ifdef TIOCKGET
   int tmode, jmode = 0;
@@ -1842,7 +1840,7 @@ static void ptyname ();
 #endif /* !USE_LIBSPT && !HAVE_POSIX_OPENPT */
 
 static void
-open_ttyp ()
+open_ttyp(void)
 {
   char nmbuf[20];
 
@@ -1962,8 +1960,7 @@ open_pty ()
 
 /** エラーだよ。さようなら。 */
 void
-uum_err (s)
-     char *s;
+uum_err (char *s)
 {
   puts (s);
   fclose (stdout);
@@ -2117,8 +2114,7 @@ default_usage ()
 }
 
 static void
-usage (optstr)
-     char *optstr;
+usage (char *optstr)
 {
   printf ("usage: prog %s by lang \"%s\"\n", optstr, lang_dir);
   exit (0);
@@ -2179,7 +2175,7 @@ restore_signals ()
 static void
 setsize ()
 {
-  register int i;
+  int i;
   struct winsize win;
   extern int Term_LineWidth, Term_RowWidth, maxlength, crow;
 
@@ -2206,7 +2202,7 @@ setsize ()
 static void
 change_size ()
 {
-  register int i;
+  int i;
   struct winsize win;
   extern int Term_LineWidth, Term_RowWidth, maxlength, crow;
 

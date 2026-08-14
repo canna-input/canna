@@ -51,7 +51,7 @@ extern char *gettxt();
 static char	fileName[256];
 static int	lineNum;
 static int	errCount;
-int chk_dflt pro((int c));
+int chk_dflt(int c);
 
 	struct  def_tbl {
 	    int   used  ;
@@ -83,9 +83,7 @@ int chk_dflt pro((int c));
 
 /*VARARGS*/
 void
-alert(fmt, arg)
-char	*fmt;
-char	*arg;
+alert(char *fmt, char *arg)
 {
     char	msg[256];
     (void)sprintf(msg, fmt, arg);
@@ -94,9 +92,7 @@ char	*arg;
     ++errCount;
 }
 void
-fatal(fmt, arg)
-char	*fmt;
-char	*arg;
+fatal(char *fmt, char *arg)
 {
     char	msg[256];
     (void)sprintf(msg, fmt, arg);
@@ -106,9 +102,7 @@ char	*arg;
 }
 
 void
-fatali(fmt, arg)
-char	*fmt;
-int	arg;
+fatali(char *fmt, int arg)
 {
     char	msg[256];
     (void)sprintf(msg, fmt, arg);
@@ -118,10 +112,7 @@ int	arg;
 }
 
 int
-getWORD(s, news, word, maxword)
-unsigned char	*s, **news;
-unsigned char	*word;
-int		maxword;
+getWORD(unsigned char *s, unsigned char **news, unsigned char *word, int maxword)
 {
     unsigned 	c;
     int	 	i;
@@ -175,9 +166,8 @@ int		maxword;
     return i;
 }
 
-unsigned char
-*allocs  (s)
-unsigned char	*s;
+unsigned char *
+allocs(unsigned char *s)
 {
     unsigned char	*d;
 
@@ -198,9 +188,7 @@ struct roman {
 };
 
 static void
-freeallocs(roman, nKey)
-struct roman *roman;
-int nKey;
+freeallocs(struct roman *roman, int nKey)
 {
   int i;
 
@@ -215,8 +203,7 @@ int nKey;
 }
 
 int
-compar(p, q)
-struct roman	*p, *q;
+compar(struct roman *p, struct roman *q)
 {	
     unsigned char	*s = p->roma;
     unsigned char	*t = q->roma;
@@ -230,9 +217,7 @@ struct roman	*p, *q;
 }
 
 int
-main(argc, argv)
-  int    argc ;
-  char **argv ; 
+main(int argc, char **argv)
 {
   struct roman *roman;
   unsigned char	rule[256], *r;
@@ -389,7 +374,7 @@ main(argc, argv)
     fatal(gettxt("cannacmd:29", "Romaji dictionary is not produced."), 0);
   }
   qsort((char *)roman, nKey, sizeof(struct roman), 
-        (int (*) pro((const void *, const void *)))compar);
+        (int (*)(const void *, const void *))compar);
   if (!flag_large) {
     putchar('K'); putchar('P');
   }
@@ -445,7 +430,7 @@ main(argc, argv)
 
 /* sub */
 int
-chk_dflt(c) int c ; {
+chk_dflt(int c) {
     int  i,n ; 
     char cc = (char)c;
     n = sizeof(def) / sizeof(struct def_tbl) ; 

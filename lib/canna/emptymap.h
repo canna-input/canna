@@ -30,7 +30,7 @@ extern int YomiBaseHiraKataToggle(), YomiBaseZenHanToggle();
 extern int YomiBaseKanaEisuToggle(), YomiBaseKakuteiHenkanToggle();
 extern int YomiBaseRotateForw(), YomiBaseRotateBack();
 extern int DoFuncSequence(), UseOtherKeymap(), YomiModeBackup();
-extern int dicTouroku pro((uiContext)), dicSakujo pro((uiContext));
+extern int dicTouroku(uiContext), dicSakujo(uiContext);
 #ifndef NO_EXTEND_MENU
 extern int kigoRussia(), kigoGreek(), kigoKeisen();
 extern int dicMount(), serverChange(), serverFin();
@@ -69,7 +69,7 @@ static struct funccfunc empty_funcs[] = {
 
   {CANNA_FN_Nop			,AlphaNop		},
   {CANNA_FN_UseOtherKeymap	,UseOtherKeymap		},
-  {CANNA_FN_UserMode		,(int (*) pro((struct _uiContext *)))
+  {CANNA_FN_UserMode		,(int (*)(struct _uiContext *))
                                  ProcExtraFunc		},
 
 #ifndef NO_EXTEND_MENU

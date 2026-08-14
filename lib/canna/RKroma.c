@@ -48,8 +48,7 @@ extern void qsort();
 #endif
 
 int
-compar(p, q)
-struct romaRec	*p, *q;
+compar(struct romaRec *p, struct romaRec *q)
 {	
   unsigned char	*s = p->roma;
   unsigned char	*t = q->roma;
@@ -64,9 +63,7 @@ struct romaRec	*p, *q;
 #endif /* JAPANESE_SORT */
 
 static int
-readHeader(rdic, dicfd)
-struct RkRxDic *rdic;
-int dicfd;
+readHeader(struct RkRxDic *rdic, int dicfd)
 {
     char magic[3];
     unsigned char hdrbuf[8];
@@ -102,8 +99,7 @@ int dicfd;
 }
 
 struct RkRxDic *
-RkwOpenRoma(romaji)
-char *romaji;
+RkwOpenRoma(char *romaji)
 {
     struct RkRxDic	*rdic;
 #ifdef JAPANESE_SORT
@@ -229,7 +225,7 @@ char *romaji;
 	}
 
         qsort((char *)tmp_rdic, rdic->nr_nkey, sizeof(struct romaRec), 
-                (int (*) pro((const void *, const void *)))compar);
+                (int (*)(const void *, const void *))compar);
 
         for (i = 0; i < rdic->nr_nkey; i++) {
 	  rdic->nr_keyaddr[i] = tmp_rdic[i].roma;
@@ -245,8 +241,7 @@ char *romaji;
  *	romaji henkan table wo tojiru
  */
 void
-RkwCloseRoma(rdic)
-struct RkRxDic	*rdic;
+RkwCloseRoma(struct RkRxDic *rdic)
 {
     if ( rdic ) {
         if (rdic->nr_string) (void)free((char *)rdic->nr_string);
@@ -257,15 +252,13 @@ struct RkRxDic	*rdic;
 }
 
 struct RkRxDic *
-RkOpenRoma(romaji)
-char *romaji;
+RkOpenRoma(char *romaji)
 {
   return RkwOpenRoma(romaji);
 }
 
 void
-RkCloseRoma(rdic)
-struct RkRxDic	*rdic;
+RkCloseRoma(struct RkRxDic *rdic)
 {
   RkwCloseRoma(rdic);
 }
@@ -279,14 +272,8 @@ struct rstat {
     int	start, end;	/* match sury key no hanni */
 };
 
-static 
-int	
-findRoma(rdic, m, c, n, flg)
-struct RkRxDic	*rdic;
-struct rstat	*m;
-unsigned char	c;
-int		n;
-int		flg;
+static int
+findRoma(struct RkRxDic *rdic, struct rstat *m, int c, int n, int flg)
 {
     register int	s, e;
 
@@ -303,12 +290,8 @@ int		flg;
     m->end	= e;
     return e - s;
 }
-static 
-unsigned char	*
-getKana(rdic, p, flags)
-struct RkRxDic	*rdic;
-int		p;
-int		flags;
+static unsigned char *
+getKana(struct RkRxDic *rdic, int p, int flags)
 {
     register unsigned char	*kana;
     int				klen;
@@ -337,20 +320,14 @@ int		flags;
 	return tmp;
     };
 }
-static 
-unsigned char	*
-getRoma(rdic, p)
-struct RkRxDic	*rdic;
-int		p;
+static unsigned char *
+getRoma(struct RkRxDic *rdic, int p)
 {
     return rdic->nr_keyaddr[p];
 }
 /*ARGSUSED*/
-static 
-unsigned char	*
-getTSU(rdic, flags)
-struct RkRxDic	*rdic;
-int		flags;
+static unsigned char *
+getTSU(struct RkRxDic *rdic, int flags)
 {
     static unsigned char  hira_tsu[] = {0xa4, 0xc3, 0};
     static unsigned char  kana_tsu[] = {0xa5, 0xc3, 0};
@@ -363,15 +340,8 @@ int		flags;
     };
 }
 
-int	
-RkMapRoma(rdic, dst, maxdst, src, maxsrc, flags, status)
-struct RkRxDic	*rdic;
-unsigned char	*dst;
-int		maxdst;
-unsigned char	*src;
-int		maxsrc;
-int		flags;
-int		*status;
+int
+RkMapRoma(struct RkRxDic *rdic, unsigned char *dst, int maxdst, unsigned char *src, int maxsrc, int flags, int *status)
 {
     register int	i;
     unsigned char	*roma;
@@ -476,11 +446,8 @@ done:
     return count;
 }
 
-static 
-unsigned char	*
-getrawKana(rdic, p)
-struct RkRxDic	*rdic;
-int		p;
+static unsigned char *
+getrawKana(struct RkRxDic *rdic, int p)
 {
   register unsigned char	*kana;
 
@@ -491,11 +458,8 @@ int		p;
   return kana;
 }
 
-static 
-unsigned char	*
-getTemp(rdic, p)
-struct RkRxDic	*rdic;
-int		p;
+static unsigned char *
+getTemp(struct RkRxDic *rdic, int p)
 {
   register unsigned char	*kana;
 
@@ -514,19 +478,8 @@ int		p;
 }
 
 
-int	
-RkMapPhonogram(rdic, dst, maxdst, src, srclen, key, flags,
-	       used_len_return, dst_len_return, tmp_len_return,
-	       rule_id_inout)
-struct RkRxDic	*rdic;
-unsigned char	*dst;
-int		maxdst;
-unsigned char	*src;
-int		srclen;
-unsigned	key;
-int		flags;
-int		*used_len_return, *dst_len_return, *tmp_len_return;
-int		*rule_id_inout;
+int
+RkMapPhonogram(struct RkRxDic *rdic, unsigned char *dst, int maxdst, unsigned char *src, int srclen, unsigned key, int flags, int *used_len_return, int *dst_len_return, int *tmp_len_return, int *rule_id_inout)
 {
   register int	i;
   unsigned char	*roma, *temp;
@@ -734,14 +687,8 @@ int		*rule_id_inout;
 
 /* RkCvtRoma
  */
-int	
-RkCvtRoma(rdic, dst, maxdst, src, maxsrc, flags)
-struct RkRxDic	*rdic;
-unsigned char	*dst;
-int		maxdst;
-unsigned char	*src;
-int		maxsrc;
-unsigned	flags;
+int
+RkCvtRoma(struct RkRxDic *rdic, unsigned char *dst, int maxdst, unsigned char *src, int maxsrc, unsigned flags)
 {
     register unsigned char	*d = dst;
     register unsigned char	*s = src;

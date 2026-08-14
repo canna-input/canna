@@ -45,8 +45,7 @@ static int cursor_bold = 0;
 int uum_cursor_invisible = 0;
 
 void
-throw_col (col)
-     int col;
+throw_col(int col)
 {
   if (cursor_upscreen)
     {
@@ -57,7 +56,7 @@ throw_col (col)
 }
 
 void
-h_r_on ()
+h_r_on(void)
 {
   if (!cursor_reverse)
     {
@@ -67,7 +66,7 @@ h_r_on ()
 }
 
 void
-h_r_off ()
+h_r_off(void)
 {
   if (cursor_reverse)
     {
@@ -81,7 +80,7 @@ h_r_off ()
 }
 
 void
-u_s_on ()
+u_s_on(void)
 {
   if (!cursor_underline)
     {
@@ -91,7 +90,7 @@ u_s_on ()
 }
 
 void
-u_s_off ()
+u_s_off(void)
 {
   if (cursor_underline)
     {
@@ -101,7 +100,7 @@ u_s_off ()
 }
 
 void
-b_s_on ()
+b_s_on(void)
 {
   if (!cursor_bold)
     {
@@ -115,7 +114,7 @@ b_s_on ()
 }
 
 void
-b_s_off ()
+b_s_off(void)
 {
   if (cursor_bold)
     {
@@ -125,7 +124,7 @@ b_s_off ()
 }
 
 void
-kk_cursor_invisible ()
+kk_cursor_invisible(void)
 {
   if (cursor_invisible_fun && (uum_cursor_invisible == 0))
     {
@@ -136,7 +135,7 @@ kk_cursor_invisible ()
 }
 
 void
-kk_cursor_normal ()
+kk_cursor_normal(void)
 {
   if (cursor_invisible_fun && uum_cursor_invisible)
     {
@@ -147,7 +146,7 @@ kk_cursor_normal ()
 }
 
 void
-kk_save_cursor ()
+kk_save_cursor(void)
 {
   if (cursor_upscreen)
     {
@@ -159,7 +158,7 @@ kk_save_cursor ()
 }
 
 void
-kk_restore_cursor ()
+kk_restore_cursor(void)
 {
   if (!cursor_upscreen)
     {
@@ -171,7 +170,7 @@ kk_restore_cursor ()
 }
 
 void
-reset_cursor_status ()
+reset_cursor_status(void)
 {
   if (!cursor_upscreen)
     {
@@ -183,7 +182,7 @@ reset_cursor_status ()
 }
 
 void
-set_cursor_status ()
+set_cursor_status(void)
 {
   if (!cursor_upscreen)
     {
@@ -219,7 +218,7 @@ set_cursor_status ()
 }
 
 void
-scroll_up ()
+scroll_up(void)
 {
   int k;
 
@@ -231,7 +230,7 @@ scroll_up ()
 
 
 void
-clr_line_all ()
+clr_line_all(void)
 {
   throw_c (0);
   clr_end_screen ();
@@ -251,7 +250,7 @@ static struct cursor_state savedupscreen[STACKLENGTH];
 static int top = 0;
 
 void
-reset_cursor ()
+reset_cursor(void)
 {
   top = 0;
 }
@@ -261,7 +260,7 @@ reset_cursor ()
    buf terminal can remember only one cursor point!!.
 */
 void
-push_cursor ()
+push_cursor(void)
 {
   if (top >= STACKLENGTH)
     {
@@ -278,7 +277,7 @@ push_cursor ()
 
 /* push_cursorで保存された位置にカーソルを飛ばす。*/
 void
-pop_cursor ()
+pop_cursor(void)
 {
   if (top <= 0)
     {
@@ -305,7 +304,7 @@ pop_cursor ()
 static int saved_cursor_rev;
 static int saved_cursor_und;
 void
-push_hrus ()
+push_hrus(void)
 {
   saved_cursor_rev = cursor_reverse;
   saved_cursor_und = cursor_underline;
@@ -314,7 +313,7 @@ push_hrus ()
 }
 
 void
-pop_hrus ()
+pop_hrus(void)
 {
   if (saved_cursor_rev)
     h_r_on ();
@@ -323,8 +322,7 @@ pop_hrus ()
 }
 
 void
-set_hanten_ul (x, y)
-     int x, y;
+set_hanten_ul(int x, int y)
 {
   if (!x)
     h_r_off ();
@@ -338,8 +336,7 @@ set_hanten_ul (x, y)
 }
 
 void
-set_bold (x)
-     int x;
+set_bold(int x)
 {
   if (x)
     b_s_on ();
@@ -347,8 +344,7 @@ set_bold (x)
 }
 
 void
-reset_bold (x)
-     int x;
+reset_bold(int x)
 {
   if (x)
     b_s_off ();

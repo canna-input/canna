@@ -43,7 +43,7 @@ extern int errno;
  *
  */
 static mountContext
-newMountContext()
+newMountContext(void)
 {
   mountContext mcxt;
 
@@ -63,8 +63,7 @@ newMountContext()
 }
 
 static void
-freeMountContext(mc)
-mountContext mc;
+freeMountContext(mountContext mc)
 {
   if (mc) {
     if (mc->mountList) {
@@ -87,8 +86,7 @@ mountContext mc;
  * 候補一覧行を作る
  */
 int
-getMountContext(d)
-uiContext d;
+getMountContext(uiContext d)
 {
   mountContext mc;
   int retval = 0;
@@ -119,8 +117,7 @@ uiContext d;
 }
 
 void
-popMountMode(d)
-uiContext d;
+popMountMode(uiContext d)
 {
   mountContext mc = (mountContext)d->modec;
 
@@ -130,8 +127,7 @@ uiContext d;
 }
 
 static struct dicname *
-findDic(s)
-char *s;
+findDic(char *s)
 {
   extern struct dicname *kanjidicnames;
   struct dicname *dp;
@@ -149,10 +145,7 @@ char *s;
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 static int
-uuMountExitCatch(d, retval, env)
-uiContext d;
-int retval;
-mode_context env;
+uuMountExitCatch(uiContext d, int retval, mode_context env)
 /* ARGSUSED */
 {
   mountContext mc;
@@ -294,10 +287,7 @@ mode_context env;
 }
 
 static int
-uuMountQuitCatch(d, retval, env)
-uiContext d;
-int retval;
-mode_context env;
+uuMountQuitCatch(uiContext d, int retval, mode_context env)
 /* ARGSUSED */
 {
   popCallback(d); /* OnOff をポップ */
@@ -326,8 +316,7 @@ mode_context env;
  * └─────────┘ └───┘
  */
 static int
-getDicList(d)
-uiContext d;
+getDicList(uiContext d)
 {
   mountContext mc = (mountContext)d->modec;
   char *dicLbuf, dicMbuf[ROMEBUFSIZE];
@@ -494,8 +483,7 @@ uiContext d;
 extern int selectOnOff(); /* onoff.c */
 
 int
-dicMount(d)
-uiContext d;
+dicMount(uiContext d)
 {
   ichiranContext oc;
   mountContext mc;

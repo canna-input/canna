@@ -59,7 +59,7 @@ typedef struct {
 
 typedef struct {
   char *client_data;
-  int (*callback_func) pro((char *, int, wchar_t **, int, int *));
+  int (*callback_func)(char *, int, wchar_t **, int, int *);
 } owcListCallbackStruct;
 
 typedef canna_uint16_t cannawc16;
@@ -68,15 +68,13 @@ typedef canna_uint32_t cannawc32;
 extern int howToReturnModeInfo;
 extern char *context_table;
 
-exp(int) wcKanjiString pro((const int, const int, wchar_t *, const int,
-			    owcKanjiStatus *));
-exp(int) wcKanjiControl pro((const int, const int, char *));
-exp(int) wcCloseKanjiContext pro((const int, owcKanjiStatusWithValue *));
+exp(int) wcKanjiString(const int, const int, wchar_t *, const int,
+			    owcKanjiStatus *);
+exp(int) wcKanjiControl(const int, const int, char *);
+exp(int) wcCloseKanjiContext(const int, owcKanjiStatusWithValue *);
 
 static size_t
-Oldwcsnlen(owcs, maxlen)
-const wchar_t *owcs;
-size_t maxlen;
+Oldwcsnlen(const wchar_t *owcs, size_t maxlen)
 {
   const wchar_t *p, *endp;
   for (p = owcs, endp = owcs + maxlen; *p && p < endp; ++p)
@@ -85,10 +83,7 @@ size_t maxlen;
 }
 
 static size_t
-wc32stowc16s(wc16s, wc32s, len)
-cannawc16 *wc16s;
-const cannawc32 *wc32s;
-int len;
+wc32stowc16s(cannawc16 *wc16s, const cannawc32 *wc32s, int len)
 {
   unsigned int i;
   for (i = 0; i < len && wc32s[i]; i++) {
@@ -120,10 +115,7 @@ int len;
 }
 
 static size_t
-wc16stowc32s(wc32s, wc16s, len)
-cannawc32 *wc32s;
-const cannawc16 *wc16s;
-int len;
+wc16stowc32s(cannawc32 *wc32s, const cannawc16 *wc16s, int len)
 {
   unsigned int i;
   for (i = 0; i < len && wc16s[i]; i++) {
@@ -155,10 +147,7 @@ int len;
 }
 
 static size_t
-OldwcstoWCs(cwcs, owcs, len)
-cannawc *cwcs;
-const wchar_t *owcs;
-size_t len;
+OldwcstoWCs(cannawc *cwcs, const wchar_t *owcs, size_t len)
 {
   if (sizeof(wchar_t) == sizeof(cannawc)) {
     unsigned int i;
@@ -174,10 +163,7 @@ size_t len;
 }
 
 static size_t
-WCstoOldwcs(owcs, cwcs, len)
-wchar_t *owcs;
-const cannawc *cwcs;
-size_t len;
+WCstoOldwcs(wchar_t *owcs, const cannawc *cwcs, size_t len)
 {
   if (sizeof(wchar_t) == sizeof(cannawc)) {
     unsigned int i;
@@ -193,15 +179,7 @@ size_t len;
 }
 
 static int
-StoreWCtoOldwc(wbuf, wbuflen, wks, owbuf, maxowbuf, owks, ch, nbytes)
-const cannawc *wbuf;
-int wbuflen;
-const wcKanjiStatus *wks;
-wchar_t *owbuf;
-int maxowbuf;
-owcKanjiStatus *owks;
-wchar_t ch;
-int nbytes;
+StoreWCtoOldwc(const cannawc *wbuf, int wbuflen, const wcKanjiStatus *wks, wchar_t *owbuf, int maxowbuf, owcKanjiStatus *owks, wchar_t ch, int nbytes)
 {
   int ret, totallen = 0, len;
   wchar_t *p, *endp;
@@ -334,13 +312,7 @@ int nbytes;
 }
 
 static int
-owcLookupKanji2(dpy, win, buffer_return, n_buffer, nbytes, functionalChar,
-	      kanji_status_return)
-unsigned int dpy, win;
-int functionalChar, nbytes;
-wchar_t *buffer_return;
-int n_buffer;
-owcKanjiStatus *kanji_status_return;
+owcLookupKanji2(unsigned int dpy, unsigned int win, wchar_t *buffer_return, int n_buffer, int nbytes, int functionalChar, owcKanjiStatus *kanji_status_return)
 {
   int ret;
   wcKanjiStatus wks;
@@ -380,11 +352,7 @@ owcKanjiStatus *kanji_status_return;
 		      
 
 int
-owcListCallback(client_data, func, items, nitems, cur_item)
-char *client_data;
-int func;
-cannawc **items;
-int nitems, *cur_item;
+owcListCallback(char *client_data, int func, cannawc **items, int nitems, int *cur_item)
 {
   const owcListCallbackStruct *owlistcb;
   int r = -1;
@@ -420,9 +388,7 @@ last:
 }
 
 static int
-owcKanjiControl2(display, window, request, arg)
-unsigned int display, window, request;
-BYTE *arg;
+owcKanjiControl2(unsigned int display, unsigned int window, unsigned int request, BYTE *arg)
 {
   int ret = -1, len1, len2;
   wcKanjiStatusWithValue wksv;
@@ -540,10 +506,7 @@ BYTE *arg;
 }
 
 exp(int)
-wcKanjiString(context_id, ch, buffer_return, nbuffer, kanji_status_return)
-int context_id, ch, nbuffer;
-wchar_t *buffer_return;
-owcKanjiStatus  *kanji_status_return;
+wcKanjiString(int context_id, int ch, wchar_t *buffer_return, int nbuffer, owcKanjiStatus *kanji_status_return)
 {
   *buffer_return = (wchar_t)ch;
 
@@ -554,19 +517,14 @@ owcKanjiStatus  *kanji_status_return;
 }
 
 exp(int)
-wcKanjiControl(context, request, arg)
-int context;
-int request;
-char *arg;
+wcKanjiControl(int context, int request, char *arg)
 {
   return owcKanjiControl2((unsigned int)0, (unsigned int)context,
 			request, (BYTE *)arg);
 }
 
 exp(int)
-wcCloseKanjiContext(context,ksva)
-int context;
-owcKanjiStatusWithValue *ksva;
+wcCloseKanjiContext(int context, owcKanjiStatusWithValue *ksva)
 {
   /* really working? */
   context_table[context] = 0;
@@ -580,40 +538,32 @@ owcKanjiStatusWithValue *ksva;
 #undef wcKanjiControl
 #undef wcCloseKanjiContext
 
-exp(int) wcKanjiString pro((const int, const int, cannawc *, const int,
-			    wcKanjiStatus *));
-exp(int) wcKanjiControl pro((const int, const int, char *));
-exp(int) wcCloseKanjiContext pro((const int, wcKanjiStatusWithValue *));
+exp(int) wcKanjiString(const int, const int, cannawc *, const int,
+			    wcKanjiStatus *);
+exp(int) wcKanjiControl(const int, const int, char *);
+exp(int) wcCloseKanjiContext(const int, wcKanjiStatusWithValue *);
 
 static int
-wc_unsupported()
+wc_unsupported(void)
 {
   jrKanjiError = "Old wide character API is disabled on this environment.";
   return -1;
 }
 
 exp(int)
-wcKanjiString(context_id, ch, buffer_return, nbuffer, kanji_status_return)
-int context_id, ch, nbuffer;
-cannawc *buffer_return;
-wcKanjiStatus  *kanji_status_return;
+wcKanjiString(int context_id, int ch, cannawc *buffer_return, int nbuffer, wcKanjiStatus *kanji_status_return)
 {
   return wc_unsupported();
 }
 
 exp(int)
-wcKanjiControl(context, request, arg)
-int context;
-int request;
-char *arg;
+wcKanjiControl(int context, int request, char *arg)
 {
   return wc_unsupported();
 }
 
 exp(int)
-wcCloseKanjiContext(context,ksva)
-int context;
-wcKanjiStatusWithValue *ksva;
+wcCloseKanjiContext(int context, wcKanjiStatusWithValue *ksva)
 {
   return  wc_unsupported();
 }

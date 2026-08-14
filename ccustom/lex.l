@@ -364,7 +364,8 @@ number			[0-9][0-9]*
 #ifdef yywrap				/* hir, 1993.1.3 */
 #undef yywrap
 #endif
-yywrap() { return (1); }
+int
+yywrap(void) { return (1); }
 
 #ifdef unput
 #undef unput

@@ -79,8 +79,8 @@
 
 #ifdef SOMEONE_USE_THIS
 /* 誰も使っていないみたい。 */
-Insertable(ch)
-unsigned char ch;
+int
+Insertable(int ch)
 {
   if ((0x20 <= ch && ch <= 0x7f) || (0xa0 <= ch && ch <= 0xff)) {
     return 1;
@@ -101,9 +101,7 @@ unsigned char ch;
  */
 
 int
-ujisncpy(dest, src, n)
-unsigned char *dest, *src;
-int n;
+ujisncpy(unsigned char *dest, unsigned char *src, int n)
 {
   int i = 0;
   unsigned char c;
@@ -125,10 +123,8 @@ int n;
   return i; /* n バイトコピーしきれた */
 }
 
-setWStrings(ws, s, sz)
-wchar_t **ws;
-unsigned char **s;
-int sz;
+int
+setWStrings(wchar_t **ws, unsigned char **s, int sz)
 {
   int f = sz;
   wchar_t *WString();
@@ -138,10 +134,8 @@ int sz;
 }
 
 
-copyAttribute(dest, src, n)
-     BYTE	*dest;
-     BYTE	*src;
-     int n;
+int
+copyAttribute(BYTE *dest, BYTE *src, int n)
 {
   for (; n; n--)
     *dest++ = *src++;
@@ -153,8 +147,7 @@ copyAttribute(dest, src, n)
  */
 
 wchar_t
-WToupper(w)
-wchar_t w;
+WToupper(wchar_t w)
 {
   if (WIsG0(w)) {
     if ('a' <= w && w <= 'z')
@@ -164,8 +157,7 @@ wchar_t w;
 }
 
 int
-WStrlen(ws)
-wchar_t *ws;
+WStrlen(wchar_t *ws)
 {
   int res = 0;
   while (*ws++) {
@@ -175,8 +167,7 @@ wchar_t *ws;
 }
 
 wchar_t *
-WStrcpy(ws1, ws2)
-wchar_t *ws1, *ws2;
+WStrcpy(wchar_t *ws1, wchar_t *ws2)
 {
   wchar_t *ws;
   int cnt, len;
@@ -199,9 +190,7 @@ wchar_t *ws1, *ws2;
 }
 
 wchar_t *
-WStrncpy(ws1, ws2, cnt)
-wchar_t *ws1, *ws2;
-int cnt;
+WStrncpy(wchar_t *ws1, wchar_t *ws2, int cnt)
 {
   wchar_t *ws;
 
@@ -223,8 +212,7 @@ int cnt;
 }
 
 wchar_t *
-WStrcat(ws1, ws2)
-wchar_t *ws1, *ws2;
+WStrcat(wchar_t *ws1, wchar_t *ws2)
 {
   wchar_t *ws;
 
@@ -234,17 +222,14 @@ wchar_t *ws1, *ws2;
 }
 
 int
-WStrcmp(w1, w2)
-wchar_t *w1, *w2;
+WStrcmp(wchar_t *w1, wchar_t *w2)
 {
   for (; *w1 && *w1 == *w2; w1++, w2++);
   return(*w1 - *w2);
 }
 
 int
-WStrncmp(w1, w2, n)
-wchar_t *w1, *w2;
-int n;
+WStrncmp(wchar_t *w1, wchar_t *w2, int n)
 {
   if (n == 0) return(0);
   for (; --n && *w1 && *w1 == *w2; w1++, w2++);
@@ -261,8 +246,7 @@ int n;
  */
 
 int
-WWhatGPlain(wc)
-wchar_t wc;
+WWhatGPlain(wchar_t wc)
 {
 #ifdef _WCHAR16
   switch (((unsigned long)wc) & 0x8080) {
@@ -283,29 +267,25 @@ wchar_t wc;
 }
 
 int
-WIsG0(wc)
-wchar_t wc;
+WIsG0(wchar_t wc)
 {
   return (WWhatGPlain(wc) == 0);
 }
 
 int
-WIsG1(wc)
-wchar_t wc;
+WIsG1(wchar_t wc)
 {
   return (WWhatGPlain(wc) == 1);
 }
 
 int
-WIsG2(wc)
-wchar_t wc;
+WIsG2(wchar_t wc)
 {
   return (WWhatGPlain(wc) == 2);
 }
 
 int
-WIsG3(wc)
-wchar_t wc;
+WIsG3(wchar_t wc)
 {
   return (WWhatGPlain(wc) == 3);
 }
@@ -313,8 +293,7 @@ wchar_t wc;
 /* 以下の２つの関数は２バイトまで適用可 */
 
 int
-WGetLeft(wc)
-wchar_t wc;
+WGetLeft(wchar_t wc)
 {
   if (WIsG0(wc) || WIsG2(wc))
     return 0;
@@ -328,8 +307,7 @@ wchar_t wc;
 }
 
 int
-WGetRight(wc)
-wchar_t wc;
+WGetRight(wchar_t wc)
 {
   if (WIsG0(wc) || WIsG2(wc))
     return 0;
@@ -339,10 +317,7 @@ wchar_t wc;
 }
 
 int
-MBstowcs(dest, src, destlen)
-wchar_t *dest;
-unsigned char *src;
-int destlen;
+MBstowcs(wchar_t *dest, unsigned char *src, int destlen)
 {
   register int i, j;
   register unsigned char ec;
@@ -376,10 +351,7 @@ int destlen;
 }
 
 int
-CNvW2E(src, srclen, dest, destlen)
-wchar_t *src;
-unsigned char *dest;
-int srclen, destlen;
+CNvW2E(wchar_t *src, int srclen, unsigned char *dest, int destlen)
 {
   register int i, j;
   register wchar_t wc;
@@ -414,10 +386,7 @@ int srclen, destlen;
 }
 
 int
-WCstombs(dest, src, destlen)
-unsigned char *dest;
-wchar_t *src;
-int destlen;
+WCstombs(unsigned char *dest, wchar_t *src, int destlen)
 {
   return CNvW2E(src, WStrlen(src), dest, destlen);
 }
@@ -449,14 +418,13 @@ static int nwsmemories = 0;
 #define WSBLOCKSIZE 128
 
 int
-WStringOpen()
+WStringOpen(void)
 {
   return 0;
 }
 
 wchar_t *
-WString(s)
-unsigned char *s;
+WString(unsigned char *s)
 {
   int i, len;
   wchar_t *temp;
@@ -494,7 +462,7 @@ unsigned char *s;
 }
 
 int
-WStringClose()
+WStringClose(void)
 {
   int i;
 
@@ -508,8 +476,8 @@ WStringClose()
   nwsmemories = 0;
 }
 
-WSfree(s)
-wchar_t *s;
+int
+WSfree(wchar_t *s)
 {
   int	i;
   wchar_t **t;

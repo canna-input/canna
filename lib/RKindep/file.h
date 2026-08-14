@@ -91,12 +91,12 @@ typedef struct {
 extern "C" {
 #endif
 
-extern int RkiConnect pro((int fd, struct sockaddr *addrp, size_t len, 
-      const struct timeval *timeout));
-extern char *RkiGetLine pro((FILE *src));
-extern void *RkiReadWholeFile pro((FILE *src, size_t *retsize));
+extern int RkiConnect(int fd, struct sockaddr *addrp, size_t len, 
+      const struct timeval *timeout);
+extern char *RkiGetLine(FILE *src);
+extern void *RkiReadWholeFile(FILE *src, size_t *retsize);
 
-extern char *RkiBasename pro((const char *src));
+extern char *RkiBasename(const char *src);
 #ifdef __cplusplus
 }
 #endif

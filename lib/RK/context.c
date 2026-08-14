@@ -64,10 +64,8 @@ int fd_dic = -1;        /* mmap */
 #define DEFAULTGRAMDIC "/canna/fuzokugo.d"
 #endif
 
-static int	
-_RkInitialize(ddhome, numCache)
-     char	*ddhome;
-     int	numCache;
+static int
+_RkInitialize(char *ddhome, int numCache)
 {
   int			i = strlen(ddhome);
   struct RkParam	*sx = &SX;
@@ -170,8 +168,7 @@ _RkInitialize(ddhome, numCache)
 }
 
 int
-RkwInitialize(ddhome)
-     char	*ddhome;
+RkwInitialize(char *ddhome)
 {
   /*
    * Word:	????
@@ -185,7 +182,7 @@ RkwInitialize(ddhome)
  *
  */
 static void
-_RkFinalizeWord()		/* finalize free word list */
+_RkFinalizeWord(void)		/* finalize free word list */
 {
   struct nword	*w, *t;
   
@@ -201,7 +198,7 @@ _RkFinalizeWord()		/* finalize free word list */
 }
 
 void
-RkwFinalize()
+RkwFinalize(void)
 {
   struct RkParam	*sx = &SX;
   int	i;
@@ -234,16 +231,16 @@ RkwFinalize()
 
 /* RkGetSystem: System heno pointer wo motomeru
  */
-struct RkParam	*
-RkGetSystem()
+struct RkParam *
+RkGetSystem(void)
 {
   return(&SX);
 }
 
 /* RkGetSystemDD: System heno pointer wo motomeru
  */
-struct DD	*
-RkGetSystemDD()
+struct DD *
+RkGetSystemDD(void)
 {
   struct RkParam	*sx;
   return(((sx = RkGetSystem()) && sx->ddpath) ? sx->ddpath[0] : (struct DD *)0);
@@ -272,9 +269,8 @@ RkGetXContext(cx_num)
   return(cx);
 }
 
-void	
-_RkEndBun(cx)
-struct RkContext	*cx;
+void
+_RkEndBun(struct RkContext *cx)
 {
     struct DD	**ddp = cx->ddpath;
     int		c;
@@ -308,9 +304,7 @@ struct RkContext	*cx;
  */
 
 int
-RkwSetDicPath(cx_num, path)
-     int	cx_num;
-     char	*path;
+RkwSetDicPath(int cx_num, char *path)
 {
   struct RkContext	*cx = RkGetContext(cx_num);
   struct DD		**new;
@@ -333,8 +327,7 @@ RkwSetDicPath(cx_num, path)
  */
 
 static int
-fillContext(cx_num)
-int cx_num;
+fillContext(int cx_num)
 {
   struct RkContext *cx = &CX[cx_num];
   int i;
@@ -389,7 +382,7 @@ int cx_num;
 }
 
 int
-RkwCreateContext()
+RkwCreateContext(void)
 {
   int	cx_num, i;
   struct RkContext *newcx;
@@ -420,8 +413,7 @@ RkwCreateContext()
 }
 
 int
-RkwCloseContext(cx_num)
-     int	cx_num;
+RkwCloseContext(int cx_num)
 {
   struct RkContext	*cx;
   int				i;
@@ -483,11 +475,10 @@ RkwCloseContext(cx_num)
 /* RkDuplicateContext
  *	onaji naiyou no context wo sakuseisuru
  */
-int RkwDuplicateContext pro((int));
+int RkwDuplicateContext(int);
 
 int
-RkwDuplicateContext(cx_num)
-     int	cx_num;
+RkwDuplicateContext(int cx_num)
 {
   struct RkContext	*sx;
   int			dup = -1;
@@ -532,10 +523,10 @@ RkwDuplicateContext(cx_num)
 
 /* RkMountDic: append the specified dictionary at the end of the mount list */
 int
-RkwMountDic(cx_num, name, mode)
-     int	cx_num;		/* context specified */
-     char	*name;		/* the name of dictonary */
-     int	mode;		/* mount mode */
+RkwMountDic(
+	int cx_num,		/* context specified */
+	char *name,		/* the name of dictonary */
+	int mode		/* mount mode */)
 {
   struct RkContext	*cx;
   int firsttime;
@@ -576,9 +567,7 @@ RkwMountDic(cx_num, name, mode)
 }
 /* RkUnmountDic: removes the specified dictionary from the mount list */
 int
-RkwUnmountDic(cx_num, name)
-     int	cx_num;
-     char	*name;
+RkwUnmountDic(int cx_num, char *name)
 {
   struct RkContext	*cx;
   int			i;
@@ -609,10 +598,10 @@ RkwUnmountDic(cx_num, name)
 
 /* RkRemountDic: relocate the specified dictionary among the mount list */
 int
-RkwRemountDic(cx_num, name, mode)
-     int	cx_num;		/* context specified */
-     char	*name;		/* the name of dictonary */
-     int	mode;		/* mount mode */
+RkwRemountDic(
+	int cx_num,		/* context specified */
+	char *name,		/* the name of dictonary */
+	int mode		/* mount mode */)
 {
   struct RkContext	*cx;
   int			i, isfound = 0;
@@ -660,10 +649,7 @@ RkwRemountDic(cx_num, name, mode)
 
 /* RkGetDicList: collects the names of the mounted dictionaies */
 int
-RkwGetMountList(cx_num, mdname, maxmdname)
-     int	cx_num;
-     char	*mdname;
-     int	maxmdname;
+RkwGetMountList(int cx_num, char *mdname, int maxmdname)
 {
   struct RkContext	*cx;
   struct MD		*mh, *md;
@@ -706,11 +692,10 @@ struct dics {
   int dictype;
 };
 
-static int diccmp pro((const struct dics *, const struct dics *));
+static int diccmp(const struct dics *, const struct dics *);
 
 static int
-diccmp(a, b)
-const struct dics *a, *b;
+diccmp(const struct dics *a, const struct dics *b)
 {
   int res;
 
@@ -742,10 +727,7 @@ const struct dics *a, *b;
 }
 
 int
-RkwGetDicList(cx_num, mdname, maxmdname)
-     int	cx_num;
-     char	*mdname;
-     int	maxmdname;
+RkwGetDicList(int cx_num, char *mdname, int maxmdname)
 {
   struct RkContext	*cx;
   struct DD   		**ddp, *dd;
@@ -785,7 +767,7 @@ RkwGetDicList(cx_num, mdname, maxmdname)
 	}
       }
       qsort(diclist, count, sizeof(struct dics), 
-	    (int (*) pro((const void *, const void *)))diccmp);
+	    (int (*)(const void *, const void *))diccmp);
 
       n = count;
       for (i = j = 0, dicp = diclist ; i < n ; i++, dicp++) {
@@ -818,10 +800,7 @@ RkwGetDicList(cx_num, mdname, maxmdname)
 
 /* RkGetDirList: collects the names of directories */
 int
-RkwGetDirList(cx_num, ddname, maxddname)
-     int	cx_num;
-     char	*ddname;
-     int	maxddname;
+RkwGetDirList(int cx_num, char *ddname, int maxddname)
 {
   struct RkContext	*cx;
   struct DD   		**ddp, *dd;
@@ -849,10 +828,7 @@ RkwGetDirList(cx_num, ddname, maxddname)
  *	mount the dictionary onto the specified context.
  */
 int
-RkwDefineDic(cx_num, name, word)
-     int	cx_num;
-     char	*name;
-     Wchar	*word;
+RkwDefineDic(int cx_num, char *name, Wchar *word)
 {
   struct RkContext	*cx;
   int			i;
@@ -903,10 +879,7 @@ RkwDefineDic(cx_num, name, word)
  *	mount the dictionary onto the specified context.
  */
 int
-RkwDeleteDic(cx_num, name, word)
-     int	cx_num;
-     char	*name;
-     Wchar	*word;
+RkwDeleteDic(int cx_num, char *name, Wchar *word)
 {
   struct RkContext	*cx;
   int			i;
@@ -956,29 +929,26 @@ RkwDeleteDic(cx_num, name, word)
  lib/RKC API.  In case STANDALONE, it becomes possible for libRK to be
  linked with libcanna directly. */
 
-int RkwSetAppName pro((int, char *));
+int RkwSetAppName(int, char *);
 
 int
-RkwSetAppName(Context, name)
-int Context;
-char *name;
+RkwSetAppName(int Context, char *name)
 {
   return 0;
 }
 
-char *RkwGetServerName pro((void));
+char *RkwGetServerName(void);
 
 char *
-RkwGetServerName()
+RkwGetServerName(void)
 {
   return (char *)NULL;
 }
 
-int RkwGetProtocolVersion pro((int *, int *));
+int RkwGetProtocolVersion(int *, int *);
 
 int
-RkwGetProtocolVersion(majorp, minorp)
-int *majorp, *minorp;
+RkwGetProtocolVersion(int *majorp, int *minorp)
 {
     *majorp = CANNA_MAJOR_MINOR / 1000;
     *minorp = CANNA_MAJOR_MINOR % 1000;
@@ -988,8 +958,7 @@ int *majorp, *minorp;
 int RkwGetServerVersion(int *, int *);
 
 int
-RkwGetServerVersion(majorp, minorp)
-int *majorp, *minorp;
+RkwGetServerVersion(int *majorp, int *minorp)
 {
   *majorp = CANNA_MAJOR_MINOR / 1000;
   *minorp = CANNA_MAJOR_MINOR % 1000;
@@ -997,8 +966,7 @@ int *majorp, *minorp;
 }
 
 int
-RkwSetUserInfo(user, group, topdir)
-char *user, *group, *topdir;
+RkwSetUserInfo(char *user, char *group, char *topdir)
 {
   return 1;
 }

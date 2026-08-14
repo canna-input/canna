@@ -33,9 +33,7 @@
 #define wchar_t cannawc
 
 int
-ushort2eucsize(src, srclen)
-Ushort *src;
-int srclen;
+ushort2eucsize(Ushort *src, int srclen)
 {
   register int i, j;
   register Ushort wc;
@@ -65,10 +63,7 @@ int srclen;
 }
 
 int
-ushort2euc(src, srclen, dest, destlen)
-Ushort *src;
-char *dest;
-int srclen, destlen;
+ushort2euc(Ushort *src, int srclen, char *dest, int destlen)
 {
   register int i, j;
   register Ushort wc;
@@ -103,9 +98,7 @@ int srclen, destlen;
 }
 
 int
-eucchars(src, srclen)
-unsigned char *src;
-int srclen;
+eucchars(unsigned char *src, int srclen)
 {
   register int i, j;
   register unsigned char ec;
@@ -121,10 +114,7 @@ int srclen;
 }
 
 int
-euc2ushort(src, srclen, dest, destlen)
-char *src;
-Ushort *dest;
-int srclen, destlen;
+euc2ushort(char *src, int srclen, Ushort *dest, int destlen)
 {
   register int i, j;
   register unsigned ec;
@@ -158,20 +148,14 @@ int srclen, destlen;
 }
 
 exp(int)
-Wineuc2ushort(src, srclen, dest, destlen)
-char *src;
-Ushort *dest;
-int srclen, destlen;
+Wineuc2ushort(char *src, int srclen, Ushort *dest, int destlen)
 {
   return euc2ushort(src, srclen, dest, destlen);
 }
 
 #ifndef CANNA_WCHAR16
 static int
-wchar2ushort32(src, srclen, dest, destlen)
-register wchar_t *src;
-register Ushort *dest;
-int srclen, destlen;
+wchar2ushort32(register wchar_t *src, int srclen, register Ushort *dest, int destlen)
 {
   register int i;
 
@@ -206,10 +190,7 @@ int srclen, destlen;
 }
 
 static int
-ushort2wchar32(src, srclen, dest, destlen)
-register Ushort *src;
-register wchar_t *dest;
-int srclen, destlen;
+ushort2wchar32(register Ushort *src, int srclen, register wchar_t *dest, int destlen)
 {
   register int i;
 
@@ -246,10 +227,7 @@ int srclen, destlen;
 #else /* CANNA_WCHAR16 */
 
 static int
-wchar2ushort16(src, srclen, dest, destlen)
-wchar_t *src;
-Ushort *dest;
-int srclen, destlen;
+wchar2ushort16(wchar_t *src, int srclen, Ushort *dest, int destlen)
 {
   register int i;
 
@@ -261,10 +239,7 @@ int srclen, destlen;
 }
 
 static int
-ushort2wchar16(src, srclen, dest, destlen)
-Ushort *src;
-wchar_t *dest;
-int srclen, destlen;
+ushort2wchar16(Ushort *src, int srclen, wchar_t *dest, int destlen)
 {
   register int i;
 
@@ -282,10 +257,7 @@ int srclen, destlen;
  */
 
 int
-wchar2ushort(src, slen, dst, dlen)
-wchar_t *src;
-Ushort *dst;
-int slen, dlen;
+wchar2ushort(wchar_t *src, int slen, Ushort *dst, int dlen)
 {
 #ifdef CANNA_WCHAR16
     return( wchar2ushort16( src, slen, dst, dlen ) );
@@ -295,10 +267,7 @@ int slen, dlen;
 }
 
 int
-ushort2wchar(src, slen, dst, dlen)
-Ushort *src;
-wchar_t *dst;
-int slen, dlen;
+ushort2wchar(Ushort *src, int slen, wchar_t *dst, int dlen)
 {
 #ifdef CANNA_WCHAR16
     return( ushort2wchar16( src, slen, dst, dlen ) );
@@ -308,17 +277,13 @@ int slen, dlen;
 }
 
 exp(int)
-Winushort2wchar(src, slen, dst, dlen)
-Ushort *src;
-wchar_t *dst;
-int slen, dlen;
+Winushort2wchar(Ushort *src, int slen, wchar_t *dst, int dlen)
 {
   return ushort2wchar(src, slen, dst, dlen);
 }
 
 int
-wcharstrlen(ws)
-wchar_t *ws;
+wcharstrlen(wchar_t *ws)
 {
   register wchar_t *p = ws;
   while (*p)
@@ -327,8 +292,7 @@ wchar_t *ws;
 }
 
 int
-ushortstrlen(ws)
-Ushort *ws;
+ushortstrlen(Ushort *ws)
 {
   register Ushort *p = ws;
   while (*p)
@@ -337,8 +301,7 @@ Ushort *ws;
 }
 
 int
-ushortstrcpy(wd, ws)
-Ushort *wd, *ws;
+ushortstrcpy(Ushort *wd, Ushort *ws)
 {
   register int res = 0;
   while ((*wd++ = *ws++) != (Ushort)0) {
@@ -348,9 +311,7 @@ Ushort *wd, *ws;
 }
 
 int
-ushortstrncpy(wd, ws, n)
-Ushort *wd, *ws;
-int n;
+ushortstrncpy(Ushort *wd, Ushort *ws, int n)
 {
   register int res = 0;
   while (n > res && (*wd = *ws) != (Ushort)0) {

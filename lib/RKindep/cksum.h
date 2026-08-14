@@ -41,9 +41,9 @@ typedef struct {
  * only ISO/IEC 8802-3:1989 CRC (==POSIX 1003.2 cksum) is supported for now
  */
 
-extern int RkiCksumCRCInit pro((RkiCksumCalc *cx));
-extern int RkiCksumAdd pro((RkiCksumCalc *cx, const void *data, size_t len));
-extern canna_uint32_t RkiCksumCRCFinish pro((RkiCksumCalc *cx));
+extern int RkiCksumCRCInit(RkiCksumCalc *cx);
+extern int RkiCksumAdd(RkiCksumCalc *cx, const void *data, size_t len);
+extern canna_uint32_t RkiCksumCRCFinish(RkiCksumCalc *cx);
 
 #ifdef __cplusplus
 }

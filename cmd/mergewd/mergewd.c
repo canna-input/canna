@@ -38,9 +38,7 @@ typedef struct LineList {
 
 /* pop first at most n elements from *h2...*t2 and push them after *t1 */
 size_t
-LineList_moveleft(h1, t1, h2, t2, n)
-LineList **h1, **t1, **h2, **t2;
-size_t n;
+LineList_moveleft(LineList **h1, LineList **t1, LineList **h2, LineList **t2, size_t n)
 {
   size_t i;
   LineList *p;
@@ -67,8 +65,7 @@ size_t n;
 
 /* merge sort */
 void
-LineList_sort(head, tail)
-LineList **head, **tail;
+LineList_sort(LineList **head, LineList **tail)
 {
   size_t unit = 1;
   int atonce;
@@ -129,8 +126,7 @@ LineList **head, **tail;
 }
 
 void
-LineList_clear(head, tail)
-LineList **head, **tail;
+LineList_clear(LineList **head, LineList **tail)
 {
   LineList *curr, *prev;
 
@@ -149,8 +145,7 @@ LineList **head, **tail;
 
 /* get a word delimited by space or tab */
 char *
-get_token(restartp)
-char **restartp;
+get_token(char **restartp)
 {
   char *p = *restartp, *q, *d;
 
@@ -181,10 +176,7 @@ char **restartp;
 }
 
 size_t
-escape_ws(dst, dstlen, src)
-char *dst;
-size_t dstlen;
-const char *src;
+escape_ws(char *dst, size_t dstlen, const char *src)
 {
   const char *s;
   char *d = dst;
@@ -208,10 +200,7 @@ const char *src;
 
 /* parse the dictionary and store them into *first_line...*last_line */
 int
-read_textdic(first_line, last_line, infile, filename)
-LineList **first_line, **last_line;
-FILE *infile;
-const char *filename;
+read_textdic(LineList **first_line, LineList **last_line, FILE *infile, const char *filename)
 {
   unsigned int lineno;
   char buf[RK_LINE_BMAX*10];
@@ -271,8 +260,7 @@ const char *filename;
 }
 
 size_t
-euc_to_uslen(es)
-unsigned char *es;
+euc_to_uslen(unsigned char *es)
 {
   Wchar buf[RK_LINE_BMAX*10];
 
@@ -280,8 +268,7 @@ unsigned char *es;
 }
 
 int
-mergeword(first_line)
-const LineList *first_line;
+mergeword(const LineList *first_line)
 {
   const LineList *l, *prev;
   char buf[RK_LINE_BMAX*10];
@@ -334,9 +321,7 @@ nothing_changed:
 }
 
 int
-main(argc, argv)
-int argc;
-char *argv[];
+main(int argc, char *argv[])
 {
   LineList *first_line = NULL, *last_line = NULL;
   int status;

@@ -31,8 +31,7 @@ extern KanjiModeRec yomi_mode, cy_mode;
  */
 
 static int
-inEmptySelfInsert(d)
-uiContext d;
+inEmptySelfInsert(uiContext d)
 {
   yomiContext yc = (yomiContext)d->modec;
   int res = 0;
@@ -46,11 +45,10 @@ uiContext d;
   return res;
 }
 
-static int EmptySelfInsert pro((uiContext));
+static int EmptySelfInsert(uiContext);
 
 static int
-EmptySelfInsert(d)
-uiContext d;
+EmptySelfInsert(uiContext d)
 {
   yomiContext yc = (yomiContext)d->modec;
   int res = inEmptySelfInsert(d);
@@ -75,11 +73,10 @@ uiContext d;
  *
  */
 
-static int EmptyYomiInsert pro((uiContext));
+static int EmptyYomiInsert(uiContext);
 
 static int
-EmptyYomiInsert(d)
-uiContext d;
+EmptyYomiInsert(uiContext d)
 {
   yomiContext yc = (yomiContext)d->modec;
 
@@ -99,11 +96,10 @@ uiContext d;
   するなんてことは必要ないのではないのかなぁ。
  */
 
-static int EmptyQuotedInsert pro((uiContext));
+static int EmptyQuotedInsert(uiContext);
 
 static int
-EmptyQuotedInsert(d)
-uiContext d;
+EmptyQuotedInsert(uiContext d)
 {
   yomiContext yc = (yomiContext)d->modec;
 
@@ -116,11 +112,10 @@ uiContext d;
   AlphaSelfInsert -- 自分自身を確定文字列として返す関数。
  */
 
-static int AlphaSelfInsert pro((uiContext));
+static int AlphaSelfInsert(uiContext);
 
 static int
-AlphaSelfInsert(d)
-uiContext d;
+AlphaSelfInsert(uiContext d)
 {
   unsigned kanap = (unsigned)d->ch;
 
@@ -140,11 +135,10 @@ uiContext d;
   }
 }
 
-static int AlphaNop pro((uiContext));
+static int AlphaNop(uiContext);
 
 static int
-AlphaNop(d)
-uiContext d;
+AlphaNop(uiContext d)
 {
   /* currentModeInfo でモード情報が必ず返るようにダミーのモードを入れておく */
   d->majorMode = d->minorMode = CANNA_MODE_KigoMode;
@@ -152,11 +146,10 @@ uiContext d;
   return 0;
 }
 
-static int EmptyQuit pro((uiContext));
+static int EmptyQuit(uiContext);
 
 static int
-EmptyQuit(d)
-uiContext d;
+EmptyQuit(uiContext d)
 {
   yomiContext yc = (yomiContext)d->modec;
   int res;
@@ -175,11 +168,10 @@ uiContext d;
   return res;
 }
 
-static int EmptyKakutei pro((uiContext));
+static int EmptyKakutei(uiContext);
 
 static int
-EmptyKakutei(d)
-uiContext d;
+EmptyKakutei(uiContext d)
 {
   int res;
 
@@ -192,11 +184,10 @@ uiContext d;
   return res;
 }
 
-static int EmptyDeletePrevious pro((uiContext));
+static int EmptyDeletePrevious(uiContext);
 
 static int
-EmptyDeletePrevious(d)
-uiContext d;
+EmptyDeletePrevious(uiContext d)
 {
   yomiContext yc = (yomiContext)d->modec;
 
@@ -210,8 +201,7 @@ uiContext d;
 }
 
 extraFunc *
-FindExtraFunc(fnum)
-int fnum;
+FindExtraFunc(int fnum)
 {
   extern extraFunc *extrafuncp;
   extraFunc *extrafunc;
@@ -225,9 +215,7 @@ int fnum;
 }
 
 static int
-UserMode(d, estruct)
-uiContext d;
-extraFunc *estruct;
+UserMode(uiContext d, extraFunc *estruct)
 {
   newmode *nmode = estruct->u.modeptr;
   yomiContext yc = (yomiContext)d->modec;
@@ -257,9 +245,7 @@ extraFunc *estruct;
 
 #ifndef NO_EXTEND_MENU /* continues to the bottom of this file */
 static int
-UserSelect(d, estruct)
-uiContext d;
-extraFunc *estruct;
+UserSelect(uiContext d, extraFunc *estruct)
 {
   int curkigo = 0, *posp = (int *)0;
   kigoIchiran *kigop = (kigoIchiran *)0;
@@ -304,9 +290,7 @@ extraFunc *estruct;
 }
   
 static int
-UserMenu(d, estruct)
-uiContext d;
-extraFunc *estruct;
+UserMenu(uiContext d, extraFunc *estruct)
 {
   return showmenu(d, estruct->u.menuptr);
 }
@@ -315,9 +299,7 @@ extraFunc *estruct;
 /* デフォルト以外のモード使用時に呼び出す関数を切り分ける */
 
 static int
-ProcExtraFunc(d, fnum)
-uiContext d;
-int fnum;
+ProcExtraFunc(uiContext d, int fnum)
 {
   extraFunc *extrafunc;
 
@@ -340,8 +322,7 @@ int fnum;
 }
 
 int
-getBaseMode(yc)
-yomiContext yc;
+getBaseMode(yomiContext yc)
 {
   int res;
   long fl = yc->generalFlags;
@@ -378,9 +359,7 @@ yomiContext yc;
 /* ベース文字の切り替え */
 
 void
-EmptyBaseModeInfo(d, yc)
-uiContext d;
-yomiContext yc;
+EmptyBaseModeInfo(uiContext d, yomiContext yc)
 {
   coreContext cc = (coreContext)d->modec;
 
@@ -389,8 +368,7 @@ yomiContext yc;
 }
 
 int
-EmptyBaseHira(d)
-uiContext d;
+EmptyBaseHira(uiContext d)
 {
   yomiContext yc = (yomiContext)d->modec;
 
@@ -404,8 +382,7 @@ uiContext d;
 }
 
 int
-EmptyBaseKata(d)
-uiContext d;
+EmptyBaseKata(uiContext d)
 {
   yomiContext yc = (yomiContext)d->modec;
 
@@ -422,8 +399,7 @@ uiContext d;
 }
 
 int
-EmptyBaseEisu(d)
-uiContext d;
+EmptyBaseEisu(uiContext d)
 {
   yomiContext yc = (yomiContext)d->modec;
 
@@ -438,8 +414,7 @@ uiContext d;
 }
 
 int
-EmptyBaseZen(d)
-uiContext d;
+EmptyBaseZen(uiContext d)
 {
   yomiContext yc = (yomiContext)d->modec;
 
@@ -460,8 +435,7 @@ uiContext d;
 }
 
 int
-EmptyBaseHan(d)
-uiContext d;
+EmptyBaseHan(uiContext d)
 {
   yomiContext yc = (yomiContext)d->modec;
 
@@ -489,8 +463,7 @@ uiContext d;
 }
 
 int
-EmptyBaseKana(d)
-uiContext d;
+EmptyBaseKana(uiContext d)
 {
   yomiContext yc = (yomiContext)d->modec;
 
@@ -513,8 +486,7 @@ uiContext d;
 }
 
 int
-EmptyBaseKakutei(d)
-uiContext d;
+EmptyBaseKakutei(uiContext d)
 {
   yomiContext yc = (yomiContext)d->modec;
 
@@ -528,8 +500,7 @@ uiContext d;
 }
 
 int
-EmptyBaseHenkan(d)
-uiContext d;
+EmptyBaseHenkan(uiContext d)
 {
   yomiContext yc = (yomiContext)d->modec;
 
@@ -542,12 +513,11 @@ uiContext d;
   return 0;
 }
 
-extern int ToggleChikuji pro((uiContext, int)); /* kctrl.c */
+extern int ToggleChikuji(uiContext, int); /* kctrl.c */
 
 #ifndef NO_EXTEND_MENU
 static int
-renbunInit(d)
-uiContext d;
+renbunInit(uiContext d)
 {
   yomiContext yc = (yomiContext)d->modec;
 
@@ -575,8 +545,7 @@ uiContext d;
 }
 
 static int
-showVersion(d)
-uiContext d;
+showVersion(uiContext d)
 {
   int retval = 0;
   char s[512];
@@ -600,8 +569,7 @@ uiContext d;
 }
 
 static int
-showServer(d)
-uiContext d;
+showServer(uiContext d)
 {
 #ifndef STANDALONE /* This is not used in Windows environment 1996.7.30 kon */
   int retval = 0;
@@ -637,8 +605,7 @@ uiContext d;
 }
 
 static int
-showGakushu(d)
-uiContext d;
+showGakushu(uiContext d)
 {
   int retval = 0;
   yomiContext yc = (yomiContext)d->modec;
@@ -665,8 +632,7 @@ uiContext d;
 }
 
 static int
-showInitFile(d)
-uiContext d;
+showInitFile(uiContext d)
 {
   int retval = 0;
   char s[512];
@@ -699,8 +665,7 @@ uiContext d;
 }
 
 static int
-showRomkanaFile(d)
-uiContext d;
+showRomkanaFile(uiContext d)
 {
   int retval = 0;
   char s[512];
@@ -734,8 +699,7 @@ uiContext d;
 }
 
 static int
-dicSync(d)
-uiContext d;
+dicSync(uiContext d)
 {
   int retval = 0;
   char s[512];

@@ -30,8 +30,8 @@
  */
 typedef int sock_type;
 #define INVALID_SOCK -1
-typedef int (*GetConnectionInfoProc) pro((void *obj,
-      sock_type connfd, Address *addr, char **hostname));
+typedef int (*GetConnectionInfoProc)(void *obj,
+      sock_type connfd, Address *addr, char **hostname);
 
 typedef struct {
   /* public */
@@ -42,27 +42,27 @@ typedef struct {
 
 extern EventMgr *global_event_mgr;
 
-int ClientBuf_store_reply pro((ClientBuf *obj,
-      const BYTE *data, size_t len));
-int ClientBuf_get_connection_info pro((ClientBuf *obj,
-      Address *addr, char **hostname));
-sock_type ClientBuf_getfd pro((ClientBuf *obj));
-ClientPtr ClientBuf_getclient pro((ClientBuf *obj));
+int ClientBuf_store_reply(ClientBuf *obj,
+      const BYTE *data, size_t len);
+int ClientBuf_get_connection_info(ClientBuf *obj,
+      Address *addr, char **hostname);
+sock_type ClientBuf_getfd(ClientBuf *obj);
+ClientPtr ClientBuf_getclient(ClientBuf *obj);
 
-EventMgr *EventMgr_new pro((void));
-void EventMgr_delete pro((EventMgr *obj));
-int EventMgr_add_listener_sock pro((EventMgr *obj,
-      sock_type listenerfd, GetConnectionInfoProc info_proc, void *info_obj));
-void EventMgr_quit_later pro((EventMgr *obj, int status));
-void EventMgr_finalize_notify pro((EventMgr *obj, const ClientBuf *clibuf));
-int EventMgr_run pro((EventMgr *obj));
-void EventMgr_clibuf_first pro((EventMgr *obj, EventMgrIterator *it));
-void EventMgr_clibuf_end pro((EventMgr *obj, EventMgrIterator *it));
-void EventMgrIterator_next pro((EventMgrIterator *obj));
+EventMgr *EventMgr_new(void);
+void EventMgr_delete(EventMgr *obj);
+int EventMgr_add_listener_sock(EventMgr *obj,
+      sock_type listenerfd, GetConnectionInfoProc info_proc, void *info_obj);
+void EventMgr_quit_later(EventMgr *obj, int status);
+void EventMgr_finalize_notify(EventMgr *obj, const ClientBuf *clibuf);
+int EventMgr_run(EventMgr *obj);
+void EventMgr_clibuf_first(EventMgr *obj, EventMgrIterator *it);
+void EventMgr_clibuf_end(EventMgr *obj, EventMgrIterator *it);
+void EventMgrIterator_next(EventMgrIterator *obj);
 
-SockHolder *SockHolder_new pro((void));
-void SockHolder_delete pro((SockHolder *obj));
-int SockHolder_tie pro((SockHolder *obj, EventMgr *event_mgr));
+SockHolder *SockHolder_new(void);
+void SockHolder_delete(SockHolder *obj);
+int SockHolder_tie(SockHolder *obj, EventMgr *event_mgr);
 
 #endif	/* COMM_H */
 /* vim: set sw=2: */

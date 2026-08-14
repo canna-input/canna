@@ -57,13 +57,11 @@
 
 #define HEADER_SIZE (SIZEOFCHAR * 2 + SIZEOFSHORT)
 
-static int CannaDispControlList pro((void));
-static void usage pro((void));
+static int CannaDispControlList(void);
+static void usage(void);
 
 int
-main(argc, argv)
-int argc ;
-char **argv ;
+main(int argc, char **argv)
 {
     char		cannahostname[256];
     int 		i ;
@@ -104,7 +102,7 @@ last:
 }
 
 static int
-CannaDispControlList()
+CannaDispControlList(void)
 {
     int     HostNum;
     int     i ;
@@ -171,7 +169,7 @@ last:
 }
 
 static void
-usage()
+usage(void)
 {
     fprintf( stderr, "usage: cshost [-cs | -cannaserver hostname]\n" ) ;
     fflush( stderr ) ;

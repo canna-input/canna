@@ -58,10 +58,7 @@ extern int FirstTime;
 extern BYTE *actFromHash();
 
 exp(int)
-wcKanjiString(context_id, ch, buffer_return, nbuffer, kanji_status_return)
-const int context_id, ch, nbuffer;
-wchar_t        *buffer_return;
-wcKanjiStatus  *kanji_status_return;
+wcKanjiString(const int context_id, const int ch, wchar_t *buffer_return, const int nbuffer, wcKanjiStatus *kanji_status_return)
 {
   int res;
 
@@ -77,18 +74,14 @@ wcKanjiStatus  *kanji_status_return;
 /* jrKanjiControl -- カナ漢字変換の制御を行う */
 
 exp(int)
-wcKanjiControl(context, request, arg)
-     const int context;
-     const int request;
-     char *arg;
+wcKanjiControl(const int context, const int request, char *arg)
 {
   return XwcKanjiControl2((unsigned int)0, (unsigned int)context,
 			  (unsigned int)request, (BYTE *)arg);
 }
 
 static uiContext
-newUiContext(dpy, win)
-unsigned int dpy, win;
+newUiContext(unsigned int dpy, unsigned int win)
 {
   extern struct CannaConfig cannaconf;
   uiContext d;
@@ -105,16 +98,10 @@ unsigned int dpy, win;
   return (uiContext)0;
 }
 
-extern int kanjiControl pro((int, uiContext, caddr_t));
+extern int kanjiControl(int, uiContext, caddr_t);
 
 int
-XwcLookupKanji2(dpy, win, buffer_return, nbuffer, nbytes, functionalChar,
-		kanji_status_return)
-unsigned int dpy, win;
-int functionalChar, nbytes;
-wchar_t *buffer_return;
-int nbuffer;
-wcKanjiStatus *kanji_status_return;
+XwcLookupKanji2(unsigned int dpy, unsigned int win, wchar_t *buffer_return, int nbuffer, int nbytes, int functionalChar, wcKanjiStatus *kanji_status_return)
 {
   uiContext d, keyToContext();
   int retval;
@@ -174,9 +161,7 @@ wcKanjiStatus *kanji_status_return;
 uiContext keyToContext();
 
 int
-XwcKanjiControl2(display, window, request, arg)
-unsigned int display, window, request;
-BYTE *arg;
+XwcKanjiControl2(unsigned int display, unsigned int window, unsigned int request, BYTE *arg)
 {
   if (request == KC_INITIALIZE || request == KC_FINALIZE ||
       request == KC_SETSERVERNAME || request == KC_SETINITFILENAME ||
@@ -236,10 +221,7 @@ struct map {
  */
 
 struct callback *
-pushCallback(d, env, ev, ex, qu, au)
-uiContext d;
-mode_context env;
-canna_callback_t ev, ex, qu, au;
+pushCallback(uiContext d, mode_context env, canna_callback_t ev, canna_callback_t ex, canna_callback_t qu, canna_callback_t au)
 {
   struct callback *newCB;
 
@@ -257,8 +239,7 @@ canna_callback_t ev, ex, qu, au;
 }
 
 void
-popCallback(d)
-uiContext d;
+popCallback(uiContext d)
 {
   struct callback *oldCB;
 

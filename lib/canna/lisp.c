@@ -42,7 +42,7 @@ static int allocarea(), skipspaces(), zaplin(), isterm();
 static void prins();
 static list mkatm(), read1(), ratom(), ratom2(), rstring();
 static int tyipeek(), tyi();
-static void tyo pro((int));
+static void tyo(int);
 static void defatms(), epush();
 static void push(), pop();
 static int  evpsh();
@@ -133,10 +133,10 @@ static list getatmz(char *);
 static list getatmz();
 #endif
 
-extern int changeModeName pro((int, char*)); /* mode.c */
-extern int changeKeyfunc pro((int, int, int, unsigned char*, unsigned char*)); /* keydef.c */
-extern int changeKeyfuncOfAll pro((int, int, unsigned char*, unsigned char*)); /* keydef.c */
-extern int RkwGetProtocolVersion pro((int*, int*)); /* engine.c */
+extern int changeModeName(int, char*); /* mode.c */
+extern int changeKeyfunc(int, int, int, unsigned char*, unsigned char*); /* keydef.c */
+extern int changeKeyfuncOfAll(int, int, unsigned char*, unsigned char*); /* keydef.c */
+extern int RkwGetProtocolVersion(int*, int*); /* engine.c */
 
 /*********************************************************************
  *                      wchar_t replace begin                        *
@@ -148,7 +148,7 @@ extern int RkwGetProtocolVersion pro((int*, int*)); /* engine.c */
 
 
 int
-clisp_init()
+clisp_init(void)
 {
   int  i;
 
@@ -184,7 +184,7 @@ clisp_init()
 
 #ifndef NO_EXTEND_MENU
 static void
-fillMenuEntry()
+fillMenuEntry(void)
 {
   extern extraFunc *FindExtraFunc(), *extrafuncp;
   extraFunc *p, *fp;
@@ -226,7 +226,7 @@ static char *untyibuf = 0;
 static int untyisize = 0, untyip = 0;
 
 void
-clisp_fin()
+clisp_fin(void)
 {
 #ifndef NO_EXTEND_MENU
   /* 終るに当たって、menu 関連のデータを埋める */
@@ -254,8 +254,7 @@ clisp_fin()
 }
 
 int
-YYparse_by_rcfilename(s)
-char *s;
+YYparse_by_rcfilename(char *s)
 {
   extern int ckverbose;
   int retval = 0;
@@ -321,8 +320,7 @@ char *s;
 #ifdef WITH_MAIN
 
 static void
-intr(sig)
-int sig;
+intr(int sig)
 /* ARGSUSED */
 {
   error("Interrupt:",NON);
@@ -336,8 +334,7 @@ int sig;
 */
 
 int
-parse_string(str)
-char *str;
+parse_string(char *str)
 {
   char *readbufbk;
 
@@ -388,7 +385,7 @@ char *str;
 static void intr();
 
 void
-clisp_main()
+clisp_main(void)
 {
   if (clisp_init() == 0) {	/* initialize data area	& etc..	*/
     fprintf(stderr, "CannaLisp: initialization failed.\n");
@@ -520,7 +517,7 @@ static int nseq;
 static int seqline;
 
 static int
-initIS()
+initIS(void)
 {
   SeqToID *p;
   char *s;
@@ -611,7 +608,7 @@ initIS()
 }
 
 static void
-finIS() /* identifySequence に用いたメモリ資源を開放する */
+finIS(void) /* identifySequence に用いたメモリ資源を開放する */
 {
   int i;
 
@@ -639,9 +636,7 @@ finIS() /* identifySequence に用いたメモリ資源を開放する */
 #define END	 0
 
 static int
-identifySequence(c, val)
-unsigned c;
-int *val;
+identifySequence(unsigned c, int *val)
 {
   int nextline;
 
@@ -666,7 +661,7 @@ int *val;
 
 
 static int
-alloccell()
+alloccell(void)
 {
   int  cellsize, odd;
   char *p;
@@ -686,7 +681,7 @@ alloccell()
 /* うまく行かなかったら０を返す */
 
 static int
-allocarea()
+allocarea(void)
 {
   /* まずはセル領域 */
   if (alloccell()) {
@@ -733,7 +728,7 @@ allocarea()
 }
 
 static void
-freearea()
+freearea(void)
 {
   free((char *)memtop);
   free((char *)stack);
@@ -749,8 +744,7 @@ freearea()
 }
 
 static list
-getatmz(name)
-char *name;
+getatmz(char *name)
 {
   int  key;
   char *p;
@@ -764,8 +758,7 @@ char *name;
 	making symbol function	*/
 
 static list 
-mkatm(name)
-char *name;
+mkatm(char *name)
 {
   list temp;
   struct atomcell *newatom;
@@ -787,9 +780,7 @@ char *name;
 /* getatm -- get atom from the oblist if possible	*/
 
 static list 
-getatm(name,key)
-char *name;
-int  key;
+getatm(char *name, int key)
 {
   list p;
   struct atomcell *atomp;
@@ -812,9 +803,7 @@ int  key;
 #define MESSAGE_MAX 256
 
 static void
-error(msg,v)
-char *msg;
-list v;
+error(char *msg, list v)
 /* ARGSUSED */
 {
   char buf[MESSAGE_MAX];
@@ -842,9 +831,7 @@ list v;
 }
 
 static void
-fatal(msg,v)
-char *msg;
-list v;
+fatal(char *msg, list v)
 /* ARGSUSED */
 {
   char buf[MESSAGE_MAX];
@@ -869,8 +856,7 @@ list v;
 }
 
 static void
-argnerr(msg)
-char *msg;
+argnerr(char *msg)
 {
   prins("incorrect number of args to ");
   error(msg, NON);
@@ -878,9 +864,7 @@ char *msg;
 }
 
 static void
-numerr(fn,arg)
-char *fn;
-list arg;
+numerr(char *fn, list arg)
 {
   prins("Non-number ");
   if (fn) {
@@ -892,9 +876,7 @@ list arg;
 }
 
 static void
-lisp_strerr(fn,arg)
-char *fn;
-list arg;
+lisp_strerr(char *fn, list arg)
 {
   prins("Non-string ");
   if (fn) {
@@ -906,8 +888,7 @@ list arg;
 }
 
 static list
-Lread(n)
-int n;
+Lread(int n)
 {
   list t;
 
@@ -938,11 +919,11 @@ int n;
   /* NOTREACHED */
 }
 
-static void untyi pro((int));
-static list rcharacter pro((void));
+static void untyi(int);
+static list rcharacter(void);
 
 static list
-read1()
+read1(void)
 {
   int  c;
   list p, *pp;
@@ -1035,7 +1016,7 @@ read1()
 	if eof read then return NO	*/
 
 static int
-skipspaces()
+skipspaces(void)
 {
   int c;
 
@@ -1060,7 +1041,7 @@ skipspaces()
 	if eof read then return NO	*/
 
 static int
-zaplin()
+zaplin(void)
 {
 	int c;
 
@@ -1073,7 +1054,7 @@ zaplin()
 static void gc();
 
 static list
-newcons()
+newcons(void)
 {
   list retval;
 
@@ -1086,8 +1067,7 @@ newcons()
 }
 
 static list
-newsymbol(name)
-char *name;
+newsymbol(char *name)
 {
   list retval;
   struct atomcell *temp;
@@ -1111,8 +1091,7 @@ char *name;
 static void patom();
 
 static void
-print(l)
-list l;
+print(list l)
 {
 	if ( !l )	/* case NIL	*/
 		prins("nil");
@@ -1144,7 +1123,7 @@ list l;
 
 
 static list 
-ratom()
+ratom(void)
 {
 	return(ratom2(tyi()));
 }
@@ -1155,8 +1134,7 @@ ratom()
 static int isnum();
 
 static list 
-ratom2(a)
-int  a;
+ratom2(int a)
 {
   int  i, c, flag;
   char atmbuf[BUFSIZE];
@@ -1203,7 +1181,7 @@ int  a;
 }
 
 static list
-rstring()
+rstring(void)
 {
   char strb[BUFSIZE];
   int c;
@@ -1240,7 +1218,7 @@ rstring()
 /* rcharacter -- 一文字読んで来る。 */
 
 static list
-rcharacter()
+rcharacter(void)
 {
   char *tempbuf;
   unsigned ch;
@@ -1307,8 +1285,8 @@ rcharacter()
   return retval;
 }
 
-static int isnum(name)
-char *name;
+static int
+isnum(char *name)
 {
 	if (*name == '-') {
 		name++;
@@ -1328,8 +1306,7 @@ char *name;
 /* tyi -- input one character from buffered stream	*/
 
 static void
-untyi(c)
-int c;
+untyi(int c)
 {
   if (readbuf < readptr) {
     *--readptr = c;
@@ -1356,7 +1333,7 @@ int c;
 }
 
 static int
-tyi()
+tyi(void)
 {
   char *gets(), *fgets();
 
@@ -1402,7 +1379,7 @@ tyi()
 /* tyipeek -- input one character without advance the read pointer	*/
 
 static int
-tyipeek()
+tyipeek(void)
 {
   int c = tyi();
   untyi(c);
@@ -1411,8 +1388,8 @@ tyipeek()
 
 /* tyo -- output one character	*/
 
-static void tyo(c)
-int c;
+static void
+tyo(int c)
 {
   if (outstream) {
     (void)putc(c, outstream);
@@ -1423,8 +1400,8 @@ int c;
 /* prins -
 	print string	*/
 
-static void prins(s)
-char *s;
+static void
+prins(char *s)
 {
 	while (*s) {
 		tyo(*s++);
@@ -1435,8 +1412,8 @@ char *s;
 /* isterm -
 	check if the character is terminating the lisp expression	*/
 
-static int isterm(c)
-int  c;
+static int
+isterm(int c)
 {
 	if (c <= ' ')
 		return(YES);
@@ -1456,8 +1433,7 @@ int  c;
 /* push down an S-expression to parameter stack	*/
 
 static void
-push(value)
-list value;
+push(list value)
 {
   if (sp <= stack) {
     error("Stack over flow",NON);
@@ -1470,8 +1446,7 @@ list value;
 /* pop up n S-expressions from parameter stack	*/
 
 static void 
-pop(x)
-int  x;
+pop(int x)
 {
   if (0 < x && sp >= &stack[STKSIZE]) {
     error("Stack under flow",NON);
@@ -1483,7 +1458,7 @@ int  x;
 /* pop up an S-expression from parameter stack	*/
 
 static list 
-pop1()
+pop1(void)
 {
   if (sp >= &stack[STKSIZE]) {
     error("Stack under flow",NON);
@@ -1493,8 +1468,7 @@ pop1()
 }
 
 static void
-epush(value)
-list value;
+epush(list value)
 {
   if (esp <= estack) {
     error("Estack over flow",NON);
@@ -1505,7 +1479,7 @@ list value;
 }
 
 static list 
-epop()
+epop(void)
 {
   if (esp >= &estack[STKSIZE]) {
     error("Lstack under flow",NON);
@@ -1527,8 +1501,7 @@ epop()
 */
 
 static void
-patom(atm)
-list atm;
+patom(list atm)
 {
   char namebuf[BUFSIZE];
 
@@ -1561,7 +1534,7 @@ static char *oldcellp;
 #define oldpointer(x) (oldcelltop + celloffset(x))
 
 static void
-gc() /* コピー方式のガーベジコレクションである */
+gc(void) /* コピー方式のガーベジコレクションである */
 {
   int i;
   list *p;
@@ -1615,8 +1588,7 @@ gc() /* コピー方式のガーベジコレクションである */
 static char *Strncpy();
 
 static list
-allocstring(n)
-int n;
+allocstring(int n)
 {
   int namesize;
   list retval;
@@ -1632,9 +1604,7 @@ int n;
 }
 
 static list
-copystring(s, n)
-char *s;
-int n;
+copystring(char *s, int n)
 {
   list retval;
 
@@ -1645,8 +1615,7 @@ int n;
 }
 
 static list
-copycons(l)
-struct cell *l;
+copycons(struct cell *l)
 {
   list newcell;
 
@@ -1657,8 +1626,7 @@ struct cell *l;
 }
 
 static void
-markcopycell(addr)
-list *addr;
+markcopycell(list *addr)
 {
   list temp;
  redo:
@@ -1715,8 +1683,7 @@ list *addr;
 }
 
 static list
-bindall(var,par,a,e)
-list var, par, a, e;
+bindall(list var, list par, list a, list e)
 {
   list *pa, *pe, retval;
 
@@ -1750,7 +1717,7 @@ list var, par, a, e;
 }
 
 static list
-Lquote()
+Lquote(void)
 {
 	list p;
 
@@ -1762,8 +1729,7 @@ Lquote()
 }
 
 static list
-Leval(n)
-int n;
+Leval(int n)
 {
   list e, t, s, tmp, aa, *pe, *pt, *ps, *paa;
   list fn, (*cfn)(), *pfn;
@@ -1962,8 +1928,7 @@ int n;
 }
 
 static list
-assq(e,a)
-list e, a;
+assq(list e, list a)
 {
   list i;
 
@@ -1978,8 +1943,7 @@ list e, a;
 /* eval each argument and push down each value to parameter stack	*/
 
 static int
-evpsh(args)
-list args;
+evpsh(list args)
 {
   int  counter;
   list temp;
@@ -2014,7 +1978,7 @@ list args;
 */
 
 static list
-Lprogn()
+Lprogn(void)
 {
   list val, *pf;
 
@@ -2030,8 +1994,7 @@ Lprogn()
 }
 
 static list
-Lcons(n)
-int n;
+Lcons(int n)
 {
 	list temp;
 
@@ -2043,8 +2006,7 @@ int n;
 }
 
 static list 
-Lncons(n)
-int n;
+Lncons(int n)
 {
 	list temp;
 
@@ -2056,8 +2018,7 @@ int n;
 }
 
 static list
-Lxcons(n)
-int n;
+Lxcons(int n)
 {
 	list temp;
 
@@ -2069,8 +2030,7 @@ int n;
 }
 
 static list 
-Lprint(n)
-int n;
+Lprint(int n)
 {
 	print(sp[0]);
 	pop(n);
@@ -2078,8 +2038,7 @@ int n;
 }
 
 static list
-Lset(n)
-int n;
+Lset(int n)
 {
   list val, t;
   list var;
@@ -2106,7 +2065,7 @@ int n;
 }
 
 static list
-Lsetq()
+Lsetq(void)
 {
   list a, *pp;
 
@@ -2129,8 +2088,7 @@ Lsetq()
 static int equal();
 
 static list 
-Lequal(n)
-int n;
+Lequal(int n)
 {
   argnchk("equal (=)",2);
   if (equal(pop1(),pop1()))
@@ -2142,9 +2100,7 @@ int n;
 /* null 文字で終わらない strncmp */
 
 static int
-Strncmp(x, y, len)
-char *x, *y;
-int len;
+Strncmp(char *x, char *y, int len)
 {
   int i;
 
@@ -2159,9 +2115,7 @@ int len;
 /* null 文字で終わらない strncpy */
 
 static char *
-Strncpy(x, y, len)
-char *x, *y;
-int len;
+Strncpy(char *x, char *y, int len)
 {
   int i;
 
@@ -2172,8 +2126,7 @@ int len;
 }
 
 static int
-equal(x,y)
-list x, y;
+equal(list x, list y)
 {
  equaltop:
   if (x == y)
@@ -2207,8 +2160,7 @@ list x, y;
 }
 
 static list 
-Lgreaterp(n)
-int n;
+Lgreaterp(int n)
 {
   list p;
   pointerint x, y;
@@ -2238,8 +2190,7 @@ int n;
 }
 
 static list 
-Llessp(n)
-int n;
+Llessp(int n)
 {
   list p;
   pointerint x, y;
@@ -2269,8 +2220,7 @@ int n;
 }
 
 static list
-Leq(n)
-int n;
+Leq(int n)
 {
   list f;
 
@@ -2283,7 +2233,7 @@ int n;
 }
 
 static list
-Lcond()
+Lcond(void)
 {
   list *pp, t, a, c;
 
@@ -2319,8 +2269,7 @@ Lcond()
 }
 
 static list
-Lnull(n)
-int n;
+Lnull(int n)
 {
   argnchk("null",1);
   if (pop1())
@@ -2330,7 +2279,7 @@ int n;
 }
 
 static list 
-Lor()
+Lor(void)
 {
   list *pp, t;
 
@@ -2347,7 +2296,7 @@ Lor()
 }
 
 static list 
-Land()
+Land(void)
 {
   list *pp, t;
 
@@ -2364,8 +2313,7 @@ Land()
 }
 
 static list 
-Lplus(n)
-int n;
+Lplus(int n)
 {
   list t;
   int  i;
@@ -2388,8 +2336,7 @@ int n;
 }
 
 static list
-Ltimes(n)
-int n;
+Ltimes(int n)
 {
   list t;
   int  i;
@@ -2411,8 +2358,7 @@ int n;
 }
 
 static list
-Ldiff(n)
-int n;
+Ldiff(int n)
 {
   list t;
   int  i;
@@ -2447,8 +2393,7 @@ int n;
 }
 
 static list 
-Lquo(n)
-int n;
+Lquo(int n)
 {
   list t;
   int  i;
@@ -2481,8 +2426,7 @@ int n;
 }
 
 static list 
-Lrem(n)
-int n;
+Lrem(int n)
 {
   list t;
   int  i;
@@ -2519,8 +2463,7 @@ int n;
  */
 
 static list 
-Lgc(n)
-int n;
+Lgc(int n)
 {
   argnchk("gc",0);
   gc();
@@ -2528,8 +2471,7 @@ int n;
 }
 
 static list
-Lusedic(n)
-int n;
+Lusedic(int n)
 {
   int i;
   list retval = NIL, temp;
@@ -2601,8 +2543,7 @@ int n;
 }
 
 static list
-Llist(n)
-int n;
+Llist(int n)
 {
 	push(NIL);
 	for (; n ; n--) {
@@ -2612,8 +2553,7 @@ int n;
 }
 
 static list
-Lcopysym(n)
-int n;
+Lcopysym(int n)
 {
   list src, dst;
   struct atomcell *dsta, *srca;
@@ -2642,8 +2582,7 @@ int n;
 }
 
 static list
-Lload(n)
-int n;
+Lload(int n)
 {
   list p, t;
   list noerror = NIL;
@@ -2698,8 +2637,7 @@ int n;
 }
 
 static list
-Lmodestr(n)
-int n;
+Lmodestr(int n)
 {
   list p;
   int mode;
@@ -2721,11 +2659,7 @@ int n;
 /* 機能シーケンスの取り出し */
 
 static int
-xfseq(fname, l, arr, arrsize)
-char *fname;
-list l;
-unsigned char *arr;
-int arrsize;
+xfseq(char *fname, list l, unsigned char *arr, int arrsize)
 {
   int i;
 
@@ -2758,8 +2692,7 @@ int arrsize;
 }
 
 static list
-Lsetkey(n)
-int n;
+Lsetkey(int n)
 {
   list p;
   int mode, slen;
@@ -2797,8 +2730,7 @@ int n;
 }
 
 static list
-Lgsetkey(n)
-int n;
+Lgsetkey(int n)
 {
   list p;
   int slen;
@@ -2833,8 +2765,7 @@ int n;
 }
 
 static list
-Lputd(n)
-int n;
+Lputd(int n)
 {
   list body, a;
   list sym;
@@ -2866,7 +2797,7 @@ int n;
 }
 
 static list
-Ldefun()
+Ldefun(void)
 {
   list form, res;
 
@@ -2885,7 +2816,7 @@ Ldefun()
 }
 
 static list
-Ldefmacro()
+Ldefmacro(void)
 {
   list form, res;
 
@@ -2904,8 +2835,7 @@ Ldefmacro()
 }
 
 static list
-Lcar(n)
-int n;
+Lcar(int n)
 {
   list f;
 
@@ -2921,8 +2851,7 @@ int n;
 }
 
 static list
-Lcdr(n)
-int n;
+Lcdr(int n)
 {
   list f;
 
@@ -2938,8 +2867,7 @@ int n;
 }
 
 static list
-Latom(n)
-int n;
+Latom(int n)
 {
   list f;
 
@@ -2952,7 +2880,7 @@ int n;
 }
 
 static list
-Llet()
+Llet(void)
 {
   list lambda, args, p, *pp, *pq, *pl, *px;
 
@@ -3009,7 +2937,7 @@ Llet()
 /* (if con tr . falist) -> (cond (con tr) (t . falist))*/
 
 static list
-Lif()
+Lif(void)
 {
   list x, *px, retval;
 
@@ -3038,8 +2966,7 @@ Lif()
 }
 
 static list
-Lunbindkey(n)
-int n;
+Lunbindkey(int n)
 {
   unsigned char fseq[2];
   static unsigned char keyseq[2] = {(unsigned char)CANNA_KEY_Undefine,
@@ -3071,8 +2998,7 @@ int n;
 }
 
 static list
-Lgunbindkey(n)
-int n;
+Lgunbindkey(int n)
 {
   unsigned char fseq[2];
   static unsigned char keyseq[2] = {(unsigned char)CANNA_KEY_Undefine,
@@ -3103,7 +3029,7 @@ int n;
 #define DEFMODE_ILLFUNCTION 2
 
 static list
-Ldefmode()
+Ldefmode(void)
 {
   list form, *sym, e, *p, fn, rd, md, us;
   extern extraFunc *extrafuncp;
@@ -3297,7 +3223,7 @@ Ldefmode()
 }
 
 static list
-Ldefsym()
+Ldefsym(void)
 {
   list form, res, e;
   int i, ncand, group;
@@ -3427,9 +3353,7 @@ static int cswidth[4] = {1, 2, 2, 3};
  */
 
 static int
-getKutenCode(data, ku, ten)
-char *data;
-int *ku, *ten;
+getKutenCode(char *data, int *ku, int *ten)
 {
   int codeset;
 
@@ -3461,9 +3385,7 @@ int *ku, *ten;
  */
 
 static int
-howManyCharsAre(tdata, edata, tku, tten, codeset)
-char *tdata, *edata;
-int *tku, *tten, *codeset;
+howManyCharsAre(char *tdata, char *edata, int *tku, int *tten, int *codeset)
 {
   int eku, eten, kosdata, koedata;
 
@@ -3484,8 +3406,7 @@ int *tku, *tten, *codeset;
  */
 
 static char *
-pickupChars(tku, tten, num, kodata)
-int tku, tten, num, kodata;
+pickupChars(int tku, int tten, int num, int kodata)
 {
   char *dptr, *tdptr, *edptr;
 
@@ -3534,9 +3455,7 @@ int tku, tten, num, kodata;
  */
 
 static void
-numtostr(num, str)
-unsigned long num;
-char *str;
+numtostr(unsigned long num, char *str)
 {
   if (num & 0xff0000) {
     *str++ = (char)((num >> 16) & 0xff);
@@ -3556,7 +3475,7 @@ char *str;
  */
 
 static list
-Ldefselection()
+Ldefselection(void)
 {
   list form, sym, e, e2, md, kigo_list, buf;
   extern extraFunc *extrafuncp;
@@ -3786,7 +3705,7 @@ Ldefselection()
  */
 
 static list
-Ldefmenu()
+Ldefmenu(void)
 {
   list form, sym, e;
   extern extraFunc *extrafuncp;
@@ -3868,8 +3787,7 @@ Ldefmenu()
 #endif /* NO_EXTEND_MENU */
 
 static list
-Lsetinifunc(n)
-int n;
+Lsetinifunc(int n)
 {
   unsigned char fseq[256];
   int i, len;
@@ -3898,8 +3816,7 @@ int n;
 }
 
 static list
-Lboundp(n)
-int n;
+Lboundp(int n)
 {
   list e;
   struct atomcell *sym;
@@ -3933,8 +3850,7 @@ int n;
 }
 
 static list
-Lfboundp(n)
-int n;
+Lfboundp(int n)
 {
   list e;
 
@@ -3958,8 +3874,7 @@ int n;
 }
 
 static list
-Lgetenv(n)
-int n;
+Lgetenv(int n)
 {
   list e;
   char strbuf[256], *ret, *getenv();
@@ -3987,8 +3902,7 @@ int n;
 }
 
 static list
-LdefEscSeq(n)
-int n;
+LdefEscSeq(int n)
 {
   extern void (*keyconvCallback)();
 
@@ -4015,8 +3929,7 @@ int n;
 }
 
 static list
-Lconcat(n)
-int n;
+Lconcat(int n)
 {
   list t, res;
   int  i, len;
@@ -4048,7 +3961,7 @@ int n;
 extern char *RkGetServerHost();
 
 static void
-ObtainVersion()
+ObtainVersion(void)
 {
 #if !defined(STANDALONE) && !defined(WIN_CANLISP)
   int a, b;
@@ -4085,10 +3998,7 @@ ObtainVersion()
 /* 変数アクセスのための関数 */
 
 static list
-VTorNIL(var, setp, arg)
-BYTE *var;
-int setp;
-list arg;
+VTorNIL(BYTE *var, int setp, list arg)
 {
   if (setp == VALSET) {
     *var = (arg == NIL) ? 0 : 1;
@@ -4100,10 +4010,7 @@ list arg;
 }
 
 static list
-StrAcc(var, setp, arg)
-char **var;
-int setp;
-list arg;
+StrAcc(char **var, int setp, list arg)
 {
   if (setp == VALSET) {
     if (null(arg) || stringp(arg)) {
@@ -4142,10 +4049,7 @@ list arg;
 }
 
 static list
-NumAcc(var, setp, arg)
-int *var;
-int setp;
-list arg;
+NumAcc(int *var, int setp, list arg)
 {
   if (setp == VALSET) {
     if (numberp(arg)) {
@@ -4172,7 +4076,8 @@ static list fn(setp, arg) int setp; list arg; { \
 static list fn(setp, arg) int setp; list arg; { \
   extern struct CannaConfig cannaconf; return acc(&var, setp, arg); }
 
-static list Vnkouhobunsetsu(setp, arg) int setp; list arg;
+static list
+Vnkouhobunsetsu(int setp, list arg)
 {
   extern int nKouhoBunsetsu;
 
@@ -4188,7 +4093,8 @@ static list Vnkouhobunsetsu(setp, arg) int setp; list arg;
   return arg;
 }
 
-static list VProtoVer(setp, arg) int setp; list arg;
+static list
+VProtoVer(int setp, list arg)
 {
 #ifndef STANDALONE
   extern int protocol_version;
@@ -4200,7 +4106,8 @@ static list VProtoVer(setp, arg) int setp; list arg;
 #endif /* STANDALONE */
 }
 
-static list VServVer(setp, arg) int setp; list arg;
+static list
+VServVer(int setp, list arg)
 {
 #ifndef STANDALONE
   extern int server_version;
@@ -4212,7 +4119,8 @@ static list VServVer(setp, arg) int setp; list arg;
 #endif /* STANDALONE */
 }
 
-static list VServName(setp, arg) int setp; list arg;
+static list
+VServName(int setp, list arg)
 {
 #ifndef STANDALONE
   extern char *server_name;
@@ -4225,7 +4133,7 @@ static list VServName(setp, arg) int setp; list arg;
 }
 
 static list
-VCannaDir(setp, arg) int setp; list arg;
+VCannaDir(int setp, list arg)
 {
   char *canna_dir = CANNALIBDIR;
 
@@ -4237,7 +4145,8 @@ VCannaDir(setp, arg) int setp; list arg;
   }
 }
 
-static list VCodeInput(setp, arg) int setp; list arg;
+static list
+VCodeInput(int setp, list arg)
 {
   extern struct CannaConfig cannaconf;
   static char *input_code[CANNA_MAX_CODE] = {"jis", "sjis", "kuten"};
@@ -4391,7 +4300,7 @@ static struct atomdefs initatom[] = {
 };
 
 static void
-deflispfunc()
+deflispfunc(void)
 {
   struct atomdefs *p;
 
@@ -4469,7 +4378,7 @@ static struct cannavardefs cannavars[] = {
 };
 
 static void
-defcannavar()
+defcannavar(void)
 {
   struct cannavardefs *p;
 
@@ -4529,7 +4438,7 @@ static struct cannamodedefs cannamodes[] = {
 };
 
 static void
-defcannamode()
+defcannamode(void)
 {
   struct cannamodedefs *p;
 
@@ -4634,7 +4543,7 @@ static struct cannafndefs cannafns[] = {
 };
 
 static void
-defcannafunc()
+defcannafunc(void)
 {
   struct cannafndefs *p;
 
@@ -4645,7 +4554,7 @@ defcannafunc()
 
 
 static void
-defatms()
+defatms(void)
 {
   deflispfunc();
   defcannavar();

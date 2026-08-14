@@ -24,17 +24,17 @@
 #ifndef RKCAPI_H
 #define RKCAPI_H
 
-typedef void (*RkcConfigErrorProc) pro((const char *const *errors));
-int RkcGetServerFD pro((void));
-int RkcConnectIrohaServer pro((char *servername));
-void RkcListenConfigErrors pro((RkcConfigErrorProc handler));
-int RkcRecvEReply pro((unsigned char *buf, int bufsize,
-      int requiredsize, int *len_return));
-int RkcSendERequest pro((const unsigned char *Buffer, int size));
-int RkcRecvWReply pro((unsigned char *buf, int bufsize,
-      int *len_return, unsigned char **allocptr));
-int RkcSendWRequest pro((const unsigned char *Buffer, int size));
-int RkwGetProtocolVersion pro((int *majorp, int *minorp));
+typedef void (*RkcConfigErrorProc)(const char *const *errors);
+int RkcGetServerFD(void);
+int RkcConnectIrohaServer(char *servername);
+void RkcListenConfigErrors(RkcConfigErrorProc handler);
+int RkcRecvEReply(unsigned char *buf, int bufsize,
+      int requiredsize, int *len_return);
+int RkcSendERequest(const unsigned char *Buffer, int size);
+int RkcRecvWReply(unsigned char *buf, int bufsize,
+      int *len_return, unsigned char **allocptr);
+int RkcSendWRequest(const unsigned char *Buffer, int size);
+int RkwGetProtocolVersion(int *majorp, int *minorp);
 
 #endif /* RKCAPI_H */
 /* vim: set sw=2: */

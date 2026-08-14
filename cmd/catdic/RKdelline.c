@@ -30,10 +30,7 @@
 #include "ccompat.h"
 
 int
-RkDeleteLine(cx_num, name, line)
-int cx_num;
-char *name;
-char *line;
+RkDeleteLine(int cx_num, char *name, char *line)
 {
   int linelen = strlen(line);
   int yomilen, yomihinshilen = 0;
@@ -102,16 +99,15 @@ char *line;
 }
 
 #ifdef TEST_DELETEDIC
-RkDeleteDic(cx_num, name, word)
-int cx_num;
-char *name;
-char *word;
+int
+RkDeleteDic(int cx_num, char *name, char *word)
 {
   printf("☆単語の定義(辞書:%s) \"%s\"\n", name, word);
   return 0;
 }
 
-main()
+int
+main(void)
 {
   char buf[2048], *p;
   int c;

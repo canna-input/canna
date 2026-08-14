@@ -39,10 +39,10 @@ extern int errno;
 
 exp(int) RkwCreateDic();
 
-static int dicTourokuDo pro((uiContext)),
-           checkUsrDic pro((uiContext)),
-           dicTourokuYomi pro((uiContext)),
-           dicTourokuYomiDo pro((uiContext, canna_callback_t));
+static int dicTourokuDo(uiContext),
+           checkUsrDic(uiContext),
+           dicTourokuYomi(uiContext),
+           dicTourokuYomiDo(uiContext, canna_callback_t);
 
 
 static char *shinshitbl1[] = 
@@ -81,7 +81,7 @@ static wchar_t *hinshitbl2[HINSHI2_SZ];
 static wchar_t *b1, *b2;
 
 int
-initHinshiTable()
+initHinshiTable(void)
 {
   int retval = 0;
 
@@ -99,8 +99,7 @@ initHinshiTable()
 }
 
 static void
-clearTango(d)
-uiContext d;
+clearTango(uiContext d)
 {
   tourokuContext tc = (tourokuContext)d->modec;
 
@@ -109,8 +108,7 @@ uiContext d;
 }
 
 void
-clearYomi(d)
-uiContext d;
+clearYomi(uiContext d)
 {
   tourokuContext tc = (tourokuContext)d->modec;
 
@@ -119,8 +117,7 @@ uiContext d;
 }
 
 static int
-clearTourokuContext(p)
-tourokuContext p;
+clearTourokuContext(tourokuContext p)
 {
   p->id = TOUROKU_CONTEXT;
   p->genbuf[0] = 0;
@@ -142,7 +139,7 @@ tourokuContext p;
 }
   
 static tourokuContext
-newTourokuContext()
+newTourokuContext(void)
 {
   tourokuContext tcxt;
 
@@ -162,8 +159,7 @@ newTourokuContext()
 }
 
 int
-getTourokuContext(d)
-uiContext d;
+getTourokuContext(uiContext d)
 {
   tourokuContext tc;
   int retval = 0;
@@ -193,8 +189,7 @@ uiContext d;
 }
 
 void
-popTourokuMode(d)
-uiContext d;
+popTourokuMode(uiContext d)
 {
   tourokuContext tc = (tourokuContext)d->modec;
 
@@ -204,17 +199,14 @@ uiContext d;
 }
 
 
-extern int checkGLineLen pro((uiContext)); /* util.c */
+extern int checkGLineLen(uiContext); /* util.c */
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * 単語登録の単語の入力                                                      *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 static int
-uuTTangoEveryTimeCatch(d, retval, env)
-uiContext d;
-int retval;
-mode_context env;
+uuTTangoEveryTimeCatch(uiContext d, int retval, mode_context env)
 {
   tourokuContext tc = (tourokuContext)env;
   int len, echoLen, revPos;
@@ -275,10 +267,7 @@ mode_context env;
 }
 
 static int
-uuTTangoExitCatch(d, retval, env)
-uiContext d;
-int retval;
-mode_context env;
+uuTTangoExitCatch(uiContext d, int retval, mode_context env)
 /* ARGSUSED */
 {
   tourokuContext tc;
@@ -295,10 +284,7 @@ mode_context env;
 }
 
 int
-uuTTangoQuitCatch(d, retval, env)
-uiContext d;
-int retval;
-mode_context env;
+uuTTangoQuitCatch(uiContext d, int retval, mode_context env)
 /* ARGSUSED */
 {
   popCallback(d); /* 読みを pop */
@@ -309,13 +295,10 @@ mode_context env;
   return prevMenuIfExist(d);
 }
 
-extern int _do_func_slightly pro((uiContext, int, mode_context, KanjiMode)); /* kctrl.c */
+extern int _do_func_slightly(uiContext, int, mode_context, KanjiMode); /* kctrl.c */
 
 static int
-uuT2TangoEveryTimeCatch(d, retval, env)
-uiContext d;
-int retval;
-mode_context env;
+uuT2TangoEveryTimeCatch(uiContext d, int retval, mode_context env)
 {
   yomiContext nyc;
   int echoLen, pos, offset;
@@ -372,10 +355,7 @@ mode_context env;
  *  単語登録モードを抜ける際に必要な処理を行う  *
  ************************************************/
 static int
-uuT2TangoExitCatch(d, retval, nyc)
-uiContext d;
-int retval;
-mode_context nyc;
+uuT2TangoExitCatch(uiContext d, int retval, mode_context nyc)
 /* ARGSUSED */
 {
   yomiContext yc;
@@ -395,10 +375,7 @@ mode_context nyc;
 }
 
 static int
-uuT2TangoQuitCatch(d, retval, env)
-uiContext d;
-int retval;
-mode_context env;
+uuT2TangoQuitCatch(uiContext d, int retval, mode_context env)
 /* ARGSUSED */
 {
   popCallback(d); /* 読みを pop */
@@ -410,18 +387,15 @@ mode_context env;
   return(0);
 }
 
-extern int GLineNGReturn pro((uiContext)); /* util.c */
-int dicTourokuTango pro((uiContext, canna_callback_t)); /* uldefine.c */
+extern int GLineNGReturn(uiContext); /* util.c */
+int dicTourokuTango(uiContext, canna_callback_t); /* uldefine.c */
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * 単語登録の辞書作成                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 static int
-uuTMakeDicYesCatch(d, retval, env)
-uiContext d;
-int retval;
-mode_context env;
+uuTMakeDicYesCatch(uiContext d, int retval, mode_context env)
 /* ARGSUSED */
 {
   int err = 0, perr = 0;
@@ -487,10 +461,7 @@ mode_context env;
 }
 
 static int
-uuTMakeDicQuitCatch(d, retval, env)
-uiContext d;
-int retval;
-mode_context env;
+uuTMakeDicQuitCatch(uiContext d, int retval, mode_context env)
 /* ARGSUSED */
 {
   popCallback(d); /* yesNo をポップ */
@@ -501,10 +472,7 @@ mode_context env;
 }
 
 static int
-uuTMakeDicNoCatch(d, retval, env)
-uiContext d;
-int retval;
-mode_context env;
+uuTMakeDicNoCatch(uiContext d, int retval, mode_context env)
 /* ARGSUSED */
 {
   popCallback(d); /* yesNo をポップ */
@@ -522,8 +490,7 @@ mode_context env;
   ユーザ辞書でマウントされているものを取り出す処理
  */
 wchar_t **
-getUserDicName(d)
-uiContext d;
+getUserDicName(uiContext d)
 /* ARGSUSED */
 {
   int nmudic; /* マウントされているユーザ辞書の数 */
@@ -573,8 +540,7 @@ uiContext d;
 /* 始めに呼ばれる関数 */
 
 int
-dicTouroku(d)
-uiContext d;
+dicTouroku(uiContext d)
 {
   tourokuContext tc;
   yomiContext yc = (yomiContext)d->modec;
@@ -601,8 +567,7 @@ uiContext d;
 }
 
 static int
-dicTourokuDo(d)
-uiContext d;
+dicTourokuDo(uiContext d)
 {
   tourokuContext tc;
   wchar_t **up;
@@ -640,7 +605,7 @@ uiContext d;
  *  単語登録用辞書を見付ける
  */
 static struct dicname *
-findUsrDic()
+findUsrDic(void)
 {
   struct dicname *res = (struct dicname *)0, *p;
 
@@ -652,7 +617,7 @@ findUsrDic()
   return res;
 }
 
-extern int getYesNoContext pro((uiContext, canna_callback_t, canna_callback_t, canna_callback_t, canna_callback_t)); /* yesno.c */
+extern int getYesNoContext(uiContext, canna_callback_t, canna_callback_t, canna_callback_t, canna_callback_t); /* yesno.c */
 
 /* 
  * マウントされている辞書のチェック
@@ -664,8 +629,7 @@ extern int getYesNoContext pro((uiContext, canna_callback_t, canna_callback_t, c
  *   マウントされている辞書がない
  */
 static int
-checkUsrDic(d)
-uiContext d;
+checkUsrDic(uiContext d)
 {
   tourokuContext tc = (tourokuContext)d->modec;
   coreContext ync;
@@ -719,9 +683,7 @@ uiContext d;
 }
 
 int
-dicTourokuTango(d, quitfunc)
-uiContext d;
-canna_callback_t quitfunc;
+dicTourokuTango(uiContext d, canna_callback_t quitfunc)
 {
   tourokuContext tc = (tourokuContext)d->modec;
   yomiContext yc, yc2;
@@ -765,17 +727,16 @@ canna_callback_t quitfunc;
 }
 
 static int
-dicTourokuTangoPre(d)
-uiContext d;
+dicTourokuTangoPre(uiContext d)
 {
   return dicTourokuTango(d, uuTTangoQuitCatch);
 }
 
 static int
-acDicTourokuTangoPre(d, dn, dm) /* ac means "alert continuation" */
-uiContext d;
-int dn;
-mode_context dm;
+acDicTourokuTangoPre( /* ac means "alert continuation" */
+	uiContext d,
+	int dn,
+	mode_context dm)
 /* ARGSUSED */
 {
   popCallback(d);
@@ -787,10 +748,7 @@ mode_context dm;
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 static int
-uuTYomiEveryTimeCatch(d, retval, env)
-uiContext d;
-int retval;
-mode_context env;
+uuTYomiEveryTimeCatch(uiContext d, int retval, mode_context env)
 {
   tourokuContext tc = (tourokuContext)env;
   int len, echoLen, revPos;
@@ -840,13 +798,10 @@ mode_context env;
   return retval;
 }
 
-int dicTourokuHinshi pro((uiContext)); /* uldefine.c */
+int dicTourokuHinshi(uiContext); /* uldefine.c */
 
 static int
-uuTYomiExitCatch(d, retval, env)
-uiContext d;
-int retval;
-mode_context env;
+uuTYomiExitCatch(uiContext d, int retval, mode_context env)
 /* ARGSUSED */
 {
   tourokuContext tc;
@@ -862,13 +817,10 @@ mode_context env;
   return(dicTourokuHinshi(d));
 }
 
-static int uuTYomiQuitCatch pro((uiContext, int, mode_context));
+static int uuTYomiQuitCatch(uiContext, int, mode_context);
 
 static int
-uuTYomiQuitCatch(d, retval, env)
-uiContext d;
-int retval;
-mode_context env;
+uuTYomiQuitCatch(uiContext d, int retval, mode_context env)
 /* ARGSUSED */
 {
   popCallback(d); /* 読みを pop */
@@ -880,29 +832,23 @@ mode_context env;
 }
 
 static int
-dicTourokuYomi(d)
-uiContext d;
+dicTourokuYomi(uiContext d)
 {
   return(dicTourokuYomiDo(d, uuTYomiQuitCatch));
 }
 
 static int
-acDicTourokuYomi(d, dn, dm)
-uiContext d;
-int dn;
-mode_context dm;
+acDicTourokuYomi(uiContext d, int dn, mode_context dm)
 /* ARGSUSED */
 {
   popCallback(d);
   return dicTourokuYomi(d);
 }
 
-extern int canna_alert pro((uiContext, char*, canna_callback_t)); /* util.c */
+extern int canna_alert(uiContext, char*, canna_callback_t); /* util.c */
 
 static int
-dicTourokuYomiDo(d, quitfunc)
-uiContext d;
-canna_callback_t quitfunc;
+dicTourokuYomiDo(uiContext d, canna_callback_t quitfunc)
 {
   yomiContext yc;
   tourokuContext tc = (tourokuContext)d->modec;
@@ -940,10 +886,7 @@ canna_callback_t quitfunc;
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 static int
-uuTHinshiExitCatch(d, retval, env)
-uiContext d;
-int retval;
-mode_context env;
+uuTHinshiExitCatch(uiContext d, int retval, mode_context env)
 /* ARGSUSED */
 {
   forichiranContext fc;
@@ -977,10 +920,7 @@ mode_context env;
 }
 
 static int
-uuTHinshiQuitCatch(d, retval, env)
-uiContext d;
-int retval;
-mode_context env;
+uuTHinshiQuitCatch(uiContext d, int retval, mode_context env)
 /* ARGSUSED */
 {
   popCallback(d); /* 一覧を pop */
@@ -998,12 +938,11 @@ mode_context env;
   return(dicTourokuYomi(d));
 }
 
-extern int GLineNGReturnTK pro((uiContext)); /* util.c */
-extern int getForIchiranContext pro((uiContext)); /* bushu.c */
+extern int GLineNGReturnTK(uiContext); /* util.c */
+extern int getForIchiranContext(uiContext); /* bushu.c */
 
 int
-dicTourokuHinshi(d)
-uiContext d;
+dicTourokuHinshi(uiContext d)
 {
   tourokuContext tc = (tourokuContext)d->modec;
   forichiranContext fc;
@@ -1080,10 +1019,7 @@ uiContext d;
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 int
-dicTourokuControl(d, tango, quitfunc)
-uiContext d;
-wchar_t *tango;
-canna_callback_t quitfunc;
+dicTourokuControl(uiContext d, wchar_t *tango, canna_callback_t quitfunc)
 {
   tourokuContext tc;
 

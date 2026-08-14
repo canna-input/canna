@@ -463,9 +463,8 @@ act		: FORWARD	{ actbuff[i++] = IROHA_FN_Forward; }
 %%
 extern IROHA_ParseError;
 
-static
-yyerror(s)
-char *s;
+static void
+yyerror(char *s)
 {
    char buf[256];
 
@@ -473,17 +472,15 @@ char *s;
    IROHA_ParseError = 1;
 }
 
-static
-RemoveDblQuote(str)
-char *str;
+static void
+RemoveDblQuote(char *str)
 {
     strcpy(str, &str[1]);
     str[strlen(str)-1] = '\0';
 }
 
-static
-chgKeyfunc(key, fnum)
-int key, fnum;
+static void
+chgKeyfunc(int key, int fnum)
 {
     if (localmode)
       changeKeyfunc(mode, key, fnum, actbuff, keybuff);

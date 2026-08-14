@@ -57,9 +57,7 @@
  */
 
 static int
-locatepath(userDDP, ddpath, mode)
-struct DD *userDDP[], *ddpath[];
-int mode;
+locatepath(struct DD *userDDP[], struct DD *ddpath[], int mode)
 {
   /* find dictionary under system and user/group directory */
   if (mode & RK_SYS_DIC) {
@@ -124,10 +122,7 @@ int mode;
  */
 
 int
-RkwCreateDic(cx_num, dicname, mode)
-int cx_num;
-char *dicname;
-int     mode;
+RkwCreateDic(int cx_num, char *dicname, int mode)
 {
   struct RkParam	*sx = RkGetSystem();
 						  
@@ -318,9 +313,7 @@ int     mode;
 }
 
 int
-copyFile(src, dst)
-struct DM	*src;
-struct DM	*dst;
+copyFile(struct DM *src, struct DM *dst)
 {
   struct DF	*srcF = src->dm_file;
   struct DD	*srcD = srcF->df_direct;
@@ -385,11 +378,7 @@ struct DM	*dst;
  *             RkwSetDicPathに失敗した場合              NOTALC
  */
 int
-RkwListDic( cx_num, dirname, buf, size )
-int  cx_num;
-char *dirname;
-char *buf;
-int  size;
+RkwListDic(int cx_num, char *dirname, char *buf, int size)
 {
   int dicscnt;
   int new_cx_num;
@@ -428,10 +417,7 @@ int  size;
  *             コンテクスト構造体が存在しない場合    -100 BADCONT
  */
 int
-RkwRemoveDic(cx_num, dicname, mode)
-int cx_num;
-char *dicname;
-int mode;
+RkwRemoveDic(int cx_num, char *dicname, int mode)
 {
   struct RkContext	*cx = RkGetContext(cx_num);
 /*  struct RkParam	*sx = RkGetSystem();	*/
@@ -498,11 +484,7 @@ int mode;
  *          コンテクスト構造体が存在しない場合    -100   BADCONT
  */
 int
-RkwRenameDic(cx_num, old, new, mode)
-  int cx_num;
-  char *old;
-  char *new;
-  int mode;
+RkwRenameDic(int cx_num, char *old, char *new, int mode)
 {
   struct RkContext	*cx = RkGetContext(cx_num);
   struct DD		*userDDP[2], *dd;
@@ -599,10 +581,7 @@ RkwRenameDic(cx_num, old, new, mode)
  */
 
 int
-RkwCopyDic(co, dir, from, to, mode)
-int co;
-char *dir, *from, *to;
-int mode;
+RkwCopyDic(int co, char *dir, char *from, char *to, int mode)
 {
   struct RkContext	*cx;
   struct DD		*userDDP[2];
@@ -769,10 +748,7 @@ int mode;
  *          コンテクスト構造体が存在しない場合    -100   BADCONT
  */
 int
-RkwChmodDic(cx_num, dicname, mode)
-int cx_num;
-char *dicname;
-int mode;
+RkwChmodDic(int cx_num, char *dicname, int mode)
 {
   struct RkContext	*cx = RkGetContext(cx_num);
   struct DD		*dd, *userDDP[2];
@@ -835,9 +811,7 @@ int mode;
  *        失敗 -1
  */
 static struct td_n_tupple *
-pushTdn(cx, tdp)
-struct RkContext *cx;
-struct TD *tdp;
+pushTdn(struct RkContext *cx, struct TD *tdp)
 {
   struct td_n_tupple	*new;
   struct _rec		*gwt;
@@ -853,8 +827,8 @@ struct TD *tdp;
 }
 
 void
-freeTdn(cx)  /* tdn を next をたどりながら free する */
-struct RkContext *cx;
+freeTdn(  /* tdn を next をたどりながら free する */
+	struct RkContext *cx)
 {
   struct td_n_tupple *work;
   struct _rec	*gwt = (struct _rec *)cx->cx_gwt;
@@ -867,8 +841,7 @@ struct RkContext *cx;
 }
 
 static void
-popTdn(cx)
-struct RkContext *cx;
+popTdn(struct RkContext *cx)
 {
   struct td_n_tupple *work;
   struct _rec	*gwt = (struct _rec *)cx->cx_gwt;
@@ -880,12 +853,7 @@ struct RkContext *cx;
 }
 
 static int
-GetLine(cx, gram, tdp, line, size)
-     struct RkContext	*cx;
-     struct RkKxGram	*gram;
-     struct TD		*tdp;
-     Wchar		*line;
-     int		size;
+GetLine(struct RkContext *cx, struct RkKxGram *gram, struct TD *tdp, Wchar *line, int size)
 {
   struct TD	*vtd;
   struct TN	*vtn;
@@ -938,12 +906,7 @@ GetLine(cx, gram, tdp, line, size)
  *          dics.dirに異常があった場合                 -10   BADDR
  */
 int
-RkwGetWordTextDic(cx_num, dirname, dicname, info, infolen)
-     int		cx_num;
-     unsigned char	*dirname;
-     unsigned char	*dicname;
-     Wchar		*info ;
-     int		infolen ;
+RkwGetWordTextDic(int cx_num, unsigned char *dirname, unsigned char *dicname, Wchar *info, int infolen)
 {
   struct RkContext *new_cx, *cx;
   struct DM *dm;

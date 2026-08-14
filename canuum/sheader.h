@@ -51,39 +51,41 @@ typedef struct _WnnEnv
 }
 WnnEnv;
 
+struct buf;
 typedef struct _FunctionTable
 {
 /* functions depends on lang */
-  int (*print_out_function) ();
+  int (*print_out_function) (w_char *, w_char *, int);
   int (*input_function) ();
-  int (*call_t_redraw_move_function) ();
-  int (*call_t_redraw_move_1_function) ();
-  int (*call_t_redraw_move_2_function) ();
-  int (*call_t_print_l_function) ();
+  int (*call_t_redraw_move_function) (int x, int start, int end, int clt_l, int add);
+  int (*call_t_redraw_move_1_function) (int x, int start, int end, int clt_l, int add1, int add2, int mode);
+  int (*call_t_redraw_move_2_function) (int x, int start1, int start2, int end1, int end2, int clt_l, int add);
+  int (*call_t_print_l_function) (int x, int add);
   int (*redraw_when_chmsig_function) ();
-  int (*char_len_function) ();
-  int (*char_q_len_function) ();
-  int (*t_redraw_move_function) ();
-  int (*t_print_l_function) ();
-  int (*c_top_function) ();
-  int (*c_end_function) ();
-  int (*c_end_nobi_function) ();
-  int (*call_redraw_line_function) ();
-  int (*hani_settei_function) ();
-  void (*errorkeyin_function) ();
-  int (*call_jl_yomi_len_function) ();
+  int (*char_len_function) (w_char x);
+  int (*char_q_len_function) (w_char x);
+  int (*t_redraw_move_function) (int x, int start, int end, int clr_l);
+  int (*t_print_l_function) (void);
+  int (*c_top_function) (void);
+  int (*c_end_function) (void);
+  int (*c_end_nobi_function) (void);
+  int (*call_redraw_line_function) (int x, int add);
+  int (*hani_settei_function) (struct buf *c_b);
+  void (*errorkeyin_function) (void);
+  int (*call_jl_yomi_len_function) (void);
 }
 FunctionTable;
 
+typedef int (*code_trans_t) (unsigned char *dst, unsigned char *src, int size);
 typedef struct _FuncDadaBase
 {
   char *lang;
   FunctionTable f_table;
   short tty_code, pty_code, internal_code, file_code;
-  int (*code_trans[16]) ();
+  code_trans_t code_trans[16];
   char *ostr;
   char *getoptstr;
-  int (*do_opt[6]) ();
+  int (*do_opt[6]) (void);
 }
 FuncDataBase;
 
@@ -184,7 +186,7 @@ extern int touroku_comment;
 extern short internal_code;
 extern short file_code;
 
-extern int (**code_trans) ();
+extern code_trans_t *code_trans;
 
 extern struct msg_cat *cd;
 
@@ -194,7 +196,7 @@ extern FunctionTable *f_table;
 
 extern FuncDataBase function_db[];
 
-extern int (*default_code_trans[]) ();
+extern code_trans_t default_code_trans[];
 
 /* ============================================================
  *   extern function prototypes
@@ -205,48 +207,232 @@ extern int (*default_code_trans[]) ();
 #include "wnn_string.h"
 #endif
 
+#ifdef CANNA
+/* w_string.c.c */
+w_char *Strncpy(w_char *ws1, w_char *ws2, int cnt);
+int eu_columlen(unsigned char *c);
+/* basic_op.c */
+void set_screen_vars_default(void);
+/* prologue.c */
+int init_uum(void);
+/* epilogue.c */
+void epilogue_no_close(void);
+void epilogue(void);
+/* functions.c */
+int t_print_l_normal(void);
+char *romkan_dispmode(void);
+char *romkan_offmode(void);
+/* etc/msg.c */
+struct msg_cat *msg_open(char *name, char *nlspath, char *lang);
+char *msg_get(struct msg_cat *cad, int n, char *mesg, register char *lang);
+/* wnnrc_op.c */
+char *get_kbd_env(void);
+/* conv/cvt_read.c */
+int convert_getterm(char *term, int flag);
+int keyin1(int (*gch) (void), char *yyy);
+/* canna.c */
+void canna_mainloop(void);
+char *wnn_perror(void);
+/* etc/server_env.c */
+char *get_server_env(char *lang);
+/* touroku.c */
+int hani_settei_normal(struct buf *c_b);
+/* prologue.c */
+int initial_message_out(void);
+/* uif.c */
+int set_cur_env(int s);
+/* functions.c */
+int char_len_normal(w_char x);
+int c_top_normal(void);
+int c_end_normal(void);
+int call_t_print_l_normal(int x, int add);
+int char_q_len_normal(w_char x);
+int call_jl_yomi_len(void);
+int t_redraw_move_normal(int x, int start, int end, int clr_l);
+int call_t_redraw_move_normal(int x, int start, int end, int clt_l, int add);
+int call_t_redraw_move_1_normal(int x, int start, int end, int clt_l, int add1, int add2, int mode);
+int call_t_redraw_move_2_normal(int x, int start1, int start2, int end1, int end2, int clt_l, int add);
+int call_redraw_line_normal(int x, int add);
+#endif /* CANNA */
+
+/* cursor.c */
+void throw_col(int col);
+void h_r_on(void);
+void h_r_off(void);
+void u_s_on(void);
+void u_s_off(void);
+void b_s_on(void);
+void b_s_off(void);
+void kk_cursor_invisible(void);
+void kk_cursor_normal(void);
+void kk_save_cursor(void);
+void kk_restore_cursor(void);
+void reset_cursor_status(void);
+void set_cursor_status(void);
+void scroll_up(void);
+void clr_line_all(void);
+void reset_cursor(void);
+void push_cursor(void);
+void pop_cursor(void);
+void push_hrus(void);
+void pop_hrus(void);
+void set_hanten_ul(int x, int y);
+void set_bold(int x);
+void reset_bold(int x);
+
 /* jhlp.c */
-extern void uum_err (char *);
+void uum_err (char *);
+int do_u_opt(void);
+int do_j_opt(void);
+int do_s_opt(void);
+int do_U_opt(void);
+int do_J_opt(void);
+int do_S_opt(void);
+int do_b_opt(void);
+int do_t_opt(void);
+int do_B_opt(void);
+int do_T_opt(void);
+int conv_keyin(char *inkey);
+int keyin(void);
+unsigned char keyin0(void);
+int arrange_ioctl(int jflg);
 #if !(HAVE_SETENV)
-  extern int setenv();
+int setenv(char *var, char *value, int overwrite);
 #endif
 
 /* printf.c */
-#if defined(__STDC__) && defined(HAVE_SNPRINTF)
-extern void FPRINTF (FILE *fp, const char *fmt, ...);
-extern void PRINTF (const char *fmt, ...);
-#else
-extern void FPRINTF ();
-extern void PRINTF ();
+int FPRINTF(FILE *file, const char *format, ...);
+int PRINTF(const char *format, ...);
+void puteustring(char *buf2, FILE *file);
+int w_putchar(w_char w);
+void putchar_norm(int c);
+void putchar1(int c);
+void flushw_buf(void);
+void errorkeyin(void);
+
+/* screen.c */
+void throw(int x);
+int char_len(w_char x);
+void t_redraw_one_line(void);
+void init_screen(void);
+int check_vst(void);
+int t_redraw_move(int x, int start, int end, int clr_l);
+int t_move(int x);
+int t_print_l(void);
+void t_print_line(int st, int end, int clr_l);
+void t_cont_line_note_delete(void);
+int cur_ichi(int cp, int start_point);
+void print_buf_msg(char *msg);
+char * get_rk_modes(void);
+int disp_mode(void);
+void display_henkan_off_mode(void);
+void t_throw(void);
+void clr_line(void);
+
+/* termcap.c */
+#ifdef TERMCAP
+int getTermData(void);
+int set_TERMCAP(void);
+void set_keypad_on(void);
+void set_keypad_off(void);
+void set_scroll_region(int start, int end);
+void clr_end_screen(void);
+void throw_cur_raw(int col, int row);
+void h_r_on_raw(void);
+void h_r_off_raw(void);
+void u_s_on_raw(void);
+void u_s_off_raw(void);
+void b_s_on_raw(void);
+void b_s_off_raw(void);
+void ring_bell(void);
+void save_cursor_raw(void);
+void restore_cursor_raw(void);
+void cursor_invisible_raw(void);
+void cursor_normal_raw(void);
+#endif /* TERMCAP */
+
+/* termio.c */
+#ifdef TERMINFO
+int openTermData(void);
+void closeTermData(void);
+void set_keypad_on(void);
+void set_keypad_off(void);
+void set_scroll_region(int start, int end);
+void clr_end_screen(void);
+void throw_cur_raw(int col, int row);
+void h_r_on_raw(void);
+void h_r_off_raw(void);
+void u_s_on_raw(void);
+void u_s_off_raw(void);
+void b_s_on_raw(void);
+void b_s_off_raw(void);
+void ring_bell(void);
+void save_cursor_raw(void);
+void restore_cursor_raw(void);
+void cursor_invisible_raw(void);
+void cursor_normal_raw(void);
+#endif /* TERMINFO */
+
+/* xutoj.c */
+int flush_designate(w_char *buf);
+int through(unsigned char *x, unsigned char *y, int z);
+int get_cswidth_by_char(int c);
+void wnn_delete_w_ss2(register w_char *s, register int n);
+#ifdef JAPANESE
+#ifdef JIS7
+int iujis_to_jis(unsigned char *jis, unsigned char *iujis, int iusiz);
+int eujis_to_jis(unsigned char *jis, unsigned char *eujis, int eusiz);
+int sjis_to_jis(unsigned char *jis, unsigned char *sjis, int siz);
 #endif
+int iujis_to_jis8(unsigned char *jis, unsigned char *iujis, int iusiz);
+int eujis_to_jis8(unsigned char *jis, unsigned char *eujis, int eusiz);
+int iujis_to_eujis(unsigned char *eujis, unsigned char *iujis, int iusiz);
+int jis_to_eujis(unsigned char *eujis, unsigned char *jis, int jsiz);
+int eujis_to_sjis(unsigned char *sjis, unsigned char *eujis, int eusiz);
+int iujis_to_sjis(unsigned char *sjis, unsigned char *iujis, int iusiz);
+int sjis_to_iujis(unsigned char *iujis, unsigned char *sjis, int ssiz);
+int sjis_to_eujis(unsigned char *eujis, unsigned char *sjis, int ssiz);
+int sjis_to_jis8(unsigned char *jis, unsigned char *sjis, int siz);
+int jis_to_iujis(unsigned char *iujis, unsigned char *jis, int jsiz);
+int jis_to_sjis(unsigned char *sjis, unsigned char *jis, int siz);
+int eujis_to_iujis(unsigned char *iujis, unsigned char *eujis, int eusiz);
+#endif /* JAPANESE */
+#ifdef CHINESE
+int ecns_to_icns(unsigned char *icns, unsigned char *ecns, int siz);
+int icns_to_ecns(unsigned char *ecns, unsigned char *icns, int siz);
+int icns_to_big5(unsigned char *big5, unsigned char *icns, int siz);
+int ecns_to_big5(unsigned char *big5, unsigned char *ecns, int siz);
+int big5_to_icns(unsigned char *icns, unsigned char *big5, int siz);
+int big5_to_ecns(unsigned char *ecns, unsigned char *big5, int siz);
+int iugb_to_eugb(unsigned char *eugb, unsigned char *iugb, int siz);
+int eugb_to_iugb(unsigned char *iugb, unsigned char *eugb, int siz);
+#endif /* CHINESE */
+#ifdef KOREAN
+int iuksc_to_ksc(unsigned char *ksc, unsigned char *iuksc, int iusiz);
+int euksc_to_ksc(unsigned char *ksc, unsigned char *euksc, int eusiz);
+int iuksc_to_euksc(unsigned char *euksc, unsigned char *iuksc, int iusiz);
+int ksc_to_euksc(unsigned char *euksc, unsigned char *ksc, int jsiz);
+int ksc_to_iuksc(unsigned char *iuksc, unsigned char *ksc, int jsiz);
+int euksc_to_iuksc(unsigned char *iuksc, unsigned char *euksc, int eusiz);
+#endif /* KOREAN */
 
 /* to be classified */
-extern void b_s_off_raw (void);
-extern void b_s_on_raw (void);
+#ifndef CANNA
 extern int backward (void);
 extern int buffer_in (void);
 extern int change_ascii_to_int (char*, int*);
 extern void change_to_empty_mode (void);
 extern void change_to_insert_mode (void);
-extern void clr_end_screen ();
-extern void clr_line ();
-extern void clr_line_all ();
 extern int connect_jserver (int);
 extern int convert_getterm ();
 extern int convert_key_setup ();
-extern int cur_ichi (int, int);
-extern void cursor_invisible_raw (void);
-extern void cursor_normal_raw (void);
 extern int dai_end (struct wnn_buf *, int);
 extern int dai_top (struct wnn_buf *, int);
 extern int dic_nickname (int, char*);
 extern int disconnect_jserver (void);
-extern int disp_mode (void);
-extern void display_henkan_off_mode (void);
 extern int empty_modep (void);
 extern void epilogue (void);
 extern void epilogue_no_close (void);
-extern void errorkeyin (void);
 extern int eu_columlen (unsigned char *);
 extern int expand_argument (char *);
 extern int expand_expr (char *);
@@ -254,16 +440,10 @@ extern void fill (char *, int);
 extern int find_dic_by_no (int);
 extern int find_end_of_tango (int);
 extern int find_entry (char *);
-extern void flushw_buf (void);
 extern int forward_char (void);
 extern int backward_char (void);
-extern int getTermData ();
 extern void get_end_of_history ();
 extern void getfname ();
-extern void h_r_off ();
-extern void h_r_off_raw ();
-extern void h_r_on ();
-extern void h_r_on_raw ();
 extern int henkan_gop ();
 extern void henkan_if_maru ();
 extern int henkan_off ();
@@ -271,27 +451,17 @@ extern int hextodec ();
 extern int hinsi_in ();
 extern int init_history ();
 extern int init_key_table ();
-extern void init_screen ();
-extern int init_uum ();
-extern int initial_message_out ();
 extern void initialize_vars ();
 extern int input_a_char_from_function ();
 extern int insert_char ();
 extern int insert_char_and_change_to_insert_mode ();
 extern int insert_modep ();
-extern int j_term_init ();
-extern int flush_designate ();
 extern int jtosj ();
 extern int jutil ();
 extern int kakutei ();
 extern int kana_in ();
 extern int kana_in_w_char_msg ();
-extern int keyin1 ();
 extern int kk ();
-extern void kk_cursor_invisible ();
-extern void kk_cursor_normal ();
-extern void kk_restore_cursor ();
-extern void kk_save_cursor ();
 extern int make_history ();
 extern int make_info_out ();
 extern int make_jikouho_retu ();
@@ -300,105 +470,50 @@ extern int make_string_for_ke ();
 extern int next_history1 ();
 extern int nobasi_tijimi_mode ();
 extern int nobi_conv ();
-extern void pop_cursor ();
-extern void pop_hrus ();
 extern int previous_history1 ();
-extern void print_buf_msg ();
-extern void reset_cursor ();
-extern void push_cursor ();
-extern void push_hrus ();
-extern void putchar1 ();
-extern void putchar_norm ();
-extern void puteustring ();
 extern int reconnect_jserver_body ();
 extern int redraw_line ();
 extern int redraw_nisemono ();
 extern void remove_key_bind ();
 extern int isconect_jserver ();
 extern int ren_henkan0 ();
-extern void reset_bold ();
-extern void reset_cursor_status ();
-extern void restore_cursor_raw ();
-extern void ring_bell ();
-extern void save_cursor_raw ();
-extern void scroll_up ();
 extern int select_jikouho1 ();
 extern int select_line_element ();
 extern int select_one_dict1 ();
 extern int select_one_element ();
-extern int set_TERMCAP ();
-extern void set_bold ();
-extern void set_cursor_status ();
 extern void set_escape_code ();
-extern void set_hanten_ul ();
 extern void set_lc_offset ();
-extern void set_screen_vars_default ();
-extern void set_keypad_on ();
-extern void set_keypad_off ();
-extern void set_scroll_region ();
 extern int st_colum ();
-extern void t_cont_line_note_delete ();
 extern int t_delete_char ();
 extern int t_kill ();
-extern int t_move ();
-extern int t_print_l ();
-extern void t_print_line ();
-extern int t_redraw_move ();
 extern int t_rubout ();
-extern void t_throw ();
 extern int t_yank ();
 extern int tan_conv ();
 extern int tan_henkan1 ();
-extern void throw_col ();
-extern void throw_cur_raw ();
 extern void touroku ();
-extern void u_s_off ();
-extern void u_s_off_raw ();
-extern void u_s_on ();
-extern void u_s_on_raw ();
 extern int update_dic_list ();
 extern int uumrc_get_entries ();
 extern void w_printf ();
-extern int w_putchar ();
 extern void w_sttost ();
 extern int wchartochar ();
 extern int yes_or_no ();
 extern int yes_or_no_or_newline ();
 extern int zenkouho_dai_c ();
 extern void find_yomi_for_kanji ();
-extern int check_vst ();
-extern void t_redraw_one_line ();
-extern void throw ();
-extern int keyin ();
 extern int push_unget_buf ();
 extern unsigned int *get_unget_buf ();
 extern int if_unget_buf ();
 
-extern int set_cur_env ();
 extern char env_state ();
 extern void get_new_env ();
 
-extern int call_t_redraw_move_normal ();
 extern int call_t_redraw_move ();
-extern int call_t_redraw_move_1_normal ();
 extern int call_t_redraw_move_1 ();
-extern int call_t_redraw_move_2_normal ();
 extern int call_t_redraw_move_2 ();
-extern int call_t_print_l_normal ();
 extern int call_t_print_l ();
-extern int c_top_normal ();
-extern int c_end_normal ();
 extern int c_end_nobi_normal ();
-extern int char_q_len_normal ();
-extern int char_len_normal ();
-extern int t_redraw_move_normal ();
-extern int t_print_l_normal ();
-extern int call_redraw_line_normal ();
 extern int call_redraw_line ();
-extern int hani_settei_normal ();
 extern void call_errorkeyin ();
-extern int call_jl_yomi_len ();
-extern int through ();
 extern int sStrcpy ();
 extern int Sstrcpy ();
 extern char *sStrncpy ();
@@ -406,33 +521,9 @@ extern w_char *Strcat ();
 extern w_char *Strncat ();
 extern int Strncmp ();
 extern w_char *Strcpy ();
-extern w_char *Strncpy ();
 extern int Strlen ();
 extern void conv_ltr_to_ieuc ();
-extern int get_cswidth_by_char ();
-extern int eeuc_to_ieuc ();
-extern int conv_keyin ();
-
-#ifdef  JAPANESE
-extern int eujis_to_iujis ();
-extern int jis_to_iujis ();
-extern int sjis_to_iujis ();
-extern int iujis_to_eujis ();
-extern int jis_to_eujis ();
-extern int sjis_to_eujis ();
-extern int iujis_to_jis8 ();
-extern int eujis_to_jis8 ();
-extern int sjis_to_jis8 ();
-extern int iujis_to_sjis ();
-extern int eujis_to_sjis ();
-extern int jis_to_sjis ();
-extern int do_u_opt ();
-extern int do_j_opt ();
-extern int do_s_opt ();
-extern int do_U_opt ();
-extern int do_J_opt ();
-extern int do_S_opt ();
-#endif /* JAPANESE */
+#endif /* !CANNA */
 
 #ifdef CHINESE
 extern int call_t_redraw_move_yincod ();
@@ -456,14 +547,6 @@ extern int not_call_jl_yomi_len ();
 extern int cwnn_pzy_yincod ();
 extern int cwnn_yincod_pzy_str ();
 
-extern int icns_to_ecns ();
-extern int icns_to_big5 ();
-extern int ecns_to_icns ();
-extern int ecns_to_big5 ();
-extern int big5_to_icns ();
-extern int big5_to_ecns ();
-extern int iugb_to_eugb ();
-extern int eugb_to_iugb ();
 extern int do_b_opt ();
 extern int do_t_opt ();
 extern int do_B_opt ();
@@ -471,22 +554,8 @@ extern int do_T_opt ();
 #endif /* CHINESE */
 
 #ifdef  KOREAN
-extern int iuksc_to_ksc ();
-extern int euksc_to_ksc ();
-extern int iuksc_to_euksc ();
-extern int ksc_to_euksc ();
-extern int ksc_to_iuksc ();
-extern int euksc_to_iuksc ();
 extern int do_u_opt ();
 extern int do_U_opt ();
 #endif /* KOREAN */
 
 extern void romkan_set_lang ();
-#if defined(__STDC__) || defined(__cplusplus)
-# define pro(x) x
-#else
-# define pro(x) ()
-#endif
-extern void wnn_delete_w_ss2 pro((w_char *, int));
-extern int openTermData pro((void));
-#undef pro

@@ -62,18 +62,17 @@ typedef struct tagClibufList {
 
 EventMgr *global_event_mgr = NULL;
 
-static void ClientBuf_init pro((ClientBuf *obj,
-      const ListenerRec *parent, sock_type fd));
-static void ClientBuf_destroy pro((ClientBuf *obj));
-static int ClientBuf_recv pro((ClientBuf *obj));
-static int ClientBuf_send pro((ClientBuf *obj));
+static void ClientBuf_init(ClientBuf *obj,
+      const ListenerRec *parent, sock_type fd);
+static void ClientBuf_destroy(ClientBuf *obj);
+static int ClientBuf_recv(ClientBuf *obj);
+static int ClientBuf_send(ClientBuf *obj);
 #define ClientBuf_getfd_fast(obj) ((obj)->fd)
 #define CLIENT_BUF_IS_SENDING(obj) \
     ((obj)->sendbuf.sb_curr != (obj)->sendbuf.sb_buf)
 
 static int
-set_nonblock(sock)
-sock_type sock;
+set_nonblock(sock_type sock)
 {
   int oldflags;
   oldflags = fcntl(sock, F_GETFL, 0 /* dummy */);
@@ -81,10 +80,7 @@ sock_type sock;
 }
 
 static void
-ClientBuf_init(obj, parent, fd)
-ClientBuf *obj;
-const ListenerRec *parent;
-sock_type fd;
+ClientBuf_init(ClientBuf *obj, const ListenerRec *parent, sock_type fd)
 {
   obj->fd = fd;
   obj->parent = parent;
@@ -99,8 +95,7 @@ sock_type fd;
 }
 
 static void
-ClientBuf_destroy(obj)
-ClientBuf *obj;
+ClientBuf_destroy(ClientBuf *obj)
 {
   close(obj->fd);
   close_session(&obj->client, 0);
@@ -109,8 +104,7 @@ ClientBuf *obj;
 }
 
 static int
-ClientBuf_recv(obj)
-ClientBuf *obj;
+ClientBuf_recv(ClientBuf *obj)
 {
   ssize_t size;
   int newwant;
@@ -163,8 +157,7 @@ recvfail:
 }
 
 static int
-ClientBuf_send(obj)
-ClientBuf *obj;
+ClientBuf_send(ClientBuf *obj)
 {
   ssize_t size;
   RkiStrbuf *buf = &obj->sendbuf;
@@ -213,10 +206,7 @@ fail:
 }
 
 int
-ClientBuf_store_reply(obj, data, len)
-ClientBuf *obj;
-const BYTE *data;
-size_t len;
+ClientBuf_store_reply(ClientBuf *obj, const BYTE *data, size_t len)
 {
   ir_debug(Dmsg(7, "ClientBuf_store_reply() start\n"));
   assert(!obj->nwant && !CLIENT_BUF_IS_SENDING(obj));
@@ -229,25 +219,20 @@ size_t len;
 }
 
 int
-ClientBuf_get_connection_info(obj, addr, hostname)
-ClientBuf *obj;
-Address *addr;
-char **hostname;
+ClientBuf_get_connection_info(ClientBuf *obj, Address *addr, char **hostname)
 {
   const ListenerRec *parent = obj->parent;
   return (*parent->l_info_proc) (parent->l_info_obj, obj->fd, addr, hostname);
 }
 
 sock_type
-ClientBuf_getfd(obj)
-ClientBuf *obj;
+ClientBuf_getfd(ClientBuf *obj)
 {
   return obj->fd;
 }
 
 ClientPtr
-ClientBuf_getclient(obj)
-ClientBuf *obj;
+ClientBuf_getclient(ClientBuf *obj)
 {
   return obj->client;
 }
@@ -262,7 +247,7 @@ struct tagEventMgr {
 };
 
 EventMgr *
-EventMgr_new()
+EventMgr_new(void)
 {
   EventMgr *obj = malloc(sizeof(EventMgr));
   if (!obj)
@@ -276,8 +261,7 @@ EventMgr_new()
 }
 
 void
-EventMgr_delete(obj)
-EventMgr *obj;
+EventMgr_delete(EventMgr *obj)
 {
   ClibufList *curr;
 #ifdef COMM_DEBUG
@@ -302,11 +286,7 @@ EventMgr *obj;
 }
 
 int
-EventMgr_add_listener_sock(obj, listenerfd, info_proc, info_obj)
-EventMgr *obj;
-sock_type listenerfd;
-GetConnectionInfoProc info_proc;
-void *info_obj;
+EventMgr_add_listener_sock(EventMgr *obj, sock_type listenerfd, GetConnectionInfoProc info_proc, void *info_obj)
 {
   ListenerRec *entry = obj->listeners + obj->nlisteners;
 
@@ -325,18 +305,14 @@ void *info_obj;
 }
 
 void
-EventMgr_quit_later(obj, status)
-EventMgr *obj;
-int status;
+EventMgr_quit_later(EventMgr *obj, int status)
 {
   obj->quitflag = 1;
   obj->exit_status = status;
 }
 
 void
-EventMgr_finalize_notify(obj, clibuf)
-EventMgr *obj;
-const ClientBuf *clibuf;
+EventMgr_finalize_notify(EventMgr *obj, const ClientBuf *clibuf)
 {
   ClibufList *entry = CBL_BODY_TO_ENTRY(clibuf);
   assert(clibuf);
@@ -345,9 +321,7 @@ const ClientBuf *clibuf;
 }
 
 static int
-EventMgr_accept(obj, listener_entry)
-EventMgr *obj;
-ListenerRec *listener_entry;
+EventMgr_accept(EventMgr *obj, ListenerRec *listener_entry)
 {
   ClibufList *cbl_ent = NULL;
   sock_type connfd = INVALID_SOCK;
@@ -388,10 +362,7 @@ fail:
 }
 
 static void
-EventMgr_check_fds(obj, rfds, wfds)
-EventMgr *obj;
-rki_fd_set *rfds;
-rki_fd_set *wfds;
+EventMgr_check_fds(EventMgr *obj, rki_fd_set *rfds, rki_fd_set *wfds)
 {
   int listenerno;
   ClibufList **cbl_link;
@@ -428,8 +399,7 @@ rki_fd_set *wfds;
 }
 
 int
-EventMgr_run(obj)
-EventMgr *obj;
+EventMgr_run(EventMgr *obj)
 {
   struct timeval timeout;
   int sync_flag = 0;
@@ -500,9 +470,7 @@ EventMgr *obj;
 }
 
 void
-EventMgr_clibuf_first(obj, it)
-EventMgr *obj;
-EventMgrIterator *it;
+EventMgr_clibuf_first(EventMgr *obj, EventMgrIterator *it)
 {
   ClibufList *entry = obj->cbl;
   it->entry = entry;
@@ -513,16 +481,13 @@ EventMgrIterator *it;
 }
 
 void
-EventMgr_clibuf_end(obj, it)
-EventMgr *obj;
-EventMgrIterator *it;
+EventMgr_clibuf_end(EventMgr *obj, EventMgrIterator *it)
 {
   it->it_val = NULL;
 }
 
 void
-EventMgrIterator_next(obj)
-EventMgrIterator *obj;
+EventMgrIterator_next(EventMgrIterator *obj)
 {
   ClibufList *entry = (ClibufList *)obj->entry;
   ClibufList *next = entry->cbl_next;
@@ -541,9 +506,7 @@ enum {
 
 #ifdef USE_UNIX_SOCKET  /* £Õ£Î£É£Ø¥É¥á¥¤¥ó¤ÎºîÀ® */
 static int
-open_unix_socket (sock, unaddr)
-sock_type *sock;
-struct sockaddr_un *unaddr;
+open_unix_socket(sock_type *sock, struct sockaddr_un *unaddr)
 {
   int oldUmask;
   int request = -1;
@@ -605,8 +568,7 @@ last:
 
 #ifdef USE_INET_SOCKET  /* £É£Î£Å£Ô¥É¥á¥¤¥ó¤ÎºîÀ® */
 static int
-open_inet_socket (sock)
-sock_type *sock;
+open_inet_socket(sock_type *sock)
 {
   
   struct sockaddr_in insock;
@@ -680,8 +642,7 @@ sock_type *sock;
 
 #ifdef INET6
 static int
-open_inet6_socket (sock)
-sock_type *sock;
+open_inet6_socket(sock_type *sock)
 {
   
   struct addrinfo hints, *info, *infolist;
@@ -773,12 +734,12 @@ sock_type *sock;
 
 #ifdef USE_UNIX_SOCKET
 static int
-get_addr_unix(dummy, connfd, addr, hostname)
+get_addr_unix(
 /* ARGSUSED */
-void *dummy;
-sock_type connfd;
-Address *addr;
-char **hostname;
+	void *dummy,
+	sock_type connfd,
+	Address *addr,
+	char **hostname)
 {
   char buf[MAXDATA];
 
@@ -796,12 +757,12 @@ char **hostname;
 }
 
 static int
-get_addr_inet(dummy, connfd, addr, hostname)
+get_addr_inet(
 /* ARGSUSED */
-void *dummy;
-sock_type connfd;
-Address *addr;
-char **hostname;
+	void *dummy,
+	sock_type connfd,
+	Address *addr,
+	char **hostname)
 {
 #ifdef INET6
   struct sockaddr_storage from;
@@ -866,7 +827,7 @@ struct tagSockHolder {
 };
 
 SockHolder *
-SockHolder_new()
+SockHolder_new(void)
 {
   SockHolder *obj = malloc(sizeof(SockHolder));
   int status = SOCK_OK;
@@ -940,8 +901,7 @@ fail:
 }
 
 void
-SockHolder_delete(obj)
-SockHolder *obj;
+SockHolder_delete(SockHolder *obj)
 {
   if (!obj)
     return;
@@ -963,9 +923,7 @@ SockHolder *obj;
 }
 
 int
-SockHolder_tie(obj, event_mgr)
-SockHolder *obj;
-EventMgr *event_mgr;
+SockHolder_tie(SockHolder *obj, EventMgr *event_mgr)
 {
 #ifdef USE_UNIX_SOCKET
   assert(obj->unsock != INVALID_SOCK);

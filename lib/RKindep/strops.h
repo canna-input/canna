@@ -43,20 +43,20 @@ typedef struct {
   char *sb_end;
 } RkiStrbuf;
 
-extern void RkiStrbuf_init pro((RkiStrbuf *sb));
-extern void RkiStrbuf_destroy pro((RkiStrbuf *sb));
-extern void RkiStrbuf_clear pro((RkiStrbuf *sb));
+extern void RkiStrbuf_init(RkiStrbuf *sb);
+extern void RkiStrbuf_destroy(RkiStrbuf *sb);
+extern void RkiStrbuf_clear(RkiStrbuf *sb);
 #define RKI_STRBUF_RESERVE(sb, size) \
   (((sb)->sb_curr + (size) < (sb)->sb_end) \
     ? 0 : RkiStrbuf_reserve(sb, size))
-extern int RkiStrbuf_reserve pro((RkiStrbuf *sb, size_t size));
-extern int RkiStrbuf_term pro((RkiStrbuf *sb));
-extern void RkiStrbuf_pack pro((RkiStrbuf *sb));
-extern int RkiStrbuf_add pro((RkiStrbuf *sb, const char *src));
-extern int RkiStrbuf_addmem pro((RkiStrbuf *sb, const void *src, size_t size));
+extern int RkiStrbuf_reserve(RkiStrbuf *sb, size_t size);
+extern int RkiStrbuf_term(RkiStrbuf *sb);
+extern void RkiStrbuf_pack(RkiStrbuf *sb);
+extern int RkiStrbuf_add(RkiStrbuf *sb, const char *src);
+extern int RkiStrbuf_addmem(RkiStrbuf *sb, const void *src, size_t size);
 #define RKI_STRBUF_ADDCH(sb, ch) \
   (RKI_STRBUF_RESERVE(sb, 1) || (*(sb)->sb_curr++ = (char)(ch), 0))
-extern int RkiStrbuf_addch pro((RkiStrbuf *sb, int ch));
+extern int RkiStrbuf_addch(RkiStrbuf *sb, int ch);
 
 #ifdef __cplusplus
 }

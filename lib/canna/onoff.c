@@ -42,7 +42,7 @@ static wchar_t *white;
 static wchar_t *space;
 
 int
-initOnoffTable()
+initOnoffTable(void)
 {
   black = WString("\241\375");
                   /* ◎ */
@@ -58,8 +58,7 @@ initOnoffTable()
 }
 
 static void
-popOnOffMode(d)
-uiContext d;
+popOnOffMode(uiContext d)
 {
   ichiranContext oc = (ichiranContext)d->modec;
 
@@ -72,16 +71,7 @@ uiContext d;
  * 候補一覧行を作る
  */
 int
-selectOnOff(d, buf, ck, nelem, bangomax, currentkouho, status,
-	  everyTimeCallback, exitCallback, quitCallback, auxCallback)
-uiContext d;
-wchar_t **buf;
-int *ck;
-int nelem, bangomax;
-int currentkouho;
-unsigned char *status;
-int (*everyTimeCallback)(), (*exitCallback)();
-int (*quitCallback)(), (*auxCallback)();
+selectOnOff(uiContext d, wchar_t **buf, int *ck, int nelem, int bangomax, int currentkouho, unsigned char *status, int (*everyTimeCallback)(), int (*exitCallback)(), int (*quitCallback)(), int (*auxCallback)())
 {
   extern KanjiModeRec onoff_mode;
   ichiranContext oc;
@@ -117,7 +107,7 @@ int (*quitCallback)(), (*auxCallback)();
   return(retval);
 }
 
-extern int allocIchiranBuf pro((uiContext)); /* ichiran.c */
+extern int allocIchiranBuf(uiContext); /* ichiran.c */
 
 /*
  * 候補一覧行を表示用のデータをテーブルに作成する
@@ -128,11 +118,7 @@ extern int allocIchiranBuf pro((uiContext)); /* ichiran.c */
  * 戻り値	正常終了時 0	異常終了時 -1
  */
 static int
-makeOnOffIchiran(d, nelem, bangomax, currentkouho, status)
-uiContext d;
-int nelem, bangomax;
-int currentkouho;
-unsigned char *status;
+makeOnOffIchiran(uiContext d, int nelem, int bangomax, int currentkouho, unsigned char *status)
 {
   ichiranContext oc = (ichiranContext)d->modec;
   wchar_t **kkptr, *kptr, *gptr, *svgptr;
@@ -273,8 +259,7 @@ unsigned char *status;
  * 戻り値	正常終了時 0	異常終了時 -1
  */
 static int
-OnOffSelect(d)
-uiContext d;
+OnOffSelect(uiContext d)
 {
   ichiranContext oc = (ichiranContext)d->modec;
   mountContext mc = (mountContext)oc->next;
@@ -305,8 +290,7 @@ uiContext d;
  * 戻り値	正常終了時 0	異常終了時 -1
  */
 static int
-OnOffKakutei(d)
-uiContext d;
+OnOffKakutei(uiContext d)
 {
   ichiranContext oc = (ichiranContext)d->modec;
   int retval = 0;

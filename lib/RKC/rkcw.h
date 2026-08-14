@@ -52,5 +52,5 @@ typedef canna_uint32_t cannawc;
 
 /* function prototypes .. */
 
-extern int rkcw_get_server_info pro((int *, int *));
-extern int ushortstrncpy pro((Ushort *, Ushort *, int));
+extern int rkcw_get_server_info(int *, int *);
+extern int ushortstrncpy(Ushort *, Ushort *, int);

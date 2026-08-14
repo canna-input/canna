@@ -132,9 +132,8 @@ static struct {
 /*
  * 新しいコンテクストを作成する。
  */
-static
-RkcContext  *
-newCC()
+static RkcContext *
+newCC(void)
 {
     register RkcContext *cx ;
     register int i ;
@@ -159,11 +158,8 @@ newCC()
 /*
  * 指定された文節から最終文節までの先頭候補または、候補列の領域を解放する
  */
-static
-void
-freeBUN(cx, from)
-register RkcContext *cx ;
-register int	    from ;
+static void
+freeBUN(register RkcContext *cx, register int from)
 {
     register RkcBun *bun ;
 
@@ -185,10 +181,8 @@ register int	    from ;
 /*
  * 指定されたコンテクストを解放する。
  */
-static
-void
-freeCC( clientcx )
-int clientcx ;
+static void
+freeCC(int clientcx)
 {
     register RkcContext     *cx ;
 
@@ -217,10 +211,8 @@ int clientcx ;
  */
 #define NOCHECK    0
 #define CHECK	   1
-static
-RkcContext *
-getCC( clientcx, type )
-int	clientcx, type ;
+static RkcContext *
+getCC(int clientcx, int type)
 {
     register RkcContext     *cx = (RkcContext *)NULL ;
 
@@ -234,13 +226,12 @@ int	clientcx, type ;
     return( cx ) ;
 }
 
-int RkwSetUserInfo pro((char *, char *, char *));
+int RkwSetUserInfo(char *, char *, char *);
 
 static RkUserInfo *uinfo;
 
 int
-RkwSetUserInfo(user, group, topdir)
-char *user, *group, *topdir;
+RkwSetUserInfo(char *user, char *group, char *topdir)
 {
   if (user && group && topdir) {
     uinfo = (RkUserInfo *)malloc(sizeof(RkUserInfo));
@@ -255,7 +246,7 @@ char *user, *group, *topdir;
 }
 
 static char *
-FindLogname()
+FindLogname(void)
 {
   if (uinfo)
     return uinfo->uname;
@@ -278,7 +269,7 @@ FindLogname()
 }
 
 static char *
-FindGroupname()
+FindGroupname(void)
 {
   if (uinfo)
     return uinfo->gname;
@@ -490,7 +481,7 @@ int cxnum ;
  *
  */
 int
-RkwKillServer()
+RkwKillServer(void)
 {
 /*
   Protocol Version 3.3 からサポート。それ以前のサーバへは送ってはいけない。
@@ -613,10 +604,10 @@ int max ;
 }
 
 static int
-_RkwDefineDic( cxnum, dicname, wordrec )	/* 単語登録 */
-int cxnum ;
-char *dicname ;
-Ushort *wordrec ;
+_RkwDefineDic(	/* 単語登録 */
+	int cxnum,
+	char *dicname,
+	Ushort *wordrec)
 {
     register RkcContext *cx = getCC( cxnum, NOCHECK ) ;
 
@@ -655,10 +646,10 @@ wchar_t *wordrec;
 }
 
 static int
-_RkwDeleteDic( cxnum, dicname, wordrec )	  /* 単語削除 */
-int cxnum ;
-char *dicname ;
-Ushort *wordrec ;
+_RkwDeleteDic(	  /* 単語削除 */
+	int cxnum,
+	char *dicname,
+	Ushort *wordrec)
 {
     register RkcContext *cx = getCC( cxnum, NOCHECK ) ;
 
@@ -751,9 +742,7 @@ char *path ;
  *	カレント文節から最終文節までの先頭候補を求め、格納する
  */
 static void
-StoreFirstKouho( cx, bun_max )
-register RkcContext *cx ;
-int bun_max ;
+StoreFirstKouho(register RkcContext *cx, int bun_max)
 {
     /* ここは、よく考えないと構造まで変えた意味が無くなるし
      *	 後でえらい目に遭うかも知れない
@@ -788,10 +777,8 @@ int bun_max ;
 /*
  *    連文節変換開始
  */
-static int	
-_RkwBgnBun(cxnum, yomi, maxyomi, mode)
-int cxnum, maxyomi, mode ; 
-Ushort *yomi ;
+static int
+_RkwBgnBun(int cxnum, Ushort *yomi, int maxyomi, int mode)
 {
     register RkcContext *cx = getCC( cxnum, NOCHECK ) ;
     int nbun, mask;					/* S002 */
@@ -905,10 +892,8 @@ int cxnum, mode ;
 /* LoadKouho
  *	必要に応じて全候補を読み出す
  */
-static
-int
-LoadKouho( cx )
-register RkcContext	 *cx ;
+static int
+LoadKouho(register RkcContext *cx)
 {
     register RkcBun	*bun = &cx->bun[ cx->curbun ] ;
     int 		ret ;
@@ -1000,11 +985,8 @@ int cxnum ;
     return( 0 );
 }
 
-static
-Ushort *
-SeekKouho( bun, to )
-register RkcBun     *bun ;
-register int	    to ;
+static Ushort *
+SeekKouho(register RkcBun *bun, register int to)
 {
     register int    i ;
     Ushort   *src_yomi ;
@@ -1017,9 +999,7 @@ register int	    to ;
 }
 
 static int
-_RkwGetKanji( cxnum, kanji, maxkanji )
-int cxnum, maxkanji ;
-Ushort *kanji ;
+_RkwGetKanji(int cxnum, Ushort *kanji, int maxkanji)
 {
     RkcContext		    *cx = getCC( cxnum, CHECK ) ;
     RkcBun		    *bun ;
@@ -1063,9 +1043,7 @@ int maxkanji;
 }
 
 static int
-_RkwGetKanjiList(cxnum, kouho, max)
-int cxnum, max ;
-Ushort *kouho ;
+_RkwGetKanjiList(int cxnum, Ushort *kouho, int max)
 {
     RkcContext	*cx = getCC( cxnum, CHECK ) ;
     RkcBun	*bun ;
@@ -1193,8 +1171,7 @@ int _RkwGetYomi();
 #endif
 
 static int
-RKReSize( cxnum, len )
-int cxnum, len ;
+RKReSize(int cxnum, int len)
 {
     register RkcContext  *cx = getCC( cxnum, CHECK ) ;
     int ret;		/* 総文節数 */
@@ -1295,9 +1272,7 @@ int cxnum ;
 }
 
 static int
-_RkwStoreYomi(cxnum, yomi, max)
-int cxnum, max ;
-Ushort *yomi ;
+_RkwStoreYomi(int cxnum, Ushort *yomi, int max)
 {
     register RkcContext  *cx = getCC( cxnum, CHECK ) ;
     int ret, len ;
@@ -1337,11 +1312,8 @@ int maxyomi;
   return _RkwStoreYomi(cxnum, rkc.cbuf, len);
 }
 
-int								/* S003 */
-_RkwGetYomi(cx, yomi, maxyomi)
-RkcContext *cx;
-int maxyomi;
-Ushort	*yomi;
+int
+_RkwGetYomi(RkcContext *cx, Ushort *yomi, int maxyomi)
 {
     register RkcBun	*bun ;
     Ushort	*src_yomi;
@@ -1436,9 +1408,7 @@ RkLex *lex ;
 }
 
 int
-RkwGetStat(cxnum, stat)
-int cxnum ;
-RkStat *stat ;
+RkwGetStat(int cxnum, RkStat *stat)
 {
     register RkcContext  *cx = getCC( cxnum, CHECK ) ;
     int ret ;
@@ -1467,7 +1437,7 @@ RkStat *stat ;
 }
 
 char *
-RkwGetServerName()
+RkwGetServerName(void)
 {
   if (ConnectIrohaServerName[0]) {
     return( ConnectIrohaServerName ) ;
@@ -1478,8 +1448,7 @@ RkwGetServerName()
 }
 
 int
-RkwGetProtocolVersion(majorp, minorp)
-int *majorp, *minorp;
+RkwGetProtocolVersion(int *majorp, int *minorp)
 {
     *majorp = ProtocolMajor;
     *minorp = ProtocolMinor;
@@ -1487,8 +1456,7 @@ int *majorp, *minorp;
 }
 
 exp(int)
-RkwGetServerVersion(majorp, minorp)
-int *majorp, *minorp;
+RkwGetServerVersion(int *majorp, int *minorp)
 {
     if( !PROTOCOL )
 	return( RkwGetProtocolVersion(majorp, minorp) );
@@ -1498,20 +1466,19 @@ int *majorp, *minorp;
 
 							/* begin:S004 */
 int
-RkcGetServerFD()
+RkcGetServerFD(void)
 {
     return( ServerFD );
 }
 
 int
-G070_RkcGetServerFD()
+G070_RkcGetServerFD(void)
 {
     return( ServerFD );
 }
 
 int
-RkcConnectIrohaServer( servername )
-char* servername;
+RkcConnectIrohaServer(char *servername)
 {
     /* XXX:
      * RkcDisconnectIrohaServerに相当するインターフェースが無いので、
@@ -1524,23 +1491,20 @@ char* servername;
 }
 							/* end:S004 */
 int
-G069_RkcConnectIrohaServer( servername )
-char* servername;
+G069_RkcConnectIrohaServer(char *servername)
 {
     return RkcConnectIrohaServer(servername);
 }
 
 void
-RkcListenConfigErrors( handler )
-RkcConfigErrorProc handler;
+RkcListenConfigErrors(RkcConfigErrorProc handler)
 {
     config_error_handler = handler;
 }
 
 #ifdef EXTENSION
 static int
-CheckRemoteToolProtoVersion(mode)
-int mode;
+CheckRemoteToolProtoVersion(int mode)
 {
   if (!PROTOCOL && ProtocolMinor < 2) /* protocol version 1.2 */
     return -1;
@@ -1552,9 +1516,7 @@ int mode;
 }
 
 int
-RkwListDic( cxnum, dirname, dicnames_return, size )
-int cxnum, size ;
-char *dirname, *dicnames_return ;
+RkwListDic(int cxnum, char *dirname, char *dicnames_return, int size)
 {
     register RkcContext *cx = getCC( cxnum, NOCHECK ) ;
 
@@ -1594,9 +1556,7 @@ char *dirname, *dicnames_return ;
 }
 
 int
-RkwCreateDic( cxnum, dicname, mode )
-int cxnum, mode ;
-char *dicname ;
+RkwCreateDic(int cxnum, char *dicname, int mode)
 {
     register RkcContext *cx = getCC( cxnum, NOCHECK ) ;
 
@@ -1611,9 +1571,7 @@ char *dicname ;
 }
 
 exp(int)
-RkwRemoveDic( cxnum, dicname, mode )
-int cxnum, mode ;
-char *dicname ;
+RkwRemoveDic(int cxnum, char *dicname, int mode)
 {
     register RkcContext *cx = getCC( cxnum, NOCHECK ) ;
 
@@ -1628,9 +1586,7 @@ char *dicname ;
 }
 
 exp(int)
-RkwRenameDic( cxnum, dicname, newdicname, mode )
-int cxnum, mode ;
-char *dicname, *newdicname;
+RkwRenameDic(int cxnum, char *dicname, char *newdicname, int mode)
 {
     register RkcContext *cx = getCC( cxnum, NOCHECK ) ;
 
@@ -1647,9 +1603,7 @@ char *dicname, *newdicname;
 /* CopyDic を 入れる。 */
 
 exp(int)
-RkwCopyDic(cxnum, dirname, dicname, newdicname, mode )
-int cxnum, mode ;
-char *dirname,*dicname, *newdicname ;
+RkwCopyDic(int cxnum, char *dirname, char *dicname, char *newdicname, int mode)
 {
     register RkcContext *cx = getCC( cxnum, NOCHECK ) ;
 
@@ -1672,10 +1626,7 @@ char *dirname,*dicname, *newdicname ;
 /* ここまで */
 
 static int
-_RkwGetWordTextDic( cxnum, dirname, dicname, info, infolen )
-int cxnum, infolen ;
-unsigned char *dirname, *dicname;
-Ushort *info;
+_RkwGetWordTextDic(int cxnum, unsigned char *dirname, unsigned char *dicname, Ushort *info, int infolen)
 {
     register RkcContext *cx = getCC( cxnum, NOCHECK ) ;
 
@@ -1692,10 +1643,7 @@ Ushort *info;
 }
 
 exp(int)
-RkwGetWordTextDic(cxnum, dirname, dicname, info, infolen)
-int cxnum, infolen ;
-unsigned char *dirname, *dicname;
-wchar_t *info;
+RkwGetWordTextDic(int cxnum, unsigned char *dirname, unsigned char *dicname, wchar_t *info, int infolen)
 {
   int len;
 
@@ -1715,11 +1663,15 @@ wchar_t *info;
 }
 
 #else
-RkwListDic(){}
+int
+RkwListDic(void){}
 RkwCreateDic(){}
-RkwRemoveDic(){}
-RkwRenameDic(){}
-RkwGetWordTextDic(){}
+int
+RkwRemoveDic(void){}
+int
+RkwRenameDic(void){}
+int
+RkwGetWordTextDic(void){}
 #endif /* EXTENSION */
 
 /* 逐次自動変換機能関数				*/
@@ -1727,9 +1679,7 @@ RkwGetWordTextDic(){}
 /* 逐次自動変換機能導入によって追加される関数	*/
 
 static int
-_RkwSubstYomi( cxnum, ys, ye, yomi, nyomi )
-int cxnum, ys, ye, nyomi;
-Ushort	*yomi;
+_RkwSubstYomi(int cxnum, int ys, int ye, Ushort *yomi, int nyomi)
 {
     register RkcContext *cx = getCC( cxnum, CHECK );
     int len, curbun, nbun = -1, pbun, retval = -1;
@@ -1828,9 +1778,7 @@ int cxnum;
 }
 
 static int
-_RkwGetLastYomi( cxnum, yomi, maxyomi )
-int	cxnum, maxyomi;
-Ushort	*yomi;
+_RkwGetLastYomi(int cxnum, Ushort *yomi, int maxyomi)
 {
     register RkcContext *cx = getCC( cxnum, CHECK );
     int	len = -1;
@@ -1869,11 +1817,8 @@ int maxyomi;
 /*
  * 先頭文節から指定された文節までの先頭候補または、候補列の領域を解放する
  */
-static
-void
-removeBUN( cx, to )
-RkcContext *cx;
-register int to;
+static void
+removeBUN(RkcContext *cx, register int to)
 {
     register RkcBun *bun ;
     register int i;
@@ -1927,11 +1872,7 @@ int cx_num, mode;
 }
 
 static int
-_RkwGetSimpleKanji(cxnum, dicname, yomi, maxyomi, kanjis, maxkanjis,
-		   hinshis, maxhinshis)
-unsigned char *dicname;
-int cxnum, maxyomi, maxkanjis, maxhinshis;
-Ushort *yomi, *kanjis, *hinshis;
+_RkwGetSimpleKanji(int cxnum, unsigned char *dicname, Ushort *yomi, int maxyomi, Ushort *kanjis, int maxkanjis, Ushort *hinshis, int maxhinshis)
 {
     RkcContext *cx = getCC( cxnum, CHECK ) ;
 
@@ -1944,10 +1885,7 @@ Ushort *yomi, *kanjis, *hinshis;
 }
 
 int
-RkwGetSimpleKanji( cxnum, dicname, yomi, maxyomi, kanjis, maxkanjis, hinshis, maxhinshis )
-int cxnum, maxyomi, maxkanjis, maxhinshis ;
-wchar_t *yomi, *kanjis, *hinshis;
-char *dicname;
+RkwGetSimpleKanji(int cxnum, char *dicname, wchar_t *yomi, int maxyomi, wchar_t *kanjis, int maxkanjis, wchar_t *hinshis, int maxhinshis)
 {
   Ushort cbuf[CBUFSIZE], cbuf2[CBIGBUFSIZE], cbuf3[CBIGBUFSIZE];
   int nkanji, len, i, j = 0, k = 0, l = 0, m = 0;
@@ -1977,11 +1915,11 @@ char *dicname;
 }
 
 int
-RkwQueryDic( cxnum, username, dicname, status )			/* S002 */
-int cxnum;
-char *username;					/* S002 */
-char *dicname;
-struct DicInfo *status;
+RkwQueryDic(			/* S002 */
+	int cxnum,
+	char *username,					/* S002 */
+	char *dicname,
+	struct DicInfo *status)
 {
     RkcContext *cx = getCC( cxnum, NOCHECK );
 
@@ -2003,9 +1941,7 @@ struct DicInfo *status;
 }
 
 static int
-_RkwGetHinshi( cxnum, dst, maxdst )
-int cxnum, maxdst;
-Ushort *dst;
+_RkwGetHinshi(int cxnum, Ushort *dst, int maxdst)
 {
     RkcContext *cx = getCC( cxnum, CHECK );
 
@@ -2038,9 +1974,7 @@ wchar_t *dst;
 }
 
 static int
-_RkwStoreRange( cxnum, yomi, maxyomi )
-int cxnum, maxyomi;
-Ushort *yomi;
+_RkwStoreRange(int cxnum, Ushort *yomi, int maxyomi)
 {
     RkcContext *cx = getCC( cxnum, CHECK );
 
@@ -2051,9 +1985,7 @@ Ushort *yomi;
 }
 
 int
-RkwStoreRange( cxnum, yomi, maxyomi )
-int cxnum, maxyomi;
-wchar_t *yomi;
+RkwStoreRange(int cxnum, wchar_t *yomi, int maxyomi)
 {
   int len;
 
@@ -2065,9 +1997,7 @@ wchar_t *yomi;
 }
 
 int
-RkwSetLocale( cxnum, locale )
-int cxnum;
-unsigned char *locale;
+RkwSetLocale(int cxnum, unsigned char *locale)
 {
     RkcContext *cx = getCC( cxnum, NOCHECK );
 
@@ -2094,9 +2024,7 @@ unsigned char *locale;
  */
 
 int
-RkwSync( cxnum, dicname )
-int cxnum;
-char *dicname;
+RkwSync(int cxnum, char *dicname)
 {
   RkcContext *cx = getCC( cxnum, NOCHECK );
 
@@ -2124,7 +2052,7 @@ char *dicname;
  *  0 or -1
  */
 
-int RkwSetAppName pro((int, char *));
+int RkwSetAppName(int, char *);
 
 int
 RkwSetAppName( cxnum, apname )
@@ -2139,7 +2067,7 @@ char *apname;
     return( -1 ) ;
 }
 
-int RkSetAppName pro((int, char *));
+int RkSetAppName(int, char *);
 
 /*
  *  RkwChmodDic ()
@@ -2159,10 +2087,7 @@ int RkSetAppName pro((int, char *));
  *  0 or -1
  */
 exp(int)
-RkwChmodDic(cxnum, dicname, mode)
-int cxnum;
-char *dicname;
-int  mode;
+RkwChmodDic(int cxnum, char *dicname, int mode)
 {
   RkcContext *cx = getCC( cxnum, NOCHECK );
 
@@ -2178,57 +2103,49 @@ int  mode;
 #ifndef OMIT_EUC_FUNCS
 
 int
-RkInitialize( hostname )
-char *hostname ;
+RkInitialize(char *hostname)
 {
     return( RkwInitialize( hostname ) ) ;
 }
 
 void
-RkFinalize()
+RkFinalize(void)
 {
     RkwFinalize() ;
 }
 
 int
-RkKillServer()
+RkKillServer(void)
 {
     return RkwKillServer();
 }
 
 int
-RkCloseContext( cxnum )
-int cxnum ;
+RkCloseContext(int cxnum)
 {
     return( RkwCloseContext( cxnum ) ) ;
 }
 
 int
-RkCreateContext()
+RkCreateContext(void)
 {
     return( RkwCreateContext() ) ;
 }
 
 int
-RkDuplicateContext( src_cx )
-int src_cx ;
+RkDuplicateContext(int src_cx)
 {
     return( RkwDuplicateContext( src_cx ) ) ;
 }
 
 int
-RkGetDicList(cxnum, dicnames, max)
-int cxnum ;
-char *dicnames ;
-int max ;
+RkGetDicList(int cxnum, char *dicnames, int max)
 {
     return( RkwGetDicList( cxnum, dicnames, max ) ) ;
 }
 
 int
-RkDefineDic(cxnum, dicname, wordrec)
-int cxnum;
-char *dicname, *wordrec;
+RkDefineDic(int cxnum, char *dicname, char *wordrec)
 {
     if( !dicname || !wordrec )
 	return( -1 ) ;
@@ -2238,9 +2155,7 @@ char *dicname, *wordrec;
 }
 
 int
-RkDeleteDic(cxnum, dicname, wordrec)
-int cxnum;
-char *dicname, *wordrec;
+RkDeleteDic(int cxnum, char *dicname, char *wordrec)
 {
     Ushort cbuf[CBUFSIZE];
 
@@ -2252,41 +2167,33 @@ char *dicname, *wordrec;
 }
 
 int
-RkMountDic( cxnum, dicname, mode )
-int cxnum, mode;
-char *dicname;
+RkMountDic(int cxnum, char *dicname, int mode)
 {
     return( RkwMountDic( cxnum, dicname, mode ) );
 }
 
 int
-RkRemountDic( cxnum, dicname, where )
-int cxnum, where;
-char *dicname;
+RkRemountDic(int cxnum, char *dicname, int where)
 {
     return( RkwRemountDic( cxnum, dicname, where ) );
 }
 
 int
-RkUnmountDic( cxnum, dicname )
-int cxnum;
-char *dicname;
+RkUnmountDic(int cxnum, char *dicname)
 {
     return( RkwUnmountDic( cxnum, dicname ) );
 }
 
 int
-RkGetMountList( cxnum, dicnames_return, max )
-int cxnum, max;
-char *dicnames_return;
+RkGetMountList(int cxnum, char *dicnames_return, int max)
 {
     return( RkwGetMountList( cxnum, dicnames_return, max ) );
 }
 
 int
-RkSetDicPath( cxnum, path ) /* サーチパスを設定 */
-int cxnum ;
-char *path ;
+RkSetDicPath( /* サーチパスを設定 */
+	int cxnum,
+	char *path)
 /* ARGSUSED */
 {
     /*
@@ -2296,10 +2203,10 @@ char *path ;
 }
 
 int
-RkGetDirList( cxnum, ddname, maxddname )   /* 辞書リストを取得 */
-int cxnum ;
-char *ddname ;
-int maxddname ;
+RkGetDirList(   /* 辞書リストを取得 */
+	int cxnum,
+	char *ddname,
+	int maxddname)
 /* ARGSUSED */
 {
 #ifdef USE_EUC_PROTOCOL
@@ -2322,11 +2229,7 @@ int maxddname ;
 }
 
 int
-RkBgnBun(cxnum, yomi, maxyomi, mode)
-int cxnum;
-char *yomi;
-int maxyomi;
-int mode;
+RkBgnBun(int cxnum, char *yomi, int maxyomi, int mode)
 {
     Ushort cbuf[CBIGBUFSIZE];
     int len;
@@ -2341,45 +2244,37 @@ int mode;
 }
 
 int
-RkEndBun( cxnum, mode )
-int cxnum, mode ;
+RkEndBun(int cxnum, int mode)
 {
     return( RkwEndBun( cxnum, mode ) );
 }
 
 int
-RkXfer( cxnum, knum )
-int cxnum, knum;
+RkXfer(int cxnum, int knum)
 {
     return( RkwXfer( cxnum, knum ) );
 }
 
 int
-RkNfer( cxnum )
-int cxnum ;
+RkNfer(int cxnum)
 {
     return( RkwNfer( cxnum ) );
 }
 
 int
-RkNext( cxnum )
-int cxnum ;
+RkNext(int cxnum)
 {
     return( RkwNext( cxnum ) );
 }
 
 int
-RkPrev(cxnum)
-int cxnum ;
+RkPrev(int cxnum)
 {
     return( RkwPrev( cxnum ) );
 }
 
 int
-RkGetKanji(cxnum, kanji, maxkanji)
-int cxnum;
-unsigned char *kanji;
-int maxkanji;
+RkGetKanji(int cxnum, unsigned char *kanji, int maxkanji)
 {
     Ushort cbuf[CBUFSIZE];
     int len;
@@ -2401,10 +2296,7 @@ int maxkanji;
 }
 
 int
-RkGetKanjiList(cxnum, kanjis, maxkanjis)
-int cxnum;
-unsigned char *kanjis;
-int maxkanjis;
+RkGetKanjiList(int cxnum, unsigned char *kanjis, int maxkanjis)
 {
   Ushort cbuf[CBIGBUFSIZE];
   int nkanji, len, i, j = 0, k = 0;
@@ -2433,29 +2325,25 @@ int maxkanjis;
 }
 
 int
-RkGoTo(cxnum, bnum)
-int cxnum, bnum ;
+RkGoTo(int cxnum, int bnum)
 {
     return( RkwGoTo( cxnum, bnum ) );
 }
 
 int
-RkLeft( cxnum )
-int cxnum;
+RkLeft(int cxnum)
 {
     return( RkwLeft( cxnum ) );
 }
 
 int
-RkRight( cxnum )
-int cxnum;
+RkRight(int cxnum)
 {
     return( RkwRight( cxnum ) );
 }
 
 int
-RkResize(cxnum, len)
-int cxnum, len ;
+RkResize(int cxnum, int len)
 {
     /* この len はバイトやけど，RkwResize には文字数を渡さなあかんのと
        ちゃうやろか? こんなん，どないやって変換したらええんやろ? */
@@ -2494,24 +2382,21 @@ int cxnum, len ;
 }
 
 int
-RkEnlarge( cxnum )  /* 文節伸ばし */
-int cxnum ;
+RkEnlarge(  /* 文節伸ばし */
+	int cxnum)
 {
     return( RKReSize( cxnum, ENLARGE  ) ) ;
 }
 
 int
-RkShorten(cxnum)    /* 文節縮め */
-int cxnum ;
+RkShorten(    /* 文節縮め */
+	int cxnum)
 {
     return( RKReSize( cxnum, SHORTEN ) ) ;
 }
 
 int
-RkStoreYomi(cxnum, yomi, maxyomi)
-int cxnum;
-char *yomi;
-int maxyomi;
+RkStoreYomi(int cxnum, char *yomi, int maxyomi)
 {
   Ushort cbuf[CBUFSIZE];
   int len;
@@ -2527,10 +2412,7 @@ int maxyomi;
 }
 
 int
-RkGetYomi(cxnum, yomi, maxyomi)
-int cxnum;
-unsigned char *yomi;
-int maxyomi;
+RkGetYomi(int cxnum, unsigned char *yomi, int maxyomi)
 {
   Ushort cbuf[CBUFSIZE];
   int len;
@@ -2552,9 +2434,7 @@ int maxyomi;
 }
 
 int
-RkGetLex(cxnum, lex, maxlex)
-int cxnum, maxlex ;
-RkLex *lex ;
+RkGetLex(int cxnum, RkLex *lex, int maxlex)
 {
     RkLex *tango;
     Ushort ybuf[CBUFSIZE], kbuf[CBUFSIZE];
@@ -2582,9 +2462,7 @@ RkLex *lex ;
 }
 
 int
-RkGetStat(cxnum, stat)
-int cxnum ;
-RkStat *stat ;
+RkGetStat(int cxnum, RkStat *stat)
 {
     unsigned char cbuf[BUFSIZE];
     int ret;
@@ -2598,51 +2476,39 @@ RkStat *stat ;
 
 #ifdef EXTENSION
 int
-RkListDic( cxnum, dirname, dicnames_return, size )
-int cxnum, size;
-unsigned char *dirname, *dicnames_return;
+RkListDic(int cxnum, unsigned char *dirname, unsigned char *dicnames_return, int size)
 {
   return RkwListDic(cxnum, (char *)dirname,(char *) dicnames_return, size);
 }
 
 exp(int)
-RkCreateDic( cxnum, dicname, mode )
-int cxnum, mode;
-unsigned char *dicname;
+RkCreateDic(int cxnum, unsigned char *dicname, int mode)
 {
   return RkwCreateDic(cxnum, (char *)dicname, mode);
 }
 
 int
-RkRemoveDic( cxnum, dicname, mode )
-int cxnum, mode;
-unsigned char *dicname;
+RkRemoveDic(int cxnum, unsigned char *dicname, int mode)
 
 {
   return RkwRemoveDic(cxnum, (char *)dicname, mode);
 }
 
 int
-RkRenameDic( cxnum, dicname, newdicname, mode )
-int cxnum, mode;
-unsigned char *dicname, *newdicname;
+RkRenameDic(int cxnum, unsigned char *dicname, unsigned char *newdicname, int mode)
 {
   return RkwRenameDic(cxnum, (char *)dicname, (char *)newdicname, mode);
 }
 
 int
-RkCopyDic(cxnum, dirname, dicname, newdicname, mode)
-int cxnum, mode;
-unsigned char *dirname, *dicname, *newdicname;
+RkCopyDic(int cxnum, unsigned char *dirname, unsigned char *dicname, unsigned char *newdicname, int mode)
 {
   return RkwCopyDic(cxnum, (char *)dirname, (char *)dicname,
 		    (char *)newdicname, mode);
 }
 
 exp(int)
-RkGetWordTextDic(cxnum, dirname, dicname, info, infolen)
-int cxnum, infolen ;
-unsigned char *dirname, *dicname, *info;
+RkGetWordTextDic(int cxnum, unsigned char *dirname, unsigned char *dicname, unsigned char *info, int infolen)
 {
   Ushort cbuf[CBUFSIZE];
   int len;
@@ -2664,17 +2530,18 @@ unsigned char *dirname, *dicname, *info;
 }
 
 #else
-int RkListDic(){}
+int
+RkListDic(void){}
 exp(int) RkCreateDic(){}
-int RkRemoveDic(){}
-int RkRenameDic(){}
+int
+RkRemoveDic(void){}
+int
+RkRenameDic(void){}
 exp(int) RkGetWordTextDic(){}
 #endif /* EXTENSION */
 
 int
-RkSubstYomi( cxnum, ys, ye, yomi, nyomi )
-int cxnum, ys, ye, nyomi;
-char *yomi;
+RkSubstYomi(int cxnum, int ys, int ye, char *yomi, int nyomi)
 {
   RkcContext *cx = getCC( cxnum, CHECK );
   char cbuf[CBUFSIZE];
@@ -2692,17 +2559,13 @@ char *yomi;
 }
 
 int
-RkFlushYomi( cxnum )
-int cxnum;
+RkFlushYomi(int cxnum)
 {
     return( RkwFlushYomi( cxnum ) );
 }
 
 int
-RkGetLastYomi( cxnum, yomi, maxyomi )
-int cxnum;
-char *yomi;
-int maxyomi;
+RkGetLastYomi(int cxnum, char *yomi, int maxyomi)
 {
   Ushort cbuf[CBUFSIZE];
   int len;
@@ -2724,16 +2587,13 @@ int maxyomi;
 }
 
 int
-RkRemoveBun( cxnum, mode )
-int cxnum, mode ;
+RkRemoveBun(int cxnum, int mode)
 {
     return( RkwRemoveBun( cxnum, mode ) );
 }
 
 int
-RkGetSimpleKanji( cxnum, dicname, yomi, maxyomi, kanjis, maxkanjis, hinshis, maxhinshis )
-int cxnum, maxyomi, maxkanjis, maxhinshis ;
-unsigned char *dicname, *yomi, *kanjis, *hinshis ;
+RkGetSimpleKanji(int cxnum, unsigned char *dicname, unsigned char *yomi, int maxyomi, unsigned char *kanjis, int maxkanjis, unsigned char *hinshis, int maxhinshis)
 {
   Ushort cbuf[CBUFSIZE], cbuf2[CBIGBUFSIZE], cbuf3[CBIGBUFSIZE];
   int nkanji, len, i, j = 0, k = 0, l = 0, m = 0;
@@ -2763,19 +2623,17 @@ unsigned char *dicname, *yomi, *kanjis, *hinshis ;
 }
 
 int
-RkQueryDic( cxnum, username, dicname, status )			/* S002 */
-int cxnum;
-char *username;					/* S002 */
-char *dicname;
-struct DicInfo *status;
+RkQueryDic(			/* S002 */
+	int cxnum,
+	char *username,					/* S002 */
+	char *dicname,
+	struct DicInfo *status)
 {
   return RkwQueryDic(cxnum, username, dicname, status);
 }
 
 int
-RkGetHinshi( cxnum, dst, maxdst )
-int cxnum, maxdst;
-unsigned char *dst;
+RkGetHinshi(int cxnum, unsigned char *dst, int maxdst)
 {
   Ushort cbuf[CBUFSIZE];
   int len;
@@ -2797,9 +2655,7 @@ unsigned char *dst;
 }
 
 int
-RkStoreRange( cxnum, yomi, maxyomi )
-int cxnum, maxyomi;
-unsigned char *yomi;
+RkStoreRange(int cxnum, unsigned char *yomi, int maxyomi)
 {
   Ushort cbuf[CBUFSIZE];
   int len;
@@ -2812,34 +2668,25 @@ unsigned char *yomi;
 }
 
 int
-RkSetLocale( cxnum, locale )
-int cxnum;
-unsigned char *locale;
+RkSetLocale(int cxnum, unsigned char *locale)
 {
     return( RkwSetLocale( cxnum, locale ) );
 }
 
 int
-RkSync( cxnum, dicname )
-int cxnum;
-char *dicname;
+RkSync(int cxnum, char *dicname)
 {
     return( RkwSync( cxnum, dicname ) );
 }
 
 int
-RkSetAppName( cxnum, apname )
-int cxnum;
-char *apname;
+RkSetAppName(int cxnum, char *apname)
 {
     return( RkwSetAppName( cxnum, apname ) );
 }
 
 int
-RkChmodDic(cxnum, dicname, mode)
-int cxnum;
-unsigned char *dicname;
-int mode;
+RkChmodDic(int cxnum, unsigned char *dicname, int mode)
 {
   return RkwChmodDic(cxnum, (char *)dicname, mode);
 }
@@ -2919,12 +2766,7 @@ exp(struct rkfuncs) RkFuncs = {
  *  bufに格納された大きさ or -1
  */
 int
-RkThrough( cxnum, command, buf, content_size, buffer_size )
-int cxnum;
-int command;
-unsigned char *buf;
-int content_size;
-int buffer_size;
+RkThrough(int cxnum, int command, unsigned char *buf, int content_size, int buffer_size)
 {
     RkcContext *cx = getCC( cxnum, NOCHECK );
 

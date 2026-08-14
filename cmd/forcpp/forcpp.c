@@ -44,7 +44,8 @@ char	*hd	= "0123456789abcdef";
 
 /* #define	ESC	'@'*/
 #define	ESC 033	
-void e2j()
+void
+e2j(void)
 {
     unsigned	c;
     int		kin = 0;
@@ -68,7 +69,8 @@ void e2j()
     };
 }
 
-void j2e()
+void
+j2e(void)
 {
     unsigned	c;
     int		kin = 0;
@@ -93,16 +95,15 @@ void j2e()
     };
 }
 
-void catch(sig)
-int sig;
+void
+catch(int sig)
 {
   fprintf(stderr, gettxt("cannacmd:18", "Dictionary format error.\n"));
   exit(1);
 }
 
-int main(n, args)
-int	n;
-char	*args[];
+int
+main(int n, char *args[])
 {
 
   (void)signal(SIGSEGV, catch);

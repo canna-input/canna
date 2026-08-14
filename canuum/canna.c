@@ -52,11 +52,6 @@
 #include "sdefine.h"
 #include "sheader.h"
 #include "wnn_config.h"
-#if defined(__STDC__) || defined(__cplusplus)
-# define pro(x) x
-#else
-# define pro(x) ()
-#endif
 
 #include <errno.h>
 
@@ -85,6 +80,7 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include <unistd.h>
 
 #include "wnn_os.h"
@@ -94,18 +90,17 @@
 #define PARTIALREDRAW 1
 #define NOREDRAW      0
 
-extern int RkMapPhonogram
-  pro((struct RkRxDic *, unsigned char *, int, unsigned char *, int,
-       unsigned, int,
-       int *, int *, int *, int *));
-extern int RkCvtRoma
-  pro((struct RkRxDic *, unsigned char *, int, unsigned char *, int,
-       unsigned));
-extern void RkCloseRoma pro((struct RkRxDic *));
-static int colwidth pro((const w_char *, int));
-static int skipchars pro((const w_char *, int, int *));
-static int cannakeyentry pro((char *, int));
-static void debugprint pro((const char *, const char *, const char *, const char *));
+extern int RkMapPhonogram(
+	struct RkRxDic *, unsigned char *, int, unsigned char *, int,
+	unsigned, int, int *, int *, int *, int *);
+extern int RkCvtRoma(
+	struct RkRxDic *, unsigned char *, int, unsigned char *, int,
+	unsigned);
+extern void RkCloseRoma(struct RkRxDic *);
+static int colwidth(const w_char *, int);
+static int skipchars(const w_char *, int, int *);
+static int cannakeyentry(char *, int);
+static void debugprint(const char *, const char *, const char *, const char *);
 
 static int maxmodelen;
 static int maxwidth = 0;
@@ -157,9 +152,7 @@ char *terminalname;
  */
 
 w_char *
-Strncpy(ws1, ws2, cnt)
-w_char *ws1, *ws2;
-int cnt;
+Strncpy(w_char *ws1, w_char *ws2, int cnt)
 {
   w_char *ws;
 
@@ -186,8 +179,7 @@ int cnt;
  */
 
 int
-eu_columlen(c)
-unsigned char *c;
+eu_columlen(unsigned char *c)
 {
   int len = 0;
   unsigned char ch;
@@ -219,9 +211,8 @@ unsigned char *c;
 
  */
 
-int
-WStrlen(ws)
-w_char *ws;
+static int
+WStrlen(w_char *ws)
 {
   int res = 0;
   while (*ws++) {
@@ -230,17 +221,15 @@ w_char *ws;
   return res;
 }
 
-int
-WStrcmp(w1, w2)
-w_char *w1, *w2;
+static int
+WStrcmp(w_char *w1, w_char *w2)
 {
   for (; *w1 && *w1 == *w2; w1++, w2++);
   return(*w1 - *w2);
 }
 
-w_char *
-WStrcpy(ws1, ws2)
-w_char *ws1, *ws2;
+static w_char *
+WStrcpy(w_char *ws1, w_char *ws2)
 {
   w_char *ws;
   int cnt, len;
@@ -263,9 +252,7 @@ w_char *ws1, *ws2;
 }
 
 static int
-colwidth(s, len)
-const w_char *s;
-int     len;
+colwidth(const w_char *s, int len)
 {
   int ret = 0;
   const w_char *es = s + len;
@@ -299,9 +286,7 @@ int     len;
  */
 
 static int
-skipchars(s, wi, ov)
-const w_char *s;
-int wi, *ov;
+skipchars(const w_char *s, int wi, int *ov)
 {
   int ret, swi;
 
@@ -323,7 +308,7 @@ int wi, *ov;
 
 
 void
-set_screen_vars_default() /* originally defined in basic_op.c */
+set_screen_vars_default(void) /* originally defined in basic_op.c */
 {
   maxwidth =
     maxlength - maxmodelen - 2 + (conv_lines - 1) * (maxlength - 1) - 1;
@@ -331,12 +316,14 @@ set_screen_vars_default() /* originally defined in basic_op.c */
 
 /* canna routines */
 
-int init_uum() /* originally defined in prologue.c */
+static void registerkeys(void);
+static void cannakeydef(int xterm, char *term, char *seq, int id);
+int
+init_uum(void) /* originally defined in prologue.c */
 {
   char **msg, *p;
   extern char *prog;
   extern void ring_bell();
-  void registerkeys(), cannakeydef();
 
   for (p = prog ; *p ; p++) { /* use basename */
     if (*p == '/' && *(p + 1)) {
@@ -395,7 +382,8 @@ int init_uum() /* originally defined in prologue.c */
 
 static struct RkRxDic *eseqdic; /* used at keyin1 */
 
-void epilogue_no_close() /* originally defined in epilogue.c */
+void
+epilogue_no_close(void) /* originally defined in epilogue.c */
 {
   wcKanjiControl(0, KC_FINALIZE, 0);
   RkCloseRoma(eseqdic);
@@ -412,7 +400,8 @@ void epilogue_no_close() /* originally defined in epilogue.c */
 #endif
 }
 
-void epilogue() /* originally defined in epilogue.c */
+void
+epilogue(void) /* originally defined in epilogue.c */
 {
   epilogue_no_close();
 }
@@ -420,27 +409,23 @@ void epilogue() /* originally defined in epilogue.c */
 extern int ptyfd, ttyfd;
 
 static void
-ptyout(s, n)
-w_char *s;
-int n;
+ptyout(w_char *s, int n)
 {
   int ml;
 
   if ((ml = (*code_trans[(internal_code << 2) | pty_c_flag])
-       (buf, s, n * sizeof(w_char))) > 0) {
+       (buf, (unsigned char *)s, n * sizeof(w_char))) > 0) {
     write(ptyfd, buf, ml);
   }
 }
 
 static void
-ttyout(s, n)
-w_char *s;
-int n;
+ttyout(w_char *s, int n)
 {
   int ml;
 
   if ((ml = (*code_trans[(internal_code << 2) | tty_c_flag])
-       (buf, s, n * sizeof(w_char))) > 0) {
+       (buf, (unsigned char *)s, n * sizeof(w_char))) > 0) {
     write(ttyfd, buf, ml);
   }
 }
@@ -448,7 +433,7 @@ int n;
 static int cursor_saved = 0;
 
 static void
-cursor_restore_if_saved()
+cursor_restore_if_saved(void)
 {
   if (cursor_saved) {
     restore_cursor_raw();
@@ -458,7 +443,7 @@ cursor_restore_if_saved()
 }
 
 static int
-cursor_save_if_not_saved()
+cursor_save_if_not_saved(void)
 {
   if (!cursor_saved) {
     save_cursor_raw();
@@ -479,8 +464,7 @@ static char seqbuf[MAXSEQUENCELEN];
 static int spooled; /* treated mainly in keyin1(); */
 
 static void
-normalize(dstat)
-struct linebuf *dstat;
+normalize(struct linebuf *dstat)
 {
   switch (dstat->revLen) {
   case 0:
@@ -497,8 +481,7 @@ struct linebuf *dstat;
 }
 
 static int
-diff(pr, cr)
-struct linebuf *pr, *cr;
+diff(struct linebuf *pr, struct linebuf *cr)
 {
   w_char *pstr, *cstr;
   int maxUnchanged, i;
@@ -598,10 +581,8 @@ struct linebuf *pr, *cr;
   ks to lbc.
  */
 
-int
-check_redraw(ks, lbc, lbp)
-wcKanjiStatus *ks;
-struct linebuf *lbp, *lbc;
+static int
+check_redraw(wcKanjiStatus *ks, struct linebuf *lbc, struct linebuf *lbp)
 {
   int	result = NOREDRAW;
   w_char *modstr = lbc->mode_string;
@@ -661,9 +642,7 @@ struct linebuf *lbp, *lbc;
 }
 
 static void
-cursorWarp(lbc, to)
-struct linebuf *lbc;
-int to;
+cursorWarp(struct linebuf *lbc, int to)
 {
   int pos;
     
@@ -674,9 +653,7 @@ int to;
 }
 
 static void
-cursorMoveForward(lbc, from, to)
-struct linebuf *lbc;
-int from, to;
+cursorMoveForward(struct linebuf *lbc, int from, int to)
 {
   int n;
 
@@ -701,9 +678,7 @@ int from, to;
  */
 
 static void
-cursorMove(lbc, from, to)
-struct linebuf *lbc;
-int from, to;
+cursorMove(struct linebuf *lbc, int from, int to)
 {
   if (to < from) {
     cursorWarp(lbc, to);
@@ -714,8 +689,7 @@ int from, to;
 }
 
 static void
-adjust_reverse(length, revPos, revLen, uLeft)
-int length, *revPos, *revLen, uLeft;
+adjust_reverse(int length, int *revPos, int *revLen, int uLeft)
 {
   if (*revPos < uLeft) {
     *revLen -= uLeft - *revPos;
@@ -735,9 +709,7 @@ int length, *revPos, *revLen, uLeft;
 }
 
 static void
-redraw_it(gline, length, revPos, revLen)
-w_char *gline;
-int length, revPos, revLen;
+redraw_it(w_char *gline, int length, int revPos, int revLen)
 {
   ttyout(gline, revPos);
 
@@ -760,9 +732,7 @@ int length, revPos, revLen;
  */
 
 static int
-redraw(how, lbc, lbp)
-int how;
-struct linebuf *lbp, *lbc;
+redraw(int how, struct linebuf *lbc, struct linebuf *lbp)
 {
   int restwidth, skips, ov;
   w_char	*gline	= lbc->line;
@@ -948,7 +918,7 @@ struct linebuf *lbp, *lbc;
  */
 
 int
-t_print_l_normal()
+t_print_l_normal(void)
 {
   cursor_restore_if_saved();
   save_cursor_raw();
@@ -960,14 +930,14 @@ t_print_l_normal()
 }
 
 char *
-romkan_dispmode()
+romkan_dispmode(void)
 {
   return (char *)"\244\253\244\363\244\312";
               /* "¤«¤ó¤Ê" in EUC */
 }
 
 char *
-romkan_offmode()
+romkan_offmode(void)
 {
   return romkan_dispmode();
 }
@@ -983,23 +953,23 @@ romkan_offmode()
 
  */
 
-struct msg_cat *
-msg_open(name, nlspath, lang) /* originally defined in etc/msg.c */
-char *name;
-char *nlspath;
-char *lang;
 /* ARGSUSED */
+struct msg_cat *
+msg_open( /* originally defined in etc/msg.c */
+	char *name,
+	char *nlspath,
+	char *lang)
 {
   return 0;
 }
 
-char *
-msg_get(cad, n, mesg, lang) /* originally defined in etc/msg.c */
-struct msg_cat *cad;
-int n;
-char *mesg;
-register char *lang;
 /* ARGSUSED */
+char *
+msg_get( /* originally defined in etc/msg.c */
+	struct msg_cat *cad,
+	int n,
+	char *mesg,
+	char *lang)
 {
 
 
@@ -1035,9 +1005,8 @@ register char *lang;
 }
 
 char *
-get_kbd_env() /* originally defined in wnnrc_op.c */
+get_kbd_env(void) /* originally defined in wnnrc_op.c */
 {
-  extern char *getenv();
   return getenv("TERM");
 }
 
@@ -1049,9 +1018,7 @@ typedef struct {
 #define INITIALSIZE 256
 
 static struct RkRxDic *
-RkCreateRoma(keywords, n)
-SeqToID *keywords;
-int n;
+RkCreateRoma(SeqToID *keywords, int n)
 {
   struct RkRxDic *rdic;
   unsigned char *p;
@@ -1125,11 +1092,10 @@ static SeqToID *sequences;
 static int nsequences = 0, seqsize = 0;
 
 static int
-compar(p, q)
-SeqToID *p, *q;
+compar(const void *p, const void *q)
 {	
-  char *s = p->seq;
-  char *t = q->seq;
+  char *s = ((SeqToID *)p)->seq;
+  char *t = ((SeqToID *)q)->seq;
 
   while ( *s == *t )
     if ( *s )
@@ -1139,17 +1105,15 @@ SeqToID *p, *q;
   return ((int)*s) - ((int)*t);
 }
 
-void
-registerkeys()
+static void
+registerkeys(void)
 {
   qsort((char *)sequences, nsequences, sizeof(SeqToID), compar);
   eseqdic = RkCreateRoma(sequences, nsequences);
 }
 
 static int
-cannakeyentry(s, ident)
-char *s;
-int ident;
+cannakeyentry(char *s, int ident)
 {
   if (!s || s[0] != '\033' || !s[1]) {
     return -1;
@@ -1183,10 +1147,7 @@ int ident;
 }
 
 void
-cannakeydef(xterm, term, seq, id)
-int xterm;
-char *term, *seq;
-int id;
+cannakeydef(int xterm, char *term, char *seq, int id)
 {
   if (xterm == CANNA_CTERMINAL) {
     if (terminalname && !strcmp(terminalname, term)) {
@@ -1206,11 +1167,11 @@ int id;
 #define MAXSEQUENCE 20
 #define AREASIZE 1024
 
-int
-convert_getterm(term, flag) /* originally defined in conv/cvt_read.c */
-char *term;
-int flag;
 /* ARGSUSED */
+int
+convert_getterm( /* originally defined in conv/cvt_read.c */
+	char *term,
+	int flag)
 {
 #ifdef TERMCAP
   char xx[MAXSEQUENCE], *p = xx, *q;
@@ -1290,10 +1251,9 @@ int flag;
   return 0;
 }
 
+/* ARGSUSED */
 int
-keyin1(gch, yyy) /* originally defined in conv/cvt_read.c */
-int (*gch) pro((void));
-char *yyy; /* ARGSUSED */
+keyin1(int (*gch) (void), char *yyy) /* originally defined in conv/cvt_read.c */
 {
   int ch, n, dummy1, dummy2, dummy3;
   char xxx[MAXSEQUENCELEN];
@@ -1334,7 +1294,7 @@ char *yyy; /* ARGSUSED */
 }
 
 void
-canna_mainloop()
+canna_mainloop(void)
 {
   w_char workbuf[MAXSIZE];
   int wch, ml, howtoredraw;
@@ -1417,37 +1377,37 @@ canna_mainloop()
  */
 
 char *
-wnn_perror()
+wnn_perror(void)
 {
   return "??";
 }
 
-char *
-get_server_env(lang) /* originally defined in etc/server_env.c */
-char *lang;
 /* ARGSUSED */
+char *
+get_server_env( /* originally defined in etc/server_env.c */
+	char *lang)
 {
   return "CANNAHOST";
 }
 
-int
-hani_settei_normal(c_b) /* originally defined in touroku.c */
-struct buf *c_b;
 /* ARGSUSED */
+int
+hani_settei_normal( /* originally defined in touroku.c */
+	struct buf *c_b)
 {
   return 0;
 }
 
 int
-initial_message_out()  /* originally defined in prologue.c */
+initial_message_out(void)  /* originally defined in prologue.c */
 {
   return 1; /* dummy function */
 }
 
-int
-set_cur_env(s) /* originally defined in uif.c. */
-char s;
 /* ARGSUSED */
+int
+set_cur_env( /* originally defined in uif.c. */
+	int s)
 {
   return 0;
 }
@@ -1459,29 +1419,30 @@ char s;
 
  */
 
-int char_len_normal(x) w_char x; /* ARGSUSED */ { return 0; }
+/* ARGSUSED */
+int char_len_normal(w_char x)  { return 0; }
+int c_top_normal(void) { return 0; }
+int c_end_normal(void) { return 0; }
+/* ARGSUSED */
+int call_t_print_l_normal(int x, int add)  { return 0; }
+/* ARGSUSED */
+int char_q_len_normal(w_char x)  { return 0; }
+int call_jl_yomi_len(void) { return 0; }
 
-int c_top_normal() { return 0; }
-int c_end_normal() { return 0; }
-int call_t_print_l_normal(x, add) int x, add; /* ARGSUSED */ { return 0; }
-int char_q_len_normal(x) w_char x; /* ARGSUSED */ { return 0; }
-int call_jl_yomi_len() { return 0; }
-
-int t_redraw_move_normal(x , start , end,clr_l)
-  int x, start, end, clr_l; /* ARGSUSED */ { return 0; }
-int call_t_redraw_move_normal(x, start, end, clt_l, add) 
-  int x, start, end, clt_l, add; /* ARGSUSED */ { return 0; }
-int call_t_redraw_move_1_normal(x, start, end, clt_l, add1, add2, mode)
-  int x, start, end, clt_l, add1, add2, mode; /* ARGSUSED */ { return 0; }
-int call_t_redraw_move_2_normal(x, start1, start2, end1, end2, clt_l, add)
-  int x, start1, start2, end1, end2, clt_l, add; /* ARGSUSED */ { return 0; }
-
-int call_redraw_line_normal(x, add) int x, add; /* ARGSUSED */ { return 0; }
+/* ARGSUSED */
+int t_redraw_move_normal(int x, int start, int end, int clr_l)  { return 0; }
+/* ARGSUSED */
+int call_t_redraw_move_normal(int x, int start, int end, int clt_l, int add) { return 0; }
+/* ARGSUSED */
+int call_t_redraw_move_1_normal(int x, int start, int end, int clt_l, int add1, int add2, int mode) { return 0; }
+/* ARGSUSED */
+int call_t_redraw_move_2_normal(int x, int start1, int start2, int end1, int end2, int clt_l, int add) { return 0; }
+/* ARGSUSED */
+int call_redraw_line_normal(int x, int add) { return 0; }
 
 
 static void
-debugprint(fmt, a, b, c)
-const char *fmt, *a, *b, *c;
+debugprint(const char *fmt, const char *a, const char *b, const char *c)
 {
   FILE *f;
 

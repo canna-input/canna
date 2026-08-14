@@ -27,7 +27,7 @@
 #include "ccompat.h"
 
 static void
-usage()
+usage(void)
 {
   fprintf(stderr, 
 	  "Usage: canlisp [{-cs|-cannaserver} servername] [-f .canna-file]\n");
@@ -35,9 +35,7 @@ usage()
 }
 
 int
-main(argc, argv)
-int argc;
-char *argv[];
+main(int argc, char *argv[])
 {
   register int i;
 

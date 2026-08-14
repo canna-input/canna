@@ -25,8 +25,7 @@
 #include "ccompat.h"
 
 static char *
-allocs(s)
-char *s;
+allocs(char *s)
 {
   char *res;
 
@@ -40,7 +39,7 @@ char *s;
 static char *program;
 
 static void
-usage()
+usage(void)
 {
   fprintf(stderr, "Usage: %s filename\n", program);
   exit(1);
@@ -51,11 +50,12 @@ struct ind {
   int page;
 } entries[1024]; /* 現状は 192 なので余裕のよっちゃんである */
 
-static
-compentry(a, b)
-struct ind *a, *b;
+static int
+compentry(const void *ga, const void *gb)
 {
   int res;
+  const struct ind *a = ga;
+  const struct ind *b = gb;
 
   res = strcmp(a->yomi, b->yomi);
   if (!res) {
@@ -65,9 +65,7 @@ struct ind *a, *b;
 }
 
 static void
-printentries(e, n)
-struct ind *e;
-int n;
+printentries(struct ind *e, int n)
 {
   int i, j;
   unsigned prevchar = 0, curchar;
@@ -103,9 +101,7 @@ int n;
 }
 
 static void
-freeentries(e, n)
-struct ind *e;
-int n;
+freeentries(struct ind *e, int n)
 {
   int i;
 
@@ -124,9 +120,7 @@ int n;
 #define CHARBUFSIZE 1024
 
 static
-readindex(f, e)
-FILE *f;
-struct ind *e;
+readindex(FILE *f, struct ind *e)
 {
   char buf[CHARBUFSIZE], *p, *q, *r, *ebuf;
   int n = 0, pagenum;
@@ -176,9 +170,8 @@ struct ind *e;
   return n;
 }
 
-main(argc, argv)
-int argc;
-char *argv[];
+int
+main(int argc, char *argv[])
 {
   FILE *inf;
   int pages;

@@ -35,8 +35,7 @@ struct xqm {
 };
 
 struct RUT *
-allocRUT(hn)
-     unsigned long hn;
+allocRUT(unsigned long hn)
 {
   struct RUT	*tempo;
 
@@ -50,9 +49,7 @@ allocRUT(hn)
 }
 
 static int 
-WrToRut(ruc, csn, tick)
-     struct RUT *ruc;
-     unsigned long csn, tick;
+WrToRut(struct RUT *ruc, unsigned long csn, unsigned long tick)
 {
   unsigned long whn;
   struct CTdata *wd, **pwd;
@@ -71,10 +68,8 @@ WrToRut(ruc, csn, tick)
   return 1;
 }
 
-static
-unsigned long 
-UpdateFrst(ruc)          
-     struct RUT *ruc;
+static unsigned long
+UpdateFrst(struct RUT *ruc)
 {
   unsigned long wmin, wtick, frst, lc;
   struct CTdata *wd;
@@ -96,9 +91,7 @@ UpdateFrst(ruc)
 }
 
 static int 
-deleteCT(ruc, csn)
-     struct RUT *ruc;
-     unsigned long csn;
+deleteCT(struct RUT *ruc, unsigned long csn)
 {
   unsigned long whn;
   struct CTdata *wd, **pre;
@@ -117,9 +110,7 @@ deleteCT(ruc, csn)
 }
 
 unsigned long 
-searchRut(ruc, csn)
-     struct RUT *ruc;
-     unsigned long csn;
+searchRut(struct RUT *ruc, unsigned long csn)
 {
   unsigned long whn;
   struct CTdata *wd;
@@ -132,11 +123,8 @@ searchRut(ruc, csn)
   return (unsigned long) 0L;
 }
 
-static
-struct CTdata *
-searchCTadd(ruc, csn)
-     struct RUT *ruc;
-     unsigned long csn;
+static struct CTdata *
+searchCTadd(struct RUT *ruc, unsigned long csn)
 {
   unsigned long whn;
   struct CTdata *wd;
@@ -150,9 +138,7 @@ searchCTadd(ruc, csn)
 }
 
 int 
-entryRut(ruc, csn, tick)
-     struct RUT *ruc;
-     unsigned long csn, tick;
+entryRut(struct RUT *ruc, unsigned long csn, unsigned long tick)
 {
   struct CTdata *wpadd;
   int retval;
@@ -191,10 +177,8 @@ entryRut(ruc, csn, tick)
   return retval;
 }
 
-static
-struct WRT *
-allocWRT(size)
-     unsigned long size;
+static struct WRT *
+allocWRT(unsigned long size)
 {
   struct WRT *tempo;
   
@@ -208,10 +192,8 @@ allocWRT(size)
   return tempo;
 }
 
-static
-struct WRT *
-readWRT(fr)
-     int fr;
+static struct WRT *
+readWRT(int fr)
 {
   unsigned	long wsz, wcs, wfrst, wtm;
   unsigned char	ll[4];
@@ -244,12 +226,10 @@ readWRT(fr)
   return wrt;
 }
 
-static int writeToWRT pro((int, struct WRT *));
+static int writeToWRT(int, struct WRT *);
 
 static int 
-writeToWRT(fr, wrt)
-     int	fr;
-     struct WRT	*wrt;
+writeToWRT(int fr, struct WRT *wrt)
 {
   unsigned char ll[4];
 
@@ -272,10 +252,8 @@ writeToWRT(fr, wrt)
   return 1;
 }
 
-static
-void
-abolishNV(nv)
-     struct NV	*nv;
+static void
+abolishNV(struct NV *nv)
 
 {
   struct NVE	*p, **q, *r;
@@ -296,10 +274,8 @@ abolishNV(nv)
   return;
 }
 
-static
-struct NV *
-readNV(fd)
-     int	fd;
+static struct NV *
+readNV(int fd)
 {
   struct NV	*vn;
   unsigned char	ll[4], *buf, *p;
@@ -355,9 +331,7 @@ readNV(fd)
 }
 
 static int
-writeNV(fd, nv)
-     int	fd;
-     struct NV	*nv;
+writeNV(int fd, struct NV *nv)
 {
   unsigned char	ll[4];
   unsigned char	*buf = (unsigned char *)0, *r;
@@ -407,8 +381,7 @@ writeNV(fd, nv)
 }
 
 static void
-freeRUT(ruc)
-struct RUT *ruc;
+freeRUT(struct RUT *ruc)
 {
   struct CTdata *wd, *nex;
   unsigned long lc;
@@ -424,8 +397,7 @@ struct RUT *ruc;
 }
 
 struct RUT *
-LoadRUC(fr)
-int fr;
+LoadRUC(int fr)
 {
   struct WRT *wruc;
   struct RUT *ruc;
@@ -457,12 +429,10 @@ int fr;
   return ruc;
 }
 
-static int SaveRUC pro((int, struct RUT *));
+static int SaveRUC(int, struct RUT *);
 
 static int 
-SaveRUC(fr, ruc)
-int fr;
-struct RUT *ruc;
+SaveRUC(int fr, struct RUT *ruc)
 {
   struct WRT	*wruc;
   struct CTdata	*wdp;
@@ -498,11 +468,7 @@ struct RUT *ruc;
 }
 
 static int
-FQscan(df, codm, file, w)
-     struct DF	*df;
-     struct DM	*codm;
-     char	*file;
-     int	*w;
+FQscan(struct DF *df, struct DM *codm, char *file, int *w)
 {
   int count = 0;
   struct HD	hd;
@@ -586,11 +552,7 @@ FQscan(df, codm, file, w)
 }
 
 int
-FQopen(dm, qm, file, mode)
-     struct DM	*dm;
-     struct DM	*qm;
-     char	*file;
-     int	mode;
+FQopen(struct DM *dm, struct DM *qm, char *file, int mode)
 {
   struct DF	*df;
   struct DD	*dd;
@@ -645,12 +607,8 @@ FQopen(dm, qm, file, mode)
  * CLOSE
  */
 /*ARGSUSED*/
-void	
-FQclose(cx, dm, qm, file)
-     struct RkContext	*cx;
-     struct DM		*dm;
-     struct DM		*qm;
-     char		*file;
+void
+FQclose(struct RkContext *cx, struct DM *dm, struct DM *qm, char *file)
 {
   struct DF		*df = qm->dm_file;
   struct xqm		*xqm;
@@ -695,12 +653,8 @@ FQclose(cx, dm, qm, file)
   }
 }
 
-int	
-FQsync(cx, dm, qm, file)
-     struct RkContext	*cx;
-     struct DM		*dm;
-     struct DM		*qm;
-     char		*file;
+int
+FQsync(struct RkContext *cx, struct DM *dm, struct DM *qm, char *file)
 /* ARGSUSED */
 {
   struct DF		*df = qm->dm_file;

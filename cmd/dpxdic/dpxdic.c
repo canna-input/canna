@@ -46,10 +46,7 @@ static	char	*program;
 static	unsigned char ebuf[8048];
 
 unsigned char *
-show_a_cand(gram, wrec, or)
-     struct RkKxGram	*gram;
-     unsigned char	*wrec;
-     unsigned		*or;
+show_a_cand(struct RkKxGram *gram, unsigned char *wrec, unsigned *or)
 {
   unsigned	j, clen, row;
   char		*ptr, rowname[128];
@@ -96,9 +93,7 @@ show_a_cand(gram, wrec, or)
 }
 
 unsigned char *
-show_a_icand(gram, wrec)
-     struct RkKxGram	*gram;
-     unsigned char	*wrec;
+show_a_icand(struct RkKxGram *gram, unsigned char *wrec)
 {
   unsigned	j, clen, row;
   char		*ptr, rowname[128];
@@ -128,11 +123,7 @@ show_a_icand(gram, wrec)
 }
 
 void
-show_a_wrec(gram, wrec, yomi, n)
-     struct RkKxGram	*gram;
-     unsigned char	*wrec;
-     Wchar		*yomi;
-     unsigned		n;
+show_a_wrec(struct RkKxGram *gram, unsigned char *wrec, Wchar *yomi, unsigned n)
 {
   unsigned	i, left, nc, or;
   Wchar		*src, *dst, syomi[1024], wch;
@@ -177,8 +168,7 @@ show_a_wrec(gram, wrec, yomi, n)
 }
 
 static int
-loadDic(dic)
-     struct ND	*dic;
+loadDic(struct ND *dic)
 {
   unsigned char	*buf;
   off_t		off = dic->doff;
@@ -211,9 +201,7 @@ loadDic(dic)
 }
 
 static int
-loadPage(dic, id)
-     struct ND	*dic;
-     int	id;
+loadPage(struct ND *dic, int id)
 {
   unsigned	off = dic->doff + dic->drsz + dic->pgsz * id;
   unsigned	size = dic->pgsz;
@@ -253,10 +241,7 @@ loadPage(dic, id)
 }
 
 unsigned char *
-offset2ptr(dic, off, which)
-     struct ND	*dic;
-     unsigned	off;
-     int	*which;
+offset2ptr(struct ND *dic, unsigned off, int *which)
 {
   unsigned char *p;
   int		pg;
@@ -276,10 +261,7 @@ offset2ptr(dic, off, which)
 }
 
 unsigned char *
-off2ptr(dic, off, id)
-     struct ND	*dic;
-     unsigned	off;
-     int	id;
+off2ptr(struct ND *dic, unsigned off, int id)
 {
   unsigned char *p;
 
@@ -288,13 +270,7 @@ off2ptr(dic, off, id)
 }
 
 int
-show_nip(gram, dic, yomi, n, p, pg)
-     struct RkKxGram	*gram;
-     struct ND		*dic;
-     Wchar		*yomi;
-     unsigned		n;
-     unsigned char	*p;
-     int		pg;
+show_nip(struct RkKxGram *gram, struct ND *dic, Wchar *yomi, unsigned n, unsigned char *p, int pg)
 {
   Wchar		w;
   unsigned char	*pp;
@@ -330,9 +306,7 @@ show_nip(gram, dic, yomi, n, p, pg)
 }
 
 int
-compit(a, b)
-     unsigned char *a;
-     unsigned char *b;
+compit(unsigned char *a, unsigned char *b)
 {
   if (*a > *b || ((*a == *b) && *(a+1) >= *(b+1))) {
     return(1);
@@ -341,12 +315,7 @@ compit(a, b)
 }
 
 static int
-show_nid(gram, dic, yomi, n, ptr)
-     struct RkKxGram	*gram;
-     struct ND		*dic;
-     Wchar		*yomi;
-     unsigned		n;
-     unsigned char	*ptr;
+show_nid(struct RkKxGram *gram, struct ND *dic, Wchar *yomi, unsigned n, unsigned char *ptr)
 {
   unsigned char	*p;
   Wchar		wc, i;
@@ -358,7 +327,7 @@ show_nid(gram, dic, yomi, n, ptr)
   p = ptr;
   wc = bst2_to_s(p); p += 5;
   qsort((char *)p, (unsigned)wc, 5, 
-        (int (*) pro((const void *, const void *)))compit);
+        (int (*)(const void *, const void *))compit);
   for (i = 0; i < wc; i++) {
     Wchar	w;
     
@@ -395,10 +364,7 @@ show_nid(gram, dic, yomi, n, ptr)
 }
 
 int
-getdic(dic, filenm, dmnm)
-     struct ND	*dic;
-     char	*filenm;
-     char	*dmnm;
+getdic(struct ND *dic, char *filenm, char *dmnm)
 {
   struct HD	hd;
   int		fd, lk;
@@ -455,9 +421,7 @@ getdic(dic, filenm, dmnm)
 }
 
 int
-main (argc, argv)
-  int argc;
-  char *argv [];
+main(int argc, char *argv[])
 {
   char			*dmnm = 0;
   int			i;

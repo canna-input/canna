@@ -74,7 +74,7 @@ extern int YYparse_by_rcfilename();
 #define OBSOLETE_HOSTENVNAME "IROHAHOST"
 
 static int
-make_initfilename()
+make_initfilename(void)
 {
   if(!CANNA_initfilename) {
     CANNA_initfilename = malloc(1024);
@@ -91,7 +91,7 @@ make_initfilename()
 }
 
 static void
-fit_initfilename()
+fit_initfilename(void)
 {
   char *tmpstr;
 
@@ -104,10 +104,10 @@ fit_initfilename()
   }
 }
 
-extern int clisp_init pro((void)); /* lisp.c */
+extern int clisp_init(void); /* lisp.c */
 
 void
-parse()
+parse(void)
 {
   char *p, *getenv();
   int n;
@@ -346,9 +346,7 @@ parse()
 #endif
 
 static void
-DISPLAY_to_hostname(name, buf, bufsize)
-char *name, *buf;
-int bufsize;
+DISPLAY_to_hostname(char *name, char *buf, int bufsize)
 {
   if (name[0] == ':' || !strncmp(name, "unix", 4)) {
     gethostname(buf, bufsize);

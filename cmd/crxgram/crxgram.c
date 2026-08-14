@@ -73,8 +73,7 @@ static char	fileName[256];
 static int	lineNum;
 
 static void
-usage(prog)
-  char	*prog;
+usage(char *prog)
 {
     (void)fprintf(stderr,
 		  "%s [-f inputs]\n",
@@ -83,27 +82,21 @@ usage(prog)
 }
 /*VARARGS*/
 void
-alert(fmt, arg)
-char	*fmt;
-unsigned char	*arg;
+alert(char *fmt, unsigned char *arg)
 {
     fprintf(stderr, "#line %d %s: ", lineNum, fileName);
     fprintf(stderr, fmt, arg);
     fputc('\n', stderr);
 }
 void
-alerti(fmt, arg)
-char	*fmt;
-int	arg;
+alerti(char *fmt, int arg)
 {
     fprintf(stderr, "#line %d %s: ", lineNum, fileName);
     fprintf(stderr, fmt, arg);
     fputc('\n', stderr);
 }
 void
-fatal(fmt, arg)
-char	*fmt;
-char	*arg;
+fatal(char *fmt, char *arg)
 {
     fprintf(stderr, "#line %d %s: (FATAL) ", lineNum, fileName);
     fprintf(stderr, fmt, arg);
@@ -112,11 +105,8 @@ char	*arg;
 }
 
 #define EOL	'\n'
-unsigned char	*
-readLine(s, len, fp)
-unsigned char	*s;
-unsigned	len;
-FILE		*fp;
+unsigned char *
+readLine(unsigned char *s, unsigned len, FILE *fp)
 {
     int	i;
     while ( fgets((char *)s, (int)len, fp) ) {
@@ -133,11 +123,8 @@ FILE		*fp;
     return (unsigned char *)0;
 }
 
-unsigned char	*
-scanToken(s, token, maxtoken)
-unsigned char	*s;
-unsigned char	*token;
-int		maxtoken;
+unsigned char *
+scanToken(unsigned char *s, unsigned char *token, int maxtoken)
 {
     int		i;
 
@@ -154,10 +141,8 @@ int		maxtoken;
 
 static int	probeHole;
 
-struct ident	*
-probeIdent(hid, name)
-struct ident	**hid;
-char		*name;
+struct ident *
+probeIdent(struct ident **hid, char *name)
 {
     char		*p;
     register unsigned	h, i, count;
@@ -188,11 +173,8 @@ char		*name;
     return (struct ident *)0;
 }
 
-struct ident	*
-addIdent(hid, name, rownum, colnum)
-struct ident	**hid;
-char		*name;
-int		rownum, colnum;
+struct ident *
+addIdent(struct ident **hid, char *name, int rownum, int colnum)
 {
     struct ident	*id;
 
@@ -217,8 +199,7 @@ int		rownum, colnum;
 }
 
 void
-enterIdent(fp)
-  FILE	*fp;
+enterIdent(FILE *fp)
 {
     unsigned char	S[MAXLINE], *s;
     FILE		*def, *swd, *mac;
@@ -321,10 +302,7 @@ enterIdent(fp)
 }
 
 void
-setVector(bits, s, op)
-unsigned char	*bits;
-unsigned char	*s;
-int		op;
+setVector(unsigned char *bits, unsigned char *s, int op)
 {
     for (;;) {
 	unsigned char	name[256];
@@ -395,8 +373,7 @@ int		op;
 }
 
 void
-enterMatrix(fp)
-  FILE	*fp;
+enterMatrix(FILE *fp)
 {
     unsigned char	S[MAXLINE], *s;
     struct ident	*r;
@@ -454,10 +431,9 @@ enterMatrix(fp)
 
 #ifdef LOGIC_HACK
 int
-ulongcomp(i, j)
-  unsigned long *i, *j;
+ulongcomp(const void *i, const void *j)
 {
-    return *i - *j;
+    return *(unsigned long *)i - *(unsigned long *)j;
 }
 
 #define SEP "/"
@@ -465,8 +441,7 @@ ulongcomp(i, j)
 #define	TestGram(cnj, col)	((cnj) && ((cnj)[((col)>>3)]&(0x80>>(col&7))))
 
 void
-enterNeg(fp)
-  FILE	*fp;
+enterNeg(FILE *fp)
 {
     unsigned char S[MAXLINE], *nextS;
     int i;
@@ -558,9 +533,7 @@ enterNeg(fp)
 #endif /* LOGIC_HACK */
 
 int
-main (argc, argv)
-  int argc;
-  char *argv [];
+main(int argc, char *argv[])
 {
     FILE		*cnj, *fp = (FILE *)0;
     unsigned long	pair;

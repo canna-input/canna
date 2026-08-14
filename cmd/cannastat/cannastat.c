@@ -116,21 +116,19 @@ static char
 *ProtoList = NULL, *ContextFlag = NULL ;
 char		major_version, minor_version;
 
-static void DispInfo pro((ClientPtr client, int flag));
-static void DispProto pro((ClientPtr client));
-static int CreateData pro((const BYTE *readbuf,
-	    ClientPtr who, size_t cinfolen));
-static void usage pro((void));
-static int process_wide_reply pro((const BYTE *reply, size_t len,
-	    int argflag, int flag));
-static int get_check_str pro((char **dst, const BYTE *src, size_t len));
-static int get_check_str_adv pro((char **dst, size_t recvlen,
-	    const BYTE **receivep, size_t *requiredsize));
+static void DispInfo(ClientPtr client, int flag);
+static void DispProto(ClientPtr client);
+static int CreateData(const BYTE *readbuf,
+	    ClientPtr who, size_t cinfolen);
+static void usage(void);
+static int process_wide_reply(const BYTE *reply, size_t len,
+	    int argflag, int flag);
+static int get_check_str(char **dst, const BYTE *src, size_t len);
+static int get_check_str_adv(char **dst, size_t recvlen,
+	    const BYTE **receivep, size_t *requiredsize);
 
 int
-main(argc, argv)
-int argc ;
-char **argv ;
+main(int argc, char **argv)
 {
     char		cannahostname[ 256 ] ;
     int 		argflag = 0, flag = 0 ;
@@ -220,9 +218,7 @@ widelast:
 
 #ifdef DEBUG
 static void
-DebugDump( buf, size )
-int size ;
-const char *buf ;
+DebugDump(const char *buf, int size)
 {
     char buf1[80] ;
     char buf2[17] ;
@@ -256,11 +252,7 @@ const char *buf ;
 #endif
 
 static int
-process_wide_reply(reply, len, argflag, flag)
-const BYTE *reply;
-size_t len;
-int argflag;
-int flag;
+process_wide_reply(const BYTE *reply, size_t len, int argflag, int flag)
 {
     size_t requiredsize;
     const BYTE *p = reply;
@@ -430,9 +422,7 @@ last:
 }
 
 static void
-DispInfo( client, flag )
-register ClientPtr client ;
-int flag ;
+DispInfo(register ClientPtr client, int flag)
 {
     static char *week[] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" } ;
     char	ctime[ 15 ], utime[ 10 ], itime[ 10 ] ;
@@ -515,8 +505,7 @@ int flag ;
 }
 
 static void
-DispProto( client )
-register ClientPtr client ;
+DispProto(register ClientPtr client)
 {
     register int i ;
     char *protoname ;
@@ -534,10 +523,7 @@ register ClientPtr client ;
 }
 
 static int
-CreateData( readbuf, who, cinfolen )
-const BYTE *readbuf ;
-ClientPtr   who ;
-size_t cinfolen ;
+CreateData(const BYTE *readbuf, ClientPtr who, size_t cinfolen)
 {
     const BYTE *receivep = readbuf ;
     size_t j ;
@@ -608,10 +594,7 @@ last:
 }
 
 static int
-get_check_str(dst, src, len)
-char **dst;
-const BYTE *src;
-size_t len;
+get_check_str(char **dst, const BYTE *src, size_t len)
 {
     size_t body;
     *dst = NULL;
@@ -625,11 +608,7 @@ size_t len;
 }
 
 static int
-get_check_str_adv(dst, recvlen, receivep, requiredsize)
-char **dst;
-size_t recvlen;
-const BYTE **receivep;
-size_t *requiredsize;
+get_check_str_adv(char **dst, size_t recvlen, const BYTE **receivep, size_t *requiredsize)
 {
     size_t len;
     const BYTE *p = *receivep;
@@ -646,7 +625,7 @@ size_t *requiredsize;
 }
 
 static void
-usage()
+usage(void)
 {
     fprintf( stderr, "usage: cannastat [-cs | -cannaserver hostname] [-a|-v]\n" ) ;
     fprintf( stderr, "                 [-cs | -cannaserver hostname] [-t]\n" ) ;

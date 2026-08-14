@@ -29,13 +29,11 @@
 #ifdef DEBUG
 const char *CallFuncName;
 #endif
-int (*CallFunc) pro((ClientPtr *clientp));
+int (*CallFunc)(ClientPtr *clientp);
 
 
 int
-main(argc, argv)
-int argc ;			
-char *argv[] ;
+main(int argc, char *argv[])
 {
   int parentid;
   SockHolder *sock_holder = NULL;
@@ -74,11 +72,7 @@ last:
 }
 
 int
-process_request(clientp, client_buf, data, len)
-ClientPtr *clientp;
-ClientBuf *client_buf;
-BYTE *data;
-size_t len;
+process_request(ClientPtr *clientp, ClientBuf *client_buf, BYTE *data, size_t len)
 {
   int request;
   int nwant, r;

@@ -49,14 +49,12 @@
 # undef MIN
 #endif
 #define MIN RKI_MIN
-static int ProcReq0 pro((char *buf, int size));
+static int ProcReq0(char *buf, int size);
 extern const char *ProtoName[];
 
 #ifdef DEBUGPROTO
 static void
-printproto(p, n)
-char *p;
-int n;
+printproto(char *p, int n)
 {
   int i;
 
@@ -71,9 +69,7 @@ int n;
 }
 
 static void
-probe(format, n, p)
-char *format, *p;
-int n;
+probe(char *format, int n, char *p)
 {
   printf(format, n);
   printproto(p, n);
@@ -83,8 +79,8 @@ int n;
 #endif /* !DEBUGPROTO */
 
 typedef struct {
-  int (*func) pro((ClientPtr *));
-  int (*extdat) pro((char *, int));
+  int (*func)(ClientPtr *);
+  int (*extdat)(char *, int);
 } oreqproc;
 
 extern oreqproc Vector[];
@@ -109,7 +105,7 @@ int canna_server_hi = 0 ;
 int canna_server_lo = 0 ;
 
 void
-getserver_version()
+getserver_version(void)
 {
     char version[ 32 ], *buf ;
 
@@ -128,9 +124,7 @@ getserver_version()
 
 #ifdef USE_EUC_PROTOCOL
 static int
-getFirstKouho( cxnum, start, end, status, datap )
-int cxnum, start, end, *status;
-BYTE **datap;
+getFirstKouho(int cxnum, int start, int end, int *status, BYTE **datap)
 {
     char *src = local_buffer2 ;
     register char *dst = (char *)*datap;
@@ -175,9 +169,7 @@ BYTE **datap;
 }
 
 static int
-listsize(src, cnt)
-char *src;
-int cnt;
+listsize(char *src, int cnt)
 {
     register int i, size = 0, len = 0;
 
@@ -194,8 +186,8 @@ int cnt;
 #endif /* USE_EUC_PROTOCOL */
 
 int
-ir_error(clientp)
-ClientPtr *clientp ; /* ARGSUSED */
+ir_error(
+	ClientPtr *clientp /* ARGSUSED */)
 {
     ir_debug(Dmsg(5, "ir_error() invoked\n"));
     return( -1 ) ;
@@ -204,10 +196,7 @@ ClientPtr *clientp ; /* ARGSUSED */
 #ifdef USE_EUC_PROTOCOL
 #ifdef DEBUG
 static int
-WriteClient(client, buf, size)
-ClientPtr client;
-const BYTE *buf;
-size_t size;
+WriteClient(ClientPtr client, const BYTE *buf, size_t size)
 {
     ir_debug( Dmsg(10, "WriteClient:") );
     ir_debug( DebugDump( 10, (const char *)buf, size ) );
@@ -219,9 +208,7 @@ size_t size;
 #endif /* USE_EUC_PROTOCOL */
 
 static int
-SendTypeE1Reply2(client_buf, stat)
-ClientBuf *client_buf;
-int stat;
+SendTypeE1Reply2(ClientBuf *client_buf, int stat)
 {
     BYTE buf[4], *p = buf;
 
@@ -235,9 +222,7 @@ int stat;
 #define SendType0Reply SendTypeE1Reply
 
 static int
-SendTypeE1Reply(client, stat)
-register ClientPtr client;
-int stat;
+SendTypeE1Reply(register ClientPtr client, int stat)
 {
     BYTE buf[4], *p = buf;
 
@@ -247,10 +232,7 @@ int stat;
 }
 
 static int
-SendTypeE2Reply(client, stat, cnt, str, slen)
-register ClientPtr client;
-char *str;
-int stat, cnt, slen;
+SendTypeE2Reply(register ClientPtr client, int stat, int cnt, char *str, int slen)
 {
     BYTE lbuf[SENDBUFSIZE], *bufp = lbuf, *p;
     char *wp;
@@ -276,10 +258,7 @@ int stat, cnt, slen;
 }
 
 static int
-SendTypeE3Reply(client, stat, storefunc, extdata, slen)
-register ClientPtr client;
-int stat, slen, (*storefunc)();
-BYTE *extdata;
+SendTypeE3Reply(register ClientPtr client, int stat, int (*storefunc)(void), BYTE *extdata, int slen)
 {
     BYTE lbuf[SENDBUFSIZE], *bufp = lbuf, *p;
     int sz = 2 * SIZEOFLONG + slen;
@@ -305,10 +284,7 @@ BYTE *extdata;
 /* IR_GET_WORD_DICは TypeE2ではない．これを TypeE4にする */
 
 static int
-SendTypeE4Reply(client, stat, cnt, infoptr, slen)
-register ClientPtr client;
-BYTE *infoptr;
-int stat, cnt, slen;
+SendTypeE4Reply(register ClientPtr client, int stat, int cnt, BYTE *infoptr, int slen)
 {
     BYTE lbuf[SENDBUFSIZE], *bufp = lbuf, *p;
     int res, sz = 2 * SIZEOFLONG + slen;
@@ -343,8 +319,7 @@ int stat, cnt, slen;
     WriteClient(client, Acknowledge.SendAckBuffer, size)
 
 static const char *
-irerrhdr(client)
-ClientPtr client;
+irerrhdr(ClientPtr client)
 {
     static char buf[50];
     int proto = Request.Request2.Type;
@@ -353,8 +328,7 @@ ClientPtr client;
 }
 
 static void
-print_context_error(client)
-ClientPtr client;
+print_context_error(ClientPtr client)
 {
     PrintMsg( "%s Context Err\n", irerrhdr(client));
 }
@@ -362,9 +336,7 @@ ClientPtr client;
 #endif /* USE_EUC_PROTOCOL */
 
 static int
-ir_initialize(clientp, client_buf)
-ClientPtr *clientp;
-ClientBuf *client_buf;
+ir_initialize(ClientPtr *clientp, ClientBuf *client_buf)
 {
     Req2 *req = &Request.Request2 ;
     int stat;
@@ -380,8 +352,7 @@ ClientBuf *client_buf;
 #ifdef USE_EUC_PROTOCOL
 
 static int
-ir_finalize(clientp)
-register ClientPtr *clientp ;
+ir_finalize(register ClientPtr *clientp)
 {
     ClientPtr client = *clientp ;
 
@@ -394,8 +365,7 @@ register ClientPtr *clientp ;
 }
 
 static int
-ir_killserver(clientp)
-register ClientPtr *clientp;
+ir_killserver(register ClientPtr *clientp)
 {
     ClientPtr client = *clientp;
 
@@ -405,8 +375,7 @@ register ClientPtr *clientp;
 }
 
 static int
-ir_create_context(clientp)
-ClientPtr *clientp ;
+ir_create_context(ClientPtr *clientp)
 {
     ClientPtr client = *clientp ;
     int cxnum, stat = -1;
@@ -426,8 +395,7 @@ ClientPtr *clientp ;
 }
 
 static int
-ir_duplicate_context(clientp)
-ClientPtr *clientp ;
+ir_duplicate_context(ClientPtr *clientp)
 {
     Req1 *req = &Request.Request1 ;
     ClientPtr client = *clientp ;
@@ -450,8 +418,7 @@ ClientPtr *clientp ;
 }
 
 static int
-ir_close_context(clientp)
-ClientPtr *clientp ;
+ir_close_context(ClientPtr *clientp)
 {
     Req1 *req = &Request.Request1 ;
     ClientPtr client = *clientp ;
@@ -469,8 +436,7 @@ ClientPtr *clientp ;
 }
 
 static int
-ir_dictionary_list(clientp)
-ClientPtr *clientp ;
+ir_dictionary_list(ClientPtr *clientp)
 {
     Req3 *req = &Request.Request3 ;
     ClientPtr client = *clientp ;
@@ -495,8 +461,7 @@ ClientPtr *clientp ;
 }
 
 static int
-ir_get_yomi( clientp )
-ClientPtr *clientp ;
+ir_get_yomi(ClientPtr *clientp)
 {
     Req5 *req = &Request.Request5 ;
     ClientPtr client = *clientp ;
@@ -528,16 +493,14 @@ ClientPtr *clientp ;
 }
 
 static int
-ir_set_dic_path( clientp )
-ClientPtr *clientp ;
+ir_set_dic_path(ClientPtr *clientp)
 /* ARGSUSED */
 {
     return( 0 ) ;
 }
 
 static int
-ir_define_dic(clientp)
-ClientPtr *clientp ;
+ir_define_dic(ClientPtr *clientp)
 {
     Req7 *req = &Request.Request7 ;
     ClientPtr client = *clientp ;
@@ -561,8 +524,7 @@ ClientPtr *clientp ;
 }
 
 static int
-ir_delete_dic(clientp)
-ClientPtr *clientp ;
+ir_delete_dic(ClientPtr *clientp)
 {
     Req7 *req = &Request.Request7 ;
     ClientPtr client = *clientp ;
@@ -586,8 +548,7 @@ ClientPtr *clientp ;
 }
 
 static int
-ir_get_dir_list(clientp)
-ClientPtr *clientp ;
+ir_get_dir_list(ClientPtr *clientp)
 {
     Req3 *req = &Request.Request3 ;
     ClientPtr client = *clientp ;
@@ -611,8 +572,7 @@ ClientPtr *clientp ;
 }
 
 static int
-ir_mount_dictionary(clientp)
-ClientPtr *clientp ;
+ir_mount_dictionary(ClientPtr *clientp)
 {
     Req8 *req = &Request.Request8 ;
     ClientPtr client = *clientp ;
@@ -634,8 +594,7 @@ ClientPtr *clientp ;
 }
 
 static int
-ir_umount_dictionary(clientp)
-ClientPtr *clientp ;
+ir_umount_dictionary(ClientPtr *clientp)
 {
     Req8 *req = &Request.Request8 ;
     ClientPtr client = *clientp ;
@@ -653,8 +612,7 @@ ClientPtr *clientp ;
 }
 
 static int
-ir_rmount_dictionary(clientp)
-ClientPtr *clientp ;
+ir_rmount_dictionary(ClientPtr *clientp)
 {
     Req9 *req = &Request.Request9  ;
     ClientPtr client = *clientp ;
@@ -674,8 +632,7 @@ ClientPtr *clientp ;
 }
 
 static int
-ir_mount_list( clientp )
-ClientPtr *clientp ;
+ir_mount_list(ClientPtr *clientp)
 {
     Req3 *req = &Request.Request3 ;
     ClientPtr client = *clientp ;
@@ -700,8 +657,7 @@ ClientPtr *clientp ;
 }
 
 static int
-ir_convert( clientp )
-ClientPtr *clientp ;
+ir_convert(ClientPtr *clientp)
 {
     Req8 *req = &Request.Request8 ;
     ClientPtr client = *clientp ;
@@ -738,8 +694,7 @@ ClientPtr *clientp ;
 }
 
 static int
-ir_convert_end( clientp )
-ClientPtr *clientp ;
+ir_convert_end(ClientPtr *clientp)
 {
     Req4 *req = &Request.Request4 ;
     ClientPtr client = *clientp ;
@@ -781,8 +736,7 @@ ClientPtr *clientp ;
 }
 
 static int
-ir_get_kanjilist( clientp )
-ClientPtr *clientp ;
+ir_get_kanjilist(ClientPtr *clientp)
 {
     Req5 *req = &Request.Request5 ;
     ClientPtr client = *clientp ;
@@ -835,8 +789,7 @@ ClientPtr *clientp ;
 }
 
 static int
-ir_resize(clientp)
-ClientPtr *clientp ;
+ir_resize(ClientPtr *clientp)
 {
 #define ENLARGE -1
 #define SHORTEN -2
@@ -877,8 +830,8 @@ ClientPtr *clientp ;
     return ret;
 }
 
-ir_store_yomi( clientp )
-ClientPtr *clientp ;
+int
+ir_store_yomi(ClientPtr *clientp)
 {
     Req9 *req = &Request.Request9 ;
     ClientPtr client = *clientp ;
@@ -915,8 +868,7 @@ ClientPtr *clientp ;
 }
 
 static int
-ir_query_extension( clientp )
-ClientPtr *clientp ;
+ir_query_extension(ClientPtr *clientp)
 {
     Req12 *req = &Request.Request12 ;
     ClientPtr client = *clientp ;
@@ -934,12 +886,11 @@ ClientPtr *clientp ;
     return SendTypeE1Reply(client, status);
 }
 
-static void iroha2canna pro((char *));
+static void iroha2canna(char *);
 
 #ifdef EXTENSION
 static int
-ir_list_dictionary( clientp )
-ClientPtr *clientp ;
+ir_list_dictionary(ClientPtr *clientp)
 {
     Req9 *req = &Request.Request9 ;
     ClientPtr client = *clientp ;
@@ -976,8 +927,7 @@ ClientPtr *clientp ;
 
 
 static int
-ir_create_dictionary( clientp )
-ClientPtr *clientp ;
+ir_create_dictionary(ClientPtr *clientp)
 {
     Req8 *req = &Request.Request8 ;
     ClientPtr client = *clientp ;
@@ -996,8 +946,7 @@ ClientPtr *clientp ;
 
 
 static int
-ir_remove_dictionary( clientp )
-ClientPtr *clientp ;
+ir_remove_dictionary(ClientPtr *clientp)
 {
     Req8 *req = &Request.Request8 ;
     ClientPtr client = *clientp ;
@@ -1015,8 +964,7 @@ ClientPtr *clientp ;
 }
 
 static int
-ir_rename_dictionary( clientp )
-ClientPtr *clientp ;
+ir_rename_dictionary(ClientPtr *clientp)
 {
     Req10 *req = &Request.Request10 ;
     ClientPtr client = *clientp ;
@@ -1035,8 +983,7 @@ ClientPtr *clientp ;
 }
 
 static int
-ir_get_word_text_dic( clientp )
-ClientPtr *clientp ;
+ir_get_word_text_dic(ClientPtr *clientp)
 {
     Req10 *req = &Request.Request10 ;
     ClientPtr client = *clientp ;
@@ -1082,10 +1029,7 @@ ClientPtr *clientp ;
 #endif /* EXTENSION */
 
 static int
-storeStat(client, ret, src, dest)
-ClientPtr client;
-int ret;
-BYTE *src, *dest;
+storeStat(ClientPtr client, int ret, BYTE *src, BYTE *dest)
 {
     if( ret >= 0 ) {
 	RkStat *stat = (RkStat *)src;
@@ -1121,8 +1065,7 @@ BYTE *src, *dest;
 }
 
 static int
-ir_get_stat( clientp )
-ClientPtr *clientp ;
+ir_get_stat(ClientPtr *clientp)
 {
     Req5 *req = &Request.Request5 ;
     ClientPtr client = *clientp ;
@@ -1148,10 +1091,11 @@ ClientPtr *clientp ;
 }
 
 static int
-storeLex(client, tangosu, src, dest)
-ClientPtr client; /* ARGSUSED */
-int tangosu;
-BYTE *src, *dest;
+storeLex(
+	ClientPtr client, /* ARGSUSED */
+	int tangosu,
+	BYTE *src,
+	BYTE *dest)
 {
     if( tangosu >= 0 ) {
 	register int i;
@@ -1174,8 +1118,7 @@ BYTE *src, *dest;
 }
 
 static int
-ir_get_lex( clientp )
-ClientPtr *clientp ;
+ir_get_lex(ClientPtr *clientp)
 {
     Req11 *req = &Request.Request11 ;
     ClientPtr client = *clientp ;
@@ -1202,8 +1145,7 @@ ClientPtr *clientp ;
 
 #ifdef DEBUG
 void
-DispDebug( client )
-ClientPtr client ;
+DispDebug(ClientPtr client)
 {
     char    return_date[DATE_LENGH] ;
     long    wtime = (long)client->used_time ;
@@ -1219,8 +1161,7 @@ ClientPtr client ;
 #endif
 
 static int
-SetServerVersion( buf )
-char *buf ;
+SetServerVersion(char *buf)
 {
   char tmpstr[14]; /* 14 is enough */
   int SendSize;
@@ -1235,8 +1176,7 @@ char *buf ;
 }
 
 int
-ir_server_stat2( client_buf )
-ClientBuf *client_buf ;
+ir_server_stat2(ClientBuf *client_buf)
 {
     char *sendp = Acknowledge.SendAckBuffer ;
     char *savep ;
@@ -1366,8 +1306,7 @@ ClientBuf *client_buf ;
 }
 
 int
-ir_server_stat( client_buf )
-ClientBuf *client_buf ;
+ir_server_stat(ClientBuf *client_buf)
 {
     char *sendp = Acknowledge.SendAckBuffer ;
     register ClientPtr	    who ;
@@ -1450,8 +1389,8 @@ ClientBuf *client_buf ;
     return retval;
 }
 
-ir_host_ctl( clientp )
-ClientPtr *clientp ;
+int
+ir_host_ctl(ClientPtr *clientp)
 {
     ClientPtr client = *clientp ;
     char *sendp = Acknowledge.SendAckBuffer ;
@@ -1487,9 +1426,7 @@ ClientPtr *clientp ;
 #endif /* USE_EUC_PROTOCOL */
 
 int
-ir_nosession(clientp, client_buf)
-ClientPtr *clientp;
-ClientBuf *client_buf;
+ir_nosession(ClientPtr *clientp, ClientBuf *client_buf)
 {
     int proto = Request.Request2.Type, r;
 
@@ -1523,14 +1460,9 @@ ClientBuf *client_buf;
 #define SIZE20	20
 
 int
-parse_euc_request(request, data, len, username, hostname)
-int *request;
-BYTE *data;
-size_t len;
-const char *username;
-const char *hostname;
+parse_euc_request(int *request, BYTE *data, size_t len, const char *username, const char *hostname)
 {
-    int (*ReqCallFunc) pro((char *, int)) ;
+    int (*ReqCallFunc)(char *, int) ;
     register Req0 *req0 = &Request.Request0 ;
     const char *username0 = username ? username : "";
     const char *hostname0 = hostname ? hostname : "";
@@ -1604,9 +1536,7 @@ const char *hostname;
 }
 
 static int
-ProcReq0( buf, size )
-char *buf ;
-int size ;
+ProcReq0(char *buf, int size)
 /* ARGSUSED */
 {
     return( 0 ) ;
@@ -1615,9 +1545,7 @@ int size ;
 #ifdef USE_EUC_PROTOCOL
 
 int
-ProcReq1( buf, size )
-char *buf ;
-int size ;
+ProcReq1(char *buf, int size)
 {
     register Req1 *req = &Request.Request1  ;
 
@@ -1632,9 +1560,7 @@ int size ;
 #endif /* USE_EUC_PROTOCOL */
 
 int
-ProcReq2( buf, size )
-char *buf ;
-int size ;
+ProcReq2(char *buf, int size)
 {
     register Req2 *req = &Request.Request2 ;
     int needsize ;
@@ -1664,9 +1590,7 @@ int size ;
 #ifdef USE_EUC_PROTOCOL
 
 int
-ProcReq3( buf, size )
-char *buf ;
-int size ;
+ProcReq3(char *buf, int size)
 {
     register Req3 *req = &Request.Request3 ;
     int needsize ;
@@ -1681,9 +1605,8 @@ int size ;
     return( 0 ) ;
 }
 
-ProcReq4( buf, size )
-char *buf ;
-int size ;
+int
+ProcReq4(char *buf, int size)
 {
     register Req4 *req = &Request.Request4 ;
     register int i ;
@@ -1714,9 +1637,8 @@ int size ;
     return( 0 ) ;
 }
 
-ProcReq5( buf, size )
-char *buf ;
-int size ;
+int
+ProcReq5(char *buf, int size)
 {
     register Req5 *req = &Request.Request5 ;
     int needsize ;
@@ -1733,9 +1655,8 @@ int size ;
     return( 0 ) ;
 }
 
-ProcReq6( buf, size )
-char *buf ;
-int size ;
+int
+ProcReq6(char *buf, int size)
 {
     register Req6 *req = &Request.Request6 ;
     int needsize ;
@@ -1759,9 +1680,8 @@ int size ;
     return( 0 ) ;
 }
 
-ProcReq7( buf, size )
-char *buf ;
-int size ;
+int
+ProcReq7(char *buf, int size)
 {
     register Req7 *req = &Request.Request7 ;
     int needsize ;
@@ -1794,9 +1714,8 @@ int size ;
     return( 0 ) ;
 }
 
-ProcReq8( buf, size )
-char *buf ;
-int size ;
+int
+ProcReq8(char *buf, int size)
 {
     register Req8 *req = &Request.Request8 ;
     int needsize ;
@@ -1824,9 +1743,8 @@ int size ;
     return( 0 ) ;
 }
 
-ProcReq9( buf, size )
-char *buf ;
-int size ;
+int
+ProcReq9(char *buf, int size)
 {
     register Req9 *req = &Request.Request9 ;
     int needsize ;
@@ -1850,9 +1768,8 @@ int size ;
     return( 0 ) ;
 }
 
-ProcReq10( buf, size )
-char *buf ;
-int size ;
+int
+ProcReq10(char *buf, int size)
 {
     register Req10 *req = &Request.Request10 ;
     int needsize ;
@@ -1896,9 +1813,8 @@ int size ;
     return( 0 ) ;
 }
 
-ProcReq11( buf, size )
-char *buf ;
-int size ;
+int
+ProcReq11(char *buf, int size)
 {
     register Req11 *req = &Request.Request11 ;
     int needsize ;
@@ -1917,9 +1833,8 @@ int size ;
     return( 0 ) ;
 }
 
-ProcReq12( buf, size )
-char *buf ;
-int size ;
+int
+ProcReq12(char *buf, int size)
 {
     register Req12 *req = &Request.Request12 ;
     int needsize ;
@@ -1948,8 +1863,7 @@ int size ;
 }
 
 static void
-iroha2canna( dirnames )
-char *dirnames;
+iroha2canna(char *dirnames)
 {
   if (dirnames) {
     char *buf, *wp;
@@ -1973,9 +1887,7 @@ char *dirnames;
 
 #ifdef DEBUG
 void
-DebugDump( level, buf, size )
-int level, size ;
-const char *buf ;
+DebugDump(int level, const char *buf, int size)
 {
     char buf1[80] ;
     char buf2[17] ;
@@ -2009,8 +1921,7 @@ const char *buf ;
 }
 
 void
-DebugDispKanji( cxnum, num )
-int cxnum, num ;
+DebugDispKanji(int cxnum, int num)
 {
     char buf[1024] ;
     Ushort cbuf[1024];
@@ -2023,9 +1934,8 @@ int cxnum, num ;
 #endif /* DEBUG */
 
 #ifdef PROTO
-RkwListDic( cxnum, dirname, mbuf, size )
-int cxnum, size ;
-char *dirname, *mbuf ;
+int
+RkwListDic(int cxnum, char *dirname, char *mbuf, int size)
 {
     if( RkwSetDicPath( cxnum, dirname ) < 0 )
 	return( -1 ) ;
@@ -2033,39 +1943,34 @@ char *dirname, *mbuf ;
     return( RkwGetDicList( cxnum, mbuf, size ) ) ;
 }
 
-RkwCreateDic( cxnum, dicname, mode )
-int cxnum, mode ;
-char *dicname ;
+int
+RkwCreateDic(int cxnum, char *dicname, int mode)
 {
     return( 0 ) ;
 }
 
-RkwRemoveDic( cxnum, dicname )
-int cxnum ;
-char *dicname ;
+int
+RkwRemoveDic(int cxnum, char *dicname)
 {
     return( 0 ) ;
 }
 
-RkwRenameDic( cxnum, dicname, newdicname, mode )
-int cxnum, mode ;
-char *dicname, *newdicname ;
+int
+RkwRenameDic(int cxnum, char *dicname, char *newdicname, int mode)
 {
     return( 0 ) ;
 }
 
 /* CopyDic の定義  */
 
-RkwCopyDic(cxnum, dirname, dicname, newdicname, mode)
-int cxnum, mode ;
-char *dirname, *dicname, *newdicname ;
+int
+RkwCopyDic(int cxnum, char *dirname, char *dicname, char *newdicname, int mode)
 {
     return( 0 ) ;
 }
 /* ここまで */
-RkwGetWordTextDic( cxnum, dirname, dicname, info, infolen )
-int cxnum, infolen ;
-char *dirname, *dicname, *info ;
+int
+RkwGetWordTextDic(int cxnum, char *dirname, char *dicname, char *info, int infolen)
 {
    ir_debug( Dmsg( 5,"RkwGetWordTextDic( %d, %s, %s, info, infolen )\n", cxnum, dirname, dicname ) );
     strncpy( info, "てすと #T35 テスト", infolen ) ;

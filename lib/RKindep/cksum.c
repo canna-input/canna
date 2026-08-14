@@ -25,14 +25,11 @@
 #include "RKindep/cksum.h"
 
 
-static void RkiCksumCRCAdd pro((RkiCksumCalc *cx,
-      const void *data, size_t len));
+static void RkiCksumCRCAdd(RkiCksumCalc *cx,
+      const void *data, size_t len);
 
 int
-RkiCksumAdd(cx, data, len)
-RkiCksumCalc *cx;
-const void *data;
-size_t len;
+RkiCksumAdd(RkiCksumCalc *cx, const void *data, size_t len)
 {
   RkiCksumCRCAdd(cx, data, len);
   return 0;
@@ -47,8 +44,7 @@ static const canna_uint32_t crctab[] = {
 };
 
 int
-RkiCksumCRCInit(cx)
-RkiCksumCalc *cx;
+RkiCksumCRCInit(RkiCksumCalc *cx)
 {
   cx->curr = 0;
   cx->len = 0;
@@ -57,10 +53,7 @@ RkiCksumCalc *cx;
 
 #define	NEXTVAL(old, ch) ((old) << 8 ^ crctab[(old) >> 24 ^ (ch)])
 static void
-RkiCksumCRCAdd(cx, data, len)
-RkiCksumCalc *cx;
-const void *data;
-size_t len;
+RkiCksumCRCAdd(RkiCksumCalc *cx, const void *data, size_t len)
 {
   const unsigned char *p = (const unsigned char *)data;
   const unsigned char *endp = p + len;
@@ -74,8 +67,7 @@ size_t len;
 }
 
 canna_uint32_t
-RkiCksumCRCFinish(cx)
-RkiCksumCalc *cx;
+RkiCksumCRCFinish(RkiCksumCalc *cx)
 {
   canna_uint32_t curr = cx->curr;
   for (; cx->len != 0; cx->len >>= 8) /* LSB first, variable length */

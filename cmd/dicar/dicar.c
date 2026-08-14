@@ -44,7 +44,7 @@ static char *program;
 /* 共通に利用する関数 */
 
 static void
-usage()
+usage(void)
 {
   (void)fprintf( stderr,"usage: %s -t filename\n\
        %s -x filename [dicname ...]\n\
@@ -56,9 +56,7 @@ usage()
 
 /* 出力状況のためのメッセージ */
 static void
-actmessage(msg, name)
-char *msg;
-char *name;
+actmessage(char *msg, char *name)
 {
   (void)printf("%s - %s\n", msg, name);
 }
@@ -70,9 +68,7 @@ char *name;
  */
 
 static void
-getatomicname(hd, name)
-struct HD *hd;
-char *name;
+getatomicname(struct HD *hd, char *name)
 {
   int len;
 
@@ -85,8 +81,7 @@ char *name;
 
 /* ヘッダ情報を書き出す */
 static void
-PrintHeader(hd)
-struct HD *hd;
+PrintHeader(struct HD *hd)
 {
   char		*date;
   time_t	tloc;
@@ -103,8 +98,7 @@ struct HD *hd;
 }
 
 static int
-openForRead(name)
-char *name;
+openForRead(char *name)
 {
   int newfd;
 
@@ -118,8 +112,7 @@ char *name;
 }
 
 static int
-openForWrite(name)
-char *name;
+openForWrite(char *name)
 {
   int newfd;
 
@@ -133,9 +126,7 @@ char *name;
 }
 
 static void
-closeForWrite(fd, name)
-int fd;
-char *name;
+closeForWrite(int fd, char *name)
 {
   if (close(fd) < 0) {
     (void)fprintf(stderr, "%s: write failed for %s\n", program, name);
@@ -144,9 +135,7 @@ char *name;
 
 /* src の内容を dst に siz 分コピーする */
 static void
-copyfile(src, dst, siz)
-int src, dst;
-unsigned siz;
+copyfile(int src, int dst, unsigned siz)
 {
   char *buf;
 
@@ -168,8 +157,7 @@ unsigned siz;
  *      バイナリ辞書内の子辞書名とサイズを表示する
  */
 static void
-traceDic( fd )
-int fd;
+traceDic(int fd)
 {
   struct HD hd;
   char key[ND_HDRSIZ];
@@ -199,9 +187,9 @@ int fd;
 
 
 static void
-xgetDic(fd, fname)
-int fd;
-char *fname; /* テキスト辞書名に .d がついたもの */
+xgetDic(
+	int fd,
+	char *fname /* テキスト辞書名に .d がついたもの */)
 {
   struct HD hd;
   int dst;
@@ -252,9 +240,7 @@ struct wordrec {
 /* 子辞書の一覧を作成する */
 
 static int
-getchild(fd, childdic)
-int fd;
-struct wordrec	*childdic;
+getchild(int fd, struct wordrec *childdic)
 {
   struct HD hd;
   off_t offset = 0;
@@ -296,8 +282,7 @@ struct wordrec	*childdic;
  */
 
 static void
-remakeDic(src, atm, dst)
-int src, atm, dst;
+remakeDic(int src, int atm, int dst)
 {
   struct HD hd;
   struct wordrec childdic[256]; /* 子辞書の情報 */
@@ -357,9 +342,7 @@ int src, atm, dst;
  */
 
 static void
-deleteDic(src, dst, fname)
-int src, dst;
-char	*fname;
+deleteDic(int src, int dst, char *fname)
 {
   struct HD hd;
   char key[ND_HDRSIZ];
@@ -394,9 +377,7 @@ char	*fname;
 }
 
 static void
-doTrace(argn, args)
-int argn;
-char **args;
+doTrace(int argn, char **args)
 {
   int fd;
 
@@ -409,9 +390,7 @@ char **args;
 }
 
 static void
-doExtract(argn, args)
-int argn;
-char **args;
+doExtract(int argn, char **args)
 {
   int fd, i;
 
@@ -428,9 +407,7 @@ char **args;
 }
 
 static void
-doReplace(argn, args)
-int argn;
-char **args;
+doReplace(int argn, char **args)
 {
   int src, dst, atm, i;
   char fname[ND_HDRSIZ];
@@ -453,9 +430,7 @@ char **args;
 }
 
 static void
-doCreate(argn, args)
-int argn;
-char **args;
+doCreate(int argn, char **args)
 {
   int dst, atm, i;
   char fname[ND_HDRSIZ];
@@ -475,9 +450,7 @@ char **args;
 }
 
 void
-doDelete(argn, args)
-int argn;
-char **args;
+doDelete(int argn, char **args)
 {
   int src, dst, i;
   char fname[ND_HDRSIZ];
@@ -497,9 +470,7 @@ char **args;
 }
 
 int
-main(argn, args)
-int	argn;
-char	**args;
+main(int argn, char **args)
 {
   char *opchar;
 

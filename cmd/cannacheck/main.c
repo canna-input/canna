@@ -32,9 +32,8 @@
 
 int IROHA_verbose = 0;
   
-int main(argc, argv,envp)
-int argc;
-char *argv[], *envp[];
+int
+main(int argc, char *argv[], char *envp[])
 {
   char **warn, *cannafile = (char *)0, *servername = (char *)0;
   int i;

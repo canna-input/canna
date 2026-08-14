@@ -70,9 +70,7 @@ extern int NhanKataKeyFunc, NhanAlphaKeyFunc;
 extern char *RomkanaTable, *RengoGakushu;
 
 static
-DISPLAY_to_hostname(name, buf, bufsize)
-char *name, *buf;
-int bufsize;
+DISPLAY_to_hostname(char *name, char *buf, int bufsize)
 {
   if (name[0] == ':' || !strncmp(name, "unix", 4)) {
     gethostname(buf, bufsize);
@@ -93,7 +91,8 @@ int bufsize;
   }
 }
 
-before_parse()
+int
+before_parse(void)
 {
   int i;
 
@@ -261,8 +260,8 @@ before_parse()
 
 */
 
-parse_string(str)
-char *str;
+int
+parse_string(char *str)
 {
   rcfile = (FILE *)0;
   ptr = yylineno = 0;
@@ -281,8 +280,7 @@ char *str;
 */
 
 static
-YYparse(f)
-FILE *f;
+YYparse(FILE *f)
 {
   rcfile = f;
   ptr = len = yylineno = 0;
@@ -302,7 +300,7 @@ FILE *f;
 */
 
 static 
-YYparse_by_rcfilename()
+YYparse_by_rcfilename(void)
 {
   FILE *f;
 
@@ -336,7 +334,8 @@ YYparse_by_rcfilename()
 #define SYSRCDIR    "/usr/lib/iroha/"
 #define FILEENVNAME "IROHAFILE"
 
-parse()
+int
+parse(void)
 {
   char *p, *getenv();
   int n;
@@ -442,7 +441,8 @@ parse()
 #define CRCFILENAME  ".canna"
 #define CFILEENVNAME "CANNAFILE"
 
-cparse()
+int
+cparse(void)
 {
   char *p, *getenv();
   int n;
@@ -553,7 +553,7 @@ cparse()
 
 #ifndef NEWGEN
 int
-  IROHA_input()
+IROHA_input(void)
 {
   while (ptr == len)
     {
@@ -575,13 +575,13 @@ int
 }
 
 void
-  IROHA_unput(c)
+IROHA_unput(int c)
 {
   buff[--ptr] = c;
 }
 
 void
-  IROHA_output(c)
+IROHA_output(int c)
 {
   putchar(c);
 }

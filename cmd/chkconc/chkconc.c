@@ -14,7 +14,7 @@
 char	*program;
 
 static void
-usage()
+usage(void)
 {
   fprintf(stderr, "usage: %s [option] hinshi...\n", program);
   fprintf(stderr, "\t-d grammar-dic\n");
@@ -22,9 +22,7 @@ usage()
 }
 
 int
-main(ac, av)
-    int ac;
-    char *av[];
+main(int ac, char *av[])
 {
   char *fzk = NULL;
   struct RkKxGram *gram;

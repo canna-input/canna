@@ -64,53 +64,49 @@ typedef struct _RkcContext {
 extern int ushort2euc(), euc2ushort(), ushort2wchar(), wchar2ushort(),
     wcharstrlen(), ushortstrlen(), ushortstrcpy() ;
 
-typedef long (*initialize_t) pro((char *));
-typedef int (*finalize_t) pro((void));
-typedef int (*close_context_t) pro((RkcContext *));
-typedef int (*create_context_t) pro((void));
-typedef int (*duplicate_context_t) pro((RkcContext *));
-typedef int (*dictionary_list_t) pro((RkcContext *, char *, int));
-typedef int (*define_dic_t) pro((RkcContext *, char *, Ushort *));
-typedef int (*delete_dic_t) pro((RkcContext *, char *, Ushort *));
-typedef int (*mount_dictionary_t) pro((RkcContext *, char *, int));
-typedef int (*remount_dictionary_t) pro((RkcContext *, char *, int));
-typedef int (*umount_dictionary_t) pro((RkcContext *, char *));
-typedef int (*mount_list_t) pro((RkcContext *, char *, int));
-typedef int (*convert_t) pro((RkcContext *, Ushort *, int, int));
-typedef int (*convert_end_t) pro((RkcContext *, int));
-typedef int (*get_kanji_list_t) pro((RkcContext *));
-typedef int (*get_stat_t) pro((RkcContext *, RkStat *));
-typedef int (*resize_t) pro((RkcContext *, int));
-typedef int (*store_yomi_t) pro((RkcContext *, Ushort *, int));
-typedef int (*get_yomi_t) pro((RkcContext *, Ushort *));
-typedef int (*get_lex_t) pro((RkcContext *, int, RkLex *));
-typedef int (*autoconv_t) pro((RkcContext *, int, int));
-typedef int (*subst_yomi_t) pro((RkcContext *, int, int, int, Ushort *, int));
-typedef int (*flush_yomi_t) pro((RkcContext *));
-typedef int (*get_last_yomi_t) pro((RkcContext *, Ushort *, int));
-typedef int (*remove_bun_t) pro((RkcContext *, int));
-typedef int (*get_simple_kanji_t)
-    pro((RkcContext *, char *, Ushort *, int, Ushort *, int, Ushort *, int));
-typedef int (*query_dic_t)
-    pro((RkcContext *, char *, char *, struct DicInfo *));
-typedef int (*get_hinshi_t) pro((RkcContext *, Ushort *, int));
-typedef int (*store_range_t) pro((RkcContext *, Ushort *, int));
-typedef int (*set_locale_t) pro((RkcContext *, char *));
-typedef int (*set_app_name_t) pro((RkcContext *, char *));
-typedef int (*notice_group_name_t) pro((RkcContext *, char *));
-typedef int (*through_t) pro((RkcContext *, int, char *, int, int));
-typedef int (*killserver_t) pro((void));
+typedef long (*initialize_t)(char *);
+typedef int (*finalize_t)(void);
+typedef int (*close_context_t)(RkcContext *);
+typedef int (*create_context_t)(void);
+typedef int (*duplicate_context_t)(RkcContext *);
+typedef int (*dictionary_list_t)(RkcContext *, char *, int);
+typedef int (*define_dic_t)(RkcContext *, char *, Ushort *);
+typedef int (*delete_dic_t)(RkcContext *, char *, Ushort *);
+typedef int (*mount_dictionary_t)(RkcContext *, char *, int);
+typedef int (*remount_dictionary_t)(RkcContext *, char *, int);
+typedef int (*umount_dictionary_t)(RkcContext *, char *);
+typedef int (*mount_list_t)(RkcContext *, char *, int);
+typedef int (*convert_t)(RkcContext *, Ushort *, int, int);
+typedef int (*convert_end_t)(RkcContext *, int);
+typedef int (*get_kanji_list_t)(RkcContext *);
+typedef int (*get_stat_t)(RkcContext *, RkStat *);
+typedef int (*resize_t)(RkcContext *, int);
+typedef int (*store_yomi_t)(RkcContext *, Ushort *, int);
+typedef int (*get_yomi_t)(RkcContext *, Ushort *);
+typedef int (*get_lex_t)(RkcContext *, int, RkLex *);
+typedef int (*autoconv_t)(RkcContext *, int, int);
+typedef int (*subst_yomi_t)(RkcContext *, int, int, int, Ushort *, int);
+typedef int (*flush_yomi_t)(RkcContext *);
+typedef int (*get_last_yomi_t)(RkcContext *, Ushort *, int);
+typedef int (*remove_bun_t)(RkcContext *, int);
+typedef int (*get_simple_kanji_t)(RkcContext *, char *, Ushort *, int, Ushort *, int, Ushort *, int);
+typedef int (*query_dic_t)(RkcContext *, char *, char *, struct DicInfo *);
+typedef int (*get_hinshi_t)(RkcContext *, Ushort *, int);
+typedef int (*store_range_t)(RkcContext *, Ushort *, int);
+typedef int (*set_locale_t)(RkcContext *, char *);
+typedef int (*set_app_name_t)(RkcContext *, char *);
+typedef int (*notice_group_name_t)(RkcContext *, char *);
+typedef int (*through_t)(RkcContext *, int, char *, int, int);
+typedef int (*killserver_t)(void);
 #ifdef EXTENSION
-typedef int (*list_dictionary_t) pro((RkcContext *, char *, char *, int));
-typedef int (*create_dictionary_t) pro((RkcContext *, char *, int));
-typedef int (*remove_dictionary_t) pro((RkcContext *, char *, int));
-typedef int (*rename_dictionary_t) pro((RkcContext *, char *, char *, int));
-typedef int (*get_text_dictionary_t)
-     pro((RkcContext *, char *, char *, Ushort *, int));
-typedef int (*sync_t) pro((RkcContext *, char *));
-typedef int (*chmod_dic_t) pro((RkcContext *, char *, int));
-typedef int (*copy_dictionary_t)
-     pro((RkcContext *, char *, char *, char *, int));
+typedef int (*list_dictionary_t)(RkcContext *, char *, char *, int);
+typedef int (*create_dictionary_t)(RkcContext *, char *, int);
+typedef int (*remove_dictionary_t)(RkcContext *, char *, int);
+typedef int (*rename_dictionary_t)(RkcContext *, char *, char *, int);
+typedef int (*get_text_dictionary_t)(RkcContext *, char *, char *, Ushort *, int);
+typedef int (*sync_t)(RkcContext *, char *);
+typedef int (*chmod_dic_t)(RkcContext *, char *, int);
+typedef int (*copy_dictionary_t)(RkcContext *, char *, char *, char *, int);
 #endif
 
 struct rkcproto {
@@ -206,4 +202,4 @@ typedef struct {
 
 /* function prototypes .. */
 
-extern int rkc_Connect_Iroha_Server pro((char *));
+extern int rkc_Connect_Iroha_Server(char *);

@@ -54,9 +54,8 @@ struct tango{
     struct tango	*next;
 };
 
-uchar *getword(p,Word)
-uchar	*p;
-uchar	*Word;
+uchar *
+getword(uchar *p, uchar *Word)
 {
     while( ISSPACE(*p) )	p++;
 
@@ -71,9 +70,8 @@ uchar	*Word;
     return(p);
 }
 
-struct tango *newtango(tsuduri,hinshi)
-uchar   *tsuduri;
-uchar   *hinshi;
+struct tango *
+newtango(uchar *tsuduri, uchar *hinshi)
 {
     struct tango   *tp;
     uchar   *p;
@@ -102,9 +100,8 @@ uchar   *hinshi;
     return(tp);
 }	
 
-void savetango(tsuduri, hinshi)
-uchar	*tsuduri;
-uchar	*hinshi;
+void
+savetango(uchar *tsuduri, uchar *hinshi)
 {
     struct tango	*tp;
     
@@ -120,9 +117,8 @@ uchar	*hinshi;
     tp->next = newtango(tsuduri, hinshi);
 }
 
-void save_factor(line, nline)
-uchar	*line;
-int	nline;
+void
+save_factor(uchar *line, int nline)
 {
     uchar	*lp;
     uchar	hinshi[SIZE];
@@ -150,7 +146,8 @@ int	nline;
 }
 
 
-void disp_factor()
+void
+disp_factor(void)
 {
     struct tango	*tp;
     
@@ -167,8 +164,7 @@ void disp_factor()
 }
 
 void
-free_factor(tp)
-struct tango *tp;
+free_factor(struct tango *tp)
 {
   struct tango *ftp;
 
@@ -182,17 +178,14 @@ struct tango *tp;
 }	
 
 void
-catch(sig)
-int sig;
+catch(int sig)
 {
   fprintf(stderr, gettxt("cannacmd:44", "Dictionary format error.\n"));
   exit(1);
 }
 
 static void
-splitword(fp, name)
-FILE *fp;
-char *name;
+splitword(FILE *fp, char *name)
 {
   int nline = 0; /* 読み込む行数を数える */
   uchar line[SIZE];
@@ -216,9 +209,7 @@ char *name;
 }
 
 int
-main( argc, argv )
-int	argc;
-char	*argv[];
+main(int argc, char *argv[])
 {
     FILE	*fp;
     int		i;

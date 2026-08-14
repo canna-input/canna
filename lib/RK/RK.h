@@ -30,16 +30,6 @@
 # define canna_export(x) x
 #endif
 
-#ifdef pro
-#define CANNA_PRO_PREDEFINED
-#else
-#if defined(__STDC__) || defined(__cplusplus)
-#define pro(x) x
-#else
-#define pro(x) ()
-#endif
-#endif
-
 #include <canna/sysdep.h>
 
 typedef	struct {
@@ -184,114 +174,114 @@ typedef canna_uint32_t cannawc;
 
 #ifdef CANNAWC_DEFINED
 
-canna_export(void) RkwFinalize pro((void));
-canna_export(int) RkwInitialize pro((char *));
-canna_export(int) RkwCreateContext pro((void));
-canna_export(int) RkwCloseContext pro((int));
-canna_export(int) RkwDuplicateContext pro((int));
-canna_export(int) RkwSetDicPath pro((int, char *));
-canna_export(int) RkwGetDirList pro((int, char *,int));
-canna_export(int) RkwGetDicList pro((int, char *,int));
-canna_export(int) RkwMountDic pro((int, char *, int));
-canna_export(int) RkwUnmountDic pro((int, char *));
-canna_export(int) RkwRemountDic pro((int, char *, int));
-canna_export(int) RkwSync pro((int, char *));
-canna_export(int) RkwGetMountList pro((int, char *, int));
-canna_export(int) RkwDefineDic pro((int, char *, cannawc *));
-canna_export(int) RkwDeleteDic pro((int, char *, cannawc *));
-canna_export(int) RkwBgnBun pro((int, cannawc *, int, int));
-canna_export(int) RkwEndBun pro((int, int));
-canna_export(int) RkwGoTo pro((int, int));
-canna_export(int) RkwLeft pro((int));
-canna_export(int) RkwRight pro((int));
-canna_export(int) RkwXfer pro((int, int));
-canna_export(int) RkwNfer pro((int));
-canna_export(int) RkwNext pro((int));
-canna_export(int) RkwPrev pro((int));
-canna_export(int) RkwResize pro((int, int));
-canna_export(int) RkwEnlarge pro((int));
-canna_export(int) RkwShorten pro((int));
-canna_export(int) RkwSubstYomi pro((int, int, int, cannawc *, int));
-canna_export(int) RkwStoreYomi pro((int, cannawc *, int));
-canna_export(int) RkwGetLastYomi pro((int, cannawc *, int));
-canna_export(int) RkwFlushYomi pro((int));
-canna_export(int) RkwRemoveBun pro((int, int));
-canna_export(int) RkwGetStat pro((int, RkStat *));
-canna_export(int) RkwGetYomi pro((int, cannawc *, int));
-canna_export(int) RkwGetHinshi pro((int, cannawc *, int));
-canna_export(int) RkwGetKanji pro((int, cannawc *, int));
-canna_export(int) RkwGetKanjiList pro((int, cannawc *, int));
-canna_export(int) RkwGetLex pro((int, RkLex *, int));
-canna_export(int) RkwCvtHira pro((cannawc *, int, cannawc *, int));
-canna_export(int) RkwCvtKana pro((cannawc *, int, cannawc *, int));
-canna_export(int) RkwCvtHan pro((cannawc *, int, cannawc *, int));
-canna_export(int) RkwCvtZen pro((cannawc *, int, cannawc *, int));
-canna_export(int) RkwCvtEuc pro((cannawc *, int, cannawc *, int));
-canna_export(int) RkwCreateDic pro((int, char *, int));
-canna_export(int) RkwQueryDic pro((int, char *, char *, struct DicInfo *));
-canna_export(void) RkwCloseRoma pro((struct RkRxDic *));
-canna_export(struct) RkRxDic * RkwOpenRoma pro((char *));
-canna_export(int) RkwSetUserInfo pro((char *, char *, char *));
-canna_export(char *) RkwGetServerName pro((void));
-canna_export(int) RkwGetServerVersion pro((int *, int *));
-canna_export(int) RkwListDic pro((int, char *, char *, int));
-canna_export(int) RkwCopyDic pro((int, char *, char *, char *, int));
-canna_export(int) RkwRemoveDic pro((int, char *, int));
-canna_export(int) RkwRenameDic pro((int, char *, char *, int));
-canna_export(int) RkwChmodDic pro((int, char *, int));
-canna_export(int) RkwGetWordTextDic pro((int, unsigned char *,
-					 unsigned char *, cannawc *, int));
-canna_export(int) RkwGetSimpleKanji pro((int, char *, cannawc *, int,
-					 cannawc *, int, cannawc *, int));
-canna_export(int) RkwStoreRange pro((int, cannawc *, int));
+canna_export(void) RkwFinalize(void);
+canna_export(int) RkwInitialize(char *);
+canna_export(int) RkwCreateContext(void);
+canna_export(int) RkwCloseContext(int);
+canna_export(int) RkwDuplicateContext(int);
+canna_export(int) RkwSetDicPath(int, char *);
+canna_export(int) RkwGetDirList(int, char *,int);
+canna_export(int) RkwGetDicList(int, char *,int);
+canna_export(int) RkwMountDic(int, char *, int);
+canna_export(int) RkwUnmountDic(int, char *);
+canna_export(int) RkwRemountDic(int, char *, int);
+canna_export(int) RkwSync(int, char *);
+canna_export(int) RkwGetMountList(int, char *, int);
+canna_export(int) RkwDefineDic(int, char *, cannawc *);
+canna_export(int) RkwDeleteDic(int, char *, cannawc *);
+canna_export(int) RkwBgnBun(int, cannawc *, int, int);
+canna_export(int) RkwEndBun(int, int);
+canna_export(int) RkwGoTo(int, int);
+canna_export(int) RkwLeft(int);
+canna_export(int) RkwRight(int);
+canna_export(int) RkwXfer(int, int);
+canna_export(int) RkwNfer(int);
+canna_export(int) RkwNext(int);
+canna_export(int) RkwPrev(int);
+canna_export(int) RkwResize(int, int);
+canna_export(int) RkwEnlarge(int);
+canna_export(int) RkwShorten(int);
+canna_export(int) RkwSubstYomi(int, int, int, cannawc *, int);
+canna_export(int) RkwStoreYomi(int, cannawc *, int);
+canna_export(int) RkwGetLastYomi(int, cannawc *, int);
+canna_export(int) RkwFlushYomi(int);
+canna_export(int) RkwRemoveBun(int, int);
+canna_export(int) RkwGetStat(int, RkStat *);
+canna_export(int) RkwGetYomi(int, cannawc *, int);
+canna_export(int) RkwGetHinshi(int, cannawc *, int);
+canna_export(int) RkwGetKanji(int, cannawc *, int);
+canna_export(int) RkwGetKanjiList(int, cannawc *, int);
+canna_export(int) RkwGetLex(int, RkLex *, int);
+canna_export(int) RkwCvtHira(cannawc *, int, cannawc *, int);
+canna_export(int) RkwCvtKana(cannawc *, int, cannawc *, int);
+canna_export(int) RkwCvtHan(cannawc *, int, cannawc *, int);
+canna_export(int) RkwCvtZen(cannawc *, int, cannawc *, int);
+canna_export(int) RkwCvtEuc(cannawc *, int, cannawc *, int);
+canna_export(int) RkwCreateDic(int, char *, int);
+canna_export(int) RkwQueryDic(int, char *, char *, struct DicInfo *);
+canna_export(void) RkwCloseRoma(struct RkRxDic *);
+canna_export(struct) RkRxDic * RkwOpenRoma(char *);
+canna_export(int) RkwSetUserInfo(char *, char *, char *);
+canna_export(char *) RkwGetServerName(void);
+canna_export(int) RkwGetServerVersion(int *, int *);
+canna_export(int) RkwListDic(int, char *, char *, int);
+canna_export(int) RkwCopyDic(int, char *, char *, char *, int);
+canna_export(int) RkwRemoveDic(int, char *, int);
+canna_export(int) RkwRenameDic(int, char *, char *, int);
+canna_export(int) RkwChmodDic(int, char *, int);
+canna_export(int) RkwGetWordTextDic(int, unsigned char *,
+					 unsigned char *, cannawc *, int);
+canna_export(int) RkwGetSimpleKanji(int, char *, cannawc *, int,
+					 cannawc *, int, cannawc *, int);
+canna_export(int) RkwStoreRange(int, cannawc *, int);
 
 #endif
 
-void	RkFinalize pro((void));
-int     RkInitialize pro((char *));
-int    	RkCreateContext pro((void));
-int     RkCloseContext pro((int));
-int	RkDuplicateContext pro((int));
-int	RkSetDicPath pro((int, char *));
-int	RkGetDirList pro((int, char *,int));
-int	RkGetDicList pro((int, char *,int));
-int	RkMountDic pro((int, char *, int));
-int	RkUnmountDic pro((int, char *));
-int	RkRemountDic pro((int, char *, int));
-int	RkSync pro((int, char *));
-int	RkGetMountList pro((int, char *, int));
-int	RkDefineDic pro((int, char *, char *));
-int	RkDeleteDic pro((int, char *, char *));
-int	RkBgnBun pro((int, char *, int, int));
-int	RkEndBun pro((int, int));
-int	RkGoTo pro((int, int));
-int	RkLeft pro((int));
-int	RkRight pro((int));
-int	RkXfer pro((int, int));
-int	RkNfer pro((int));
-int	RkNext pro((int));
-int	RkPrev pro((int));
-int	RkResize pro((int, int));
-int	RkEnlarge pro((int));
-int	RkShorten pro((int));
-int	RkSubstYomi pro((int, int, int, char *, int));
-int	RkStoreYomi pro((int, char *, int));
-int	RkGetLastYomi pro((int, char *, int));
-int	RkFlushYomi pro((int));
-int	RkRemoveBun pro((int, int));
-int	RkGetStat pro((int, RkStat *));
-int	RkGetYomi pro((int, unsigned char *, int));
-int	RkGetHinshi pro((int, unsigned char *, int));
-int	RkGetKanji pro((int, unsigned char *, int));
-int	RkGetKanjiList pro((int, unsigned char *, int));
-int	RkGetLex pro((int, RkLex *, int));
-int	RkCvtHira pro((unsigned char *, int, unsigned char *, int));
-int	RkCvtKana pro((unsigned char *, int, unsigned char *, int));
-int	RkCvtHan pro((unsigned char *, int, unsigned char *, int));
-int	RkCvtZen pro((unsigned char *, int, unsigned char *, int));
-int	RkCvtNone pro((unsigned char *, int, unsigned char *, int));
-int	RkCvtEuc pro((unsigned char *, int, unsigned char *, int));
-int	RkQueryDic pro((int, char *, char *, struct DicInfo *));
+void	RkFinalize(void);
+int     RkInitialize(char *);
+int    	RkCreateContext(void);
+int     RkCloseContext(int);
+int	RkDuplicateContext(int);
+int	RkSetDicPath(int, char *);
+int	RkGetDirList(int, char *,int);
+int	RkGetDicList(int, char *,int);
+int	RkMountDic(int, char *, int);
+int	RkUnmountDic(int, char *);
+int	RkRemountDic(int, char *, int);
+int	RkSync(int, char *);
+int	RkGetMountList(int, char *, int);
+int	RkDefineDic(int, char *, char *);
+int	RkDeleteDic(int, char *, char *);
+int	RkBgnBun(int, char *, int, int);
+int	RkEndBun(int, int);
+int	RkGoTo(int, int);
+int	RkLeft(int);
+int	RkRight(int);
+int	RkXfer(int, int);
+int	RkNfer(int);
+int	RkNext(int);
+int	RkPrev(int);
+int	RkResize(int, int);
+int	RkEnlarge(int);
+int	RkShorten(int);
+int	RkSubstYomi(int, int, int, char *, int);
+int	RkStoreYomi(int, char *, int);
+int	RkGetLastYomi(int, char *, int);
+int	RkFlushYomi(int);
+int	RkRemoveBun(int, int);
+int	RkGetStat(int, RkStat *);
+int	RkGetYomi(int, unsigned char *, int);
+int	RkGetHinshi(int, unsigned char *, int);
+int	RkGetKanji(int, unsigned char *, int);
+int	RkGetKanjiList(int, unsigned char *, int);
+int	RkGetLex(int, RkLex *, int);
+int	RkCvtHira(unsigned char *, int, unsigned char *, int);
+int	RkCvtKana(unsigned char *, int, unsigned char *, int);
+int	RkCvtHan(unsigned char *, int, unsigned char *, int);
+int	RkCvtZen(unsigned char *, int, unsigned char *, int);
+int	RkCvtNone(unsigned char *, int, unsigned char *, int);
+int	RkCvtEuc(unsigned char *, int, unsigned char *, int);
+int	RkQueryDic(int, char *, char *, struct DicInfo *);
 
 #ifdef __cplusplus
 }
@@ -299,59 +289,59 @@ int	RkQueryDic pro((int, char *, char *, struct DicInfo *));
 
 #if defined(ENGINE_SWITCH)
 struct rkfuncs {
-  int (*GetProtocolVersion) pro((int *, int *));
-  char *(*GetServerName) pro((void));
-  int (*GetServerVersion) pro((int *, int *));
-  int (*Initialize) pro((char *));
-  void (*Finalize) pro((void));
-  int (*CreateContext) pro((void));
-  int (*DuplicateContext) pro((int));
-  int (*CloseContext) pro((int));
-  int (*SetDicPath) pro((int, char *));
-  int (*CreateDic) pro((int, unsigned char *, int));
-  int (*SyncDic) pro((int, char *));
-  int (*GetDicList) pro((int, char *, int));
-  int (*GetMountList) pro((int, char *, int));
-  int (*MountDic) pro((int, char *, int));
-  int (*RemountDic) pro((int, char *, int));
-  int (*UnmountDic) pro((int, char *));
-  int (*DefineDic) pro((int, char *, wchar_t *));
-  int (*DeleteDic) pro((int, char *, wchar_t *));
-  int (*GetHinshi) pro((int, wchar_t *, int));
-  int (*GetKanji) pro((int, wchar_t *, int));
-  int (*GetYomi) pro((int, wchar_t *, int));
-  int (*GetLex) pro((int, RkLex *, int));
-  int (*GetStat) pro((int, RkStat *));
-  int (*GetKanjiList) pro((int, wchar_t *, int));
-  int (*FlushYomi) pro((int));
-  int (*GetLastYomi) pro((int, wchar_t *, int));
-  int (*RemoveBun) pro((int, int));
-  int (*SubstYomi) pro((int, int, int, wchar_t *, int));
-  int (*BgnBun) pro((int, wchar_t *, int, int));
-  int (*EndBun) pro((int, int));
-  int (*GoTo) pro((int, int));
-  int (*Left) pro((int));
-  int (*Right) pro((int));
-  int (*Next) pro((int));
-  int (*Prev) pro((int));
-  int (*Nfer) pro((int));
-  int (*Xfer) pro((int, int));
-  int (*Resize) pro((int, int));
-  int (*Enlarge) pro((int));
-  int (*Shorten) pro((int));
-  int (*StoreYomi) pro((int, wchar_t *, int));
-  int (*SetAppName) pro((int, char *));
-  int (*SetUserInfo) pro((char *, char *, char *));
-  int (*QueryDic) pro((int, char *, char *, struct DicInfo *));
-  int (*CopyDic) pro((int, char *, char *, char *, int));
-  int (*ListDic) pro((int, char *, char *, int));
-  int (*RemoveDic) pro((int, char *, int));
-  int (*RenameDic) pro((int, char *, char *, int));
-  int (*ChmodDic) pro((int, char *, int));
-  int (*GetWordTextDic) pro((int, unsigned char	*, unsigned char *,
-			     wchar_t *, int));
-  int (*GetSimpleKanji) pro((int, char *, wchar_t *, int, wchar_t *, int,
-			     wchar_t *, int));
+  int (*GetProtocolVersion)(int *, int *);
+  char *(*GetServerName)(void);
+  int (*GetServerVersion)(int *, int *);
+  int (*Initialize)(char *);
+  void (*Finalize)(void);
+  int (*CreateContext)(void);
+  int (*DuplicateContext)(int);
+  int (*CloseContext)(int);
+  int (*SetDicPath)(int, char *);
+  int (*CreateDic)(int, unsigned char *, int);
+  int (*SyncDic)(int, char *);
+  int (*GetDicList)(int, char *, int);
+  int (*GetMountList)(int, char *, int);
+  int (*MountDic)(int, char *, int);
+  int (*RemountDic)(int, char *, int);
+  int (*UnmountDic)(int, char *);
+  int (*DefineDic)(int, char *, wchar_t *);
+  int (*DeleteDic)(int, char *, wchar_t *);
+  int (*GetHinshi)(int, wchar_t *, int);
+  int (*GetKanji)(int, wchar_t *, int);
+  int (*GetYomi)(int, wchar_t *, int);
+  int (*GetLex)(int, RkLex *, int);
+  int (*GetStat)(int, RkStat *);
+  int (*GetKanjiList)(int, wchar_t *, int);
+  int (*FlushYomi)(int);
+  int (*GetLastYomi)(int, wchar_t *, int);
+  int (*RemoveBun)(int, int);
+  int (*SubstYomi)(int, int, int, wchar_t *, int);
+  int (*BgnBun)(int, wchar_t *, int, int);
+  int (*EndBun)(int, int);
+  int (*GoTo)(int, int);
+  int (*Left)(int);
+  int (*Right)(int);
+  int (*Next)(int);
+  int (*Prev)(int);
+  int (*Nfer)(int);
+  int (*Xfer)(int, int);
+  int (*Resize)(int, int);
+  int (*Enlarge)(int);
+  int (*Shorten)(int);
+  int (*StoreYomi)(int, wchar_t *, int);
+  int (*SetAppName)(int, char *);
+  int (*SetUserInfo)(char *, char *, char *);
+  int (*QueryDic)(int, char *, char *, struct DicInfo *);
+  int (*CopyDic)(int, char *, char *, char *, int);
+  int (*ListDic)(int, char *, char *, int);
+  int (*RemoveDic)(int, char *, int);
+  int (*RenameDic)(int, char *, char *, int);
+  int (*ChmodDic)(int, char *, int);
+  int (*GetWordTextDic)(int, unsigned char	*, unsigned char *,
+			     wchar_t *, int);
+  int (*GetSimpleKanji)(int, char *, wchar_t *, int, wchar_t *, int,
+			     wchar_t *, int);
 };
 #endif /* ENGINE_SWITCH */
 
@@ -359,12 +349,6 @@ struct rkfuncs {
 #undef CANNA_EXP_PREDEFINED
 #else
 #undef canna_export
-#endif
-
-#ifdef CANNA_PRO_PREDEFINED
-#undef CANNA_PRO_PREDEFINED
-#else
-#undef pro
 #endif
 
 #endif	/* _RK_h */

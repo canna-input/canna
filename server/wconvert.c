@@ -78,8 +78,8 @@
 
 
 typedef struct {
-  int (*func) pro((ClientPtr *));
-  int (*extdat) pro((BYTE *));
+  int (*func)(ClientPtr *);
+  int (*extdat)(BYTE *);
 } reqproc;
 
 extern const char *WideProtoName[], *ExtensionRequest[];
@@ -88,11 +88,11 @@ extern const reqproc WideVector[];
 extern const reqproc ExtensionWideVector[];
 #endif
 
-static int RkThrough pro((int cx, int command, char *buf,
-      int content_size, int buffer_size));
+static int RkThrough(int cx, int command, char *buf,
+      int content_size, int buffer_size);
 
 #ifdef DEBUG
-static char *conveuc pro((Ushort *src));
+static char *conveuc(Ushort *src);
 static const char null[] = "NULL";
 #endif /* DEBUG */
 static IRwReq	Request ;
@@ -103,9 +103,7 @@ TotalWideRequestTypeCount[ W_MAXREQUESTNO ] ;
 
 #ifdef DEBUGPROTO
 static void
-printproto(p, n)
-char *p;
-int n;
+printproto(char *p, int n)
 {
   int i;
 
@@ -120,9 +118,7 @@ int n;
 }
 
 static void
-probe(format, n, p)
-char *format, *p;
-int n;
+probe(char *format, int n, char *p)
 {
   printf(format, n);
   printproto(p, n);
@@ -132,9 +128,7 @@ int n;
 #endif /* !DEBUGPROTO */
 
 static int
-GetFirstKouho(cxnum, start, end, val_return, buf, bufsize, bufp_return)
-int cxnum, start, end, *val_return, bufsize;
-Ushort *buf, **bufp_return;
+GetFirstKouho(int cxnum, int start, int end, int *val_return, Ushort *buf, int bufsize, Ushort **bufp_return)
 {
   int rest = bufsize, len, i, j;
   Ushort kanjibuf[DEFAULTBUFSIZE/*RK_DENO_SAIDAI_CHOU*/], *p = buf;
@@ -180,10 +174,7 @@ Ushort *buf, **bufp_return;
 
 #ifdef DEBUG
 static int
-WriteClient(client, buf, size)
-ClientPtr client;
-const BYTE *buf;
-size_t size;
+WriteClient(ClientPtr client, const BYTE *buf, size_t size)
 {
     ir_debug( Dmsg(10, "WriteClient:") );
     ir_debug( DebugDump( 10, (char *)buf, size ) );
@@ -194,9 +185,7 @@ size_t size;
 #endif
 
 static BYTE *
-copylenstr(name, p)
-char *name;
-BYTE *p;
+copylenstr(char *name, BYTE *p)
 {
   int len, filledlen;
 
@@ -216,12 +205,7 @@ BYTE *p;
  */
 
 static int
-SendType1Reply(client, majo, mino, stat, majorv, minorv, curtime,
-	       nproto, protonames, protofreqs, nclients, ncontexts, who)
-ClientPtr client, *who;
-int majo, mino, stat, majorv, minorv, curtime, nproto, nclients, ncontexts;
-unsigned int *protofreqs;
-char **protonames;
+SendType1Reply(ClientPtr client, int majo, int mino, int stat, int majorv, int minorv, int curtime, int nproto, char **protonames, unsigned int *protofreqs, int nclients, int ncontexts, ClientPtr *who)
 {
   int namelen, fillednamelen;
   int i, j, len, requiredsize, size, clinfolen, retval;
@@ -355,9 +339,7 @@ char **protonames;
 }
 
 static int
-SendType2Reply(client, majo, mino, stat)
-ClientPtr client;
-int majo, mino, stat;
+SendType2Reply(ClientPtr client, int majo, int mino, int stat)
 {
   BYTE buf[HEADER_SIZE + SIZEOFCHAR], *p = buf;
 
@@ -369,10 +351,7 @@ int majo, mino, stat;
 }
 
 static int
-SendType4Reply(client, majo, mino, stat, len, dat)
-ClientPtr client;
-int majo, mino, stat, len;
-int *dat;
+SendType4Reply(ClientPtr client, int majo, int mino, int stat, int len, int *dat)
 {
   BYTE lbuf[DEFAULTBUFSIZE], *bufp = lbuf, *p;
   int requiredsize = HEADER_SIZE + SIZEOFCHAR + (len * SIZEOFINT);
@@ -398,11 +377,7 @@ int *dat;
 }
 
 static int
-SendType4XReply(client, majo, mino, val, s1, s2, len, dat)
-ClientPtr client;
-int majo, mino, val, len;
-char *s1, *s2;
-int *dat;
+SendType4XReply(ClientPtr client, int majo, int mino, int val, char *s1, char *s2, int len, int *dat)
 {
   BYTE lbuf[DEFAULTBUFSIZE], *bufp = lbuf, *p;
   int retval, size, i, slen1 = strlen(s1) + 1, slen2 = strlen(s2) + 1;
@@ -432,9 +407,7 @@ int *dat;
 }
 
 static int
-SendType5Reply(client, majo, mino, context)
-ClientPtr client;
-int majo, mino, context;
+SendType5Reply(ClientPtr client, int majo, int mino, int context)
 {
   BYTE buf[HEADER_SIZE + SIZEOFSHORT], *p = buf;
 
@@ -446,9 +419,7 @@ int majo, mino, context;
 }
 
 static int
-namesize(names, n)
-char *names;
-int n;
+namesize(char *names, int n)
 {
   register int tmp, res = 0;
 
@@ -464,9 +435,7 @@ int n;
 }
 
 static int
-unamesize(names, n)
-Ushort *names;
-int n;
+unamesize(Ushort *names, int n)
 {
   register int tmp, res = 0;
 
@@ -482,8 +451,7 @@ int n;
 }
 
 static int
-unamesize2(names)
-Ushort *names;
+unamesize2(Ushort *names)
 {
   register int tmp, res = 0;
 
@@ -496,10 +464,7 @@ Ushort *names;
 }
 
 static int
-SendType6Reply(client, majo, mino, n, names, namelen)
-ClientPtr client;
-int majo, mino, n, namelen;
-char *names;
+SendType6Reply(ClientPtr client, int majo, int mino, int n, char *names, int namelen)
 {
   BYTE lbuf[DEFAULTBUFSIZE], *bufp = lbuf, *p;
   int requiredsize, retval, size;
@@ -523,10 +488,7 @@ char *names;
 }
 
 static int
-SendType7Reply(client, majo, mino, n, len, dat)
-ClientPtr client;
-int majo, mino, n, len;
-Ushort *dat;
+SendType7Reply(ClientPtr client, int majo, int mino, int n, int len, Ushort *dat)
 {
   BYTE lbuf[DEFAULTBUFSIZE], *bufp = lbuf, *p;
   int requiredsize = HEADER_SIZE + SIZEOFSHORT + (len * SIZEOFSHORT);
@@ -551,10 +513,7 @@ Ushort *dat;
 }
 
 static int
-SendType9Reply(client, majo, mino, val, len, dat)
-ClientPtr client;
-int majo, mino, val, len;
-int *dat;
+SendType9Reply(ClientPtr client, int majo, int mino, int val, int len, int *dat)
 {
   BYTE lbuf[DEFAULTBUFSIZE], *bufp = lbuf, *p;
   int requiredsize = HEADER_SIZE + SIZEOFSHORT + len * SIZEOFINT;
@@ -581,11 +540,7 @@ int *dat;
 #if 0
 /* Is this used? */
 static
-SendType10Reply(client, majo, mino, val, s1, s2, len, dat)
-ClientPtr client;
-int majo, mino, val, len;
-char *s1, *s2;
-int *dat;
+SendType10Reply(ClientPtr client, int majo, int mino, int val, char *s1, char *s2, int len, int *dat)
 {
   BYTE lbuf[DEFAULTBUFSIZE], *bufp = lbuf, *p;
   int retval, size, i, slen1 = strlen(s1) + 1, slen2 = strlen(s2) + 1;
@@ -616,9 +571,7 @@ int *dat;
 #endif
 
 static const char *
-irwerrhdr(client, proto)
-ClientPtr client;
-int proto;
+irwerrhdr(ClientPtr client, int proto)
 {
   static char buf[50];
   sprintf(buf, "[%.25s](%.20s)", client->username, WideProtoName[proto - 1]);
@@ -626,8 +579,7 @@ int proto;
 }
 
 static int
-irw_finalize( clientp )
-ClientPtr *clientp ;
+irw_finalize(ClientPtr *clientp)
 {
     register ClientPtr client = *clientp;
 
@@ -641,8 +593,7 @@ ClientPtr *clientp ;
 }
 
 static int
-irw_killserver(clientp)
-ClientPtr *clientp;
+irw_killserver(ClientPtr *clientp)
 {
   register ClientPtr client = *clientp;
   int stat = 0;
@@ -708,8 +659,7 @@ addr_ok:
 }
 
 static int
-irw_create_context( clientp )
-ClientPtr *clientp ;
+irw_create_context(ClientPtr *clientp)
 {
     ClientPtr client = *clientp ;
     int cxnum ;
@@ -737,9 +687,7 @@ ClientPtr *clientp ;
  */
 
 static int
-validcontext(cxnum, client, proto)
-int cxnum, proto;
-ClientPtr client;
+validcontext(int cxnum, ClientPtr client, int proto)
 {
   if (chk_cxt(client, cxnum)) {
     return 1;
@@ -749,8 +697,7 @@ ClientPtr client;
 }
 
 static int
-irw_duplicate_context( clientp )
-ClientPtr *clientp ;
+irw_duplicate_context(ClientPtr *clientp)
 {
     ClientPtr client = *clientp ;
     int cxnum = Request.type2.context;
@@ -770,8 +717,7 @@ ClientPtr *clientp ;
 }
 
 static int
-irw_close_context( clientp )
-ClientPtr *clientp ;
+irw_close_context(ClientPtr *clientp)
 {
     ClientPtr client = *clientp ;
     int cxnum = Request.type2.context, stat = -1;
@@ -785,8 +731,7 @@ ClientPtr *clientp ;
 }
 
 static int
-irw_dictionary_list( clientp )
-ClientPtr *clientp ;
+irw_dictionary_list(ClientPtr *clientp)
 {
     ClientPtr client = *clientp ;
     char *dicnames = (char *)local_buffer ;
@@ -805,8 +750,7 @@ ClientPtr *clientp ;
 }
 
 static int
-irw_get_yomi( clientp )
-ClientPtr *clientp ;
+irw_get_yomi(ClientPtr *clientp)
 {
     ClientPtr client = *clientp ;
     Ushort *yomi = (Ushort *)local_buffer ;
@@ -834,8 +778,7 @@ ClientPtr *clientp ;
 }
 
 static int
-irw_define_dic( clientp )
-ClientPtr *clientp ;
+irw_define_dic(ClientPtr *clientp)
 {
     ClientPtr client = *clientp ;
     Ushort *data;
@@ -856,8 +799,7 @@ ClientPtr *clientp ;
 }
 
 static int
-irw_delete_dic( clientp )
-ClientPtr *clientp ;
+irw_delete_dic(ClientPtr *clientp)
 {
     ClientPtr client = *clientp ;
     char *dicname ;
@@ -878,8 +820,7 @@ ClientPtr *clientp ;
 }
 
 static int
-irw_get_dir_list( clientp )
-ClientPtr *clientp ;
+irw_get_dir_list(ClientPtr *clientp)
 {
     ClientPtr client = *clientp ;
     char *dicnames = (char *)local_buffer ;
@@ -898,8 +839,7 @@ ClientPtr *clientp ;
 }
 
 static int
-irw_mount_dictionary( clientp )
-ClientPtr *clientp ;
+irw_mount_dictionary(ClientPtr *clientp)
 {
     ClientPtr client = *clientp ;
     char *dicname ;
@@ -917,8 +857,7 @@ ClientPtr *clientp ;
 }
 
 static int
-irw_umount_dictionary( clientp )
-ClientPtr *clientp ;
+irw_umount_dictionary(ClientPtr *clientp)
 {
     ClientPtr client = *clientp ;
     int cxnum = Request.type15.context, stat = -1;
@@ -934,8 +873,7 @@ ClientPtr *clientp ;
 }
 
 static int
-irw_rmount_dictionary( clientp )
-ClientPtr *clientp ;
+irw_rmount_dictionary(ClientPtr *clientp)
 {
     ClientPtr client = *clientp ;
     int cxnum = Request.type15.context, stat = -1;
@@ -952,8 +890,7 @@ ClientPtr *clientp ;
 }
 
 static int
-irw_mount_list( clientp )
-ClientPtr *clientp ;
+irw_mount_list(ClientPtr *clientp)
 {
     ClientPtr client = *clientp ;
     char *dicnames = (char *)local_buffer ;
@@ -973,8 +910,7 @@ ClientPtr *clientp ;
 }
 
 static int
-irw_convert( clientp )
-ClientPtr *clientp ;
+irw_convert(ClientPtr *clientp)
 {
     wReq14 *req = &Request.type14 ;
     ClientPtr client = *clientp ;
@@ -1009,8 +945,7 @@ ClientPtr *clientp ;
 }
 
 static int
-irw_convert_end( clientp )
-ClientPtr *clientp ;
+irw_convert_end(ClientPtr *clientp)
 {
     wReq10 *req = &Request.type10 ;
     ClientPtr client = *clientp ;
@@ -1053,8 +988,7 @@ ClientPtr *clientp ;
 }
 
 static int
-irw_get_kanjilist( clientp )
-ClientPtr *clientp ;
+irw_get_kanjilist(ClientPtr *clientp)
 {
     ClientPtr client = *clientp ;
     Ushort *kouho = (Ushort *)local_buffer ;
@@ -1082,8 +1016,7 @@ ClientPtr *clientp ;
 }
 
 static int
-irw_resize(clientp)
-ClientPtr *clientp ;
+irw_resize(ClientPtr *clientp)
 {
 #define ENLARGE -1
 #define SHORTEN -2
@@ -1123,8 +1056,7 @@ ClientPtr *clientp ;
 }
 
 static int
-irw_store_yomi( clientp )
-ClientPtr *clientp ;
+irw_store_yomi(ClientPtr *clientp)
 {
     wReq11 *req = &Request.type11 ;
     ClientPtr client = *clientp ;
@@ -1161,8 +1093,7 @@ ClientPtr *clientp ;
 }
 
 static int
-irw_query_extension( clientp )
-ClientPtr *clientp ;
+irw_query_extension(ClientPtr *clientp)
 {
     wReq17 *req = &Request.type17 ;
     ClientPtr client = *clientp ;
@@ -1207,9 +1138,7 @@ last:
  */
 
 int
-checkPermissionToRead(client, dirname, dicname)
-ClientPtr client;
-char *dirname, *dicname;
+checkPermissionToRead(ClientPtr client, char *dirname, char *dicname)
 {
   int check = 0, len = (int)0xdeadbeef;
   char *dp;
@@ -1291,9 +1220,7 @@ char *dirname, *dicname;
  */
 
 char *
-insertUserSla(dirname, dirlen)
-char *dirname;
-int dirlen;
+insertUserSla(char *dirname, int dirlen)
 {
   int ncolon = 0;
   char *p, *q, *r, *s, *res;
@@ -1332,8 +1259,7 @@ int dirlen;
 #ifdef EXTENSION
 
 static int
-irw_list_dictionary( clientp )
-ClientPtr *clientp ;
+irw_list_dictionary(ClientPtr *clientp)
 {
     wReq18 *req = &Request.type18 ;
     ClientPtr client = *clientp ;
@@ -1389,8 +1315,7 @@ protoerr:
 }
 
 static int
-irw_create_dictionary( clientp )
-ClientPtr *clientp ;
+irw_create_dictionary(ClientPtr *clientp)
 {
     wReq15 *req = &Request.type15 ;
     ClientPtr client = *clientp ;
@@ -1408,8 +1333,7 @@ ClientPtr *clientp ;
 }
 
 static int
-irw_chmod_dictionary( clientp )
-ClientPtr *clientp;
+irw_chmod_dictionary(ClientPtr *clientp)
 {
   wReq15 *req = &Request.type15;
   ClientPtr client = *clientp;
@@ -1424,8 +1348,7 @@ ClientPtr *clientp;
 }
 
 static int
-irw_remove_dictionary( clientp )
-ClientPtr *clientp ;
+irw_remove_dictionary(ClientPtr *clientp)
 {
     wReq15 *req = &Request.type15 ;
     ClientPtr client = *clientp ;
@@ -1443,8 +1366,7 @@ ClientPtr *clientp ;
 }
 
 static int
-irw_rename_dictionary( clientp )
-ClientPtr *clientp ;
+irw_rename_dictionary(ClientPtr *clientp)
 {
     wReq15 *req = &Request.type15 ;
     ClientPtr client = *clientp ;
@@ -1461,8 +1383,7 @@ ClientPtr *clientp ;
 }
 
 static int
-irw_copy_dictionary( clientp )
-ClientPtr *clientp;
+irw_copy_dictionary(ClientPtr *clientp)
 {
     wReq21 *req = &Request.type21;
     ClientPtr client = *clientp;
@@ -1484,8 +1405,7 @@ ClientPtr *clientp;
 }
 
 static int
-irw_get_word_text_dic( clientp )
-ClientPtr *clientp ;
+irw_get_word_text_dic(ClientPtr *clientp)
 {
     wReq18 *req = &Request.type18 ;
     ClientPtr client = *clientp ;
@@ -1551,8 +1471,7 @@ protoerr:
 }
 
 static int
-irw_server_stat( clientp )
-ClientPtr *clientp ;
+irw_server_stat(ClientPtr *clientp)
 {
     ClientPtr client = *clientp, who, *OutPut;
     int i, j, stat = 0, max_cx, majorv, minorv, curtime, retval, n;
@@ -1595,8 +1514,7 @@ ClientPtr *clientp ;
 }
 
 static int
-irw_host_ctl( clientp )
-ClientPtr *clientp ;
+irw_host_ctl(ClientPtr *clientp)
 {
     ClientPtr client = *clientp ;
     char *hosts, *users, *endhosts;
@@ -1642,8 +1560,7 @@ ClientPtr *clientp ;
 }
 
 static int
-irw_sync(clientp)
-ClientPtr *clientp;
+irw_sync(ClientPtr *clientp)
 {
   wReq15 *req = &Request.type15 ;
   ClientPtr client = *clientp;
@@ -1657,8 +1574,7 @@ ClientPtr *clientp;
 #endif /* EXTENSION */
 
 static int
-irw_get_stat( clientp )
-ClientPtr *clientp ;
+irw_get_stat(ClientPtr *clientp)
 {
     int cxnum = Request.type7.context;
     int bunsetu = Request.type7.number;
@@ -1683,8 +1599,7 @@ ClientPtr *clientp ;
 }
 
 static int
-irw_get_lex( clientp )
-ClientPtr *clientp ;
+irw_get_lex(ClientPtr *clientp)
 {
   ClientPtr client = *clientp;
   RkLex *lex = (RkLex *)local_buffer;
@@ -1709,8 +1624,7 @@ ClientPtr *clientp ;
 
 /* 逐次変換で使用する関数 */
 static int
-irw_autoconv( clientp )
-ClientPtr *clientp ;
+irw_autoconv(ClientPtr *clientp)
 {
     wReq5 *req = &Request.type5 ;
     ClientPtr client = *clientp ;
@@ -1728,8 +1642,7 @@ ClientPtr *clientp ;
 }
 
 static int
-irw_subst_yomi( clientp )
-ClientPtr *clientp ;
+irw_subst_yomi(ClientPtr *clientp)
 {
     wReq4 *req = &Request.type4 ;
     ClientPtr client = *clientp ;
@@ -1758,8 +1671,7 @@ ClientPtr *clientp ;
 }
 
 static int
-irw_flush_yomi( clientp )
-ClientPtr *clientp ;
+irw_flush_yomi(ClientPtr *clientp)
 {
     wReq10 *req = &Request.type10;
     ClientPtr client = *clientp ;
@@ -1811,8 +1723,7 @@ ClientPtr *clientp ;
 }
 
 static int
-irw_get_last_yomi( clientp )
-ClientPtr *clientp ;
+irw_get_last_yomi(ClientPtr *clientp)
 {
     ClientPtr client = *clientp ;
     Ushort *yomi = (Ushort *)local_buffer ;
@@ -1843,8 +1754,7 @@ ClientPtr *clientp ;
 }
 
 static int
-irw_remove_yomi( clientp )
-ClientPtr *clientp ;
+irw_remove_yomi(ClientPtr *clientp)
 {
     wReq10 *req = &Request.type10 ;
     ClientPtr client = *clientp ;
@@ -1876,8 +1786,7 @@ ClientPtr *clientp ;
 }
 
 static int
-irw_get_simple_kanji( clientp )
-ClientPtr *clientp;
+irw_get_simple_kanji(ClientPtr *clientp)
 {
     wReq13 *req = &Request.type13;
     ClientPtr client = *clientp ;
@@ -1912,8 +1821,7 @@ ClientPtr *clientp;
 }
 
 static int
-irw_query_dictionary( clientp )
-ClientPtr *clientp ;
+irw_query_dictionary(ClientPtr *clientp)
 {
   ClientPtr client = *clientp ;
   int cxnum = Request.type15.context, stat = -1;
@@ -1978,8 +1886,7 @@ ClientPtr *clientp ;
 }
 
 static int
-irw_get_hinshi( clientp )
-ClientPtr *clientp ;
+irw_get_hinshi(ClientPtr *clientp)
 {
     wReq8 *req = &Request.type8 ;
     ClientPtr client = *clientp ;
@@ -2008,8 +1915,7 @@ ClientPtr *clientp ;
 }
 
 static int
-irw_store_range( clientp )
-ClientPtr *clientp ;
+irw_store_range(ClientPtr *clientp)
 {
     wReq11 *req = &Request.type11 ;
     ClientPtr client = *clientp ;
@@ -2040,8 +1946,7 @@ ClientPtr *clientp ;
 }
 
 static int
-irw_set_locale( clientp )
-ClientPtr *clientp ;
+irw_set_locale(ClientPtr *clientp)
 {
     wReq15 *req = &Request.type15 ;
     ClientPtr client = *clientp ;
@@ -2058,8 +1963,7 @@ ClientPtr *clientp ;
 }
 
 static int
-irw_set_app_name( clientp )
-ClientPtr *clientp;
+irw_set_app_name(ClientPtr *clientp)
 {
     wReq15 *req = &Request.type15;
     ClientPtr client = *clientp;
@@ -2081,8 +1985,7 @@ ClientPtr *clientp;
 }
 							/* S000:begin */
 static int
-irw_notice_group_name(clientp)
-ClientPtr *clientp;
+irw_notice_group_name(ClientPtr *clientp)
 {
   wReq15 *req = &Request.type15;
   ClientPtr client = *clientp;
@@ -2110,8 +2013,7 @@ ClientPtr *clientp;
 }
 							/* S000:begin */
 static int
-irw_through( clientp )
-ClientPtr *clientp;
+irw_through(ClientPtr *clientp)
 {
   ClientPtr client = *clientp;
   int cxnum = Request.type20.context, content_size, size = 0, stat = -1;
@@ -2143,12 +2045,7 @@ ClientPtr *clientp;
 #define DATALEN_TOP (sizeof( char ) * 2)
 
 int
-parse_wide_request(request, data, len, username, hostname)
-int *request;
-BYTE *data;
-size_t len;
-const char *username;
-const char *hostname;
+parse_wide_request(int *request, BYTE *data, size_t len, const char *username, const char *hostname)
 {
     int (* ReqCallFunc)() ;
     BYTE *p = data;
@@ -2221,8 +2118,7 @@ const char *hostname;
 }
 
 static int
-ProcWideReq0(buf)
-BYTE *buf ;
+ProcWideReq0(BYTE *buf)
 /* ARGSUSED */
 {
     ir_debug( Dmsg(10, "ProcWideReq0(error case) start!!\n") );
@@ -2230,8 +2126,7 @@ BYTE *buf ;
 }
 
 static int
-ProcWideReq1(buf)
-BYTE *buf ;
+ProcWideReq1(BYTE *buf)
 /* ARGSUSED */
 {
     ir_debug( Dmsg(10, "ProcWideReq1 start!!\n") );
@@ -2243,8 +2138,7 @@ BYTE *buf ;
 }
 
 static int
-ProcWideReq2(buf)
-BYTE *buf ;
+ProcWideReq2(BYTE *buf)
 {
     ir_debug( Dmsg(10, "ProcWideReq2 start!!\n") );
 
@@ -2257,8 +2151,7 @@ BYTE *buf ;
 }
 
 static int
-ProcWideReq3(buf)
-BYTE *buf ;
+ProcWideReq3(BYTE *buf)
 {
     ir_debug( Dmsg(10, "ProcWideReq3 start!!\n") );
 
@@ -2273,8 +2166,7 @@ BYTE *buf ;
 }
 
 static int
-ProcWideReq4(buf)
-BYTE *buf ;
+ProcWideReq4(BYTE *buf)
 {
     register Ushort *data;
     int i, len ;
@@ -2307,8 +2199,7 @@ BYTE *buf ;
 }
 
 static int
-ProcWideReq5(buf)
-BYTE *buf ;
+ProcWideReq5(BYTE *buf)
 {
     ir_debug( Dmsg(10, "ProcWideReq5 start!!\n") );
 
@@ -2325,8 +2216,7 @@ BYTE *buf ;
 }
 							/* S000:begin */
 static int
-ProcWideReq6(buf)
-BYTE *buf ;
+ProcWideReq6(BYTE *buf)
 {
     ir_debug( Dmsg(10, "ProcWideReq6 start!!\n") );
 
@@ -2343,8 +2233,7 @@ BYTE *buf ;
 }
 
 static int
-ProcWideReq7(buf)
-BYTE *buf ;
+ProcWideReq7(BYTE *buf)
 {
     ir_debug( Dmsg(10, "ProcWideReq7 start!!\n") );
 
@@ -2361,8 +2250,7 @@ BYTE *buf ;
 }
 
 static int
-ProcWideReq8(buf)
-BYTE *buf ;
+ProcWideReq8(BYTE *buf)
 {
     ir_debug( Dmsg(10, "ProcWideReq8 start!!\n") );
 
@@ -2381,8 +2269,7 @@ BYTE *buf ;
 }
 
 static int
-ProcWideReq9(buf)
-BYTE *buf ;
+ProcWideReq9(BYTE *buf)
 {
     ir_debug( Dmsg(10, "ProcWideReq9 start!!\n") );
 
@@ -2401,8 +2288,7 @@ BYTE *buf ;
 }
 
 static int
-ProcWideReq10(buf)
-BYTE *buf ;
+ProcWideReq10(BYTE *buf)
 {
     register int i ;
     int rest;
@@ -2431,8 +2317,7 @@ BYTE *buf ;
 }
 
 static int
-ProcWideReq11(buf)
-BYTE *buf ;
+ProcWideReq11(BYTE *buf)
 {
     register Ushort *data;
     int i, len ;
@@ -2469,8 +2354,7 @@ BYTE *buf ;
 }
 
 static int
-ProcWideReq12(buf)
-BYTE *buf ;
+ProcWideReq12(BYTE *buf)
 {
     register Ushort *data;
     int i, len, rest;
@@ -2506,8 +2390,7 @@ BYTE *buf ;
 }
 
 static int
-ProcWideReq13(buf)
-BYTE *buf ;
+ProcWideReq13(BYTE *buf)
 {
     register Ushort *data;
     int i ,len, rest;
@@ -2554,8 +2437,7 @@ BYTE *buf ;
 }
 
 static int
-ProcWideReq14(buf)
-BYTE *buf ;
+ProcWideReq14(BYTE *buf)
 {
     register Ushort *data;
     int i, len ;
@@ -2585,8 +2467,7 @@ BYTE *buf ;
 }
 
 static int
-ProcWideReq15(buf)
-BYTE *buf ;
+ProcWideReq15(BYTE *buf)
 {
     int rest;
     ir_debug( Dmsg(10, "ProcWideReq15 start!!\n") );
@@ -2608,8 +2489,7 @@ BYTE *buf ;
 }
 
 static int
-ProcWideReq17(buf)
-BYTE *buf ;
+ProcWideReq17(BYTE *buf)
 {
     char *p;
     size_t len;
@@ -2640,8 +2520,7 @@ BYTE *buf ;
 
 #ifdef EXTENSION
 static int
-ProcWideReq18(buf)
-BYTE *buf ;
+ProcWideReq18(BYTE *buf)
 {
     ir_debug( Dmsg(10, "ProcWideReq18 start!!\n") );
 
@@ -2661,8 +2540,7 @@ BYTE *buf ;
 #endif /* EXTENSION */
 
 static int
-ProcWideReq19(buf)
-BYTE *buf ;
+ProcWideReq19(BYTE *buf)
 {
     int rest;
     ir_debug( Dmsg(10, "ProcWideReq19 start!!\n") );
@@ -2684,8 +2562,7 @@ BYTE *buf ;
 }							/* S000:end */
 /* Copy Dic のため */
 static int
-ProcWideReq20(buf)
-BYTE *buf ;
+ProcWideReq20(BYTE *buf)
 {
     BYTE *bufend;
     ir_debug( Dmsg(10, "ProcWideReq20 start!!\n") );
@@ -2722,38 +2599,35 @@ BYTE *buf ;
 
 #ifdef WIDE_PROTO
 
-RkwSubstYomi( cxnum, ys, ye, yomi, nyomi )
-int cxnum, ys, ye, nyomi;
-Ushort *yomi;
+int
+RkwSubstYomi(int cxnum, int ys, int ye, Ushort *yomi, int nyomi)
 {
     RkwEndBun( cxnum, 0 );
     return( RkwBgnBun( cxnum, yomi, nyomi, 0) );
 }
 
-RkwFlushYomi( cxnum )
-int cxnum;
+int
+RkwFlushYomi(int cxnum)
 {
     RkwEndBun( cxnum, 0 );
     return( RkwBgnBun( cxnum, "フラッシュ読み", 14, 0) );
 }
 
-RkwGetLastYomi( cxnum, yomi, maxyomi )
-int cxnum, maxyomi;
-Ushort *yomi ;
+int
+RkwGetLastYomi(int cxnum, Ushort *yomi, int maxyomi)
 {
     return( euc2ushort("未決文節", 8, yomi, maxyomi) );
 }
 
-RkwRemoveBun( cxnum, mode )
-int cxnum, mode;
+int
+RkwRemoveBun(int cxnum, int mode)
 {
     return( 0 );
 }
 
 #if 0
-RkwSetLocale( cxnum, locale )
-int cxnum;
-char *locale;
+int
+RkwSetLocale(int cxnum, char *locale)
 {
     return( 0 );
 }
@@ -2763,10 +2637,7 @@ static unsigned char kouho[] = "テスト候補";
 static unsigned char hinshi[] = "#T35 テスト品詞";
 
 int
-RkwGetSimpleKanji( cxnum, dicname, yomi, maxyomi, kanjis, maxkanjis, hinshis, maxhinshis )
-int cxnum, maxyomi, maxkanjis, maxhinshis;
-char *dicname;
-Ushort *yomi, *kanjis, *hinshis;
+RkwGetSimpleKanji(int cxnum, char *dicname, Ushort *yomi, int maxyomi, Ushort *kanjis, int maxkanjis, Ushort *hinshis, int maxhinshis)
 {
    Dmsg( 5,"RkwGetSimpleKanji( %d, %s, %s, %d, kanjis, %d, hinshis, %d )\n",
 	cxnum, dicname, conveuc(yomi), maxyomi, maxkanjis, maxhinshis );
@@ -2781,13 +2652,8 @@ Ushort *yomi, *kanjis, *hinshis;
  *   2003.09.21 aida_s
  */
 #if 0
-#ifdef pcux_r32
 struct DicInfo *
-#endif /* pcux_r32 */
-RkwQueryDic( cxnum, dicname, status )
-int cxnum;
-char *dicname;
-struct DicInfo *status;
+RkwQueryDic(int cxnum, char *dicname, struct DicInfo *status)
 {
     ir_debug( Dmsg(5, "RkwQueryDic( %d, %s, status )\n", cxnum, dicname) );
 
@@ -2796,9 +2662,7 @@ struct DicInfo *status;
 #endif
 
 int
-RkwGetHinshi( cxnum, dst, maxdst )
-int cxnum, maxdst;
-Ushort *dst;
+RkwGetHinshi(int cxnum, Ushort *dst, int maxdst)
 {
     ir_debug( Dmsg(5, "RkwGetHinshi( %d, dst, %d )\n", cxnum, maxdst) );
     euc2ushort( "#T35 テスト", strlen("#T35 テスト"), dst, maxdst ) ;
@@ -2807,9 +2671,7 @@ Ushort *dst;
 }
 
 int
-RkwStoreRange( cxnum, yomi, maxyomi )
-int cxnum, maxyomi;
-Ushort *yomi;
+RkwStoreRange(int cxnum, Ushort *yomi, int maxyomi)
 {
     ir_debug( Dmsg(5, "RkwStoreRange( %d, yomi, %d )\n", cxnum, maxyomi) );
 
@@ -2820,8 +2682,7 @@ Ushort *yomi;
 
 #ifdef DEBUG
 static char *
-conveuc(src)
-Ushort *src;
+conveuc(Ushort *src)
 {
     static char dest[CBUFSIZE];
     ushort2euc(src, ushortstrlen(src), dest, CBUFSIZE);
@@ -2831,9 +2692,7 @@ Ushort *src;
 							/* S000:begin */
 /* #ifdef DEBUG_TOOL */
 static int
-RkThrough( cx, command, buf, content_size, buffer_size )
-int cx, command, content_size, buffer_size;
-char *buf;
+RkThrough(int cx, int command, char *buf, int content_size, int buffer_size)
 /* ARGSUSED */
 {
     int i;

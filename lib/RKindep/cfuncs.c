@@ -30,16 +30,13 @@
 
 #if !HAVE_MALLOC
 void *
-RkiMalloc(size)
-size_t size;
+RkiMalloc(size_t size)
 {
   return malloc(size ? size : 1);
 }
 
 void *
-RkiCalloc(num, size)
-size_t num;
-size_t size;
+RkiCalloc(size_t num, size_t size)
 {
   return calloc(num ? num : 1, size ? size : 1);
 }
@@ -47,10 +44,7 @@ size_t size;
 
 #ifndef HAVE_MEMSET
 void *
-RkiMemset(buf, ch, size)
-void *buf;
-int ch;
-size_t size;
+RkiMemset(void *buf, int ch, size_t size)
 {
   char *p = (char *)buf;
   char *endp = p + size;
@@ -62,8 +56,7 @@ size_t size;
 
 #ifndef HAVE_STRDUP
 char *
-RkiStrdup(str)
-const char *str;
+RkiStrdup(const char *str)
 {
   size_t len = strlen(str) + 1;
   char *p;
@@ -77,10 +70,7 @@ const char *str;
 
 #ifndef HAVE_STRLCPY
 size_t
-RkiAltStrlcpy(dst, src, size)
-char *dst;
-const char *src;
-size_t size;
+RkiAltStrlcpy(char *dst, const char *src, size_t size)
 {
   const char *sp = src;
   char *dp = dst;
@@ -98,10 +88,7 @@ last:
 }
 
 size_t
-RkiAltStrlcat(dst, src, size)
-char *dst;
-const char *src;
-size_t size;
+RkiAltStrlcat(char *dst, const char *src, size_t size)
 {
   const char *sp = src;
   char *dp = dst;

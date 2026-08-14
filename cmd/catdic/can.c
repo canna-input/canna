@@ -79,31 +79,31 @@ extern  void Message();
 
 
 /* lib/RKC/rkc.c */
-extern	int RkwGetProtocolVersion pro((int*, int*));
-extern	int RkKillServer pro((void));
-extern	int RkListDic pro((int, unsigned char*, unsigned char*, int));
-extern	int RkCreateDic pro((int, unsigned char*, int));
-extern	int RkRemoveDic pro((int, unsigned char*, int));
-extern	int RkRenameDic pro((int, unsigned char*, unsigned char*, int));
-extern	int RkCopyDic pro((int, unsigned char*, unsigned char*, unsigned char*, int));
-extern	int RkGetWordTextDic pro((int, unsigned char*, unsigned char*, unsigned char*, int));
-extern	int RkChmodDic pro((int, unsigned char*, int));
+extern	int RkwGetProtocolVersion(int*, int*);
+extern	int RkKillServer(void);
+extern	int RkListDic(int, unsigned char*, unsigned char*, int);
+extern	int RkCreateDic(int, unsigned char*, int);
+extern	int RkRemoveDic(int, unsigned char*, int);
+extern	int RkRenameDic(int, unsigned char*, unsigned char*, int);
+extern	int RkCopyDic(int, unsigned char*, unsigned char*, unsigned char*, int);
+extern	int RkGetWordTextDic(int, unsigned char*, unsigned char*, unsigned char*, int);
+extern	int RkChmodDic(int, unsigned char*, int);
 
 /* Rkdelline.c */
-extern	int RkDeleteLine pro((int, char*, char*));
+extern	int RkDeleteLine(int, char*, char*);
 
 /* rutil.c */
-extern	int RkDefineLine pro((int, unsigned char*, char*));
-extern	int CopyDic pro((int, unsigned char*, unsigned char*, unsigned char*, int));
-extern	int PrintMessage pro((int, unsigned char*));
-extern	int makeDictionary pro((int, unsigned char*, int));
-extern	int rmDictionary pro((int, unsigned char*, int));
+extern	int RkDefineLine(int, unsigned char*, char*);
+extern	int CopyDic(int, unsigned char*, unsigned char*, unsigned char*, int);
+extern	int PrintMessage(int, unsigned char*);
+extern	int makeDictionary(int, unsigned char*, int);
+extern	int rmDictionary(int, unsigned char*, int);
 
 /* can.c */
-int DownLoadDic pro((FILE*, unsigned char*));
-int renameDictionary pro((int, char*, char*, int));
-int scan_opt pro((int, char**, int*));
-void shrink_opt pro((int, char*[], int));
+int DownLoadDic(FILE*, unsigned char*);
+int renameDictionary(int, char*, char*, int);
+int scan_opt(int, char**, int*);
+void shrink_opt(int, char*[], int);
 
 char            init[RECSZ], *Progname;
 unsigned char	*r_dic;
@@ -156,7 +156,7 @@ static int      cmd_code ;
 /**************************************************************/
 
 void
-usage()
+usage(void)
 {
 
     switch ( cmd_code ) {
@@ -289,8 +289,7 @@ usage()
 }
 
 static SIGVAL
-StopAll(sig)
-int sig;
+StopAll(int sig)
 /* ARGSUSED */
 {
 #ifdef DEBUG
@@ -309,8 +308,7 @@ int sig;
 }
 
 static SIGVAL
-RefreshAll(sig)
-int sig;
+RefreshAll(int sig)
 /* ARGSUSED */
 {
 #ifdef DEBUG
@@ -352,7 +350,7 @@ int sig;
 
 
 int
-rk_init()
+rk_init(void)
 {
     if ((cx_num = RkInitialize(init)) < 0 ) {
 	if (init[0] != '/') {
@@ -369,7 +367,7 @@ rk_init()
 }
 
 int 
-nwcheck()
+nwcheck(void)
 {
     int   bak ; 
     RkwGetProtocolVersion(&majv, &minv);
@@ -404,8 +402,7 @@ nwcheck()
 }
 
 static int
-ParseFile(fp)
-  FILE	*fp;
+ParseFile(FILE *fp)
 {
     char line[BUFLEN], *whinp ; 
     int ret = -1 ; 
@@ -469,8 +466,7 @@ ParseFile(fp)
 }
 
 void 
-dicname_chk(dic)
-char  *dic ; 
+dicname_chk(char *dic)
 {
     if ((unsigned char *)index(dic, '-' )) {
 	Message(gettxt("cannacmd:64",
@@ -486,7 +482,7 @@ char  *dic ;
 
 /*  グループ名 検索   */
 char *
-searchgroup()
+searchgroup(void)
 {
     char *groupname = NULL ;
     
@@ -509,7 +505,7 @@ searchgroup()
  * ユーザ名検索 帰り値=名前へのポインタ
  */
 static char *
-searchuname()
+searchuname(void)
 {
     char *username = NULL, *getenv(), *getlogin() ;
     
@@ -533,7 +529,7 @@ searchuname()
 
 /* addwords delwords で辞書に write権があるかをチェックする */
 static void
-write_chk()
+write_chk(void)
 {
     int mode ,ret;
     mode = 0 ;
@@ -582,9 +578,7 @@ write_chk()
 
 /* mkdic mvdic  でオーバライトする時 write権があるかをチェックする */
 int
-ovwrite_chk(dicname,mode)
-char *dicname;
-int mode;
+ovwrite_chk(char *dicname, int mode)
 {
     int ret;
     ret = RkChmodDic(cx_num, (unsigned char *)dicname, mode) ;
@@ -626,8 +620,7 @@ int mode;
 /**************************************************************/
 
 static int
-Addwords(fp)
-  FILE	*fp;
+Addwords(FILE *fp)
 {
     int  ret ; 
     if (RkMountDic(cx_num, (char *)r_dic, 0) < 0 ) {
@@ -641,9 +634,7 @@ Addwords(fp)
 }
 
 void
-add_main (argc,argv)
-int   argc  ;
-char  **argv;
+add_main(int argc, char **argv)
 {
     FILE	*fp;
     char	*l_file = NULL;
@@ -695,9 +686,7 @@ char  **argv;
 /**************************************************************/
 
 void
-cat_main(argc,argv)
-int   argc  ;
-char  **argv;
+cat_main(int argc, char **argv)
 {
     FILE *fopen(), *fp = stdout;
     unsigned char dirname[RECSZ*2];  /* ユーザ名または"iroha"またはNULL*/
@@ -815,9 +804,7 @@ char  **argv;
 }
 
 int
-DownLoadDic(fp, dirname)
-FILE          *fp;
-unsigned char *dirname;
+DownLoadDic(FILE *fp, unsigned char *dirname)
 {
     int           ret , hlen , hflg , blen ; 
     unsigned char buf[BUFLEN] ; 
@@ -867,9 +854,7 @@ unsigned char *dirname;
 /**************************************************************/
 
 void
-cp_main(argc,argv)
-int   argc  ;
-char  **argv;
+cp_main(int argc, char **argv)
 {
   unsigned char dirname[RECSZ*2];      /* ユーザ名または"iroha"またはNULL*/
   int  dirname_offset = 0 , mode_cp  , ret ; 
@@ -1029,9 +1014,7 @@ char  **argv;
 /**************************************************************/
 
 void
-del_main (argc,argv)
-int   argc  ;
-char  **argv;
+del_main(int argc, char **argv)
 {
     FILE	*fp;
     char	*l_file = NULL;
@@ -1084,9 +1067,7 @@ char  **argv;
 
 /* 辞書リストを作成します。 */
 void
-ls_main(argc,argv)
-int   argc  ;
-char  **argv;
+ls_main(int argc, char **argv)
 {
     unsigned char *p;
     int i, arg, j;
@@ -1281,9 +1262,7 @@ char  **argv;
 /**************************************************************/
 
 static int
-Upload(fp, flag)
-  FILE	*fp;
-  int   flag;
+Upload(FILE *fp, int flag)
 {
     int ret=0 ; 
     (void) signal(SIGINT,  StopAll);
@@ -1302,9 +1281,7 @@ Upload(fp, flag)
 }
 
 void
-mk_main (argc,argv)
-int   argc  ;
-char  **argv;
+mk_main(int argc, char **argv)
 {
     FILE	*fp;
     char	*l_file = NULL;
@@ -1396,9 +1373,7 @@ char  **argv;
 /**************************************************************/
 
 void
-mv_main(argc,argv)
-int   argc  ;
-char  **argv;
+mv_main(int argc, char **argv)
 {
   int  ret ,mode;
   char *dicname1;
@@ -1451,11 +1426,7 @@ char  **argv;
 }
 
 int
-renameDictionary(cn, dicname1, dicname2, force)
-int cn;
-char *dicname1;
-char *dicname2;
-int force;
+renameDictionary(int cn, char *dicname1, char *dicname2, int force)
 {
   char ans[20];
   int ret = 0;
@@ -1541,9 +1512,7 @@ int force;
 /**************************************************************/
 
 void
-rm_main(argc,argv)
-int   argc  ;
-char  **argv;
+rm_main(int argc, char **argv)
 {
   int  i, j , ret , undel ;
   int isflag = 0;
@@ -1602,9 +1571,7 @@ char  **argv;
 /************************************************************************/
 
 void
-ch_main(argc,argv)
-int   argc  ;
-char  **argv;
+ch_main(int argc, char **argv)
 {
     int  ret ,mode ; 
     scan_opt(argc,argv,&argc);
@@ -1657,9 +1624,7 @@ char  **argv;
 /************************************************************************/
 
 void
-sy_main(argc,argv)
-int   argc  ;
-char  **argv;
+sy_main(int argc, char **argv)
 {
     int  ret ,mode ; 
     scan_opt(argc,argv,&argc);
@@ -1695,9 +1660,7 @@ char  **argv;
 /************************************************************************/
 
 void
-kill_main(argc,argv)
-int   argc  ;
-char  **argv;
+kill_main(int argc, char **argv)
 {
 
     int  ret ; 
@@ -1770,7 +1733,7 @@ char  **argv;
 }
 
 void
-can_ver()
+can_ver(void)
 {
     rk_init();
     nwcheck();
@@ -1787,7 +1750,7 @@ can_ver()
 /************************************************************************/
 static struct  command {
 	char *name ;
-	void  (*func) pro((int, char **));
+	void  (*func)(int, char **);
 	int  cmd_code ;
 }	commands[] = {
 	{"addwords",add_main,1},
@@ -1812,9 +1775,7 @@ static struct  command {
 #define  NCOMMANDS    (sizeof(commands) / sizeof(struct command))
 
 int
-main(argc,argv)
-int argc ;
-char **argv ; 
+main(int argc, char **argv)
 {
     int     i ; 
     char *p ;
@@ -1850,9 +1811,7 @@ char **argv ;
 /*  オプションのチェック 
     辞書名以外のオプションはチェック後 argv から取り除く   */
 int
-scan_opt(argc,argv,argcp)
-int  argc ,*argcp; 
-char **argv ; 
+scan_opt(int argc, char **argv, int *argcp)
 { 
 /* この関数でチェックするもの 
        オプションの重複指定がないか
@@ -2054,9 +2013,7 @@ char    **p ;
 
 /*  argv のオプションを n 個分前に詰める */
 void
-shrink_opt(argc,argv,n)
-int  argc, n ; 
-char  *argv[] ;
+shrink_opt(int argc, char *argv[], int n)
 {
     int  i ; 
     for ( i = n ; i < argc ; i++ ) {

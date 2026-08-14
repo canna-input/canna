@@ -21,9 +21,9 @@
  */
 
 
-extern int ConvertAsBushu pro((uiContext));
-extern int DoFuncSequence pro((uiContext)), UseOtherKeymap pro((uiContext));
-extern int YomiBubunKakutei pro((uiContext));
+extern int ConvertAsBushu(uiContext);
+extern int DoFuncSequence(uiContext), UseOtherKeymap(uiContext);
+extern int YomiBubunKakutei(uiContext);
 
 static struct funccfunc yomi_funcs[] = {
   {CANNA_FN_FunctionalInsert	,YomiInsert		},

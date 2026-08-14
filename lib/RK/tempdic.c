@@ -44,8 +44,7 @@
 #define	dm_td	dm_extdata.ptr
 
 static void
-freeTD(td)
-     struct TD	*td;
+freeTD(struct TD *td)
 {
   int	i;
   for (i = 0; i < (int)td->td_n; i++) {
@@ -65,7 +64,7 @@ freeTD(td)
 
 /* newTD: allocates a fresh node */
 static TD *
-newTD()
+newTD(void)
 {
   struct TD	*td;
 
@@ -85,10 +84,7 @@ newTD()
  * INSERT
  */
 static TN *
-extendTD(tdic, key, tw)
-     struct TD		*tdic;
-     Wchar		key;
-     struct TW		*tw;
+extendTD(struct TD *tdic, int key, struct TW *tw)
 {
   int		i, j;
   struct TN	*tp;
@@ -122,9 +118,7 @@ extendTD(tdic, key, tw)
 }
 
 static int
-yomi_equal(x, y, n)
-     Wrec *x, *y;
-     int n;
+yomi_equal(Wrec *x, Wrec *y, int n)
 {
   int l;
 
@@ -144,11 +138,8 @@ yomi_equal(x, y, n)
   return(0);
 }
 
-static
-Wchar
-nthKey(w, n)
-     Wrec	*w;
-     int	n;
+static Wchar
+nthKey(Wrec *w, int n)
 {
   if (n < (int)((*w >> 1) & 0x3f)) {
     if (*w & 0x80)
@@ -171,12 +162,7 @@ nthKey(w, n)
  */
 
 static TN *
-defineTD(dm, tab, n, newTW, nlen)
-     struct DM	*dm;
-     struct TD	*tab;
-     int	n;
-     struct TW	*newTW;
-     int	nlen;
+defineTD(struct DM *dm, struct TD *tab, int n, struct TW *newTW, int nlen)
 {
   int		i;
   Wchar		key;
@@ -226,11 +212,7 @@ defineTD(dm, tab, n, newTW, nlen)
 }
 
 static int
-enterTD(dm, td, gram, word)
-     struct DM		*dm;
-     struct TD		*td;
-     struct RkKxGram	*gram;
-     Wchar		*word;
+enterTD(struct DM *dm, struct TD *td, struct RkKxGram *gram, Wchar *word)
 {
   struct TW	tw;
   int ret = -1;
@@ -271,9 +253,7 @@ enterTD(dm, td, gram, word)
  * DELETE
  */
 static void
-shrinkTD(td, key)
-     struct TD *td;
-     Wchar key;
+shrinkTD(struct TD *td, int key)
 {
   int		i;
   struct TN	*tn = td->td_node;
@@ -297,11 +277,7 @@ shrinkTD(td, key)
  *    newW  定義するワードレコード
  */
 static int
-deleteTD(dm, tab, n, newW)
-     struct DM	*dm;
-     struct TD	**tab;
-     int	n;
-     Wrec	*newW;
+deleteTD(struct DM *dm, struct TD **tab, int n, Wrec *newW)
 {
   struct TD	*td = *tab;
   int		i;
@@ -361,11 +337,7 @@ deleteTD(dm, tab, n, newW)
  */
 /*ARGSUSED*/
 int
-_Rktopen(dm, file, mode, gram)
-     struct DM	*dm;
-     char	*file;
-     int	mode;
-     struct RkKxGram	*gram;
+_Rktopen(struct DM *dm, char *file, int mode, struct RkKxGram *gram)
 {
   struct DF	*df = dm->dm_file;
   struct DD	*dd = df->df_direct;
@@ -446,7 +418,7 @@ _Rktopen(dm, file, mode, gram)
 /*
  * CLOSE
  */
-static int writeTD pro((struct TD *, struct RkKxGram *, int));
+static int writeTD(struct TD *, struct RkKxGram *, int);
 
 static int
 writeTD(td, gram, fdes)

@@ -44,8 +44,7 @@ RkcErrorBuf rkc_errors;
 RkcConfMgr rkc_config;
 
 static char *
-config_path(name)
-const char *name;
+config_path(const char *name)
 {
   const char *home;
   RkiStrbuf buf;
@@ -71,10 +70,7 @@ nomem:
 }
 
 static char *
-read_pipe_with_errors(cmd, errors, size)
-const char *cmd;
-RkcErrorBuf *errors;
-size_t *size;
+read_pipe_with_errors(const char *cmd, RkcErrorBuf *errors, size_t *size)
 {
   int pipefds[4];
   pid_t pid;
@@ -222,7 +218,7 @@ fail:
 }
 
 void
-rkc_configure()
+rkc_configure(void)
 {
   const char *preproc;
   char *path = NULL, *cmd = NULL;
@@ -281,22 +277,20 @@ last:
 }
 
 void
-rkc_config_fin()
+rkc_config_fin(void)
 {
   RkcConfMgr_destroy(&rkc_config);
   RkcErrorBuf_destroy(&rkc_errors);
 }
 
 static void
-RkcErrorBuf_init(cx)
-RkcErrorBuf *cx;
+RkcErrorBuf_init(RkcErrorBuf *cx)
 {
   bzero(cx, sizeof(RkcErrorBuf));
 }
 
 static void
-RkcErrorBuf_destroy(cx)
-RkcErrorBuf *cx;
+RkcErrorBuf_destroy(RkcErrorBuf *cx)
 {
   if (cx->buf) {
     char **p = cx->buf, **endp = p + cx->curr;
@@ -307,9 +301,7 @@ RkcErrorBuf *cx;
 }
 
 static void
-RkcErrorBuf_add(cx, msg)
-RkcErrorBuf *cx;
-const char *msg;
+RkcErrorBuf_add(RkcErrorBuf *cx, const char *msg)
 {
   char *newmsg;
   if (cx->nomem)
@@ -338,8 +330,7 @@ fail:
 }
 
 const char *const *
-RkcErrorBuf_get(cx)
-RkcErrorBuf *cx;
+RkcErrorBuf_get(RkcErrorBuf *cx)
 {
   static const char *const altres1[] = { NULL };
   static const char *const altres2[] = { NOMEM_MSG, NULL };
@@ -359,11 +350,7 @@ RkcErrorBuf *cx;
 }
 
 static int
-Token_assignstr(tp, str, len, type)
-TokenRec *tp;
-const char *str;
-size_t len;
-int type;
+Token_assignstr(TokenRec *tp, const char *str, size_t len, int type)
 {
   size_t *hdrp = malloc(sizeof(size_t) + len + 1);
   char *bodyp;
@@ -382,10 +369,7 @@ int type;
 }
 
 static Lexer *
-Lexer_new(srcdata, srcsize, errorbuf)
-const char *srcdata;
-size_t srcsize;
-RkcErrorBuf *errorbuf;
+Lexer_new(const char *srcdata, size_t srcsize, RkcErrorBuf *errorbuf)
 {
   Lexer *cx;
   const char *p;
@@ -414,8 +398,7 @@ fail:
 }
 
 static void
-Lexer_delete(cx)
-Lexer *cx;
+Lexer_delete(Lexer *cx)
 {
   if (!cx)
     return;
@@ -423,10 +406,7 @@ Lexer *cx;
 }
 
 static int
-match_operator1(resp, postfix_op, ch)
-TokenRec *resp;
-int postfix_op;
-int ch;
+match_operator1(TokenRec *resp, int postfix_op, int ch)
 {
   static const struct {
     int op_char;
@@ -464,11 +444,7 @@ int ch;
 }
 
 static int
-match_operator2(resp, postfix_op, ch1, ch2)
-TokenRec *resp;
-int postfix_op;
-int ch1;
-int ch2;
+match_operator2(TokenRec *resp, int postfix_op, int ch1, int ch2)
 {
   static const struct {
     char op_expr[2];
@@ -494,10 +470,7 @@ int ch2;
 }
 
 static int
-Lexer_next(cx, resp, postfix_op)
-Lexer *cx;
-TokenRec *resp;
-int postfix_op;
+Lexer_next(Lexer *cx, TokenRec *resp, int postfix_op)
 {
   int ch = 0; /* stop gcc's warning */
 
@@ -701,9 +674,7 @@ tokinval:
 }
 
 static void
-Lexer_error(cx, msg)
-const Lexer *cx;
-const char *msg;
+Lexer_error(const Lexer *cx, const char *msg)
 {
   char *newmsg;
   unsigned int lineno;
@@ -731,8 +702,7 @@ static const char *op_dump[OP_DUMMY] = {
 #endif
 #ifdef CONF_LEXER_DEBUG
 static void
-Token_dump(tp)
-const TokenRec *tp;
+Token_dump(const TokenRec *tp)
 {
   switch (tp->type) {
     case TOK_INVAL:
@@ -767,10 +737,7 @@ const TokenRec *tp;
 #endif /* CONF_LEXER_DEBUG */
 
 static Parser *
-Parser_new(confmgr, lexer, errorbuf)
-RkcConfMgr *confmgr;
-Lexer *lexer;
-RkcErrorBuf *errorbuf;
+Parser_new(RkcConfMgr *confmgr, Lexer *lexer, RkcErrorBuf *errorbuf)
 {
   Parser *cx;
   cx = malloc(sizeof(Parser));
@@ -787,8 +754,7 @@ RkcErrorBuf *errorbuf;
 }
 
 static void
-Parser_delete(cx)
-Parser *cx;
+Parser_delete(Parser *cx)
 {
   if (!cx)
     return;
@@ -797,8 +763,7 @@ Parser *cx;
 }
 
 static void
-Parser_run(cx)
-Parser *cx;
+Parser_run(Parser *cx)
 {
   if (Parser_next(cx))
     goto fail;
@@ -811,8 +776,7 @@ fail:
 }
 
 static int
-Parser_next(cx)
-Parser *cx;
+Parser_next(Parser *cx)
 {
   int r = Lexer_next(cx->lexer, &cx->currtok, 0);
 #ifdef CONF_LEXER_DEBUG
@@ -822,8 +786,7 @@ Parser *cx;
 }
 
 static int
-Parser_next_postfixop(cx)
-Parser *cx;
+Parser_next_postfixop(Parser *cx)
 {
   int r;
   r = Lexer_next(cx->lexer, &cx->currtok, 1);
@@ -834,19 +797,14 @@ Parser *cx;
 }
 
 static void
-Parser_error(cx, msg)
-Parser *cx;
-const char *msg;
+Parser_error(Parser *cx, const char *msg)
 {
   if (!cx->discard)
     Lexer_error(cx->lexer, msg);
 }
 
 static int
-Parser_stmt(cx, stmttab, nstmt)
-Parser *cx;
-const StmtRec *stmttab;
-size_t nstmt;
+Parser_stmt(Parser *cx, const StmtRec *stmttab, size_t nstmt)
 {
   size_t i;
   
@@ -968,16 +926,13 @@ static const OperatorRec operators[] = {
 };
 
 static void
-Parser_eval_error(cx)
-Parser *cx;
+Parser_eval_error(Parser *cx)
 {
   Parser_error(cx, "Syntax error in an expression");
 }
 
 static int
-Parser_eval(cx, lprio)
-Parser *cx;
-int lprio;
+Parser_eval(Parser *cx, int lprio)
 {
   int r;
   unsigned int val1;
@@ -1116,8 +1071,7 @@ checkpostfixop:
 }
 
 static char *
-Parser_getstr(cx)
-Parser *cx;
+Parser_getstr(Parser *cx)
 {
   RkiStrbuf sb;
 
@@ -1170,8 +1124,7 @@ static const StmtRec top_statements[] = {
 };
 
 static int
-syn_top(cx)
-Parser *cx;
+syn_top(Parser *cx)
 {
   while (cx->currtok.type != TOK_EOF) {
     if (cx->currtok.type == TOK_SEMICOLON) {
@@ -1190,8 +1143,7 @@ static const StmtRec host_statements[] = {
 };
 
 static int
-syn_host(cx)
-Parser *cx;
+syn_host(Parser *cx)
 {
   int res;
   int old_discard = cx->discard;
@@ -1264,17 +1216,14 @@ allend:
 }
 
 static void
-RkcConfMgr_init(cx, errors)
-RkcConfMgr *cx;
-RkcErrorBuf *errors;
+RkcConfMgr_init(RkcConfMgr *cx, RkcErrorBuf *errors)
 {
   bzero(cx, sizeof(RkcConfMgr));
   cx->errors = errors;
 }
 
 static void
-RkcConfMgr_destroy(cx)
-RkcConfMgr *cx;
+RkcConfMgr_destroy(RkcConfMgr *cx)
 {
   size_t pos;
   HostRec *currhost = cx->hosts, *nexthost;
@@ -1296,9 +1245,7 @@ RkcConfMgr *cx;
 }
 
 static int
-RkcConfMgr_openhost(cx, hostname)
-RkcConfMgr *cx;
-const char *hostname;
+RkcConfMgr_openhost(RkcConfMgr *cx, const char *hostname)
 {
   HostRec *hostrec;
 
@@ -1324,17 +1271,14 @@ nomem:
 }
 
 static void
-RkcConfMgr_closehost(cx)
-RkcConfMgr *cx;
+RkcConfMgr_closehost(RkcConfMgr *cx)
 {
   assert(cx->currhost);
   cx->currhost = NULL;
 }
 
 static ConfRec *
-RkcConfMgr_get_target(cx, item)
-RkcConfMgr *cx;
-ConfItem item;
+RkcConfMgr_get_target(RkcConfMgr *cx, ConfItem item)
 {
   ConfRec *rec, *endrec;
   ConfRec **conf;
@@ -1373,10 +1317,7 @@ ConfItem item;
 }
 
 static int
-RkcConfMgr_set_string(cx, item, val)
-RkcConfMgr *cx;
-ConfItem item;
-const char *val;
+RkcConfMgr_set_string(RkcConfMgr *cx, ConfItem item, const char *val)
 {
   char *newval;
   ConfRec *target;
@@ -1394,10 +1335,7 @@ nomem:
 }
 
 int
-RkcConfMgr_set_number(cx, item, val)
-RkcConfMgr *cx;
-ConfItem item;
-unsigned int val;
+RkcConfMgr_set_number(RkcConfMgr *cx, ConfItem item, unsigned int val)
 {
   ConfRec *target;
 
@@ -1424,9 +1362,7 @@ int val;
 }
 
 static int
-hostname_match(pattern, name)
-const char *pattern;
-const char *name;
+hostname_match(const char *pattern, const char *name)
 {
   const char *p, *endp;
   size_t namelen = strlen(name);
@@ -1445,10 +1381,7 @@ const char *name;
 }
 
 static const ConfRec *
-RkcConfMgr_find(cx, item, hostname)
-const RkcConfMgr *cx;
-ConfItem item;
-const char *hostname;
+RkcConfMgr_find(const RkcConfMgr *cx, ConfItem item, const char *hostname)
 {
   ConfRec *confrec, *confend;
   if (hostname) {
@@ -1498,10 +1431,7 @@ const NumberDefaultRec host_num_defaults[] = {
 };
 
 const char *
-RkcConfMgr_get_string(cx, item, hostname)
-const RkcConfMgr *cx;
-ConfItem item;
-const char *hostname;
+RkcConfMgr_get_string(const RkcConfMgr *cx, ConfItem item, const char *hostname)
 {
   const ConfRec *confrec;
   const StrDefaultRec *defrec, *endrec;
@@ -1526,10 +1456,7 @@ const char *hostname;
 }
 
 unsigned int
-RkcConfMgr_get_number(cx, item, hostname)
-const RkcConfMgr *cx;
-ConfItem item;
-const char *hostname;
+RkcConfMgr_get_number(const RkcConfMgr *cx, ConfItem item, const char *hostname)
 {
   const ConfRec *confrec;
   const NumberDefaultRec *defrec, *endrec;
@@ -1554,10 +1481,7 @@ const char *hostname;
 }
 
 int
-RkcConfMgr_get_yesno(cx, item, hostname)
-const RkcConfMgr *cx;
-ConfItem item;
-const char *hostname;
+RkcConfMgr_get_yesno(const RkcConfMgr *cx, ConfItem item, const char *hostname)
 {
   const ConfRec *confrec;
   const NumberDefaultRec *defrec, *endrec;

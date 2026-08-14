@@ -26,31 +26,26 @@
 
 
 void
-RkiStrbuf_init(sb)
-RkiStrbuf *sb;
+RkiStrbuf_init(RkiStrbuf *sb)
 {
   sb->sb_buf = sb->sb_curr = sb->sb_end = NULL;
 }
 
 void
-RkiStrbuf_destroy(sb)
-RkiStrbuf *sb;
+RkiStrbuf_destroy(RkiStrbuf *sb)
 {
   free(sb->sb_buf);
 }
 
 void
-RkiStrbuf_clear(sb)
-RkiStrbuf *sb;
+RkiStrbuf_clear(RkiStrbuf *sb)
 {
   free(sb->sb_buf);
   sb->sb_buf = sb->sb_curr = sb->sb_end = NULL;
 }
 
 int
-RkiStrbuf_reserve(sb, size)
-RkiStrbuf *sb;
-size_t size;
+RkiStrbuf_reserve(RkiStrbuf *sb, size_t size)
 {
   size_t oldsize = sb->sb_end - sb->sb_buf, newsize;
   size_t used = sb->sb_curr - sb->sb_buf;
@@ -68,8 +63,7 @@ size_t size;
 }
 
 int
-RkiStrbuf_term(sb)
-RkiStrbuf *sb;
+RkiStrbuf_term(RkiStrbuf *sb)
 {
   if (sb->sb_curr && !*sb->sb_curr)
     return 0; /* already terminated */
@@ -80,8 +74,7 @@ RkiStrbuf *sb;
 }
 
 void
-RkiStrbuf_pack(sb)
-RkiStrbuf *sb;
+RkiStrbuf_pack(RkiStrbuf *sb)
 {
   size_t used = sb->sb_curr - sb->sb_buf;
   char *tmp;
@@ -93,18 +86,13 @@ RkiStrbuf *sb;
 }
 
 int
-RkiStrbuf_add(sb, src)
-RkiStrbuf *sb;
-const char *src;
+RkiStrbuf_add(RkiStrbuf *sb, const char *src)
 {
   return RkiStrbuf_addmem(sb, src, strlen(src));
 }
 
 int
-RkiStrbuf_addmem(sb, src, size)
-RkiStrbuf *sb;
-const void *src;
-size_t size;
+RkiStrbuf_addmem(RkiStrbuf *sb, const void *src, size_t size)
 {
   if (RKI_STRBUF_RESERVE(sb, size))
     return -1;
@@ -114,9 +102,7 @@ size_t size;
 }
 
 int
-RkiStrbuf_addch(sb, ch)
-RkiStrbuf *sb;
-int ch;
+RkiStrbuf_addch(RkiStrbuf *sb, int ch)
 {
   return RKI_STRBUF_ADDCH(sb, ch);
 }

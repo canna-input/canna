@@ -53,8 +53,10 @@ extern int NallKeyFunc, NalphaKeyFunc, NyomiganaiKeyFunc, NyomiKeyFunc;
 extern int NjishuKeyFunc, NtankouhoKeyFunc,  NichiranKeyFunc;
 extern int NzenHiraKeyFunc, NzenKataKeyFunc, NzenAlphaKeyFunc;
 extern int NhanKataKeyFunc, NhanAlphaKeyFunc;
+extern char *showChar(int);
 
-init_mode_mei()
+int
+init_mode_mei(void)
 {
   int i;
   for (i = 0; i < 40; i++) {
@@ -63,7 +65,8 @@ init_mode_mei()
   }
 }
 
-free_mode_mei()
+int
+free_mode_mei(void)
 {
   int i;
   for (i = 0; i < 40; i++) {
@@ -74,8 +77,7 @@ free_mode_mei()
 }
 
 char *
-toChar(suuji)
-int suuji;
+toChar(int suuji)
 {
   if (suuji == ON)
     return "on";
@@ -86,8 +88,7 @@ int suuji;
 }
 
 char *
-print_buff(acts, keys)
-unsigned char *acts, *keys;
+print_buff(unsigned char *acts, unsigned char *keys)
 {
   unsigned char *p;
   char *_buff;
@@ -116,8 +117,8 @@ unsigned char *acts, *keys;
   return _buff;
 }
 
-write_iroha(f)
-FILE *f;
+int
+write_iroha(FILE *f)
 {
   int i;
 

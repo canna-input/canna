@@ -46,8 +46,7 @@ extern is_icustom;
 #endif /* NEWGEN */
 
 char *
-showChar(c)
-int c;
+showChar(int c)
 {
   if (c < 0x20) {
     strcpy(returnKey, "C-");
@@ -87,8 +86,8 @@ int c;
   return returnKey;
 }
 
-scc(key)
-char *key;
+int
+scc(char *key)
 {
   int length, Fkey, Ckey, Pkey, Skey;
 
@@ -221,8 +220,8 @@ char *key;
   }
 }
 
-tilda(fileName)
-char *fileName;
+int
+tilda(char *fileName)
 {
   char q[1024];
 
@@ -235,9 +234,8 @@ char *fileName;
   }
 }
 
-changeModeName(mode,string)
-int   mode;
-char *string;
+int
+changeModeName(int mode, char *string)
 {
   char *p;
 
@@ -254,7 +252,8 @@ char *string;
   }
 }
 
-initKeyFunc()
+int
+initKeyFunc(void)
 {
   allKey[0] = (char *)NULL;
   alphaKey[0] = (char *)NULL;
@@ -282,16 +281,16 @@ initKeyFunc()
   hanAlphaFunc[0] = (char *)NULL;
 }
 
-specialen(block)
-unsigned char *block;
+int
+specialen(unsigned char *block)
 {
   int i;
   for (i = 0;block[i] != 255; i++);
   return i;
 }
 
-specpy(a, b)
-unsigned char *a, *b;
+int
+specpy(unsigned char *a, unsigned char *b)
 {
   unsigned char *p;
 
@@ -303,8 +302,7 @@ unsigned char *a, *b;
 }
 
 char *
-copy_acts(acts)
-unsigned char *acts;
+copy_acts(unsigned char *acts)
 {
   unsigned char *p;
   p = (unsigned char *)malloc(strlen((char *)acts) + 1);
@@ -317,8 +315,7 @@ unsigned char *acts;
 }
 
 char *
-copy_keys(keys)
-unsigned char *keys;
+copy_keys(unsigned char *keys)
 {
   unsigned char *p, *k1, *k2;
 
@@ -335,9 +332,8 @@ unsigned char *keys;
   exitccustom();
 }
 
-changeKeyfunc(mode, key, fnum, actbuff, keybuff)
-int mode, key, fnum;
-unsigned char *actbuff, *keybuff;
+int
+changeKeyfunc(int mode, int key, int fnum, unsigned char *actbuff, unsigned char *keybuff)
 {
   switch(mode) {
   case 0 :
@@ -409,9 +405,8 @@ unsigned char *actbuff, *keybuff;
   }
 }
 
-cchangeKeyfunc(mode, key, fnum, actbuff, keybuff)
-int mode, key, fnum;
-unsigned char *actbuff, *keybuff;
+int
+cchangeKeyfunc(int mode, int key, int fnum, unsigned char *actbuff, unsigned char *keybuff)
 {
   switch(mode) {
   case 0 :
@@ -484,9 +479,8 @@ unsigned char *actbuff, *keybuff;
 }
 
 
-changeKeyfuncOfAll(key, fnum, actbuff, keybuff)
-int key, fnum;
-unsigned char *actbuff, *keybuff;
+int
+changeKeyfuncOfAll(int key, int fnum, unsigned char *actbuff, unsigned char *keybuff)
 {
     allKey[NallKeyFunc] = copy_keys(keybuff);
     allFunc[NallKeyFunc++] = copy_acts(actbuff);
@@ -496,9 +490,8 @@ unsigned char *actbuff, *keybuff;
 
 char *string;
 
-append_dic(loc, dic)
-int loc;
-char *dic;
+int
+append_dic(int loc, char *dic)
 {
   switch(loc) {
   case 0 : /* ローマ字かな変換テーブル */
@@ -549,8 +542,8 @@ char *dic;
   }
 }
 
-delete_dic(loc, num)
-int loc, num;
+int
+delete_dic(int loc, int num)
 {
   switch(loc) {
   case 0 : /* ローマ字かな変換テーブル */
@@ -582,8 +575,8 @@ int loc, num;
   }
 }
 
-etc_action(kinou,which)
-int kinou, which;
+int
+etc_action(int kinou, int which)
 {
   switch(kinou) {
   case 0 :  /* initialMode */

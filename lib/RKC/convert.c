@@ -76,9 +76,7 @@ BYTE *p;
 
 #ifdef DEBUGPROTO
 static void
-printproto(p, n)
-char *p;
-int n;
+printproto(char *p, int n)
 {
   int i;
 
@@ -93,9 +91,7 @@ int n;
 }
 
 static void
-probe(format, n, p)
-char *format, *p;
-int n;
+probe(char *format, int n, char *p)
 {
   printf(format, n);
   printproto(p, n);
@@ -120,9 +116,7 @@ int n;
 #define ReadServer RkcRecvEReply
 
 int
-RkcRecvEReply(buf, bufsize, requiredsize, len_return)
-BYTE *buf;
-int bufsize, requiredsize, *len_return;
+RkcRecvEReply(BYTE *buf, int bufsize, int requiredsize, int *len_return)
 {
   int empty_count = 0, bufcnt = 0, readlen;
   unsigned rest = (unsigned)bufsize;
@@ -186,12 +180,14 @@ int bufsize, requiredsize, *len_return;
   }
 }
 
-static
-#ifndef SIGNALRETURNSINT
-void
+#ifdef SIGNALRETURNSINT
+typedef int sig_ret_type;
+#else
+typedef void sig_ret_type;
 #endif
-DoSomething(sig)
-int sig;
+
+static sig_ret_type
+DoSomething(int sig)
 /* ARGSUSED */
 {
     errno = EPIPE;
@@ -201,9 +197,7 @@ int sig;
 #define WriteServer RkcSendERequest
 
 int
-RkcSendERequest( Buffer, size )
-const BYTE *Buffer ;
-int size ;
+RkcSendERequest(const BYTE *Buffer, int size)
 {
     register int todo, retval = YES;
     register int write_stat;
@@ -277,10 +271,11 @@ last:
     return retval;
 }
 
-static
-SendType0Request(proto, len, name) /* Initialize */
-long proto, len;
-BYTE *name;
+static int
+SendType0Request( /* Initialize */
+	long proto,
+	long len,
+	BYTE *name)
 {
   BYTE lbuf[PROTOBUF], *bufp = lbuf, *p;
   int sz = 8 + len;
@@ -300,9 +295,9 @@ BYTE *name;
   }
 }
 
-static
-SendTypeE1Request(proto) /* Finalize */
-int proto;
+static int
+SendTypeE1Request( /* Finalize */
+	int proto)
 {
   BYTE lbuf[4];
 
@@ -310,9 +305,10 @@ int proto;
   return WriteServer(lbuf, sizeof(lbuf));
 }
 
-static
-SendTypeE2Request(proto, con) /* IR_DUP_CON */
-int proto, con;
+static int
+SendTypeE2Request( /* IR_DUP_CON */
+	int proto,
+	int con)
 {
   BYTE lbuf[8], *p;
 
@@ -321,9 +317,11 @@ int proto, con;
   return WriteServer(lbuf, sizeof(lbuf));
 }
 
-static
-SendTypeE3Request(proto, con, val) /* IR_DIC_LIST */
-int proto, con, val;
+static int
+SendTypeE3Request( /* IR_DIC_LIST */
+	int proto,
+	int con,
+	int val)
 {
   BYTE lbuf[12], *p;
 
@@ -333,9 +331,12 @@ int proto, con, val;
   return WriteServer(lbuf, sizeof(lbuf));
 }
 
-static
-SendTypeE4Request(proto, con, bun, val) /* IR_GET_YOMI */
-int proto, con, bun, val;
+static int
+SendTypeE4Request( /* IR_GET_YOMI */
+	int proto,
+	int con,
+	int bun,
+	int val)
 {
   BYTE lbuf[16], *p;
 
@@ -346,9 +347,13 @@ int proto, con, bun, val;
   return WriteServer(lbuf, sizeof(lbuf));
 }
 
-static
-SendTypeE5Request(proto, con, bun, val, max) /* IR_GET_LEX */
-int proto, con, bun, val;
+static int
+SendTypeE5Request( /* IR_GET_LEX */
+	int proto,
+	int con,
+	int bun,
+	int val,
+	int max)
 {
   BYTE lbuf[5 * SIZEOFLONG], *p;
 
@@ -360,10 +365,13 @@ int proto, con, bun, val;
   return WriteServer(lbuf, sizeof(lbuf));
 }
 
-static
-SendTypeE6Request(proto, con, bun, name, nlen) /* IR_STO_YOMI */
-int proto, con, bun, nlen;
-BYTE *name;
+static int
+SendTypeE6Request( /* IR_STO_YOMI */
+	int proto,
+	int con,
+	int bun,
+	BYTE *name,
+	int nlen)
 {
   BYTE lbuf[SENDBUFSIZE], *bufp = lbuf, *p;
   int res, sz = 4 * SIZEOFLONG + nlen;
@@ -382,10 +390,11 @@ BYTE *name;
   return NO;
 }
 
-static
-SendTypeE7Request(proto, cx, val) /* IR_CONV_END */
-int proto, val;
-RkcContext *cx;
+static int
+SendTypeE7Request( /* IR_CONV_END */
+	int proto,
+	RkcContext *cx,
+	int val)
 {
   BYTE lbuf[SENDBUFSIZE], *bufp = lbuf, *p;
   int res, con = (int)cx->server, mbun = val * (int)cx->maxbun, i;
@@ -408,10 +417,13 @@ RkcContext *cx;
   return NO;
 }
 
-static
-SendTypeE9Request(proto, con, name, nlen, val) /* IR_MNT_DIC */
-int proto, con, nlen, val;
-BYTE *name;
+static int
+SendTypeE9Request( /* IR_MNT_DIC */
+	int proto,
+	int con,
+	BYTE *name,
+	int nlen,
+	int val)
 {
   BYTE lbuf[SENDBUFSIZE], *bufp = lbuf, *p;
   int res, sz = 4 * SIZEOFLONG + nlen;
@@ -430,10 +442,14 @@ BYTE *name;
   return NO;
 }
 
-static
-SendTypeE10Request(proto, con, name, nlen, val, vlen) /* IR_DEF_DIC */
-int proto, con, nlen, vlen;
-BYTE *name, *val;
+static int
+SendTypeE10Request( /* IR_DEF_DIC */
+	int proto,
+	int con,
+	BYTE *name,
+	int nlen,
+	BYTE *val,
+	int vlen)
 {
   BYTE lbuf[SENDBUFSIZE], *bufp = lbuf, *p;
   int res, sz = 4 * SIZEOFLONG + nlen + vlen;
@@ -453,10 +469,8 @@ BYTE *name, *val;
   return NO;
 }
 
-static
-SendTypeE11Request(proto, con, name, nlen, dest, dlen, val)
-int proto, con, nlen, dlen, val;
-BYTE *name, *dest;
+static int
+SendTypeE11Request(int proto, int con, BYTE *name, int nlen, BYTE *dest, int dlen, int val)
 {
   BYTE lbuf[SENDBUFSIZE], *bufp = lbuf, *p;
   int res, sz = 5 * SIZEOFLONG + nlen + dlen;
@@ -477,10 +491,12 @@ BYTE *name, *dest;
   return NO;
 }
 
-static
-SendTypeE12Request(proto, name, nlen, val) /* IR_QUERY_EXT */
-long proto, nlen, val;
-BYTE *name;
+static int
+SendTypeE12Request( /* IR_QUERY_EXT */
+	long proto,
+	BYTE *name,
+	long nlen,
+	long val)
 {
   BYTE lbuf[SENDBUFSIZE], *bufp = lbuf, *p;
   int res, sz = 3 * SIZEOFLONG + nlen;
@@ -500,9 +516,9 @@ BYTE *name;
 
 #define RecvType0Reply RecvTypeE1Reply /* Initinalize */
 
-static
-RecvTypeE1Reply(rep) /* Finalize */
-long *rep;
+static int
+RecvTypeE1Reply( /* Finalize */
+	long *rep)
 {
   BYTE lbuf[SIZEOFLONG];
 
@@ -527,10 +543,8 @@ long *rep;
 
  */
 
-static
-GeneralReply(rep, storefunc, addr, maxn, unit, offset)
-int *rep, (*storefunc)(), maxn, unit, offset;
-BYTE *addr;
+static int
+GeneralReply(int *rep, int (*storefunc)(void), BYTE *addr, int maxn, int unit, int offset)
 {
   BYTE lbuf[RECVBUFSIZE], *bufp = lbuf, *p;
   int res, datalen, readlen, readcnt, requiredsize, retval;
@@ -591,11 +605,13 @@ BYTE *addr;
 #define RecvTypeE3Reply(rep, storefunc, addr, maxn, unit) \
   GeneralReply(rep, storefunc, addr, maxn, unit, 2)
 
-static
-RecvTypeE4Reply(rep, storefunc, addr, maxn, unit) /* IR_GET_LEX */
-int *rep, maxn, unit;
-int (*storefunc)();
-BYTE *addr;
+static int
+RecvTypeE4Reply( /* IR_GET_LEX */
+	int *rep,
+	int (*storefunc)(void),
+	BYTE *addr,
+	int maxn,
+	int unit)
 {
   return GeneralReply(rep, storefunc, addr, maxn, unit, 1);
 }
@@ -607,10 +623,7 @@ BYTE *addr;
  */
 
 static int
-firstKouhoStore(n, cx, data, datalen)
-int n, datalen;
-RkcContext *cx;
-BYTE *data;
+firstKouhoStore(int n, RkcContext *cx, BYTE *data, int datalen)
 /* ARGSUSED */
 {
     register Ushort *return_kouho, *wp, *ewp;
@@ -662,8 +675,7 @@ BYTE *data;
 }
 
 static long
-rkc_initialize( username )
-char *username ;
+rkc_initialize(char *username)
 {
   long reply;
   long len = strlen( (char *)username ) + 1 ;
@@ -678,9 +690,8 @@ char *username ;
   return ((long ) -1);
 }
 
-static
-Fin_Create( request )
-int request ;
+static int
+Fin_Create(int request)
 {
   int reply;
 
@@ -691,23 +702,22 @@ int request ;
   return -1;
 }
 
-static
-rkc_finalize()
+static int
+rkc_finalize(void)
 {
   int retval = Fin_Create(IR_FIN);
   (void)close(ServerFD);
   return retval;
 }
 
-static
-rkc_create_context()
+static int
+rkc_create_context(void)
 {
     return( Fin_Create( IR_CRE_CON ) ) ;
 }
 
-static
-Dup_Close_CX( cx_num, request )
-int cx_num, request ;
+static int
+Dup_Close_CX(int cx_num, int request)
 {
   int reply;
 
@@ -718,24 +728,20 @@ int cx_num, request ;
   return -1;
 }
 
-static
-rkc_duplicate_context( cx )
-register RkcContext *cx ;
+static int
+rkc_duplicate_context(register RkcContext *cx)
 {
     return( Dup_Close_CX( (int)cx->server, IR_DUP_CON ) ) ;
 }
 
-static
-rkc_close_context( cx )
-register RkcContext *cx ;
+static int
+rkc_close_context(register RkcContext *cx)
 {
     return( Dup_Close_CX( (int)cx->server, IR_CLO_CON ) ) ;
 }
 
 static int
-dicStore(n, src, slen, dest, dmax, unit)
-BYTE *src, *dest;
-int n, slen, unit, dmax;
+dicStore(int n, BYTE *src, int slen, BYTE *dest, int dmax, int unit)
 /* ARGSUSED */
 {
   BYTE *p = dest, *endp = dest + dmax - 2; /* 2 for EOS */
@@ -753,10 +759,8 @@ int n, slen, unit, dmax;
   return i;
 }
 
-static
-Dic_Dir_List( context, data, max, request )
-int context, max, request ;
-char *data ;
+static int
+Dic_Dir_List(int context, char *data, int max, int request)
 {
   int reply;
 
@@ -767,19 +771,14 @@ char *data ;
   return -1;
 }
 
-static
-rkc_dictionary_list( cx, dicnames, max)
-register RkcContext *cx ;
-char *dicnames;
-int max ;
+static int
+rkc_dictionary_list(register RkcContext *cx, char *dicnames, int max)
 {
   return Dic_Dir_List((int)cx->server, dicnames, max, IR_DIC_LIST);
 }
 
-static
-Define_Delete_dic( cx, dicname, wordrec, request )
-register RkcContext *cx ;
-char *dicname, *wordrec ;
+static int
+Define_Delete_dic(register RkcContext *cx, char *dicname, char *wordrec, int request)
 {
   int reply;
 
@@ -792,11 +791,8 @@ char *dicname, *wordrec ;
   return -1;
 }
 
-static
-rkc_define_dic( cx, dicname, wordrec)
-register RkcContext *cx ;
-char *dicname;
-Ushort *wordrec ;
+static int
+rkc_define_dic(register RkcContext *cx, char *dicname, Ushort *wordrec)
 {
   char cbuf[RK_LINE_BMAX];
 
@@ -804,11 +800,8 @@ Ushort *wordrec ;
   return Define_Delete_dic(cx, dicname, cbuf, IR_DEF_DIC);
 }
 
-static
-rkc_delete_dic( cx,  dicname, wordrec)
-register RkcContext *cx ;
-char *dicname ;
-Ushort *wordrec ;
+static int
+rkc_delete_dic(register RkcContext *cx, char *dicname, Ushort *wordrec)
 {
   char cbuf[RK_LINE_BMAX];
 
@@ -816,10 +809,8 @@ Ushort *wordrec ;
   return Define_Delete_dic(cx, dicname, cbuf, IR_UNDEF_DIC);
 }
 
-static
-mount_dic(req, con, dat, mod)
-int req, con, mod;
-char *dat;
+static int
+mount_dic(int req, int con, char *dat, int mod)
 {
   int reply, datlen = strlen((char *)dat) + 1;
 
@@ -830,28 +821,20 @@ char *dat;
   return -1;
 }
 
-static
-rkc_mount_dictionary( cx, dicname, mode )
-register RkcContext *cx ;
-char *dicname ;
-int  mode ;
+static int
+rkc_mount_dictionary(register RkcContext *cx, char *dicname, int mode)
 {
   return mount_dic(IR_MNT_DIC, (int)cx->server, dicname, mode);
 }
 
-static
-rkc_umount_dictionary( cx, dicname )
-register RkcContext *cx ;
-char *dicname ;
+static int
+rkc_umount_dictionary(register RkcContext *cx, char *dicname)
 {
   return mount_dic(IR_UMNT_DIC, cx->server, dicname, 0);
 }
 
-static
-rkc_remount_dictionary( cx, dicname, where )
-register RkcContext *cx ;
-char *dicname ;
-int where ;
+static int
+rkc_remount_dictionary(register RkcContext *cx, char *dicname, int where)
 {
   int reply, datalen = strlen(dicname) + 1;
 
@@ -863,29 +846,22 @@ int where ;
   return -1;
 }
 
-static
-rkc_mount_list( cx, data, max)
-RkcContext *cx ;
-char *data;
-int max ;
+static int
+rkc_mount_list(RkcContext *cx, char *data, int max)
 {
   return Dic_Dir_List(cx->server, data, max, IR_MNT_LIST);
 }
 
-rkc_get_dir_list( cx, ddname, maxddname )
-RkcContext *cx ;
-char *ddname ;
-int maxddname ;
+int
+rkc_get_dir_list(RkcContext *cx, char *ddname, int maxddname)
 {
     return( Dic_Dir_List( cx->server, ddname, maxddname, IR_DIR_LIST ) ) ;
 }
 
 #define GAKUSHU 1
 
-static
-rkc_convert_end( cx, mode )
-RkcContext *cx ;
-int mode ;
+static int
+rkc_convert_end(RkcContext *cx, int mode)
 {
   int reply, gakushu = (mode & GAKUSHU) ? 1 : 0;
 
@@ -896,10 +872,8 @@ int mode ;
   return -1;
 }
 
-static
-convStore(n, data, datalen, contex, v, u)
-int n, datalen, v, u;
-BYTE *data, *contex;
+static int
+convStore(int n, BYTE *data, int datalen, BYTE *contex, int v, int u)
 /* ARGSUSED */
 {
   RkcContext *cx = (RkcContext *)contex;
@@ -911,11 +885,8 @@ BYTE *data, *contex;
   return ret;
 }
 
-static
-rkc_convert( cx, yomi, length, mode )
-RkcContext *cx ;
-int length ,mode;
-Ushort *yomi ;
+static int
+rkc_convert(RkcContext *cx, Ushort *yomi, int length, int mode)
 {
   int reply, datalen = ushort2eucsize(yomi, length) + 1, res = -1;
   char cbuf[BUFSIZE], *bufp = cbuf;
@@ -936,10 +907,8 @@ Ushort *yomi ;
   return res;
 }
 
-static
-yomiStore(n, data, datalen, dest, destlen, unit)
-int n, datalen, destlen, unit;
-BYTE *data, *dest;
+static int
+yomiStore(int n, BYTE *data, int datalen, BYTE *dest, int destlen, int unit)
 /* ARGSUSED */
 {
   int len = L4TOL(data); data += SIZEOFLONG;
@@ -947,10 +916,8 @@ BYTE *data, *dest;
   return euc2ushort((char *)data, len, (Ushort *)dest, destlen);
 }
 
-static
-rkc_get_yomi( cx, yomip )
-register RkcContext *cx ;
-Ushort *yomip ;
+static int
+rkc_get_yomi(register RkcContext *cx, Ushort *yomip)
 {
   int reply;
 
@@ -962,10 +929,8 @@ Ushort *yomip ;
 }
 
 
-static
-kanlisStore(n, data, datalen, cox, v, u)
-int n, datalen, v, u;
-BYTE *data, *cox;
+static int
+kanlisStore(int n, BYTE *data, int datalen, BYTE *cox, int v, int u)
 /* ARGSUSED */
 {
   RkcContext *cx = (RkcContext *)cox;
@@ -996,8 +961,8 @@ BYTE *data, *cox;
   return n;
 }
 
-rkc_get_kanji_list( cx )
-register RkcContext *cx ;
+int
+rkc_get_kanji_list(register RkcContext *cx)
 {
   int reply;
 
@@ -1011,19 +976,15 @@ register RkcContext *cx ;
 
 extern int _RkwGetYomi();
 
-static
-resizeStore(n, data, datalen, contex, v, u)
-int n, datalen, v, u;
-BYTE *data, *contex;
+static int
+resizeStore(int n, BYTE *data, int datalen, BYTE *contex, int v, int u)
 /* ARGSUSED */
 {
   return firstKouhoStore(n, (RkcContext *)contex, data, datalen);
 }
 
-static
-rkc_resize( cx, yomi_length )
-register RkcContext *cx ;
-int yomi_length ;
+static int
+rkc_resize(register RkcContext *cx, int yomi_length)
 {
     Ushort cbuf[CBUFSIZE];
     register int ret, euclen = 0;
@@ -1058,11 +1019,8 @@ int yomi_length ;
     return -1;
 }
 
-static
-rkc_store_yomi( cx, yomi, max )
-register RkcContext *cx ;
-Ushort *yomi ;
-int max ;
+static int
+rkc_store_yomi(register RkcContext *cx, Ushort *yomi, int max)
 {
   int reply, len;
   char cbuf[BUFSIZE], *bufp = cbuf;
@@ -1085,8 +1043,8 @@ int max ;
 
 static int RemoteDicUtilBaseProtoNumber = 0;
 
-static
-Query_Extension()
+static int
+Query_Extension(void)
 {
     if( !RemoteDicUtilBaseProtoNumber ){
 	int datalen = strlen( REMOTE_DIC_UTIL ) + 1 ;
@@ -1103,11 +1061,8 @@ Query_Extension()
 }
 
 #ifdef EXTENSION
-static
-rkc_list_dictionary( cx, dirname, dicnames_return, size )
-register RkcContext *cx ;
-char *dirname, *dicnames_return ;
-int size ;
+static int
+rkc_list_dictionary(register RkcContext *cx, char *dirname, char *dicnames_return, int size)
 {
   int reply, datalen = strlen(dirname) + 1;
   int extension_base = Query_Extension() ;
@@ -1124,11 +1079,8 @@ int size ;
   return -1;
 }
 
-static
-rkc_create_dictionary( cx, dicname, mode )
-register RkcContext *cx ;
-char *dicname ;
-int mode ;
+static int
+rkc_create_dictionary(register RkcContext *cx, char *dicname, int mode)
 {
     int extension_base = Query_Extension() ;
 
@@ -1139,11 +1091,8 @@ int mode ;
 		     dicname, mode);
 }
 
-static
-rkc_destroy_dictionary(cx, dicname, xx)
-register RkcContext *cx ;
-char *dicname;
-int xx;
+static int
+rkc_destroy_dictionary(register RkcContext *cx, char *dicname, int xx)
 /* ARGSUSED */
 {
     int extension_base = Query_Extension() ;
@@ -1155,11 +1104,8 @@ int xx;
 		     dicname, 0);
 }
 
-static
-rkc_rename_dictionary( cx, dicname, newdicname, mode )
-register RkcContext *cx ;
-char *dicname, *newdicname;
-int mode ;
+static int
+rkc_rename_dictionary(register RkcContext *cx, char *dicname, char *newdicname, int mode)
 {
     int reply;
     int extension_base = Query_Extension() ;
@@ -1179,12 +1125,8 @@ int mode ;
 }
 
 /* ARGSUSED */
-static
-rkc_get_text_dictionary( cx, dirname, dicname, info, infolen )	
-register RkcContext *cx ;
-char *dirname, *dicname;
-Ushort *info ;
-int infolen ;
+static int
+rkc_get_text_dictionary(register RkcContext *cx, char *dirname, char *dicname, Ushort *info, int infolen)
 {
     int extension_base = Query_Extension() ;
     int ret ;
@@ -1208,11 +1150,8 @@ int infolen ;
 #endif /* EXTENSION */
 
 /* ARGSUSED */
-static
-statStore(n, src, slen, dest, maxn, unit)
-int n, slen, maxn, unit;
-BYTE *src;
-RkStat *dest;
+static int
+statStore(int n, BYTE *src, int slen, RkStat *dest, int maxn, int unit)
 {
   if (!(n < 0)) {
     dest->bunnum = (int)L4TOL(src);	/* bunsetsu bangou */
@@ -1233,11 +1172,8 @@ RkStat *dest;
 }
 
 /* ARGSUSED */
-static
-lexStore(n, src, slen, dest, maxn, unit)
-int n, slen, maxn, unit;
-BYTE *src;
-RkLex *dest;
+static int
+lexStore(int n, BYTE *src, int slen, RkLex *dest, int maxn, int unit)
 {
   int i;
 
@@ -1258,10 +1194,8 @@ RkLex *dest;
   return n;
 }
 
-static
-rkc_get_stat( cx, stat )
-register RkcContext *cx ;
-RkStat *stat ;
+static int
+rkc_get_stat(register RkcContext *cx, RkStat *stat)
 {
   int reply, n, i;
   Ushort cbuf[CBUFSIZE], *src_kanji;
@@ -1292,11 +1226,8 @@ RkStat *stat ;
   return reply;
 }
 
-static
-rkc_get_lex( cx, max, info_return )
-register RkcContext *cx ;
-int max ;
-RkLex *info_return ;
+static int
+rkc_get_lex(register RkcContext *cx, int max, RkLex *info_return)
 {
     int ret, len, i, ylen, klen;
     char kbuf[BUFSIZE], ybuf[BUFSIZE];
@@ -1346,7 +1277,7 @@ RkLex *info_return ;
 #endif /* USE_EUC_PROTOCOL */
 
 static int
-rkc_error()
+rkc_error(void)
 {
     return -1;
 }

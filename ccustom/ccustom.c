@@ -30,6 +30,13 @@
 #include <curses.h>
 #endif
 #include <signal.h>
+#ifdef SIGNALRETURNSINT
+typedef int sig_ret_type;
+#define SIG_RETVAL 0
+#else
+typedef void sig_ret_type;
+#define SIG_RETVAL
+#endif
 #include "ccustom.h"
 #include "ccompat.h"
 
@@ -106,10 +113,8 @@ WINDOW *base_win,  *err_win,   *load_win,
        *mode1_win, *mode2_win, *dddic_win,
        *etc_win,   *_etc_win,  *end_win;
 
-disp_block(win, y, x, block, start, end)
-WINDOW *win;
-int y, x, start, end;
-char **block;
+void
+disp_block(WINDOW *win, int y, int x, char **block, int start, int end)
 {
   int i, j;
 
@@ -144,8 +149,8 @@ char **block;
   wrefresh(win);
 }
 
-err_word(format, string)
-char *format, *string;
+int
+err_word(char *format, char *string)
 {
 #ifdef __FreeBSD__
   wstandout(err_win);
@@ -161,9 +166,8 @@ char *format, *string;
   wrefresh(err_win);
 }
 
-current_word(win, format, string)
-WINDOW *win;
-char *format, *string;
+int
+current_word(WINDOW *win, char *format, char *string)
 {
 #ifdef __FreeBSD__
   wstandout(win);
@@ -179,9 +183,8 @@ char *format, *string;
   wrefresh(win);
 }
 
-clr_cul_to_end(win, y, x)
-WINDOW *win;
-int y, x;
+int
+clr_cul_to_end(WINDOW *win, int y, int x)
 {
   wmove(win, y, x);
   wclrtobot(win);
@@ -189,10 +192,7 @@ int y, x;
 }
 
 void
-current_print(win,y,x,string)
-WINDOW *win;
-int    y, x;
-char   *string;
+current_print(WINDOW *win, int y, int x, char *string)
 {
 #ifdef __FreeBSD__
   wstandout(win);
@@ -209,10 +209,8 @@ char   *string;
   wrefresh(win);
 }
 
-current_print2(win, y, x, string, copy)
-WINDOW *win;
-int y, x;
-char *string, *copy;
+int
+current_print2(WINDOW *win, int y, int x, char *string, char *copy)
 {
   int i = 0;
 
@@ -223,10 +221,8 @@ char *string, *copy;
   return (x + i/2 -1);
 }
 
-inc_rev_print(win, y, x, str1, rev, str2)
-WINDOW *win;
-int y, x;
-char *str1, *rev, *str2;
+int
+inc_rev_print(WINDOW *win, int y, int x, char *str1, char *rev, char *str2)
 {
   mvwaddstr(win, y, x, str1);
   current_word(win, "%s", rev);
@@ -234,7 +230,8 @@ char *str1, *rev, *str2;
   wclrtoeol(win);
 }
 
-loadFile()
+int
+loadFile(void)
 {
   char f_name[1024];
   int  y, x;
@@ -284,7 +281,8 @@ loadFile()
   }
 }
 
-saveFile()
+int
+saveFile(void)
 {
   FILE *f_save;
   char f_name[1024];
@@ -328,8 +326,8 @@ saveFile()
   }
 }
 
-ask_dic(loc)
-int loc;
+int
+ask_dic(int loc)
 {
   switch(loc) {
   case 0 : /* ローマ字かな変換テーブル */
@@ -345,8 +343,8 @@ int loc;
   }
 }
 
-print_dic_list(loc, start, end, current)
-int loc, start, end, current;
+int
+print_dic_list(int loc, int start, int end, int current)
 {
   int i, kazu;
   char **dic;
@@ -409,7 +407,8 @@ int loc, start, end, current;
   return current;
 }
 
-confDic()
+int
+confDic(void)
 {
   char d_name[512], *d_name2, *dic[16];
   int  y, x, location, ndic,
@@ -549,9 +548,8 @@ confDic()
 
 #define char_width(c) (((c) & 0x80) ? (((c) == 0x8e) ? 1 : 2) : 1)
 
-howManyLines(s1, s2, s3, cols)
-unsigned char *s1, *s2, *s3;
-int cols;
+int
+howManyLines(unsigned char *s1, unsigned char *s2, unsigned char *s3, int cols)
 {
   unsigned char *p;
   int l = 1, co = L_MARGIN, cwidth;
@@ -598,8 +596,8 @@ int cols;
   return l;
 }
 
-m_set(ph_mode)
-int ph_mode;
+int
+m_set(int ph_mode)
 {
   switch(ph_mode) {
   case 0:
@@ -663,9 +661,8 @@ extern char *showChar(int);
 extern char *showChar();
 #endif
 
-create_key_buff(mode, num, kora, ban, str1, rev, str2)
-int mode, num, kora, ban;
-char *str1, *rev, *str2;
+int
+create_key_buff(int mode, int num, int kora, int ban, char *str1, char *rev, char *str2)
 {
   int i, nseq, max_key, max_act ,sum, len = 0, length;
   char buff[512], *p, *r, *key, *acts;
@@ -835,8 +832,8 @@ char *str1, *rev, *str2;
   return len;
 }
 
-sp_disp(mode, top, line, kora, ban)
-int mode, top, line, kora, ban;
+int
+sp_disp(int mode, int top, int line, int kora, int ban)
 {
   int length, tate = 0, pate = 0, i, j, kazu, end_stat = 0, etent;
   char str1[256], rev[256], str2[256];
@@ -1009,8 +1006,8 @@ int mode, top, line, kora, ban;
   WDisp.ban = ban;
 }
 
-set_dk_blocks(mode, n)
-int mode, n;
+int
+set_dk_blocks(int mode, int n)
 {
   char str1[256], rev[256], str2[256];
 
@@ -1024,8 +1021,8 @@ int mode, n;
   dk_blocks[n].gyousu = howManyLines(str1, rev, str2, COLS);
 }
 
-init_dk_blocks(mode)
-int mode;
+int
+init_dk_blocks(int mode)
 {
   int i;
 
@@ -1034,8 +1031,8 @@ int mode;
   dk_blocks[i].str = (char *)NULL;
 }
 
-copy_dk_blocks(a, b)
-int a, b;
+int
+copy_dk_blocks(int a, int b)
 {
   dk_blocks[a].len = dk_blocks[b].len;
   dk_blocks[a].str = dk_blocks[b].str;
@@ -1044,15 +1041,16 @@ int a, b;
   dk_blocks[a].gyousu = dk_blocks[b].gyousu;
 }
 
-fin_dk_blocks()
+int
+fin_dk_blocks(void)
 {
   int i;
   for (i = 0; dk_blocks[i].str; i++)
       free(dk_blocks[i].str);
 }
 
-tourokuN(ph_mode, N)
-int ph_mode, N;
+int
+tourokuN(int ph_mode, int N)
 {
   switch(ph_mode) {
   case 0:
@@ -1094,8 +1092,8 @@ int ph_mode, N;
   }
 }
 
-for_UNDO(status)
-char status;     
+int
+for_UNDO(int status)
 {
   char *p, *q, *s;
 
@@ -1121,7 +1119,8 @@ char status;
   U_WDisp.current = WDisp.current;
 }
 
-from_UNDO()
+int
+from_UNDO(void)
 {
   char *p, *q, *s;
 int i;
@@ -1152,8 +1151,8 @@ int i;
   undo_status = -1;
 }
 
-shinki(mode, kora, num)
-int mode, kora, num;
+int
+shinki(int mode, int kora, int num)
 {
   int N;
   char *p;
@@ -1194,8 +1193,8 @@ int mode, kora, num;
   }
 }
 
-to_multi(mode, num, kora, ban, which)
-int mode, num, kora, ban, which;
+int
+to_multi(int mode, int num, int kora, int ban, int which)
 {
   int atai, hosei, kazu, i;
   char *buff;
@@ -1259,8 +1258,8 @@ int mode, num, kora, ban, which;
   sp_disp(mode, WDisp.top, WDisp.line, WDisp.kora, WDisp.ban);
 }
 
-okikae(mode, num, kora, ban, obj)
-int mode, num, kora, ban, obj;
+int
+okikae(int mode, int num, int kora, int ban, int obj)
 {
   if (dk_blocks[num].len > 200 ) {
       beep();
@@ -1282,8 +1281,8 @@ int mode, num, kora, ban, obj;
   sp_disp(mode, WDisp.top, WDisp.line, WDisp.kora, WDisp.ban);
 }
 
-delete_obj(mode, num, kora, ban)
-int mode, num, kora, ban;
+int
+delete_obj(int mode, int num, int kora, int ban)
 {
   int i;
   char *p;
@@ -1311,8 +1310,8 @@ int mode, num, kora, ban;
 }
     
 
-kill_G(mode, num)
-int mode, num;
+int
+kill_G(int mode, int num)
 {
   int kazu, i;
 
@@ -1331,8 +1330,8 @@ int mode, num;
     touroku_start--;
 }
 
-kill_UNDO(mode)
-int mode;
+int
+kill_UNDO(int mode)
 {
   int kazu, i, num;
 
@@ -1347,8 +1346,8 @@ int mode;
   from_UNDO();
 }
 
-dispIn(cus_mode)
-int cus_mode;
+int
+dispIn(int cus_mode)
 {
   char *p;
   char str1[256], rev[256], str2[256];
@@ -1487,8 +1486,8 @@ int cus_mode;
   fin_dk_blocks();
 }
 
-keyIn(cus_mode, status)
-int cus_mode, status;
+int
+keyIn(int cus_mode, int status)
 {
   char prev_char[20], *p;
   int  y, x, i;
@@ -1693,8 +1692,8 @@ int cus_mode, status;
   return  scc(prev_char);
 }
 
-actIn(cus_mode, status)
-int cus_mode, status;
+int
+actIn(int cus_mode, int status)
 {
   int  y, x; 
   int  current_point = 0, location,
@@ -1782,7 +1781,8 @@ int cus_mode, status;
   return (t_location +2);
 }
 
-keyCustom()
+int
+keyCustom(void)
 {
   int  y, x, location, c_location = 0;
   chtype c;
@@ -1848,12 +1848,13 @@ char *hozon_mode_mei;
 
 #define BOTOM 14
 
-scrollDisplay(win, name_list, s_point, c_point, scrflg)
-WINDOW *win;
-char **name_list;
-int 	s_point, 	/* start line */
-	c_point;	/* current line */
-int	scrflg;		/* 0: はじめて 1: スクロールしない 2: スクロールする */
+int
+scrollDisplay(
+	WINDOW *win,
+	char **name_list,
+	int s_point, 	/* start line */
+	int c_point,	/* current line */
+	int scrflg		/* 0: はじめて 1: スクロールしない 2: スクロールする */)
 {
   char   **menu, print_mode[512], undo_mode[512], undo_sts;
   int    location, c_location = 0, u_location = -1;
@@ -1907,9 +1908,8 @@ int	scrflg;		/* 0: はじめて 1: スクロールしない 2: スクロールする */
 }
 
 
-printCurrentName(win, location)
-WINDOW *win;
-int     location;
+int
+printCurrentName(WINDOW *win, int location)
 {
   char print_mode[512];
   if (is_icustom) {
@@ -1942,7 +1942,8 @@ int     location;
   wrefresh(err_win);
 }
 
-modeNameDisplay()
+int
+modeNameDisplay(void)
 {
   WINDOW *win;
   char   **menu, print_mode[512], undo_mode[512], undo_sts;
@@ -2223,7 +2224,8 @@ modeNameDisplay()
   return DONOT;
 }
 
-modeName()
+int
+modeName(void)
 {
   int  y, x, page = 1; 
   int  location, c_location = 0;
@@ -2237,9 +2239,8 @@ modeName()
   return;
 }
 
-on_off(win,ctm)
-WINDOW  *win;
-char ctm;
+int
+on_off(WINDOW *win, int ctm)
 {
   int y, x;
 
@@ -2276,9 +2277,11 @@ char ctm;
   wrefresh(win);
 }
 
-etcScroll(s_point, c_point, scrflg)
-int s_point, c_point;
-int scrflg;	/* 0: 初めて 1: スクロールしない 2: スクロールさせる */
+int
+etcScroll(
+	int s_point,
+	int c_point,
+	int scrflg	/* 0: 初めて 1: スクロールしない 2: スクロールさせる */)
 {
   int location, i;
 
@@ -2425,7 +2428,8 @@ int s_point, c_point;
 
 */
 
-etcCustom()
+int
+etcCustom(void)
 {
   int  y, x, 
        location = 0, c_location = 0, start_point = 0;
@@ -2633,7 +2637,8 @@ etcCustom()
 
 char i_file[128], *getenv();
 
-get_save_file()
+int
+get_save_file(void)
 {
   char *p;
   FILE *f;
@@ -2665,10 +2670,8 @@ get_save_file()
   return;
 }
 
-santaku(win, y, x, which, a, b, c)
-WINDOW *win;
-int y, x, which;
-char *a, *b, *c;
+int
+santaku(WINDOW *win, int y, int x, int which, char *a, char *b, char *c)
 {
   wmove(win, y, x);
   wprintw(win, "%s  %s  %s\n", a, b, c);
@@ -2691,7 +2694,8 @@ char *a, *b, *c;
   }
 }
 
-endCustom()
+int
+endCustom(void)
 {
   FILE *f_save;
   int sentaku = 2;
@@ -2778,7 +2782,8 @@ endCustom()
   }
 }
 
-initctm()
+int
+initctm(void)
 {
   etc_ctm[0]  =  MID; /* initialMode */
   etc_ctm[1] =  CursorWrap;
@@ -2833,7 +2838,7 @@ static int (*func[])() = {
 
 #ifdef HAVE_LOCALE
 void
-checkLocale()
+checkLocale(void)
 {
   char *localebuff;
 
@@ -2849,9 +2854,8 @@ checkLocale()
 }
 #endif /* HAVE_LOCALE */
 
-main(argc, argv)
-int argc;
-char *argv[];
+int
+main(int argc, char *argv[])
 {
   void root_ctm(), int_exit(), on_suspend();
   void proc_delete_key();
@@ -2991,7 +2995,7 @@ char *argv[];
 }
 
 void
-root_ctm()
+root_ctm(void)
 {
   int    x, y, location, c_location = 0;
   chtype c;
@@ -3047,16 +3051,17 @@ root_ctm()
   }
 }
 
-void
-int_exit()
+sig_ret_type
+int_exit(void)
 {
   endwin();
   exit(0);
+  /* NOTREACHED */
+  return SIG_RETVAL;
 }
 
-void
-proc_delete_key(sig)
-int sig;
+sig_ret_type
+proc_delete_key(int sig)
 /* ARGSUSED */
 {
   static unsigned char counter = 0;
@@ -3078,12 +3083,12 @@ int sig;
   else {
     signal(SIGINT, proc_delete_key);
   }
+  return SIG_RETVAL;
 }
 
 /* サスペンドさせてもＯＫ */
-void
-on_suspend( signo )
-int	signo;
+sig_ret_type
+on_suspend(int signo)
 {
 	endwin();	/* tty をリセット */
 	kill(getpid(), signo);
@@ -3094,13 +3099,13 @@ int	signo;
 	putchar( '\0' );
 
 	wrefresh( curscr );
+	return SIG_RETVAL;
 }
 
 #ifndef SVR4
 #ifdef __FreeBSD__
-ustam_scroll(win, n)
-WINDOW	*win;
-int	n;
+int
+ustam_scroll(WINDOW *win, int n)
 {
   int	i;
   int	top, bot;
@@ -3138,9 +3143,8 @@ int	n;
   return OK;
 }
 #else
-ustam_scroll(win, n)
-WINDOW	*win;
-int	n;
+int
+ustam_scroll(WINDOW *win, int n)
 {
 	chtype	*sp;
 	int	i;
@@ -3183,7 +3187,8 @@ int	n;
 #endif /* SVR4 */
 
 #ifdef __FreeBSD__
-beep() 
+int
+beep(void)
 {
   putchar(7); 
   fflush(stdout);
@@ -3203,7 +3208,8 @@ wsetscrreg(WINDOW *w,int t,int b)
 #endif /* __FreeBSD__ */
 
 
-exitccustom()
+int
+exitccustom(void)
 {
     refresh();
     endwin();

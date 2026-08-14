@@ -96,7 +96,7 @@ static wchar_t *russia_data[UURD_SZ];
 static wchar_t *greek_data[UUGD_SZ];
 
 int
-initUlKigoTable()
+initUlKigoTable(void)
 {
   int retval;
 
@@ -165,15 +165,13 @@ char *skeisen_data[] =
 static wchar_t *keisen_data[UUKD_SZ];
 
 int
-initUlKeisenTable()
+initUlKeisenTable(void)
 {
   return setWStrings(keisen_data, skeisen_data, UUKD_SZ);
 }
 
 static int
-uuKigoExitDo(d, retval)
-uiContext d;
-int retval;
+uuKigoExitDo(uiContext d, int retval)
 {
   popForIchiranMode(d);
   popCallback(d);
@@ -186,10 +184,7 @@ int retval;
 }
 
 static int
-uuKigoRExitCatch(d, retval, env)
-uiContext d;
-int retval;
-mode_context env;
+uuKigoRExitCatch(uiContext d, int retval, mode_context env)
 /* ARGSUSED */
 {
   forichiranContext fc;
@@ -203,10 +198,7 @@ mode_context env;
 }
 
 static int
-uuKigoGExitCatch(d, retval, env)
-uiContext d;
-int retval;
-mode_context env;
+uuKigoGExitCatch(uiContext d, int retval, mode_context env)
 /* ARGSUSED */
 {
   forichiranContext fc;
@@ -220,10 +212,7 @@ mode_context env;
 }
 
 static int
-uuKigoKExitCatch(d, retval, env)
-uiContext d;
-int retval;
-mode_context env;
+uuKigoKExitCatch(uiContext d, int retval, mode_context env)
 /* ARGSUSED */
 {
   forichiranContext fc;
@@ -237,10 +226,7 @@ mode_context env;
 }
 
 int
-uuKigoGeneralExitCatch(d, retval, env)
-uiContext d;
-int retval;
-mode_context env;
+uuKigoGeneralExitCatch(uiContext d, int retval, mode_context env)
 /* ARGSUSED */
 {
   forichiranContext fc;
@@ -256,10 +242,7 @@ mode_context env;
 }
 
 static int
-uuKigoQuitCatch(d, retval, env)
-uiContext d;
-int retval;
-mode_context env;
+uuKigoQuitCatch(uiContext d, int retval, mode_context env)
 /* ARGSUSED */
 {
   popCallback(d); /* 一覧を pop */
@@ -271,15 +254,10 @@ mode_context env;
   return prevMenuIfExist(d);
 }
 
-extern int getForIchiranContext pro((uiContext)); /* bushu.c */
+extern int getForIchiranContext(uiContext); /* bushu.c */
 
 int
-uuKigoMake(d, allkouho, size, cur, mode, exitfunc, posp)
-uiContext d;
-wchar_t **allkouho;
-int size, *posp;
-char cur, mode;
-int (*exitfunc)();
+uuKigoMake(uiContext d, wchar_t **allkouho, int size, int cur, int mode, int (*exitfunc)(), int *posp)
 {
   forichiranContext fc;
   ichiranContext ic;
@@ -334,8 +312,7 @@ int (*exitfunc)();
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 static
-kigoZenpan(d)
-uiContext	d;
+kigoZenpan(uiContext d)
 {
   if(makeKigoIchiran(d, CANNA_MODE_ExtendMode) == NG) /* 0 は拡張の記号一覧 */
     return(GLineNGReturn(d));
@@ -351,8 +328,7 @@ uiContext	d;
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 int
-kigoRussia(d)
-uiContext d;
+kigoRussia(uiContext d)
 {
   yomiContext yc = (yomiContext)d->modec;
 
@@ -373,8 +349,7 @@ uiContext d;
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 int
-kigoGreek(d)
-uiContext d;
+kigoGreek(uiContext d)
 {
   yomiContext yc = (yomiContext)d->modec;
 
@@ -395,8 +370,7 @@ uiContext d;
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 int
-kigoKeisen(d)
-uiContext d;
+kigoKeisen(uiContext d)
 {
   yomiContext yc = (yomiContext)d->modec;
 

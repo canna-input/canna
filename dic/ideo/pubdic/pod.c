@@ -71,10 +71,7 @@ static int dicserialcompar();
 static int (*dic_compare_func)() = &diccompar;
 
 int
-Mbstowcs(d, ss, n)
-Wchar *d;
-char *ss;
-int n;
+Mbstowcs(Wchar *d, char *ss, int n)
 {
   register Wchar *p = d;
   register int ch;
@@ -102,10 +99,7 @@ int n;
 }
 
 int
-Wcstombs(d, s, n)
-char *d;
-Wchar *s;
-int n;
+Wcstombs(char *d, Wchar *s, int n)
 {
   register unsigned char *p = (unsigned char *)d;
   register Wchar ch;
@@ -138,8 +132,7 @@ int n;
 }
 
 int
-Wscmp(s1, s2)
-register Wchar *s1, *s2;
+Wscmp(register Wchar *s1, register Wchar *s2)
 {
   register int res;
 
@@ -162,9 +155,7 @@ register Wchar *s1, *s2;
 }
 
 Wchar *
-Wscpy(d, s)
-Wchar *d;
-register Wchar *s;
+Wscpy(Wchar *d, register Wchar *s)
 {
   register Wchar *p = d, ch;
 
@@ -176,8 +167,7 @@ register Wchar *s;
 }
 
 int
-Wslen(s)
-Wchar *s;
+Wslen(Wchar *s)
 {
   register Wchar *p = s;
 
@@ -186,8 +176,7 @@ Wchar *s;
 }
 
 int
-Watoi(s)
-Wchar *s;
+Watoi(Wchar *s)
 {
   register int res = 0;
   register Wchar ch;
@@ -200,9 +189,7 @@ Wchar *s;
 }
 
 static void
-Fputws(s, f)
-Wchar *s;
-FILE *f;
+Fputws(Wchar *s, FILE *f)
 {
   char buf[READBUFSIZE];
 
@@ -212,10 +199,7 @@ FILE *f;
 }
 
 Wchar *
-Fgetws(buf, siz, f)
-Wchar *buf;
-int siz;
-FILE *f;
+Fgetws(Wchar *buf, int siz, FILE *f)
 {
   char mbuf[READBUFSIZE], *p;
 
@@ -231,8 +215,7 @@ FILE *f;
 /* s が全てカタカナから構成されているかどうかを返す関数 */
 
 static int
-all_kana(s)
-Wchar *s;
+all_kana(Wchar *s)
 {
   static Wchar xa = 0, xke, aa, *p;
 
@@ -254,8 +237,7 @@ Wchar *s;
 /* スラッシュを探す */
 
 static Wchar *
-findslash(s)
-Wchar *s;
+findslash(Wchar *s)
 {
   while (*s) {
     if (*s == (Wchar)'/') {
@@ -269,9 +251,7 @@ Wchar *s;
 /* トークンを一個取り出す */
 
 static Wchar *
-extstr(p, pp, key_return)
-Wchar *p, **pp;
-int *key_return;
+extstr(Wchar *p, Wchar **pp, int *key_return)
 {
   Wchar *res;
   int key = 0;
@@ -302,7 +282,7 @@ struct hinshipack {
 static struct hinshipack *partsofspeech[HINSHIBUFSIZE];
 
 static void
-malloc_failed()
+malloc_failed(void)
 {
   (void)fprintf(stderr, "%s: malloc failed.\n", program);
 }
@@ -310,9 +290,7 @@ malloc_failed()
 /* 品詞名を品詞名テーブルに登録する */
 
 static struct hinshipack *
-internhinshi(str, flag)
-Wchar *str;
-int flag;
+internhinshi(Wchar *str, int flag)
 {
   struct hinshipack *p, **pp;
   Wchar *s;
@@ -346,7 +324,7 @@ int flag;
 /* 品詞名を置き換える */
 
 static void
-replace_hinshi()
+replace_hinshi(void)
 {
   FILE *f;
   Wchar readbuf[READBUFSIZE], *to, *from, *s;
@@ -413,8 +391,7 @@ replace_hinshi()
 }
 
 static void
-select_hinshi(n)
-int n;
+select_hinshi(int n)
 {
   Wchar *s, *t, *xx;
   struct hinshipack *p;
@@ -482,8 +459,7 @@ struct descpack {
 };
 
 static void
-freedesc(p)
-struct descpack *p;
+freedesc(struct descpack *p)
 {
   free((char *)p->hinshi);
   free((char *)p->tandesc);
@@ -496,8 +472,7 @@ static struct descpack *description[HINSHIBUFSIZE];
 /* ルールの登録 */
 
 static struct descpack *
-interndesc(hin, tan, yom)
-Wchar *hin, *tan, *yom;
+interndesc(Wchar *hin, Wchar *tan, Wchar *yom)
 {
   struct descpack *p, **pp, *next = (struct descpack *)0;
   Wchar *s;
@@ -546,8 +521,7 @@ Wchar *hin, *tan, *yom;
 /* ルールの探索 */
 
 static struct descpack *
-searchdesc(hin)
-Wchar *hin;
+searchdesc(Wchar *hin)
 {
   struct descpack *p, **pp;
   Wchar *s;
@@ -564,7 +538,7 @@ Wchar *hin;
 }
 
 static void
-store_description()
+store_description(void)
 {
   FILE *f;
   Wchar readbuf[READBUFSIZE], *hin, *tan, *yom, *s;
@@ -611,8 +585,7 @@ static int nkinds;
 /* 種別の登録 */
 
 static long
-internkind(s)
-Wchar *s;
+internkind(Wchar *s)
 {
   int i;
   Wchar *p;
@@ -646,7 +619,7 @@ Wchar *s;
 /* 種別の一覧の出力 */
 
 static void
-listkinds()
+listkinds(void)
 {
   int i;
 
@@ -657,14 +630,13 @@ listkinds()
 }
 
 static int
-kindcompar(k1, k2)
-struct kindpack *k1, *k2;
+kindcompar(const void *k1, const void *k2)
 {
-  return Wscmp(k1->kind, k2->kind);
+  return Wscmp(((struct kindpack *)k1)->kind, ((struct kindpack *)k2)->kind);
 }
 
 static void
-sortkind()
+sortkind(void)
 {
   qsort((char *)kinds, nkinds, sizeof(struct kindpack), kindcompar);
 }
@@ -707,10 +679,7 @@ static int ndicentries = 0;
 #define IGNORE_KIND   2L
 
 static struct dicpack *
-intern(key, yomi, kouho, hinshi, hindo, kind, stat, flags)
-int key, hindo, *stat;
-Wchar *yomi, *kouho, *hinshi;
-long kind, flags;
+intern(int key, Wchar *yomi, Wchar *kouho, Wchar *hinshi, int hindo, long kind, int *stat, long flags)
 {
   struct dicpack *p, **pp;
   struct descpack *dp;
@@ -811,8 +780,7 @@ long kind, flags;
 /* 登録されているエントリに対して fn を実行する */
 
 static void
-for_all_interned(fn)
-void (*fn)();
+for_all_interned(void (*fn)(void))
 {
   int i;
   struct dicpack *p; 
@@ -826,8 +794,7 @@ void (*fn)();
 #endif
 
 static void
-storepd(file)
-FILE *file;
+storepd(FILE *file)
 {
   Wchar readbuf[READBUFSIZE], *p, *yomi, *hinshi, *kouho, *hindo, *kind;
   int nhindo, key, tkey, stat;
@@ -859,8 +826,7 @@ FILE *file;
 }
 
 static void
-comparepd(file)
-FILE *file;
+comparepd(FILE *file)
 {
   Wchar readbuf[READBUFSIZE], *p, *yomi, *hinshi, *kouho, *hindo, *kind;
   int nhindo, key, tkey, stat, *statp = &stat;
@@ -945,9 +911,7 @@ FILE *file;
 }
 
 static void
-canna_yomioutput(ws, cf)
-Wchar *ws;
-FILE *cf;
+canna_yomioutput(Wchar *ws, FILE *cf)
 {
   Wchar yomi[READBUFSIZE];
   Wchar *yp;
@@ -973,11 +937,7 @@ FILE *cf;
 }
 
 static void
-canna_output(cf, p, h, n)
-FILE *cf;
-struct dicpack *p;
-Wchar *h;
-int n;
+canna_output(FILE *cf, struct dicpack *p, Wchar *h, int n)
 {
   for (; n-- > 0 ; h += Wslen(h) + 1) {
     canna_yomioutput(p->yomi, cf);
@@ -993,12 +953,7 @@ int n;
 }
 
 static void
-entry_out(cf, p, h, n, ex)
-FILE *cf;
-struct dicpack *p;
-Wchar *h;
-int n;
-Wchar *ex;
+entry_out(FILE *cf, struct dicpack *p, Wchar *h, int n, Wchar *ex)
 {
   int i, f = 1;
   long b;
@@ -1048,9 +1003,7 @@ Wchar *ex;
 /* p で表されるエントリをファイル cf に出力する */
 
 static void
-printentry(cf, p)
-FILE *cf;
-struct dicpack *p;
+printentry(FILE *cf, struct dicpack *p)
 {
   if (specific_kind && !(p->kind & specific_kind)) {
     return;
@@ -1074,8 +1027,7 @@ struct dicpack *p;
 
 #if 0 /* unused */
 static void
-showdeleted(p)
-struct dicpack *p;
+showdeleted(struct dicpack *p)
 {
   if (!(p->flags & COMMON)) {
     (void)printf("- ");
@@ -1085,9 +1037,7 @@ struct dicpack *p;
 #endif
 
 static void
-showentry(pd, n)
-struct dicpack **pd;
-int n;
+showentry(struct dicpack **pd, int n)
 {
   FILE *cf = (FILE *)0, *of = (FILE *)0, *nf = (FILE *)0;
   struct dicpack *p;
@@ -1159,8 +1109,7 @@ int n;
 }
 
 static int
-diccompar(p1, p2)
-struct dicpack **p1, **p2;
+diccompar(struct dicpack **p1, struct dicpack **p2)
 {
   int n;
   if (n = Wscmp((*p1)->yomi, (*p2)->yomi)) {
@@ -1178,8 +1127,7 @@ struct dicpack **p1, **p2;
 }
 
 static int
-dichindocompar(p1, p2)
-struct dicpack **p1, **p2;
+dichindocompar(struct dicpack **p1, struct dicpack **p2)
 {
   int n;
   if (n = Wscmp((*p1)->yomi, (*p2)->yomi)) {
@@ -1200,8 +1148,7 @@ struct dicpack **p1, **p2;
 }
 
 static int
-dichindocompar2(p1, p2)
-struct dicpack **p1, **p2;
+dichindocompar2(struct dicpack **p1, struct dicpack **p2)
 {
   int n;
   if (n = Wscmp((*p1)->yomi, (*p2)->yomi)) {
@@ -1219,8 +1166,7 @@ struct dicpack **p1, **p2;
 }
 
 static int
-dicserialcompar(p1, p2)
-struct dicpack **p1, **p2;
+dicserialcompar(struct dicpack **p1, struct dicpack **p2)
 {
   int n;
 
@@ -1233,9 +1179,7 @@ struct dicpack **p1, **p2;
 }
 
 static void
-shrinkargs(argv, n, count)
-char **argv;
-int n, count;
+shrinkargs(char **argv, int n, int count)
 {
   int i;
 
@@ -1245,9 +1189,7 @@ int n, count;
 }
 
 static void
-parseargs(argc, argv)
-int argc;
-char *argv[];
+parseargs(int argc, char *argv[])
 {
   int i;
 
@@ -1426,9 +1368,7 @@ static Wchar kihonh[] = {
 };
 
 int
-main(argc, argv)
-int argc;
-char *argv[];
+main(int argc, char *argv[])
 {
   in1 = in2 = stdin;
 

@@ -81,7 +81,7 @@ static char *default_hinshi[] = {
 };
 
 int
-ask_default_hinshi_size()
+ask_default_hinshi_size(void)
 {
   int i;
   
@@ -89,8 +89,8 @@ ask_default_hinshi_size()
   return i;
 }
 
-char *salloc(s)
-char *s;
+char *
+salloc(char *s)
 {
   char *new;
   
@@ -105,9 +105,7 @@ char *s;
 
 /* 品詞対応 */
 char *
-chghinshi(hinshi, size, taiou, fsize)
-char   *hinshi, **taiou;
-int    size, fsize;
+chghinshi(char *hinshi, int size, char **taiou, int fsize)
 {
   int   i;
   char wnn_hinshi[MAXTANGO];
@@ -145,9 +143,7 @@ int    size, fsize;
 
 /* 品詞ファイル読み込み */
 int
-read_hinshi(fp, taiou)
-FILE  *fp;
-char *taiou[MAXHINSHI];
+read_hinshi(FILE *fp, char *taiou[MAXHINSHI])
 {
   int  size;
   char H[MAXTANGO], wnn[MAXTANGO], iroha[MAXTANGO];
@@ -166,8 +162,7 @@ char *taiou[MAXHINSHI];
 }
  
 char *
-get_hindo(iroha_hinshi)
-char *iroha_hinshi;
+get_hindo(char *iroha_hinshi)
 {
   char *p;
   char *hindo;
@@ -183,17 +178,13 @@ char *iroha_hinshi;
 
 /* 出力 */
 void
-itow_write(fp, yomi, hinshi, kouho, hindo)
-FILE  *fp;
-char *yomi, *hinshi, *kouho, *hindo;
+itow_write(FILE *fp, char *yomi, char *hinshi, char *kouho, char *hindo)
 {
   fprintf( fp, "%s %s %s %s \n", yomi, kouho, hinshi, hindo);
 }
 
 int
-main(argc, argv)
-int  argc;
-char *argv[]; 
+main(int argc, char *argv[])
 {
   char *taiou[MAXHINSHI];
   char *nd, *hinshis, hinshi[MAXTANGO], *p;

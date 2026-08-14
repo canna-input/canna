@@ -38,8 +38,8 @@ extern "C" {
 #else
 # define RkiStrlcpy RkiAltStrlcpy
 # define RkiStrlcat RkiAltStrlcat
-extern size_t RkiAltStrlcpy pro((char *dst, const char *src, size_t len));
-extern size_t RkiAltStrlcat pro((char *dst, const char *src, size_t len));
+extern size_t RkiAltStrlcpy(char *dst, const char *src, size_t len);
+extern size_t RkiAltStrlcat(char *dst, const char *src, size_t len);
 #endif
 
 #define RKI_MIN(x, y) (((x) < (y)) ? (x) : (y))

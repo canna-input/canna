@@ -44,8 +44,7 @@ static int serverChangeDo();
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 int
-serverFin(d)
-uiContext d;
+serverFin(uiContext d)
 {
   int retval = 0;
   yomiContext yc = (yomiContext)d->modec;
@@ -67,7 +66,7 @@ uiContext d;
   return(retval);
 }
 
-extern int checkGLineLen pro((uiContext)); /* util.c */
+extern int checkGLineLen(uiContext); /* util.c */
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * サーバの切り換え                                                          *
@@ -76,10 +75,7 @@ extern int checkGLineLen pro((uiContext)); /* util.c */
 #ifndef STANDALONE
 
 static int
-uuServerChangeEveryTimeCatch(d, retval, env)
-uiContext d;
-int retval;
-mode_context env;
+uuServerChangeEveryTimeCatch(uiContext d, int retval, mode_context env)
 /* ARGSUSED */
 {
   int len, echoLen, revPos;
@@ -133,10 +129,7 @@ mode_context env;
 }
 
 static int
-uuServerChangeExitCatch(d, retval, env)
-uiContext d;
-int retval;
-mode_context env;
+uuServerChangeExitCatch(uiContext d, int retval, mode_context env)
 /* ARGSUSED */
 {
   popCallback(d); /* 読みを pop */
@@ -145,10 +138,7 @@ mode_context env;
 }
 
 static int
-uuServerChangeQuitCatch(d, retval, env)
-uiContext d;
-int retval;
-mode_context env;
+uuServerChangeQuitCatch(uiContext d, int retval, mode_context env)
 /* ARGSUSED */
 {
   popCallback(d); /* 読みを pop */
@@ -160,8 +150,7 @@ extern exp(char *) RkwGetServerName();
 #endif /* STANDALONE */
 
 int
-serverChange(d)
-uiContext d;
+serverChange(uiContext d)
 {
   int retval = 0;
   wchar_t *w;
@@ -207,9 +196,7 @@ uiContext d;
 		 
 #ifndef STANDALONE
 static int
-serverChangeDo(d, len)
-uiContext d;
-int len;
+serverChangeDo(uiContext d, int len)
 {
 /* wchar_t で良いか？ 256 で良いか？ */
   wchar_t newServerName[256];

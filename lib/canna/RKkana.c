@@ -162,10 +162,7 @@ hankaku[] = {
 #else /* !OBSOLETE_RKKANA */
 
 static int
-_ADDCODE(dst, maxdst, count, code, length)
-unsigned char *dst;
-int maxdst, count, length;
-unsigned long code;
+_ADDCODE(unsigned char *dst, int maxdst, int count, unsigned long code, int length)
 {
   if ((unsigned long)length <= (unsigned long)maxdst) {
     maxdst -= length;
@@ -194,12 +191,8 @@ unsigned long code;
  *	hankaku moji(ASCII+katakana) wo taiou suru zenkaku moji ni suru
  *	dakuten,handakuten shori mo okonau.
  */
-int	
-RkCvtZen(zen, maxzen, han, maxhan)
-unsigned char	*zen;
-int		maxzen;
-unsigned char	*han;
-int		maxhan;
+int
+RkCvtZen(unsigned char *zen, int maxzen, unsigned char *han, int maxhan)
 {
     unsigned char	*z = zen;
     unsigned char	*h = han;
@@ -265,12 +258,8 @@ int		maxhan;
 /* RkCvtHan
  *	zenkaku kana moji wo hankaku moji ni suru 
  */
-int	
-RkCvtHan(han, maxhan, zen, maxzen)
-unsigned char	*han;
-int		maxhan;
-unsigned char	*zen;
-int		maxzen;
+int
+RkCvtHan(unsigned char *han, int maxhan, unsigned char *zen, int maxzen)
 {
     unsigned char	*h = han;
     unsigned char	*z = zen;
@@ -350,12 +339,8 @@ int		maxzen;
 /* RkCvtKana/RkCvtHira
  *	zenkaku hiragana wo katakana ni suru 
  */
-int	
-RkCvtKana(kana, maxkana, hira, maxhira)
-unsigned char	*kana;
-int		maxkana;
-unsigned char	*hira;
-int		maxhira;
+int
+RkCvtKana(unsigned char *kana, int maxkana, unsigned char *hira, int maxhira)
 {
     register unsigned char	*k = kana;
     register unsigned char	*h = hira;
@@ -396,12 +381,8 @@ int		maxhira;
 	*k = 0;
     return count;
 }
-int	
-RkCvtHira(hira, maxhira, kana, maxkana)
-unsigned char	*hira;
-int		maxhira;
-unsigned char	*kana;
-int		maxkana;
+int
+RkCvtHira(unsigned char *hira, int maxhira, unsigned char *kana, int maxkana)
 {
     register unsigned char	*h = hira;
     register unsigned char	*k = kana;
@@ -444,12 +425,8 @@ int		maxkana;
 	*h = 0;
     return count;
 }
-int	
-RkCvtNone(dst, maxdst, src, maxsrc)
-unsigned char	*dst;
-int		maxdst;
-unsigned char	*src;
-int		maxsrc;
+int
+RkCvtNone(unsigned char *dst, int maxdst, unsigned char *src, int maxsrc)
 {
     register unsigned char	*d = dst;
     register unsigned char	*s = src;
@@ -482,11 +459,7 @@ int		maxsrc;
  * 	shift jis --> euc 
  */
 int
-RkCvtEuc(euc, maxeuc, sj, maxsj)
-unsigned char	*euc;
-int		maxeuc;
-unsigned char	*sj;
-int		maxsj;
+RkCvtEuc(unsigned char *euc, int maxeuc, unsigned char *sj, int maxsj)
 {
     unsigned char	*e = euc;
     unsigned char	*s = sj;
@@ -558,12 +531,7 @@ static unsigned kurai3new[] = { 0, 0xbdbd, 0xc9b4, 0xc0e9, };
 static unsigned kurai3old[] = { 0, 0xbdbd, 0xc9b4, 0xc0e9, };
 
 int
-RkCvtSuuji(dst, maxdst, src, maxsrc, format)
-unsigned char	*dst;
-int		maxdst;
-unsigned char	*src;
-int		maxsrc;
-int		format;
+RkCvtSuuji(unsigned char *dst, int maxdst, unsigned char *src, int maxsrc, int format)
 {
     int			count;
     int			i, j, k;
@@ -723,9 +691,7 @@ int		format;
 #define CBUFSIZE     512
 
 int
-RkwCvtHan(dst, maxdst, src, srclen)
-wchar_t *dst, *src;
-int maxdst, srclen;
+RkwCvtHan(wchar_t *dst, int maxdst, wchar_t *src, int srclen)
 {
   int len = 0;
 #ifndef USE_MALLOC_FOR_BIG_ARRAY
@@ -760,9 +726,7 @@ int maxdst, srclen;
 }
 
 int
-RkwCvtHira(dst, maxdst, src, srclen)
-wchar_t *dst, *src;
-int maxdst, srclen;
+RkwCvtHira(wchar_t *dst, int maxdst, wchar_t *src, int srclen)
 {
   int len = 0;
 #ifndef USE_MALLOC_FOR_BIG_ARRAY
@@ -798,9 +762,7 @@ int maxdst, srclen;
 }
   
 int
-RkwCvtKana(dst, maxdst, src, srclen)
-wchar_t *dst, *src;
-int maxdst, srclen;
+RkwCvtKana(wchar_t *dst, int maxdst, wchar_t *src, int srclen)
 {
   int len = 0;
 #ifndef USE_MALLOC_FOR_BIG_ARRAY
@@ -836,9 +798,7 @@ int maxdst, srclen;
 }
 
 int
-RkwCvtZen(dst, maxdst, src, srclen)
-wchar_t *dst, *src;
-int maxdst, srclen;
+RkwCvtZen(wchar_t *dst, int maxdst, wchar_t *src, int srclen)
 {
   int len = 0;
 #ifndef USE_MALLOC_FOR_BIG_ARRAY
@@ -874,9 +834,7 @@ int maxdst, srclen;
 }
 
 int
-RkwCvtNone(dst, maxdst, src, srclen)
-wchar_t *dst, *src;
-int maxdst, srclen;
+RkwCvtNone(wchar_t *dst, int maxdst, wchar_t *src, int srclen)
 {
   int i;
   int len = (maxdst < srclen) ? maxdst : srclen;
@@ -889,10 +847,7 @@ int maxdst, srclen;
 }
 
 int
-RkwMapRoma(romaji, dst, maxdst, src, srclen, flags, status)
-struct RkRxDic *romaji;
-wchar_t *dst, *src;
-int maxdst, srclen, flags, *status;
+RkwMapRoma(struct RkRxDic *romaji, wchar_t *dst, int maxdst, wchar_t *src, int srclen, int flags, int *status)
 {
   int len = 0, ret;
 #ifndef USE_MALLOC_FOR_BIG_ARRAY
@@ -1000,10 +955,7 @@ int maxdst, srclen, flags, *ulen, *dlen, *tlen, *rule;
 }
 
 int
-RkwCvtRoma(romaji, dst, maxdst, src, srclen, flags)
-struct RkRxDic *romaji;
-wchar_t *dst, *src;
-int maxdst, srclen, flags;
+RkwCvtRoma(struct RkRxDic *romaji, wchar_t *dst, int maxdst, wchar_t *src, int srclen, int flags)
 {
   int ret = 0, len;
 #ifndef USE_MALLOC_FOR_BIG_ARRAY

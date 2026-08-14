@@ -39,15 +39,7 @@ static wchar_t *inbuf = 0;
 static int inbufsize = 0;
 
 static int
-StoreWCtoEUC(wbuf, wbuflen, wks, ebuf, maxebuf, ks, ch, nbytes)
-wchar_t *wbuf;
-int wbuflen;
-wcKanjiStatus *wks;
-char *ebuf;
-int maxebuf;
-jrKanjiStatus *ks;
-int ch;
-int nbytes;
+StoreWCtoEUC(wchar_t *wbuf, int wbuflen, wcKanjiStatus *wks, char *ebuf, int maxebuf, jrKanjiStatus *ks, int ch, int nbytes)
 {
   int ret, rest, totallen = 0, len;
   char *p;
@@ -185,13 +177,7 @@ int nbytes;
 }
 
 int
-XLookupKanji2(dpy, win, buffer_return, bytes_buffer, nbytes, functionalChar,
-	      kanji_status_return)
-unsigned int dpy, win;
-int functionalChar, nbytes;
-char *buffer_return;
-int bytes_buffer;
-jrKanjiStatus *kanji_status_return;
+XLookupKanji2(unsigned int dpy, unsigned int win, char *buffer_return, int bytes_buffer, int nbytes, int functionalChar, jrKanjiStatus *kanji_status_return)
 {
   int ret;
   wcKanjiStatus wks;
@@ -228,11 +214,7 @@ jrKanjiStatus *kanji_status_return;
 }
 		      
 int
-EUCListCallback(client_data, func, items, nitems, cur_item)
-char *client_data;
-int func;
-wchar_t **items;
-int nitems, *cur_item;
+EUCListCallback(char *client_data, int func, wchar_t **items, int nitems, int *cur_item)
 {
   const jrEUCListCallbackStruct *elistcb;
   int r = -1;
@@ -270,9 +252,7 @@ last:
 }
 
 int
-XKanjiControl2(display, window, request, arg)
-unsigned int display, window, request;
-BYTE *arg;
+XKanjiControl2(unsigned int display, unsigned int window, unsigned int request, BYTE *arg)
 {
   int ret = -1, len1, len2;
   wcKanjiStatusWithValue wksv;
@@ -413,10 +393,7 @@ BYTE *arg;
 }
 
 exp(int)
-jrKanjiString(context_id, ch, buffer_return, nbuffer, kanji_status_return)
-const int context_id, ch, nbuffer;
-char  *buffer_return;
-jrKanjiStatus  *kanji_status_return;
+jrKanjiString(const int context_id, const int ch, char *buffer_return, const int nbuffer, jrKanjiStatus *kanji_status_return)
 {
   *buffer_return = ch;
 
@@ -429,10 +406,7 @@ jrKanjiStatus  *kanji_status_return;
 /* jrKanjiControl -- カナ漢字変換の制御を行う */
 
 exp(int)
-jrKanjiControl(context, request, arg)
-     const int context;
-     const int request;
-     char *arg;
+jrKanjiControl(const int context, const int request, char *arg)
 {
   return XKanjiControl2((unsigned int)0, (unsigned int)context,
 			request, (BYTE *)arg);

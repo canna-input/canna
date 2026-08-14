@@ -50,8 +50,7 @@ struct map {
 extern struct map *mapFromHash();
 
 static unsigned char *
-showChar(c)
-int c;
+showChar(int c)
 {
   static unsigned char Gkey[9];
   static char *keyCharMap[] = {               
@@ -101,8 +100,7 @@ int c;
 }
 
 int
-UseOtherKeymap(d)
-uiContext d;
+UseOtherKeymap(uiContext d)
 {
   struct map *p;
   unsigned char showKey[10];
@@ -127,10 +125,10 @@ uiContext d;
 }
 
 static int
-_DoFuncSequence(d, keytbl, key) /* 複数の機能の割り当て */
-uiContext d;
-BYTE *keytbl;
-BYTE key;
+_DoFuncSequence( /* 複数の機能の割り当て */
+	uiContext d,
+	BYTE *keytbl,
+	int key)
 {
   int res, total_res, ginfo = 0;
   int prevEchoLen = -1, prevRevPos, prevRevLen;
@@ -241,19 +239,14 @@ BYTE key;
 }
 
 int
-DoFuncSequence(d) /* 複数の機能の割り当て */
-uiContext d;
+DoFuncSequence( /* 複数の機能の割り当て */
+	uiContext d)
 {
   return _DoFuncSequence(d, (BYTE *)NULL, (BYTE)0);
 }
 
 int
-multiSequenceFunc(d, mode, whattodo, key, fnum)
-uiContext d;
-KanjiMode mode;
-int whattodo;
-unsigned key;
-int fnum;
+multiSequenceFunc(uiContext d, KanjiMode mode, int whattodo, unsigned key, int fnum)
 {
   int i;
   unsigned char *p;

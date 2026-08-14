@@ -176,7 +176,7 @@ extern const char *DebugProc[][2];
 extern const char *DebugProcWide[][2];
 #endif
 extern const char *CallFuncName;
-extern int (*CallFunc) pro((ClientPtr *clientp));
+extern int (*CallFunc)(ClientPtr *clientp);
 extern ACLPtr ACLHead ;
 extern int canna_server_hi;
 extern int canna_server_lo;
@@ -185,75 +185,70 @@ extern int canna_server_lo;
 #ifdef __STDC__
 # define USE_VARARGS
 #endif
-#if defined(USE_VARARGS) && defined(__STDC__)
-# define vapro(x) x
-#else
-# define vapro(x) ()
-#endif
 
 #ifdef DEBUG
-void Dmsg vapro((int Pri, const char *f, ...));
+void Dmsg(int Pri, const char *f, ...);
 #endif /* DEBUG */
-void PrintMsg vapro((const char *f, ...));
-void nomem_msg pro((const char *));
+void PrintMsg(const char *f, ...);
+void nomem_msg(const char *);
 
-void EarlyInit pro((int, char **));
-int BecomeDaemon pro((void));
-void CloseServer pro((void));
-int CheckSignal pro((void));
-AddrList *GetAddrListFromName pro((const char *hostname));
-AddrList *SearchAddrList pro((const AddrList *list, const Address *addrp));
-void FreeAddrList pro((AddrList *list));
-int NumberAccessControlList pro((void));
-int CheckAccessControlList pro((Address *hostaddrp, const char *username));
-int SetDicHome pro((ClientPtr client, int cxnum));
-ClientPtr *get_all_other_clients pro((ClientPtr self, size_t *count));
-void AllSync pro((void));
-void DetachTTY pro((void));
+void EarlyInit(int, char **);
+int BecomeDaemon(void);
+void CloseServer(void);
+int CheckSignal(void);
+AddrList *GetAddrListFromName(const char *hostname);
+AddrList *SearchAddrList(const AddrList *list, const Address *addrp);
+void FreeAddrList(AddrList *list);
+int NumberAccessControlList(void);
+int CheckAccessControlList(Address *hostaddrp, const char *username);
+int SetDicHome(ClientPtr client, int cxnum);
+ClientPtr *get_all_other_clients(ClientPtr self, size_t *count);
+void AllSync(void);
+void DetachTTY(void);
 
 /* convert.c */
-int ir_nosession pro((ClientPtr *clientp, ClientBuf *client_buf));
-int ir_error pro((ClientPtr *clientp));
+int ir_nosession(ClientPtr *clientp, ClientBuf *client_buf);
+int ir_error(ClientPtr *clientp);
 #ifdef DEBUG
-void DebugDispKanji pro((int cxnum, int num));
-void DebugDump pro((int level, const char *buf, int size));
+void DebugDispKanji(int cxnum, int num);
+void DebugDump(int level, const char *buf, int size);
 #endif
 
 /* wconvert.c */
-int parse_wide_request pro((int *request, BYTE *data, size_t len,
-      const char *username, const char *hostname));
-int parse_euc_request pro((int *request, BYTE *data, size_t len,
-      const char *username, const char *hostname));
-char *insertUserSla pro((char *, int));
-int checkPermissionToRead pro((ClientPtr client,
-      char *dirname, char *dicname));
+int parse_wide_request(int *request, BYTE *data, size_t len,
+      const char *username, const char *hostname);
+int parse_euc_request(int *request, BYTE *data, size_t len,
+      const char *username, const char *hostname);
+char *insertUserSla(char *, int);
+int checkPermissionToRead(ClientPtr client,
+      char *dirname, char *dicname);
 
 /* main.c */
-int process_request pro((
+int process_request(
       ClientPtr *clientp, ClientBuf *client_buf,
-      BYTE *data, size_t len));
+      BYTE *data, size_t len);
 
 /* session.c */
-UserTable *UserTable_new pro((void));
-void UserTable_delete pro((UserTable *obj));
-void close_session pro((ClientPtr *clientp, int notify));
-int open_session pro((ClientPtr *clientp, char *name, ClientBuf *client_buf));
-void ClientStat pro((ClientPtr client, int type,
-      int request_Type, char *return_date));
+UserTable *UserTable_new(void);
+void UserTable_delete(UserTable *obj);
+void close_session(ClientPtr *clientp, int notify);
+int open_session(ClientPtr *clientp, char *name, ClientBuf *client_buf);
+void ClientStat(ClientPtr client, int type,
+      int request_Type, char *return_date);
 
 /* util.c */
-size_t ushort2euc pro((const Ushort *src, size_t srclen,
-      char *dest, size_t destlen));
-size_t euc2ushort pro((const char *src, size_t srclen,
-      Ushort *dest, size_t destlen));
-size_t ushortstrlen pro((const Ushort *ws));
-Ushort *ushortmemchr pro((const Ushort *ws, int ch, size_t len));
-size_t ushortstrcpy pro((Ushort *wd, const Ushort *ws));
-size_t ushortstrncpy pro((Ushort *wd, const Ushort *ws, size_t len));
-int WidenClientContext pro((ClientPtr cli, size_t n));
-int set_cxt pro((ClientPtr cl, int n));
-void off_cxt pro((ClientPtr cl, int cn));
-int chk_cxt pro((ClientPtr cl, int cn));
+size_t ushort2euc(const Ushort *src, size_t srclen,
+      char *dest, size_t destlen);
+size_t euc2ushort(const char *src, size_t srclen,
+      Ushort *dest, size_t destlen);
+size_t ushortstrlen(const Ushort *ws);
+Ushort *ushortmemchr(const Ushort *ws, int ch, size_t len);
+size_t ushortstrcpy(Ushort *wd, const Ushort *ws);
+size_t ushortstrncpy(Ushort *wd, const Ushort *ws, size_t len);
+int WidenClientContext(ClientPtr cli, size_t n);
+int set_cxt(ClientPtr cl, int n);
+void off_cxt(ClientPtr cl, int cn);
+int chk_cxt(ClientPtr cl, int cn);
 
 #endif	/* SERVER_H */
 /* vim: set sw=2: */

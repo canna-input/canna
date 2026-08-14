@@ -36,9 +36,9 @@
 #define wchar_t cannawc
 
 static int quitHex();
-extern int checkGLineLen pro((uiContext)); /* util.c */
-extern int cvtAsHex pro((uiContext, wchar_t*, wchar_t*, int)); /* romaji.c */
-extern int convertAsHex pro((uiContext)); /* romaji.c */
+extern int checkGLineLen(uiContext); /* util.c */
+extern int cvtAsHex(uiContext, wchar_t*, wchar_t*, int); /* romaji.c */
+extern int convertAsHex(uiContext); /* romaji.c */
 
 /* cfuncdef
 
@@ -47,10 +47,7 @@ extern int convertAsHex pro((uiContext)); /* romaji.c */
  */
 
 static int
-hexEveryTimeCatch(d, retval, env)
-     uiContext d;
-     int retval;
-     mode_context env;
+hexEveryTimeCatch(uiContext d, int retval, mode_context env)
      /* ARGSUSED */
 {
   yomiContext yc = (yomiContext)d->modec;
@@ -101,10 +98,7 @@ hexEveryTimeCatch(d, retval, env)
 }
 
 static int
-exitHex(d, retval, env)
-uiContext d;
-int retval;
-mode_context env;
+exitHex(uiContext d, int retval, mode_context env)
 {
   killmenu(d);
   if (cvtAsHex(d, d->buffer_return, d->buffer_return, d->nbytes)) {
@@ -120,10 +114,7 @@ mode_context env;
 }
 
 static int
-quitHex(d, retval, env)
-     uiContext d;
-     int retval;
-     mode_context env;
+quitHex(uiContext d, int retval, mode_context env)
      /* ARGSUSED */
 {
   GlineClear(d);
@@ -135,9 +126,7 @@ quitHex(d, retval, env)
 yomiContext GetKanjiString();
 
 static int
-hexMode(d, major_mode)
-uiContext d;
-int major_mode;
+hexMode(uiContext d, int major_mode)
 {
   yomiContext yc;
 
@@ -163,8 +152,7 @@ int major_mode;
  */
 
 int
-HexMode(d)
-uiContext d;
+HexMode(uiContext d)
 {
   yomiContext yc = (yomiContext)d->modec;
 

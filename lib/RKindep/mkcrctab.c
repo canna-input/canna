@@ -4,9 +4,7 @@
 
 
 int
-main(argc, argv)
-int argc;
-char *argv[];
+main(int argc, char *argv[])
 {
   canna_uint32_t i, r;
   unsigned int j;

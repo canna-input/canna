@@ -89,7 +89,7 @@ typedef enum {
 #define COMMA_LPRIO 11
 #define COLON_LPRIO 20
 
-typedef unsigned int (*CalcProc) pro((unsigned int, unsigned int));
+typedef unsigned int (*CalcProc)(unsigned int, unsigned int);
 typedef struct {
   int lprio;
   int rprio;
@@ -126,7 +126,7 @@ typedef struct {
   unsigned int exprval;
 } Parser;
 
-typedef int (*StmtProc) pro((Parser *cx));
+typedef int (*StmtProc)(Parser *cx);
 
 typedef struct {
   const char *name;
@@ -162,9 +162,9 @@ struct tagRkcConfMgr {
   RkcErrorBuf *errors;
 };
 
-static void RkcErrorBuf_init pro((RkcErrorBuf *cx));
-static void RkcErrorBuf_destroy pro((RkcErrorBuf *cx));
-static void RkcErrorBuf_add pro((RkcErrorBuf *cx, const char *msg));
+static void RkcErrorBuf_init(RkcErrorBuf *cx);
+static void RkcErrorBuf_destroy(RkcErrorBuf *cx);
+static void RkcErrorBuf_add(RkcErrorBuf *cx, const char *msg);
 #define RkcErrorBuf_nomem(cx) ((cx)->nomem = 1)
 
 #define TOKEN_STRHDR(str) ((size_t *)((str) - sizeof(size_t)))
@@ -205,38 +205,35 @@ static void RkcErrorBuf_add pro((RkcErrorBuf *cx, const char *msg));
   TOKEN_UNREF(tp); \
   TOKEN_INIT(tp); \
 } while(0)
-static int Token_assignstr pro((
-      TokenRec *tp, const char *str, size_t len, int type));
+static int Token_assignstr(
+      TokenRec *tp, const char *str, size_t len, int type);
 #ifdef CONF_DEBUG
-static void Token_dump pro((const TokenRec *tp));
+static void Token_dump(const TokenRec *tp);
 #endif
 
-static Lexer *Lexer_new pro((
-      const char *srcdata, size_t srcsize, RkcErrorBuf *errorbuf));
-static void Lexer_delete pro((Lexer *cx));
-static int Lexer_next pro((Lexer *cx, TokenRec *resp, int prefix_op));
-static void Lexer_error pro((const Lexer *cx, const char *msg));
+static Lexer *Lexer_new(
+      const char *srcdata, size_t srcsize, RkcErrorBuf *errorbuf);
+static void Lexer_delete(Lexer *cx);
+static int Lexer_next(Lexer *cx, TokenRec *resp, int prefix_op);
+static void Lexer_error(const Lexer *cx, const char *msg);
 
-static Parser *Parser_new pro((
-      RkcConfMgr *confmgr, Lexer *lexer, RkcErrorBuf *errorbuf));
-static void Parser_delete pro((Parser *cx));
-static void Parser_run pro((Parser *cx));
-static int Parser_next pro((Parser *cx));
-static int Parser_next_postfixop pro((Parser *cx));
-static void Parser_error pro((Parser *cx, const char *msg));
-static void Parser_eval_error pro((Parser *cx));
-static int Parser_eval pro((Parser *cx, int lprio));
-static char *Parser_getstr pro((Parser *cx));
+static Parser *Parser_new(
+      RkcConfMgr *confmgr, Lexer *lexer, RkcErrorBuf *errorbuf);
+static void Parser_delete(Parser *cx);
+static void Parser_run(Parser *cx);
+static int Parser_next(Parser *cx);
+static int Parser_next_postfixop(Parser *cx);
+static void Parser_error(Parser *cx, const char *msg);
+static void Parser_eval_error(Parser *cx);
+static int Parser_eval(Parser *cx, int lprio);
+static char *Parser_getstr(Parser *cx);
 
-static int syn_top pro((Parser *cx));
-static int syn_host pro((Parser *cx));
+static int syn_top(Parser *cx);
+static int syn_host(Parser *cx);
 
-#define DECL_CALCPROC(x) static unsigned int x \
-pro((unsigned int, unsigned int))
+#define DECL_CALCPROC(x) static unsigned int x(unsigned int, unsigned int)
 #define DEF_CALCPROC(x) static unsigned int \
-x(arg1, arg2) \
-unsigned int arg1; \
-unsigned int arg2;
+x(unsigned int arg1, unsigned int arg2)
 #define DEF_CALCPROC_OP1(x, op) DEF_CALCPROC(x) \
 /* ARGUSED */ \
 { return op arg1; }
@@ -266,16 +263,16 @@ DECL_CALCPROC(calc_land);
 DECL_CALCPROC(calc_lor);
 DECL_CALCPROC(calc_lnot);
 
-static void RkcConfMgr_init pro((RkcConfMgr *cx, RkcErrorBuf *errors));
-static void RkcConfMgr_destroy pro((RkcConfMgr *cx));
-static int RkcConfMgr_openhost pro((RkcConfMgr *cx, const char *hostname));
-static void RkcConfMgr_closehost pro((RkcConfMgr *cx));
-static int RkcConfMgr_set_string pro((RkcConfMgr *cx,
-      ConfItem item, const char *val));
-static int RkcConfMgr_set_number pro((RkcConfMgr *cx,
-      ConfItem item, unsigned int val));
-static int RkcConfMgr_set_yesno pro((RkcConfMgr *cx,
-      ConfItem item, int val));
+static void RkcConfMgr_init(RkcConfMgr *cx, RkcErrorBuf *errors);
+static void RkcConfMgr_destroy(RkcConfMgr *cx);
+static int RkcConfMgr_openhost(RkcConfMgr *cx, const char *hostname);
+static void RkcConfMgr_closehost(RkcConfMgr *cx);
+static int RkcConfMgr_set_string(RkcConfMgr *cx,
+      ConfItem item, const char *val);
+static int RkcConfMgr_set_number(RkcConfMgr *cx,
+      ConfItem item, unsigned int val);
+static int RkcConfMgr_set_yesno(RkcConfMgr *cx,
+      ConfItem item, int val);
 
 #define CONFIG_DIR ".cannax/"
 #define CONFIG_FILE "rkc.conf"

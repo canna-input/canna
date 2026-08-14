@@ -65,8 +65,7 @@ static int		_RkCountDDP();
 static struct DD	**_RkAppendDDP();
 
 char *
-allocStr(s)
-     char	*s;
+allocStr(char *s)
 {
   char	*d = (char *)0;
   int	len;
@@ -80,13 +79,8 @@ allocStr(s)
 /*
  * DM
  */
-static
-struct DM	*
-_RkCreateDM(df, dicname, nickname, class)
-     struct DF		*df;
-     unsigned char	*dicname;
-     unsigned char	*nickname;
-     int		class;
+static struct DM *
+_RkCreateDM(struct DF *df, unsigned char *dicname, unsigned char *nickname, int class)
 {
   struct DM	*dm;
     
@@ -113,10 +107,8 @@ _RkCreateDM(df, dicname, nickname, class)
   return 0;
 }
 
-static
-void
-_RkFreeDM(dm)
-     struct DM	*dm;
+static void
+_RkFreeDM(struct DM *dm)
 {
     if (dm) {
 	dm->dm_next->dm_prev = dm->dm_prev;
@@ -129,13 +121,8 @@ _RkFreeDM(dm)
     };
 }
 
-static
-struct DM *
-_RkAllocDM(df, dicname, nickname, class)
-     struct DF		*df;
-     unsigned char	*dicname;
-     unsigned char	*nickname;
-     int		class;
+static struct DM *
+_RkAllocDM(struct DF *df, unsigned char *dicname, unsigned char *nickname, int class)
 {
   struct DM	*m, *mh = &df->df_members;
 
@@ -157,12 +144,8 @@ _RkAllocDM(df, dicname, nickname, class)
 /*
  * DF
  */
-static
-struct DF *
-_RkCreateDF(dd, lnk, type)
-     struct DD		*dd;
-     unsigned char	*lnk;
-     int		type;
+static struct DF *
+_RkCreateDF(struct DD *dd, unsigned char *lnk, int type)
 {
   struct DF	*df;
     
@@ -185,10 +168,8 @@ _RkCreateDF(dd, lnk, type)
   return(df);
 }
 
-static
-void
-_RkFreeDF(df)
-     struct DF	*df;
+static void
+_RkFreeDF(struct DF *df)
 {
   struct DM	*m, *n;
 
@@ -209,12 +190,8 @@ _RkFreeDF(df)
   };
 }
 
-static
-struct DF	*
-_RkAllocDF(dd, lnk, type)
-     struct DD		*dd;
-     unsigned char	*lnk;
-     int		type;
+static struct DF *
+_RkAllocDF(struct DD *dd, unsigned char *lnk, int type)
 {
   struct DF	*f;
   struct DF	*fh = &dd->dd_files;
@@ -235,8 +212,7 @@ _RkAllocDF(dd, lnk, type)
 }
 
 int
-_RkRealizeDF(df)
-     struct DF	*df;
+_RkRealizeDF(struct DF *df)
 {
   struct DD	*dd = df->df_direct;
   char		*pathname;
@@ -260,15 +236,15 @@ _RkRealizeDF(df)
 }
 
 static int
-_RkParseDicsDir(line, lnk, member, nickname, dftype, dmclass,
-		r_return, w_return)
-char	*line;
-char	*lnk;
-char	*member;
-char	*nickname;
-int	*dftype;
-int	*dmclass;
-int *r_return, *w_return; /* アクセス権を返す所 */
+_RkParseDicsDir(
+	char *line,
+	char *lnk,
+	char *member,
+	char *nickname,
+	int *dftype,
+	int *dmclass,
+	int *r_return,
+	int *w_return /* アクセス権を返す所 */)
 {
   char	*s, *d, *t, par, ch;
   int	count;
@@ -395,10 +371,8 @@ int *r_return, *w_return; /* アクセス権を返す所 */
 /*
  * DD - dictonary directory record
  */
-static
-struct DD	*
-_RkCreateDD(path, name)
-     unsigned char	*path, *name;
+static struct DD *
+_RkCreateDD(unsigned char *path, unsigned char *name)
 {
   struct DD	*dd;
     
@@ -422,10 +396,8 @@ _RkCreateDD(path, name)
   return (struct DD *)0;
 }
 
-static 
-void
-_RkFreeDD(dd)
-     struct DD	*dd;
+static void
+_RkFreeDD(struct DD *dd)
 {
   struct DF	*f, *g;
   struct DF	*fh = &dd->dd_files;
@@ -456,11 +428,8 @@ _RkFreeDD(dd)
     (void)free((char *)dd);
   };
 }
-static
-struct DD	*
-_RkLookupDD(dd, name)
-     struct DD	*dd;
-     unsigned char	*name;
+static struct DD *
+_RkLookupDD(struct DD *dd, unsigned char *name)
 {
   struct DD		*d;
 
@@ -473,10 +442,8 @@ _RkLookupDD(dd, name)
 /* _RkReadDD
  *	read a DD directory using dics.dir file.
  */
-static
-struct DD	*
-_RkReadDD(name)
-     char	*name;
+static struct DD *
+_RkReadDD(char *name)
 {
   char		*dics_dir = "/dics.dir";
   struct DD *dd = (struct DD *)0;
@@ -632,10 +599,8 @@ _RkReadDD(name)
   return dd;
 }
 
-static
-struct DD	*
-_RkOpenDD(name)
-     char	*name;
+static struct DD *
+_RkOpenDD(char *name)
 {
   struct RkParam	*sx = RkGetSystem();
   struct DD		*dd;
@@ -656,9 +621,7 @@ _RkOpenDD(name)
 }
 
 char *
-_RkCreatePath(dd, name)
-     struct DD	*dd;
-     char	*name;
+_RkCreatePath(struct DD *dd, char *name)
 {
   unsigned 	sz;
   char        *ddname;
@@ -676,9 +639,7 @@ _RkCreatePath(dd, name)
 }
 
 char *
-_RkCreateUniquePath(dd, proto)
-     struct DD	*dd;
-     char	*proto;
+_RkCreateUniquePath(struct DD *dd, char *proto)
 {
   static char	newLinkName[RK_LINK_BMAX];
   unsigned 	i;
@@ -719,9 +680,8 @@ _RkCreateUniquePath(dd, proto)
   return (char *)0;
 }
 
-char	*
-_RkMakePath(df)
-     struct DF       *df;
+char *
+_RkMakePath(struct DF *df)
 {
   if (df)
     return _RkCreatePath(df->df_direct, df->df_link);
@@ -730,8 +690,7 @@ _RkMakePath(df)
 }
 
 int
-_RkRealizeDD(dd)
-     struct DD	*dd;
+_RkRealizeDD(struct DD *dd)
 {
   struct DDT		*ddLines;
   struct DDT		*ddt;
@@ -898,8 +857,7 @@ _RkRealizeDD(dd)
  * DDP
  */
 int
-_RkIsInDDP(ddp, dd)
-     struct DD	**ddp, *dd;
+_RkIsInDDP(struct DD **ddp, struct DD *dd)
 {
   while (*ddp) 
     if (*ddp++ == dd)
@@ -907,10 +865,8 @@ _RkIsInDDP(ddp, dd)
   return 0;
 }
 
-static
-int
-_RkCountDDP(ddp)
-     struct DD	**ddp;
+static int
+_RkCountDDP(struct DD **ddp)
 {
   int	count = 0;
 
@@ -918,9 +874,8 @@ _RkCountDDP(ddp)
     while (ddp[count])  count++;
   return count;
 }
-struct DD	**
-_RkCopyDDP(ddp)
-     struct DD	**ddp;
+struct DD **
+_RkCopyDDP(struct DD **ddp)
 {
   struct DD	**new = (struct DD **)0;
   int		i;
@@ -936,11 +891,8 @@ _RkCopyDDP(ddp)
   };
   return new;
 }
-static
-struct DD	**
-_RkAppendDDP(ddp, dd)
-     struct DD	**ddp;
-     struct DD	*dd;
+static struct DD **
+_RkAppendDDP(struct DD **ddp, struct DD *dd)
 {
   struct DD	**new;
   int		i;
@@ -960,9 +912,8 @@ _RkAppendDDP(ddp, dd)
   return new;
 }
 
-struct DD	**
-_RkCreateDDP(ddpath)
-     char		*ddpath;
+struct DD **
+_RkCreateDDP(char *ddpath)
 {
   char		*d, *s;
   struct DD 	*dd;
@@ -1005,8 +956,7 @@ _RkCreateDDP(ddpath)
 }
 
 void
-_RkFreeDDP(ddp)
-     struct DD	**ddp;
+_RkFreeDDP(struct DD **ddp)
 {
   struct DD	*dd;
   int		i;
@@ -1023,10 +973,8 @@ _RkFreeDDP(ddp)
 /* _RkSearchDDP/Q
  *	search dictionary file by nickname 
  */
-struct DM	*
-_RkSearchDDP(ddp, name)
-     struct DD	**ddp;
-     char	*name;
+struct DM *
+_RkSearchDDP(struct DD **ddp, char *name)
 {
   struct DD	*dd;
   struct DF	*f, *fh;
@@ -1067,11 +1015,8 @@ _RkSearchDDP(ddp, name)
    あるタイプの辞書だけ探して返す
  */
 
-struct DM	*
-_RkSearchDDQ(ddp, name, type)
-     struct DD	**ddp;
-     char	*name;
-     int	type;
+struct DM *
+_RkSearchDDQ(struct DD **ddp, char *name, int type)
 {
   struct DD	*dd;
   struct DF	*f, *fh;
@@ -1099,10 +1044,8 @@ _RkSearchDDQ(ddp, name, type)
   最初に見付かるのがシステム辞書にあるやつかどうかを判断しながら返す
  */
 
-struct DM	*
-_RkSearchUDDP(ddp, name)
-     struct DD		**ddp;
-     unsigned char	*name;
+struct DM *
+_RkSearchUDDP(struct DD **ddp, unsigned char *name)
 {
   struct DM	*dm = _RkSearchDDP(ddp, (char *)name);
     
@@ -1117,10 +1060,8 @@ _RkSearchUDDP(ddp, name)
   学習ファイルは除外して探す
  */
 
-struct DM	*
-_RkSearchDDMEM(ddp, name)
-     struct DD	**ddp;
-     char	*name;
+struct DM *
+_RkSearchDDMEM(struct DD **ddp, char *name)
 {
   struct DD	*dd;
   struct DF	*f, *fh;
@@ -1155,10 +1096,7 @@ _RkSearchDDMEM(ddp, name)
  */
 
 struct DM *
-_RkSearchDicWithFreq(ddpath, name, qmp)
-struct DD **ddpath;
-char *name;
-struct DM **qmp;
+_RkSearchDicWithFreq(struct DD **ddpath, char *name, struct DM **qmp)
 {
   struct DD *udd[2];
   struct DM *dm, *qm;
@@ -1192,9 +1130,7 @@ struct DM **qmp;
  */
 
 int
-DMcheck(spec, name)
-char *spec;
-char *name;
+DMcheck(char *spec, char *name)
 {
   int dftype, dmclass;
   int r, w, ret;
@@ -1235,10 +1171,8 @@ char *name;
  *	create a new member under dd 
  *	DMcreate does not create an actual dictionary file.
  */
-struct DM	*
-DMcreate(dd, spec)
-     struct DD		*dd;
-     char		*spec;
+struct DM *
+DMcreate(struct DD *dd, char *spec)
 {
   int		dftype, dmclass;
   struct DF	*df;
@@ -1306,8 +1240,7 @@ DMcreate(dd, spec)
 }
 
 int
-DMremove(dm)
-     struct DM	*dm;
+DMremove(struct DM *dm)
 {
   struct DF	*df = dm->dm_file;
   struct DDT	*ddt = dm->dm_line;
@@ -1333,9 +1266,7 @@ DMremove(dm)
 }
 
 int
-DMrename(dm, nickname)
-     struct DM		*dm;
-     unsigned char	*nickname;
+DMrename(struct DM *dm, unsigned char *nickname)
 {
   struct DF	*df = dm->dm_file;
   struct DDT	*ddt = dm->dm_line;
@@ -1400,9 +1331,7 @@ DMrename(dm, nickname)
 }
 
 int
-DMchmod(dm, mode)
-struct DM *dm;
-int mode;
+DMchmod(struct DM *dm, int mode)
 {
   struct DF	*df = dm->dm_file;
   struct DDT	*ddt = dm->dm_line;
@@ -1465,9 +1394,7 @@ int mode;
 }
 
 int
-DDchmod(dd, mode)
-struct DD *dd;
-int mode;
+DDchmod(struct DD *dd, int mode)
 {
   char *dicsdir;
   unsigned newflags = dd->dd_flags;
@@ -1511,12 +1438,7 @@ int mode;
 }
 
 int
-_RkMountMD(cx, dm, qm, mode, firsttime)
-     struct RkContext	*cx;
-     struct DM		*dm;
-     struct DM		*qm;
-     int		mode;
-     int		firsttime;
+_RkMountMD(struct RkContext *cx, struct DM *dm, struct DM *qm, int mode, int firsttime)
 {
   struct MD	*md, *head;
   struct DF	*df;
@@ -1583,9 +1505,7 @@ _RkMountMD(cx, dm, qm, mode, firsttime)
 }
 
 void
-_RkUmountMD(cx, md)
-     struct RkContext	*cx;
-     struct MD		*md;
+_RkUmountMD(struct RkContext *cx, struct MD *md)
 {
   struct DM	*dm = md->md_dic;
   struct DM	*qm = md->md_freq;

@@ -211,7 +211,7 @@ static wchar_t *bushu_char[BUSHU_CNT];
 static wchar_t *bushu_key[BUSHU_CNT];
 
 int
-initBushuTable()
+initBushuTable(void)
 {
   int retval = 0;
 
@@ -230,8 +230,7 @@ initBushuTable()
  * 戻り値	正常終了時 0
  */
 static int
-makeBushuEchoStr(d)
-uiContext d;
+makeBushuEchoStr(uiContext d)
 {
   ichiranContext ic = (ichiranContext)d->modec;
 
@@ -251,8 +250,7 @@ uiContext d;
  * forichiranContext の初期化
  */
 static int
-clearForIchiranContext(p)
-forichiranContext p;
+clearForIchiranContext(forichiranContext p)
 {
   p->id = FORICHIRAN_CONTEXT;
   p->curIkouho = 0;
@@ -262,7 +260,7 @@ forichiranContext p;
 }
   
 static forichiranContext
-newForIchiranContext()
+newForIchiranContext(void)
 {
   forichiranContext fcxt;
 
@@ -281,8 +279,7 @@ newForIchiranContext()
 }
 
 int
-getForIchiranContext(d)
-uiContext d;
+getForIchiranContext(uiContext d)
 {
   forichiranContext fc;
   int retval = 0;
@@ -311,8 +308,7 @@ uiContext d;
 }
 
 void
-popForIchiranMode(d)
-uiContext d;
+popForIchiranMode(uiContext d)
 {
   forichiranContext fc = (forichiranContext)d->modec;
 
@@ -327,9 +323,7 @@ uiContext d;
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 static int
-vBushuMode(d, major_mode)
-uiContext d;
-int major_mode;
+vBushuMode(uiContext d, int major_mode)
 {
   forichiranContext fc;
   ichiranContext ic;
@@ -384,10 +378,7 @@ int major_mode;
 }
 
 static int
-vBushuIchiranQuitCatch(d, retval, env)
-     uiContext d;
-     int retval;
-     mode_context env;
+vBushuIchiranQuitCatch(uiContext d, int retval, mode_context env)
      /* ARGSUSED */
 {
   popCallback(d); /* 一覧をポップ */
@@ -404,10 +395,7 @@ vBushuIchiranQuitCatch(d, retval, env)
 }
 
 static int
-vBushuExitCatch(d, retval, env)
-     uiContext d;
-     int retval;
-     mode_context env;
+vBushuExitCatch(uiContext d, int retval, mode_context env)
      /* ARGSUSED */
 {
   forichiranContext fc;
@@ -430,8 +418,7 @@ vBushuExitCatch(d, retval, env)
 }
 
 int
-BushuMode(d)
-uiContext d;
+BushuMode(uiContext d)
 {
   yomiContext yc = (yomiContext)d->modec;
 
@@ -448,13 +435,10 @@ uiContext d;
  * 部首モード入力の一覧表示                                                  *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-static int bushuEveryTimeCatch pro((uiContext, int, mode_context));
+static int bushuEveryTimeCatch(uiContext, int, mode_context);
 
 static int
-bushuEveryTimeCatch(d, retval, env)
-     uiContext d;
-     int retval;
-     mode_context env;
+bushuEveryTimeCatch(uiContext d, int retval, mode_context env)
      /* ARGSUSED */
 {
   makeBushuEchoStr(d);
@@ -462,13 +446,10 @@ bushuEveryTimeCatch(d, retval, env)
   return(retval);
 }
 
-static int bushuExitCatch pro((uiContext, int, mode_context));
+static int bushuExitCatch(uiContext, int, mode_context);
 
 static int
-bushuExitCatch(d, retval, env)
-uiContext d;
-int retval;
-mode_context env;
+bushuExitCatch(uiContext d, int retval, mode_context env)
 {
   yomiContext yc;
 
@@ -494,10 +475,7 @@ mode_context env;
 
 #ifndef NO_EXTEND_MENU
 static int
-bushuQuitCatch(d, retval, env)
-     uiContext d;
-     int retval;
-     mode_context env;
+bushuQuitCatch(uiContext d, int retval, mode_context env)
      /* ARGSUSED */
 {
   popCallback(d); /* 一覧をポップ */
@@ -521,10 +499,7 @@ bushuQuitCatch(d, retval, env)
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 static int
-convBushuQuitCatch(d, retval, env)
-uiContext d;
-int retval;
-mode_context env;
+convBushuQuitCatch(uiContext d, int retval, mode_context env)
 {
   popCallback(d); /* 一覧をポップ */
 
@@ -548,11 +523,10 @@ mode_context env;
  * 引き数	uiContext
  * 戻り値	正常終了時 0	異常終了時 -1
  */
-int ConvertAsBushu pro((uiContext));
+int ConvertAsBushu(uiContext);
 
 int
-ConvertAsBushu(d)
-uiContext	d;
+ConvertAsBushu(uiContext d)
 {
   yomiContext yc = (yomiContext)d->modec;
   int res;
@@ -594,10 +568,7 @@ uiContext	d;
  * 読みを部首辞書から部首変換する
  */
 static int
-bushuBgnBun(st, yomi, length)
-RkStat *st;
-wchar_t *yomi;
-int length;
+bushuBgnBun(RkStat *st, wchar_t *yomi, int length)
 {
   int nbunsetsu;
   extern int defaultBushuContext;
@@ -643,10 +614,7 @@ int length;
  */
 
 static int
-bushuHenkan(d, flag, ext, cur, quitfunc)
-uiContext	d;
-int             flag, ext, cur;
-int             (*quitfunc) pro((uiContext, int, mode_context));
+bushuHenkan(uiContext d, int flag, int ext, int cur, int (*quitfunc)(uiContext, int, mode_context))
 {
   forichiranContext fc;
   ichiranContext ic;
@@ -777,9 +745,7 @@ int             (*quitfunc) pro((uiContext, int, mode_context));
  * 戻り値	正常終了時 0	異常終了時 -1
  */
 static int
-makeBushuIchiranQuit(d, flag)
-uiContext	d;
-int              flag;
+makeBushuIchiranQuit(uiContext d, int flag)
 {
   extern int defaultBushuContext;
 

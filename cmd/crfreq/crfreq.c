@@ -32,8 +32,7 @@
 char	*program = "";
 
 static char *
-STrdup(s)
-char *s;
+STrdup(char *s)
 {
   char *p = (char *)malloc(strlen(s) + 1);
   if (p) strcpy(p, s);
@@ -43,10 +42,7 @@ char *s;
 unsigned char   fqbits[1024*1024];
 
 int
-CreateNL(fr, size1, size2)
-     int	fr;
-     int	size1;
-     int	size2;
+CreateNL(int fr, int size1, int size2)
 {
   unsigned char ll[4], *buf = (unsigned char *)0xdeadbeef; /* for gcc */
   
@@ -90,16 +86,14 @@ CreateNL(fr, size1, size2)
 }
 
 static void
-usage()
+usage(void)
 {
   (void)fprintf(stderr, "usage: %s <file name> [dictionary-name]\n", program);
   exit(1);
 }
 
 int
-main(argc, argv)
-  int argc;
-  char *argv[];
+main(int argc, char *argv[])
 {
   struct HD	hd;
   off_t		off, doff; 

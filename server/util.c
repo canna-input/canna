@@ -27,10 +27,7 @@
 #include "server.h"
 
 size_t
-ushort2euc(src, srclen, dest, destlen)
-const Ushort *src;
-char *dest;
-size_t srclen, destlen;
+ushort2euc(const Ushort *src, size_t srclen, char *dest, size_t destlen)
 {
   register size_t i, j;
   register Ushort wc;
@@ -65,10 +62,7 @@ size_t srclen, destlen;
 }
 
 size_t
-euc2ushort(src, srclen, dest, destlen)
-const char *src;
-Ushort *dest;
-size_t srclen, destlen;
+euc2ushort(const char *src, size_t srclen, Ushort *dest, size_t destlen)
 {
   register size_t i, j;
   register unsigned ec;
@@ -103,10 +97,7 @@ size_t srclen, destlen;
 
 #if 0 /* unused */
 size_t
-wchar2ushort32(src, srclen, dest, destlen)
-register const wchar_t *src;
-register Ushort *dest;
-size_t srclen, destlen;
+wchar2ushort32(register const wchar_t *src, size_t srclen, register Ushort *dest, size_t destlen)
 {
   register size_t i;
 
@@ -141,10 +132,7 @@ size_t srclen, destlen;
 }
 
 size_t
-ushort2wchar32(src, srclen, dest, destlen)
-register const Ushort *src;
-register wchar_t *dest;
-size_t srclen, destlen;
+ushort2wchar32(register const Ushort *src, size_t srclen, register wchar_t *dest, size_t destlen)
 {
   register size_t i;
 
@@ -177,10 +165,7 @@ size_t srclen, destlen;
 }
 
 size_t
-wchar2ushort16(src, srclen, dest, destlen)
-register const wchar_t *src;
-register Ushort *dest;
-size_t srclen, destlen;
+wchar2ushort16(register const wchar_t *src, size_t srclen, register Ushort *dest, size_t destlen)
 {
   register size_t i;
 
@@ -192,10 +177,7 @@ size_t srclen, destlen;
 }
 
 size_t
-ushort2wchar16(src, srclen, dest, destlen)
-register const Ushort *src;
-register wchar_t *dest;
-size_t srclen, destlen;
+ushort2wchar16(register const Ushort *src, size_t srclen, register wchar_t *dest, size_t destlen)
 {
   register size_t i;
 
@@ -208,8 +190,7 @@ size_t srclen, destlen;
 #endif /* unused */
 
 size_t
-ushortstrlen(ws)
-const Ushort *ws;
+ushortstrlen(const Ushort *ws)
 {
   size_t res = 0;
   while (*ws++) {
@@ -219,10 +200,7 @@ const Ushort *ws;
 }
 
 Ushort *
-ushortmemchr(ws, ch, len)
-const Ushort *ws;
-int ch;
-size_t len;
+ushortmemchr(const Ushort *ws, int ch, size_t len)
 {
   const Ushort *p, *end;
   for (p = ws, end = ws + len; p < end; ++p)
@@ -232,9 +210,7 @@ size_t len;
 }
 
 size_t
-ushortstrcpy(wd, ws)
-Ushort *wd;
-const Ushort *ws;
+ushortstrcpy(Ushort *wd, const Ushort *ws)
 {
   register size_t res = 0;
   while ((*wd++ = *ws++) != (Ushort)0) {
@@ -244,10 +220,7 @@ const Ushort *ws;
 }
 
 size_t
-ushortstrncpy(wd, ws, n)
-Ushort *wd;
-const Ushort *ws;
-size_t n;
+ushortstrncpy(Ushort *wd, const Ushort *ws, size_t n)
 {
   register size_t res = 0;
 
@@ -273,9 +246,7 @@ size_t n;
  */
 
 int
-WidenClientContext(cl, n)
-ClientPtr cl;
-size_t n;
+WidenClientContext(ClientPtr cl, size_t n)
 {
   int *new, *old, i;
 
@@ -304,9 +275,7 @@ size_t n;
 
 #define N_ADD_CONTEXTS	    4
 int
-set_cxt(cl, n)
-ClientPtr cl;
-int n;
+set_cxt(ClientPtr cl, int n)
 {
   if (!(cl->ncon < cl->cfsize) && !WidenClientContext(cl, N_ADD_CONTEXTS)) {
     return 0;
@@ -322,9 +291,7 @@ int n;
  */
 
 void
-off_cxt(cl, cn)
-ClientPtr cl;
-int cn;
+off_cxt(ClientPtr cl, int cn)
 {
   int i, n = cl->ncon, *contexts = cl->context_flag;
 
@@ -348,9 +315,7 @@ int cn;
  */
 
 int
-chk_cxt(cl, cn)
-ClientPtr cl;
-int cn;
+chk_cxt(ClientPtr cl, int cn)
 {
   int i, n = cl->ncon, *contexts = cl->context_flag;
   

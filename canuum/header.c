@@ -120,7 +120,7 @@ int dic_list_size;
 short internal_code;
 short file_code;
 
-int (**code_trans) (char *x, char *y, int z);
+code_trans_t *code_trans;
 
 struct msg_cat *cd;
 
@@ -222,6 +222,6 @@ FuncDataBase function_db[] = {
    }
 };
 
-int (*default_code_trans[]) () =
+code_trans_t default_code_trans[] =
 {
 through, through, through, through, through, through, through, through, through, through, through, through, through, through, through, through};

@@ -32,11 +32,7 @@
 
 
 int
-RkiConnect(fd, addrp, len, timeout)
-int fd;
-struct sockaddr *addrp;
-size_t len;
-const struct timeval *timeout;
+RkiConnect(int fd, struct sockaddr *addrp, size_t len, const struct timeval *timeout)
 {
   int flags;
   int res = -1, r;
@@ -81,8 +77,7 @@ finish:
  */
 /* stdioのfeof()のセマンティクスはどこへ行っても共通なのだろうか？ */
 char *
-RkiGetLine(fp)
-FILE *fp;
+RkiGetLine(FILE *fp)
 {
   char *buf, *tmp;
   size_t buflen;
@@ -121,9 +116,7 @@ err:
 }
 
 void *
-RkiReadWholeFile(fp, retsize)
-FILE *fp;
-size_t *retsize;
+RkiReadWholeFile(FILE *fp, size_t *retsize)
 {
   size_t pos = 0;
   size_t buflen = 256;

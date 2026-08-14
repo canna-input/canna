@@ -100,15 +100,21 @@ int cursor_state;
 FILE *debugc;
 #endif
 
+static char *strsch(char *str1, char *str2);
+static char *sr_set(char **st, int start, int end);
+#ifdef unused
+static void clr_screen(void);
+static void clr_line1(void);
+#endif
+static void strascii(unsigned char *dest, unsigned char *str);
+static int decfline(char *name);
 
 int
-getTermData ()
+getTermData(void)
 {
   char *name;
   char *pter;
-  char *sr_set ();
   char *j;
-  extern char *getenv (), *get_kbd_env ();
 
 
 #ifdef DCUREOR
@@ -205,9 +211,8 @@ getTermData ()
   return (0);
 }
 
-char *
-strsch (str1, str2)
-     char *str1, *str2;
+static char *
+strsch(char *str1, char *str2)
 {
   char *c = NULL;
   int flag = 0;
@@ -235,8 +240,7 @@ strsch (str1, str2)
 /* Remove an entry from TERMCAP string   by T.S. */
 
 static char *
-remove (p, ob)
-     char *p, *ob;
+remove (char *p, char *ob)
 {
   char *r;
 
@@ -249,11 +253,8 @@ remove (p, ob)
   return (r);
 }
 
-static void strascii ();
-static int decfline ();
-
 int
-set_TERMCAP ()
+set_TERMCAP(void)
 {
   return (decfline (TermData));
 }
@@ -261,8 +262,7 @@ set_TERMCAP ()
 
 /** termcap no entry no naka de li: to cs: wo kakikaemasu */
 static int
-decfline (name)
-     char *name;
+decfline(char *name)
 {
   char *name1;
   char *c;
@@ -300,10 +300,8 @@ decfline (name)
 
 /* functions using Terminal Information. */
 
-char *
-sr_set (st, start, end)
-     int start, end;
-     char **st;
+static char *
+sr_set(char **st, int start, int end)
 {
   char *string = *st;
   char *pt = Term_SetScrollRegion;
@@ -413,20 +411,19 @@ sr_set (st, start, end)
 }
 
 void
-set_keypad_on ()
+set_keypad_on(void)
 {
   tputs (Term_KeyPadOn, 1, putchar);
 }
 
 void
-set_keypad_off ()
+set_keypad_off(void)
 {
   tputs (Term_KeyPadOff, 1, putchar);
 }
 
 void
-set_scroll_region (start, end)
-     int start, end;
+set_scroll_region(int start, int end)
 {
   char *a;
   char TERM_SCROLLREGION[24];
@@ -437,57 +434,58 @@ set_scroll_region (start, end)
 }
 
 void
-clr_end_screen ()
+clr_end_screen(void)
 {
   tputs (Term_CleEndScreen, 1, putchar);
 }
 
-void
-clr_screen ()
+#ifdef unused
+static void
+clr_screen(void)
 {
   tputs (Term_ClrScreen, Term_RowWidth, putchar);
 }
 
-void
-clr_line1 ()
+static void
+clr_line1(void)
 {
   tputs (Term_ClrEofLine, 1, putchar);
 }
+#endif /* unused */
 
 void
-throw_cur_raw (col, row)
-     int col, row;
+throw_cur_raw(int col, int row)
 {
   tputs (tgoto (Term_ThrowCursor, col, row), 1, putchar);
 }
 
 void
-h_r_on_raw ()
+h_r_on_raw(void)
 {
   tputs (Term_StandOutStart, 1, putchar);
 }
 
 void
-h_r_off_raw ()
+h_r_off_raw(void)
 {
   tputs (Term_StandOutEnd, 1, putchar);
 }
 
 void
-u_s_on_raw ()
+u_s_on_raw(void)
 {
   tputs (Term_UnderScoreStart, 1, putchar);
 }
 
 void
-u_s_off_raw ()
+u_s_off_raw(void)
 {
   tputs (Term_UnderScoreEnd, 1, putchar);
   flush ();
 }
 
 void
-b_s_on_raw ()
+b_s_on_raw(void)
 {
   if (bold_mode_fun)
     tputs (Term_BoldOutStart, 1, putchar);
@@ -497,7 +495,7 @@ b_s_on_raw ()
 }
 
 void
-b_s_off_raw ()
+b_s_off_raw(void)
 {
   if (bold_mode_fun)
     tputs (Term_BoldOutEnd, 1, putchar);
@@ -507,7 +505,7 @@ b_s_off_raw ()
 }
 
 void
-ring_bell ()
+ring_bell(void)
 {
   putchar (Ctrl ('G'));
   flush ();
@@ -517,32 +515,31 @@ ring_bell ()
 }
 
 void
-save_cursor_raw ()
+save_cursor_raw(void)
 {
   tputs (Term_SaveCursor, 1, putchar);
 }
 
 void
-restore_cursor_raw ()
+restore_cursor_raw(void)
 {
   tputs (Term_RestoreCursor, 1, putchar);
 }
 
 void
-cursor_invisible_raw ()
+cursor_invisible_raw(void)
 {
   tputs (Term_CursorInvisible, 1, putchar);
 }
 
 void
-cursor_normal_raw ()
+cursor_normal_raw(void)
 {
   fputs (Term_CursorNormal, stdout);
 }
 
 static void
-strascii (dest, str)
-     unsigned char *dest, *str;
+strascii(unsigned char *dest, unsigned char *str)
 {
   for (; *str; str++)
     {

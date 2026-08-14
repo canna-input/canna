@@ -43,9 +43,7 @@ static char *e_message[] = {
 };
 
 int
-enterAdjustMode(d, yc)
-uiContext d;
-yomiContext yc;
+enterAdjustMode(uiContext d, yomiContext yc)
 {
   extern KanjiModeRec bunsetsu_mode;
   int i, n = 0;
@@ -77,12 +75,10 @@ yomiContext yc;
   return 0;
 }
 
-int leaveAdjustMode pro((uiContext, yomiContext));
+int leaveAdjustMode(uiContext, yomiContext);
 
 int
-leaveAdjustMode(d, yc)
-uiContext d;
-yomiContext yc;
+leaveAdjustMode(uiContext d, yomiContext yc)
 {
   extern KanjiModeRec bunsetsu_mode;
 
@@ -92,11 +88,10 @@ yomiContext yc;
   return 0;
 }
 
-static int BunFullExtend pro((uiContext));
+static int BunFullExtend(uiContext);
 
 static int
-BunFullExtend(d)
-uiContext d;
+BunFullExtend(uiContext d)
 {
   yomiContext yc = (yomiContext)d->modec;
 
@@ -105,11 +100,10 @@ uiContext d;
   return 0;
 }
 
-static int BunFullShrink pro((uiContext));
+static int BunFullShrink(uiContext);
 
 static int
-BunFullShrink(d)
-uiContext d;
+BunFullShrink(uiContext d)
 {
   yomiContext yc = (yomiContext)d->modec;
 
@@ -118,11 +112,10 @@ uiContext d;
   return 0;
 }
 
-static int BunExtend pro((uiContext));
+static int BunExtend(uiContext);
 
 static int
-BunExtend(d)
-uiContext d;
+BunExtend(uiContext d)
 {
   yomiContext yc = (yomiContext)d->modec;
 
@@ -140,11 +133,10 @@ uiContext d;
   return 0;
 }
 
-static int BunShrink pro((uiContext));
+static int BunShrink(uiContext);
 
 static int
-BunShrink(d)
-uiContext d;
+BunShrink(uiContext d)
 {
   yomiContext yc = (yomiContext)d->modec;
 
@@ -166,11 +158,10 @@ uiContext d;
   return 0;
 }
 
-static int BunHenkan pro((uiContext));
+static int BunHenkan(uiContext);
 
 static int
-BunHenkan(d)
-uiContext d;
+BunHenkan(uiContext d)
 {
   yomiContext yc = (yomiContext)d->modec;
 
@@ -186,11 +177,10 @@ uiContext d;
   return 0;
 }
 
-static int BunQuit pro((uiContext));
+static int BunQuit(uiContext);
 
 static int
-BunQuit(d)
-uiContext d;
+BunQuit(uiContext d)
 {
   yomiContext yc = (yomiContext)d->modec;
 
@@ -200,11 +190,10 @@ uiContext d;
   return 0;
 }
 
-static int BunSelfInsert pro((uiContext));
+static int BunSelfInsert(uiContext);
 
 static int
-BunSelfInsert(d)
-uiContext d;
+BunSelfInsert(uiContext d)
 {
   d->nbytes = BunQuit(d);
   d->more.todo = 1;
@@ -213,11 +202,10 @@ uiContext d;
   return d->nbytes;
 }
 
-static int BunQuotedInsert pro((uiContext));
+static int BunQuotedInsert(uiContext);
 
 static int
-BunQuotedInsert(d)
-uiContext d;
+BunQuotedInsert(uiContext d)
 {
   d->nbytes = BunQuit(d);
   d->more.todo = 1;
@@ -226,11 +214,10 @@ uiContext d;
   return d->nbytes;
 }
 
-static int BunKillToEOL pro((uiContext));
+static int BunKillToEOL(uiContext);
 
 static int
-BunKillToEOL(d)
-uiContext d;
+BunKillToEOL(uiContext d)
 {
   d->nbytes = BunQuit(d);
   d->more.todo = 1;

@@ -96,26 +96,25 @@ static int oldmaxcol = 0; /** redraw sita tokini doko made mae ni kaita data ga 
 用いる。 */
 #define MARJIN 1                /* カーソルが右端からこれだけの所にくれば、次の画面に行く */
 
-static void t_cont_line_note ();
-static int find_character_on_that_col (), set_vst ();
+static void t_cont_line_note(void);
+static int find_character_on_that_col(int c, int start_point);
+static int set_vst(void);
 
 void
-throw (x)
-     int x;
+throw(int x)
 {
   throw0 ((col = x) + 1);
 }
 
 int
-char_len (x)
-     w_char x;
+char_len(w_char x)
 {
   return ((*char_len_func) (x));
 }
 
 /* vst をセットし直して、リドローする*/
 void
-t_redraw_one_line ()
+t_redraw_one_line(void)
 {
   if (c_b->vst)
     {
@@ -129,7 +128,7 @@ t_redraw_one_line ()
 }
 
 void
-init_screen ()
+init_screen(void)
 {
   int tmp;
 
@@ -149,7 +148,7 @@ init_screen ()
 
 /* hituyouga areba vst wo settosinaosite, settosinaosita tokiniha 1 wo kaesu */
 int
-check_vst ()
+check_vst(void)
 {
   int k = -1;
 
@@ -168,19 +167,14 @@ check_vst ()
 }
 
 int
-t_redraw_move (x, start, end, clr_l)
-     int x;
-     int start;
-     int end;
-     int clr_l;
+t_redraw_move(int x, int start, int end, int clr_l)
 {
   (*t_redraw_move_func) (x, start, end, clr_l);
   return (0);
 }
 
 int
-t_move (x)
-     int x;
+t_move(int x)
 {
   int old_cp = c_b->t_c_p;
 
@@ -202,7 +196,7 @@ t_move (x)
 }
 
 int
-t_print_l ()
+t_print_l(void)
 {
   (*t_print_l_func) ();
   return (0);
@@ -224,12 +218,11 @@ c_b->buffer の中で、st から end までで画面に現れている所(vstより先)を
 */
 
 void
-t_print_line (st, end, clr_l)
-     int st, end, clr_l;
+t_print_line(int st, int end, int clr_l)
 {
-  register int k;
-  register int col1;
-  register int end_of_line = maxlength - disp_mode_length - 1 - c_b->start_col;
+  int k;
+  int col1;
+  int end_of_line = maxlength - disp_mode_length - 1 - c_b->start_col;
   int tmp;
 
   int mst = min (c_b->t_m_start, c_b->t_c_p);
@@ -473,7 +466,7 @@ end_syori:
 
 /* 行の先頭処理 */
 static void
-t_cont_line_note ()
+t_cont_line_note(void)
 {
   throw0 (0);
   putchar_norm ('$');
@@ -481,7 +474,7 @@ t_cont_line_note ()
 
 /* 行の先頭処理 */
 void
-t_cont_line_note_delete ()
+t_cont_line_note_delete(void)
 {
   throw0 (0);
   putchar_norm (' ');
@@ -489,13 +482,13 @@ t_cont_line_note_delete ()
 
 /*画面のコラム0がバッファーのstart_point の時、コラムc にある文字を返す*/
 static int
-find_character_on_that_col (c, start_point)
-     int c;                     /* colum */
-     int start_point;           /* in_buffer as vst */
+find_character_on_that_col(
+	int c,                     /* colum */
+	int start_point           /* in_buffer as vst */)
 {
 
   int k;
-  register int end_of_line = maxlength - disp_mode_length - 1 - c_b->start_col;
+  int end_of_line = maxlength - disp_mode_length - 1 - c_b->start_col;
   int len = 0;
   for (k = start_point; k <= c_b->maxlen; k++)
     {
@@ -513,15 +506,12 @@ find_character_on_that_col (c, start_point)
 }
 
 /*画面のコラム0がバッファーのstart_point の時、文字cpの画面上の位置を返す。*/
-/* static */
 int
-cur_ichi (cp, start_point)
-     register int cp;
-     int start_point;
+cur_ichi(int cp, int start_point)
 {
-  register int k;
-  register int end_of_line = maxlength - disp_mode_length - 1 - c_b->start_col;
-  register int len = 0;
+  int k;
+  int end_of_line = maxlength - disp_mode_length - 1 - c_b->start_col;
+  int len = 0;
   if (cp < start_point)
     return (-1);
   if (cp > c_b->maxlen)
@@ -541,8 +531,7 @@ cur_ichi (cp, start_point)
 
 
 void
-print_buf_msg (msg)
-     char *msg;
+print_buf_msg(char *msg)
 {
   push_cursor ();
   throw_c (0);
@@ -556,7 +545,7 @@ print_buf_msg (msg)
    else returns new start colum
 */
 static int
-set_vst ()
+set_vst(void)
 {
   int tmp;
   int vst1;
@@ -573,10 +562,9 @@ set_vst ()
 
 
 static char rk_modes[80];
-extern char *romkan_dispmode (), *romkan_offmode ();
 
 char *
-get_rk_modes ()
+get_rk_modes(void)
 {
   char *p;
 
@@ -590,7 +578,7 @@ get_rk_modes ()
 }
 
 int
-disp_mode ()
+disp_mode(void)
 {
   push_cursor ();
   throw_col (0);
@@ -602,7 +590,7 @@ disp_mode ()
 
 /* cursor status is saved before call it */
 void
-display_henkan_off_mode ()
+display_henkan_off_mode(void)
 {
   char *p;
 
@@ -616,7 +604,7 @@ display_henkan_off_mode ()
 
 /* カーソルを飛ばす*/
 void
-t_throw ()
+t_throw(void)
 {
   throw0 (col + 1);
   flush ();
@@ -624,7 +612,7 @@ t_throw ()
 
 
 void
-clr_line ()
+clr_line(void)
 {
   clr_end_screen ();
 }

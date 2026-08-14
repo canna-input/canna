@@ -76,8 +76,8 @@ static struct hin table[] = {
   {"接頭語(お)","#PRE"},{"接頭語(各)","#PRE"},{"記号","#T35"}
 };
 
-char *salloc(s)
-     char *s;
+char *
+salloc(char *s)
 {
   char *new;
   
@@ -91,10 +91,8 @@ char *salloc(s)
 }
 
 /* 品詞対応 */
-char *chghinshi( hinshi, taiou, fshurui )
-     char   *hinshi;
-     struct hin   *taiou;
-     int    fshurui;  
+char *
+chghinshi(char *hinshi, struct hin *taiou, int fshurui) 
 {
   int   shurui;
   int   i;
@@ -113,9 +111,8 @@ char *chghinshi( hinshi, taiou, fshurui )
 }
 
 /* 品詞ファイル読み込み */
-int read_hinshi( fp, taiou )
-     FILE    *fp;
-     struct  hin  *taiou;
+int
+read_hinshi(FILE *fp, struct hin *taiou)
 {
   int     shurui;
   char    H[MAXTANGO];
@@ -135,10 +132,8 @@ int read_hinshi( fp, taiou )
 } 
 
 /* 出力 */
-void wtoi_write( fp, yomi, hinshi, kouho, hindo )
-     FILE	*fp;
-     uchar   *yomi, *hinshi, *kouho;
-     int	hindo;
+void
+wtoi_write(FILE *fp, uchar *yomi, uchar *hinshi, uchar *kouho, int hindo)
 {
   if( !strcmp((char *)hinshi,"#kxuru") || !strcmp((char *)hinshi,"#sxuru")){
     strcat((char *)yomi,"る");
@@ -150,8 +145,8 @@ void wtoi_write( fp, yomi, hinshi, kouho, hindo )
     fprintf( fp, "%s %s*%d %s \n", yomi, hinshi, hindo, kouho );
 }
 
-int suuji(kazu)
-     char *kazu;
+int
+suuji(char *kazu)
 {
   int i;
 
@@ -162,9 +157,8 @@ int suuji(kazu)
   return(atoi(kazu));
 }
 
-int main(argc,argv)
-     int  argc;
-     char *argv[]; 
+int
+main(int argc, char *argv[])
 {
   struct hin taiou[MAXHINSHI];
   uchar	S[MAXTANGO],y[MAXTANGO], h[MAXTANGO], k[MAXTANGO],nd[10];

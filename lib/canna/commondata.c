@@ -138,8 +138,7 @@ jrUserInfoStruct *uinfo = (jrUserInfoStruct *)NULL;
 int mountnottry = 1;
 
 void
-InitCannaConfig(cf)
-struct CannaConfig *cf;
+InitCannaConfig(struct CannaConfig *cf)
 {
   bzero(cf, sizeof(struct CannaConfig));
   cf->CannaVersion = CANNA_MAJOR_MINOR;
@@ -167,10 +166,10 @@ struct CannaConfig *cf;
   cf->auto_sync = 1;
 }
 
-static void freeUInfo pro((void));
+static void freeUInfo(void);
 
 static void
-freeUInfo()
+freeUInfo(void)
 {
   if (uinfo) {
     if (uinfo->uname)
@@ -194,7 +193,7 @@ freeUInfo()
   デファールト値にもどす。
 */
 void
-restoreBindings()
+restoreBindings(void)
 {
   InitCannaConfig(&cannaconf);
 

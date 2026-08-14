@@ -144,13 +144,7 @@ struct kansuu
 /* for message file */
 #ifndef CANNA
 #include "msg.h"
-#else /* CANNA */
-struct msg_cat { /* dummy */
-  int dummy;
-};
-struct msg_cat *msg_open();
-char *msg_get(struct msg_cat *cad, int n, char *msg, char *lang);
-#endif /* CANNA */
+#endif /* !CANNA */
 
 #define MSG_GET(no)     msg_get(cd, no, NULL, NULL)
 

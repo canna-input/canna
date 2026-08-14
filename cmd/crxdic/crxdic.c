@@ -145,7 +145,7 @@ int	compat = 0;
 int	with_gram = 0;
 
 extern	Wchar	*euctous();
-int getp pro((struct node *));
+int getp(struct node *);
 
 #define MAXLINE		1024
 #define MAXKOUHO       	64
@@ -153,8 +153,7 @@ int getp pro((struct node *));
 #define MAXHINSHI	32
 
 static char *
-STrdup(s)
-char *s;
+STrdup(char *s)
 {
   char *p = (char *)malloc(strlen(s) + 1);
   if (p) strcpy(p, s);
@@ -166,9 +165,7 @@ char *s;
 }
 
 static int
-CopyLine(dst, src, len)
-Wchar *dst, *src;
-int len;
+CopyLine(Wchar *dst, Wchar *src, int len)
 {
   register Wchar *p = dst;
 
@@ -200,8 +197,7 @@ int len;
 #define RkwIsControlChar(x) ((unsigned long)(x) < (unsigned long)' ')
 
 static Wchar *
-extractYomi(wrec)
-Wchar *wrec;
+extractYomi(Wchar *wrec)
 {
   int yomilen;
   Wchar *p, *q, *res;
@@ -230,9 +226,7 @@ Wchar *wrec;
     ついでに読みからバックスラッシュを取り除いたものを読み専用の配列に入れる。
  */
 struct TextDic *
-open_wfile(filename, nel)
-     char	*filename;
-     unsigned	*nel;
+open_wfile(char *filename, unsigned *nel)
 {
   FILE		*fp;
   Wchar		line[MAXLINE];
@@ -304,12 +298,8 @@ open_wfile(filename, nel)
   return lines;
 }
 
-unsigned char	*
-nhash(buf, key, size, unit)
-     unsigned char	*buf;
-     Wchar		key;
-     unsigned		size;
-     unsigned		unit;
+unsigned char *
+nhash(unsigned char *buf, int key, unsigned size, unsigned unit)
 {
   unsigned char	*p;
   int		i, j;
@@ -328,14 +318,7 @@ nhash(buf, key, size, unit)
 }
 
 void
-fil_pnd(dst, c, nd, val, islast, size, unit)
-     unsigned char	*dst;
-     int		c;
-     struct node	*nd;
-     unsigned long	val;
-     int		islast;
-     unsigned		size;
-     unsigned		unit;
+fil_pnd(unsigned char *dst, int c, struct node *nd, unsigned long val, int islast, unsigned size, unsigned unit)
 {
     unsigned char	*ptr;
 
@@ -357,12 +340,7 @@ fil_pnd(dst, c, nd, val, islast, size, unit)
 }
 
 void
-fil_dnd(dst, nd, val, size, unit)
-     unsigned char	*dst;
-     struct node	*nd;
-     unsigned long	val;
-     unsigned		size;
-     unsigned		unit;
+fil_dnd(unsigned char *dst, struct node *nd, unsigned long val, unsigned size, unsigned unit)
 {
   dst = nhash(dst, nd->key, size, unit);
   s_to_bst2(nd->key, dst);
@@ -377,9 +355,7 @@ fil_dnd(dst, nd, val, size, unit)
 }
 
 unsigned long
-fil_dic(nd, dic)
-     struct node	*nd;
-     struct dictionary	*dic;
+fil_dic(struct node *nd, struct dictionary *dic)
 {
   struct page	*P;
   struct direc	*D;
@@ -442,9 +418,7 @@ fil_dic(nd, dic)
 }
 
 struct page *
-alloc_page(dic, pn)
-     struct dictionary	*dic;
-     unsigned		pn;
+alloc_page(struct dictionary *dic, unsigned pn)
 {
     struct page	*P;
     int		i;
@@ -468,8 +442,7 @@ alloc_page(dic, pn)
 }
 
 void
-alloc_dir(dic)
-  struct dictionary	*dic;
+alloc_dir(struct dictionary *dic)
 {
     struct direc	*D = dic->Dir;
     int			sz = D->dirsiz;
@@ -484,10 +457,7 @@ alloc_dir(dic)
 }
 
 struct wlist *
-append_wlist(dic, tail, nd)
-  struct dictionary	*dic;
-  struct wlist		*tail;
-  struct node		*nd;
+append_wlist(struct dictionary *dic, struct wlist *tail, struct node *nd)
 {
     struct wlist	*w;
     
@@ -508,10 +478,7 @@ append_wlist(dic, tail, nd)
 }
 
 static int
-is_overflow_page(dic, pg, pn, size)
-  struct dictionary	*dic;
-  struct page		*pg;
-  unsigned		pn, size;
+is_overflow_page(struct dictionary *dic, struct page *pg, unsigned pn, unsigned size)
 {
     unsigned	total;
     
@@ -526,11 +493,7 @@ is_overflow_page(dic, pg, pn, size)
 static int atop = 1;
 
 int
-assign_to_page(dic, nd, page_num, is_pn_indir)
-     struct dictionary	*dic;
-     struct node	*nd;
-     unsigned		page_num;
-     int		is_pn_indir;
+assign_to_page(struct dictionary *dic, struct node *nd, unsigned page_num, int is_pn_indir)
 {
     struct page		*P;
     struct direc	*D;
@@ -617,8 +580,7 @@ assign_to_page(dic, nd, page_num, is_pn_indir)
 }
 
 void
-calculate_dic_status(dic)
-  struct dictionary	*dic;
+calculate_dic_status(struct dictionary *dic)
 {
     int		i, totalcand = 0, snd = 0;
     
@@ -643,9 +605,7 @@ calculate_dic_status(dic)
 }
 
 void
-fil_ltab(gram, dic)
-     struct dictionary	*dic;
-     struct RkKxGram	*gram;
+fil_ltab(struct RkKxGram *gram, struct dictionary *dic)
 {
   unsigned long	first_lvo, pwo, lvo, csn;
   int			i, pn;
@@ -686,8 +646,7 @@ fil_ltab(gram, dic)
 }
 
 void
-fil_page_header(dic)
-     struct dictionary	*dic;
+fil_page_header(struct dictionary *dic)
 {
   int		pn;
   unsigned char	*dst;
@@ -706,13 +665,7 @@ fil_page_header(dic)
   }
 }
 struct node *
-build_tree(parent, dic, gram, wrec_ptr, d, top, bot, dir_nodes)
-  struct node		*parent;
-  struct dictionary	*dic;
-  struct RkKxGram	*gram;
-  struct TextDic	*wrec_ptr;
-  unsigned		d, top, bot;
-  unsigned		*dir_nodes;
+build_tree(struct node *parent, struct dictionary *dic, struct RkKxGram *gram, struct TextDic *wrec_ptr, unsigned d, unsigned top, unsigned bot, unsigned *dir_nodes)
 {
     int			F1 = top;
     int			F2 = bot;
@@ -819,11 +772,8 @@ build_tree(parent, dic, gram, wrec_ptr, d, top, bot, dir_nodes)
     return dir;
 }
 
-static
-struct node *
-creat_tree(dic, gram)
-     struct dictionary	*dic;
-     struct RkKxGram	*gram;
+static struct node *
+creat_tree(struct dictionary *dic, struct RkKxGram *gram)
 {
   int			i;
   struct TextDic	*top;
@@ -866,10 +816,7 @@ creat_tree(dic, gram)
 }
 
 struct dictionary *
-init_dic(name, dictype, maxpage)
-     char	*name;
-     int	dictype;
-     unsigned	maxpage;
+init_dic(char *name, int dictype, unsigned maxpage)
 {
   struct dictionary	*dic;
   int			i;
@@ -914,8 +861,7 @@ init_dic(name, dictype, maxpage)
 }
 
 static void
-makeHeader(dic)
-     struct dictionary	*dic;
+makeHeader(struct dictionary *dic)
 {
   unsigned char		*buf;
   size_t		size;
@@ -1047,9 +993,7 @@ makeHeader(dic)
 
 
 static void
-write_file(out, dic)
-     char		*out;
-     struct dictionary	*dic;
+write_file(char *out, struct dictionary *dic)
 {
   int	i, fd;
     
@@ -1096,7 +1040,7 @@ write_file(out, dic)
 }
 
 static void
-usage()
+usage(void)
 {
   fprintf(stderr, "usage: crxdic [option] -o dicfile text\n");
   fprintf(stderr, "\toptions:\n");
@@ -1111,9 +1055,7 @@ usage()
 }
 
 static void
-parse_arg(argc, argv)
-     int argc;
-     char *argv [];
+parse_arg(int argc, char *argv[])
 {
   int		i;
   
@@ -1166,8 +1108,7 @@ parse_arg(argc, argv)
 }
 
 int
-getp(nd)
-     struct node	*nd;
+getp(struct node *nd)
 {
   int	n, k;
   
@@ -1184,9 +1125,7 @@ getp(nd)
 }
 
 int
-main (argc, argv)
-     int	argc;
-     char	**argv;
+main(int argc, char **argv)
 {
   struct dictionary	*dic;
   struct node		*topnd;

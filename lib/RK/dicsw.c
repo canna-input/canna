@@ -24,25 +24,21 @@
 
 #include	"RKintern.h"
 
-extern int _Rkpopen pro((struct DM *, char *, int, struct RkKxGram *));
-extern int _Rkpclose pro((struct DM *, char *, struct RkKxGram *));
-extern int _Rkpsearch
-  pro((struct RkContext *, struct DM *, Wchar *, int, struct nread *,
-       int, int *));
-extern int _Rkpio pro((struct DM *, struct ncache *, int));
-extern int _Rkpctl
-  pro((struct DM *, struct DM *, int, Wchar *, struct RkKxGram *));
-extern int _Rkpsync pro((struct RkContext *, struct DM *, struct DM *));
+extern int _Rkpopen(struct DM *, char *, int, struct RkKxGram *);
+extern int _Rkpclose(struct DM *, char *, struct RkKxGram *);
+extern int _Rkpsearch(struct RkContext *, struct DM *, Wchar *, int, struct nread *,
+       int, int *);
+extern int _Rkpio(struct DM *, struct ncache *, int);
+extern int _Rkpctl(struct DM *, struct DM *, int, Wchar *, struct RkKxGram *);
+extern int _Rkpsync(struct RkContext *, struct DM *, struct DM *);
 
-extern int _Rktopen pro((struct DM *, char *, int, struct RkKxGram *));
-extern int _Rktclose pro((struct DM *, char *, struct RkKxGram *));
-extern int _Rktsearch
-  pro((struct RkContext *, struct DM *, Wchar *, int, struct nread *,
-       int, int *));
-extern int _Rktio pro((struct DM *, struct ncache *, int));
-extern int _Rktctl
-  pro((struct DM *, struct DM *, int, Wchar *, struct RkKxGram *));
-extern int _Rktsync pro((struct RkContext *, struct DM *, struct DM *));
+extern int _Rktopen(struct DM *, char *, int, struct RkKxGram *);
+extern int _Rktclose(struct DM *, char *, struct RkKxGram *);
+extern int _Rktsearch(struct RkContext *, struct DM *, Wchar *, int, struct nread *,
+       int, int *);
+extern int _Rktio(struct DM *, struct ncache *, int);
+extern int _Rktctl(struct DM *, struct DM *, int, Wchar *, struct RkKxGram *);
+extern int _Rktsync(struct RkContext *, struct DM *, struct DM *);
 
 struct RkDST 	_RkDST[] = {
 /* PERMDIC */ { _Rkpopen, _Rkpclose, _Rkpsearch, _Rkpio, _Rkpctl, _Rkpsync, },

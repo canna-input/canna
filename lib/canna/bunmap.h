@@ -22,7 +22,7 @@
 
 
 extern int DoFuncSequence(), UseOtherKeymap();
-extern int TanNop pro((uiContext)), YomiKakutei pro((uiContext));
+extern int TanNop(uiContext), YomiKakutei(uiContext);
 
 static struct funccfunc bun_funcs[] = {
   {CANNA_FN_FunctionalInsert	,BunSelfInsert		},

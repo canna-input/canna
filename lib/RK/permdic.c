@@ -47,12 +47,7 @@ extern int fd_dic;      /* mmap */
 #endif
 
 static int
-openDF(df, dfnm, w, gramoff, gramsz)
-     struct DF	*df;
-     char	*dfnm;
-     int        *w;
-     off_t	*gramoff;
-     size_t	*gramsz;
+openDF(struct DF *df, char *dfnm, int *w, off_t *gramoff, size_t *gramsz)
 {
   struct HD	hd;
   struct ND	nd, *xnd;
@@ -147,11 +142,11 @@ openDF(df, dfnm, w, gramoff, gramsz)
 }
 
 int
-_Rkpopen(dm, dfnm, mode, gram)
-     struct DM	*dm;
-     char	*dfnm;
-     int	mode;
-     struct RkKxGram *gram; /* ARGSUSED */
+_Rkpopen(
+	struct DM *dm,
+	char *dfnm,
+	int mode,
+	struct RkKxGram *gram /* ARGSUSED */)
 {
   struct DF	*df;
   struct DD	*dd;
@@ -239,11 +234,11 @@ _Rkpopen(dm, dfnm, mode, gram)
   return 0;
 }
 
-int	
-_Rkpclose(dm, dfnm, gram)
-     struct DM	*dm;
-     char		*dfnm;
-     struct RkKxGram *gram; /* ARGSUSED */
+int
+_Rkpclose(
+	struct DM *dm,
+	char *dfnm,
+	struct RkKxGram *gram /* ARGSUSED */)
 {
   struct DF	*df = dm->dm_file;
   struct ND	*xdm = (struct ND *)dm->dm_xdm;
@@ -299,11 +294,8 @@ _Rkpclose(dm, dfnm, gram)
   return 0;
 }
 
-static
-unsigned char *
-assurep(dic, id)
-     struct ND	*dic;
-     int	id;
+static unsigned char *
+assurep(struct ND *dic, int id)
 {
   off_t	off = dic->doff + dic->drsz + dic->pgsz * id;
   unsigned	size = dic->pgsz;
@@ -346,10 +338,7 @@ assurep(dic, id)
 }
 
 int
-_RkEql(a, b, n)
-     Wchar		*a;
-     unsigned char	*b;
-     int		n;
+_RkEql(Wchar *a, unsigned char *b, int n)
 {
   Wchar	c, d;
   for (; n-- > 0; b += 2) {
@@ -362,18 +351,7 @@ _RkEql(a, b, n)
 }
 
 static int
-readThisCache(dm, xdm, pgno, val, key, cur, ylen, nread, mc, nc, cf)
-     struct DM		*dm;
-     struct ND		*xdm;
-     long		pgno;
-     unsigned long	val;
-     Wchar		*key;
-     int		cur;
-     int		ylen;
-     struct nread	*nread;
-     int		mc;
-     int		nc;
-     int		*cf;
+readThisCache(struct DM *dm, struct ND *xdm, long pgno, unsigned long val, Wchar *key, int cur, int ylen, struct nread *nread, int mc, int nc, int *cf)
 {
   int		remlen;
   unsigned char	*wrec1, *wrec;
@@ -405,19 +383,7 @@ readThisCache(dm, xdm, pgno, val, key, cur, ylen, nread, mc, nc, cf)
 }
 
 static int
-SearchInPage(dm, xdm, pgno, buf, val, key, cur, ylen, nread, mc, nc, cf)
-     struct DM		*dm;
-     struct ND		*xdm;
-     unsigned char	*buf;
-     long		pgno;
-     unsigned long	val;
-     Wchar		*key;
-     int		cur;
-     int		ylen;
-     struct nread	*nread;
-     int		mc;
-     int		nc;
-     int		*cf;
+SearchInPage(struct DM *dm, struct ND *xdm, long pgno, unsigned char *buf, unsigned long val, Wchar *key, int cur, int ylen, struct nread *nread, int mc, int nc, int *cf)
 {
   Wchar		kv, wc;
   unsigned char	*pos = buf + val;
@@ -451,17 +417,7 @@ SearchInPage(dm, xdm, pgno, buf, val, key, cur, ylen, nread, mc, nc, cf)
 }
 
 static int
-SearchInDir(dm, xdm, pos, key, cur, ylen, nread, mc, nc, cf)
-     struct DM		*dm;
-     struct ND		*xdm;
-     unsigned char	*pos;
-     Wchar		*key;
-     int		cur;
-     int		ylen;
-     struct nread	*nread;
-     int		mc;
-     int		nc;
-     int		*cf;
+SearchInDir(struct DM *dm, struct ND *xdm, unsigned char *pos, Wchar *key, int cur, int ylen, struct nread *nread, int mc, int nc, int *cf)
 {
   Wchar		kv, wc, nw;
   unsigned long	val;
@@ -518,15 +474,8 @@ SearchInDir(dm, xdm, pos, key, cur, ylen, nread, mc, nc, cf)
   return(nc);
 }
 
-int		
-_Rkpsearch(cx, dm, key, n, nread, mc, cf)
-     struct RkContext	*cx;
-     struct DM		*dm;
-     Wchar		*key;
-     int		n;
-     struct nread	*nread;
-     int		mc;
-     int		*cf;
+int
+_Rkpsearch(struct RkContext *cx, struct DM *dm, Wchar *key, int n, struct nread *nread, int mc, int *cf)
 /* ARGSUSED */
 {
   struct ND	*xdm;
@@ -540,11 +489,8 @@ _Rkpsearch(cx, dm, key, n, nread, mc, cf)
   return(0);
 }
 
-int	
-_Rkpio(dm, cp, io)
-     struct DM		*dm;
-     struct ncache	*cp;
-     int		io;
+int
+_Rkpio(struct DM *dm, struct ncache *cp, int io)
 /* ARGSUSED */
 {
   if (io == 0) {
@@ -556,10 +502,7 @@ _Rkpio(dm, cp, io)
 
 #if 0 /* 使われていないのでとりあえずコメントにする */
 static void
-ch_perm(qm, offset, size, num)
-     struct DM  *qm;
-     unsigned   offset;
-     int        size, num;
+ch_perm(struct DM *qm, unsigned offset, int size, int num)
 {
   unsigned char	tmp[8192];
   /* I leave this stack located array because of it is not used */
@@ -576,13 +519,8 @@ ch_perm(qm, offset, size, num)
 #define PERM_WRECSIZE 2048
 #define PERM_NREADSIZE 128
 
-int	
-_Rkpctl(dm, qm, what, arg, gram)
-     struct DM	*dm;
-     struct DM	*qm;
-     int	what;
-     Wchar	*arg;
-     struct RkKxGram *gram;
+int
+_Rkpctl(struct DM *dm, struct DM *qm, int what, Wchar *arg, struct RkKxGram *gram)
 {
   int		nc, cf = 0, ret = -1;
   struct ND	*xdm;
@@ -780,10 +718,8 @@ _Rkpctl(dm, qm, what, arg, gram)
   return ret;
 }  
 
-int	
-_Rkpsync(cx, dm, qm)
-     struct RkContext *cx;
-     struct DM	*dm, *qm;
+int
+_Rkpsync(struct RkContext *cx, struct DM *dm, struct DM *qm)
 {
   struct DF	*df;
   struct DD     *dd;
