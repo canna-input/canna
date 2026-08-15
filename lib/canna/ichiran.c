@@ -36,12 +36,11 @@ extern int errno;
 #endif
 #define wchar_t cannawc
 
-extern int TanNextKouho();
 
-static void clearIchiranContext();
-static int IchiranKakutei();
-static void getIchiranPreviousKouhoretsu();
-static void getIchiranNextKouhoretsu();
+static void clearIchiranContext(ichiranContext);
+static int IchiranKakutei(uiContext);
+static void getIchiranPreviousKouhoretsu(uiContext);
+static void getIchiranNextKouhoretsu(uiContext);
 
 
 #define ICHISIZE 9
@@ -307,7 +306,7 @@ popIchiranMode(uiContext d)
  * すべての候補を取り出して、配列にする
  */
 
-static int makeKouhoIchiran();
+static int makeKouhoIchiran(uiContext, int, int, int, int);
 
 wchar_t **
 getIchiranList(int context, int *nelem, int *currentkouho)
@@ -414,24 +413,11 @@ newIchiranContext(void)
  * 候補一覧行を作る
  */
 
-#ifdef __STDC__
 int
 selectOne(uiContext d, wchar_t **buf, int *ck, int nelem, int bangomax,
 	  unsigned inhibit, int currentkouho, int allowcallback,
 	  canna_callback_t everyTimeCallback, canna_callback_t exitCallback,
 	  canna_callback_t quitCallback, canna_callback_t auxCallback)
-#else
-selectOne(d, buf, ck, nelem, bangomax, inhibit, currentkouho, allowcallback,
-	  everyTimeCallback, exitCallback, quitCallback, auxCallback)
-uiContext d;
-wchar_t **buf;
-int *ck;
-int nelem, bangomax;
-unsigned inhibit;
-int currentkouho;
-int allowcallback;
-canna_callback_t everyTimeCallback, exitCallback, quitCallback, auxCallback;
-#endif
 {
   extern KanjiModeRec ichiran_mode;
   ichiranContext ic;

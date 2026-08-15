@@ -148,13 +148,12 @@ warnRKCErrors(const char *const *errors)
 int
 KanjiInit(void)
 {
-  char *ptr, *getenv(), *kodmesg = ""/* 辞書の種別毎のメッセージ */;
+  char *ptr, *kodmesg = ""/* 辞書の種別毎のメッセージ */;
   int con;
   struct dicname *stp;
   extern struct dicname *kanjidicnames;
   extern int FirstTime;
   extern jrUserInfoStruct *uinfo;
-  extern char *RkGetServerHost(void);
   int ret = -1;
 #ifndef USE_MALLOC_FOR_BIG_ARRAY
   char buf[256];

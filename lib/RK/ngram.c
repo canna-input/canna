@@ -57,7 +57,6 @@ struct RkKxGram {
 };
 #define is_row_num(g, n)	((0 <= (n)) && ((n) < ((g)->ng_rowcol)))
 
-extern unsigned char *ustoeuc();
 
 void
 RkCloseGram(struct RkKxGram *gram)
@@ -483,7 +482,6 @@ wstowrec(struct RkKxGram *gram, Wchar *src, Wrec *dst, unsigned maxdst, unsigned
 static Wrec *
 fil_wc2wrec_flag(Wrec *wrec, unsigned *wreclen, unsigned ncand, Wchar *yomi, unsigned ylen, unsigned left)
 {
-  extern Wchar	uniqAlnum();
   Wrec		*owrec = wrec;
   Wchar		tmp;
   int		wlen = *wreclen, i;
@@ -526,7 +524,6 @@ fil_wc2wrec_flag(Wrec *wrec, unsigned *wreclen, unsigned ncand, Wchar *yomi, uns
 static Wrec *
 fil_wrec_flag(Wrec *wrec, unsigned *wreclen, unsigned ncand, Wrec *yomi, unsigned ylen, unsigned left)
 {
-  extern Wchar	uniqAlnum();
   Wrec		*owrec = wrec;
   Wchar		tmp;
   int		wlen = *wreclen, i;

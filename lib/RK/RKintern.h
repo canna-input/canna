@@ -958,55 +958,6 @@ extern struct RkDST	_RkDST[];
 
 
 
-/* Internal Functions */
-struct RkParam		*RkGetSystem();
-struct DD		*RkGetSystemDD();
-struct DD		*RkGetUserDD();
-struct RkContext	*RkGetContext();
-struct RkContext	*RkGetXContext();
-struct RkKxGram		*RkReadGram(int, size_t);
-struct RkKxGram		*RkOpenGram();
-struct RkKxGram		*RkDuplicateGram();
-void			RkCloseGram();
-
-int			_RkInitializeCache();
-void			_RkFinalizeCache();
-struct ncache		*_RkFindCache();
-struct ncache		*_RkReadCache();
-void			_RkFreeCache();
-void		 	_RkKillCache();
-void		 	_RkPurgeCache();
-void			_RkDerefCache();
-
-int			_RkRenbun2();
-void			_RkLearnBun();
-
-int			RkScanWcand();
-int			RkUniqWcand();
-int			RkUnionWcand();
-int			RkSubtractWcand();
-
-unsigned char		*RkGetGramName();
-int			RkGetGramNum();
-Wchar			*RkUparseWrec();
-Wchar			*_RkUparseWrec();
-Wrec			*RkParseWrec();
-Wrec			*RkParseOWrec();
-Wchar			*RkUparseGramNum();
-Wchar			*RkParseGramNum();
-
-/* Context */
-char			*allocStr();
-void			_RkEndBun();
-void			freeDF();
-
-int			_RkCandNumber();
-int			_RkWordLength();
-int			_RkCalcLog2(int);
-int			_RkCalcUnlog2();
-
-/* etc. */
-
 #ifdef OPTIMIZE
 #define RkGetContext(cx_num)\
     ((IsCxNum(cn) && IS_LIVECTX(&CX[cn])) ? \
@@ -1030,34 +981,6 @@ int			_RkCalcUnlog2();
 #define IS_HYPHEN(wc)		(IS_WC_G1_HYPHEN(wc) || ((wc) == '-'))
 /* space も候補として使いたいが今の所は space */
 #define IS_DIC_PUNCT(euc)	isspace(euc)
-
-	int		_RkRealizeDF();
-
-	struct DM	*_RkSearchDDQ();
-	struct DM	*_RkSearchDDP();
-	struct DM	*_RkSearchUDDP();
-	struct DM	*_RkSearchDDMEM();
-
-	int		_RkIsinDDP();
-struct DD		**_RkCopyDDP();
-struct DD		**_RkCreateDDP();
-void			_RkFreeDDP();
-
-struct DM		*DMcreate();
-int			DMremove();
-int			DMrename();
-
-int			_RkMountMD();
-void			_RkUmountMD();
-
-char			*_RkCreatePath();
-char			*_RkCreateUniquePath();
-char			*_RkMakePath();
-
-unsigned char		*_RkCreateHeader(struct HD *, size_t *size);
-int			_RkReadHeader(int, struct HD *, off_t);
-void			_RkClearHeader(struct HD *);
-void			_RkRehashCache();
 
 /*
  * limits
@@ -1128,65 +1051,162 @@ void			_RkRehashCache();
 
 #define RK_OLD_MAX_HDRSIZ	1024
 
-#ifndef	_RK_INTERN_FUNCTIONS_DEF_
-#define	_RK_INTERN_FUNCTIONS_DEF_
+/* Internal Functions */
 
-struct DM *_RkSearchDicWithFreq(struct DD **, char *, struct DM **);
-void _Rkpanic(const char *, ...);
-void RkAssertFail(const char *, int, const char *);
-unsigned long _RkGetTick(int);
-struct TW *RkCopyWrec(struct TW *);
-struct TW *RkUnionWrec(struct TW *, struct TW *);
-struct TW *RkSubtractWrec(struct TW *, struct TW *);
-void _RkFreeQue(struct nstore *, int, int);
-void freeTdn(struct RkContext *);
-void _RkFreeBunq(struct nstore *);
-int _RkRealizeDD(struct DD *);
-int RkCvtWide(Wchar *, int, char *, int);
-int RkCvtNarrow(char *, int, Wchar *, int);
-
-#if defined(MMAP)
-int _RkDoInvalidateCache(long, unsigned long);
-#endif
-
-int _RkGetLink(struct ND *, long, unsigned long,
-		    unsigned long *, unsigned long *);
-long _RkUnpackBits(unsigned *, unsigned char *, long, int, int);
+/* bits.c */
 long _RkPackBits(unsigned char *, long, int, unsigned *, int);
+long _RkUnpackBits(unsigned *, unsigned char *, long, int, int);
+long _RkCopyBits(unsigned char *, long, int, unsigned char *, long, int);
 int _RkSetBitNum(unsigned char *, unsigned long, int, int, int);
+int _RkCalcFqSize(int);
+int _RkCalcLog2(int);
+
+/* bun.c */
+struct nstore *_RkReallocBunStorage(struct nstore *, unsigned);
+int _RkResize(int, int, int);
+int _RkwSync(struct RkContext *, char *);
+
+/* context.c */
+struct RkParam *RkGetSystem(void);
+struct DD *RkGetSystemDD(void);
+struct RkContext *RkGetContext(int);
+struct RkContext *RkGetXContext(int);
+void _RkEndBun(struct RkContext *);
+
+/* dd.c */
+char *allocStr(char *);
+int _RkRealizeDF(struct DF *);
+char *_RkCreatePath(struct DD *, char *);
+char *_RkCreateUniquePath(struct DD *, char *);
+char *_RkMakePath(struct DF *);
+int _RkRealizeDD(struct DD *);
+int _RkIsInDDP(struct DD **, struct DD *);
+struct DD **_RkCopyDDP(struct DD **);
+struct DD **_RkCreateDDP(char *);
+void _RkFreeDDP(struct DD **);
+struct DM *_RkSearchDDP(struct DD **, char *);
+struct DM *_RkSearchDDQ(struct DD **, char *, int);
+struct DM *_RkSearchUDDP(struct DD **, unsigned char *);
+struct DM *_RkSearchDDMEM(struct DD **, char *);
+struct DM *_RkSearchDicWithFreq(struct DD **, char *, struct DM **);
+int DMcheck(char *, char *);
+struct DM *DMcreate(struct DD *, char *);
+int DMremove(struct DM *);
+int DMrename(struct DM *, char *);
+int DMchmod(struct DM *, int);
+int DDchmod(struct DD *, int);
+int _RkMountMD(struct RkContext *, struct DM *, struct DM *, int, int);
+void _RkUmountMD(struct RkContext *, struct MD *);
+
+/* dic.c */
+int copyFile(struct DM *, struct DM *);
+void freeTdn(struct RkContext *);
+
+/* fq.c */
+struct RUT *allocRUT(unsigned long);
+unsigned long searchRut(struct RUT *, unsigned long);
+int entryRut(struct RUT *, unsigned long, unsigned long);
+struct RUT *LoadRUC(int);
+int FQopen(struct DM *, struct DM *, char *, int);
+void FQclose(struct RkContext *, struct DM *, struct DM *, char *);
 int FQsync(struct RkContext *, struct DM *, struct DM *, char *);
 
+/* kana.c */
+int RkCvtWide(Wchar *, int, char *, int);
+int RkCvtNarrow(char *, int, Wchar *, int);
 int RkwCvtSuuji(Wchar *, int, Wchar *, int, int);
 int RkwCvtNone(Wchar *, int, Wchar *, int);
 
+/* ncache.c */
+int _RkInitializeCache(int);
+void _RkFinalizeCache(void);
+int _RkRelease(void);
+void _RkDerefCache(struct ncache *);
+void _RkPurgeCache(struct ncache *);
+void _RkKillCache(struct DM *);
+#if defined(MMAP)
+int _RkDoInvalidateCache(long, unsigned long);
+#endif
+struct ncache *_RkFindCache(struct DM *, long);
+void _RkRehashCache(struct ncache *, long);
+struct ncache *_RkReadCache(struct DM *, long);
+
+/* ngram.c */
+void RkCloseGram(struct RkKxGram *);
+struct RkKxGram *RkReadGram(int, size_t);
+struct RkKxGram *RkOpenGram(char *);
+struct RkKxGram *RkDuplicateGram(struct RkKxGram *);
+int _RkWordLength(unsigned char *);
+int _RkCandNumber(unsigned char *);
+int RkGetGramNum(struct RkKxGram *, char *);
+Wrec *RkParseWrec(struct RkKxGram *, Wchar *, unsigned, unsigned char *, unsigned);
+Wrec *RkParseOWrec(struct RkKxGram *, Wchar *, unsigned char *, unsigned, unsigned long *);
+Wchar *RkParseGramNum(struct RkKxGram *, Wchar *, int *);
+unsigned char *RkGetGramName(struct RkKxGram *, int);
+Wchar *RkUparseGramNum(struct RkKxGram *, int, Wchar *, int);
 int _RkRowNumber(unsigned char *);
+Wchar *_RkUparseWrec(struct RkKxGram *, Wrec *, Wchar *, int, unsigned long *, int);
+Wchar *RkUparseWrec(struct RkKxGram *, Wrec *, Wchar *, int, unsigned long *);
+struct TW *RkCopyWrec(struct TW *);
+int RkScanWcand(Wrec *, struct RkWcand *, int);
+int RkUniqWcand(struct RkWcand *, int);
+int RkUnionWcand(struct RkWcand *, int, int, struct RkWcand *, int);
+int RkSubtractWcand(struct RkWcand *, int, struct RkWcand *, int, unsigned long *);
+struct TW *RkSubtractWrec(struct TW *, struct TW *);
+struct TW *RkUnionWrec(struct TW *, struct TW *);
 int RkTestGram(const struct RkKxGram *, int, int);
 #ifdef LOGIC_HACK
 int RkCheckNegGram(const struct RkKxGram *, int, int, int);
 #endif
 void RkFirstGram(struct RkGramIterator *, const struct RkKxGram *);
 void RkEndGram(struct RkGramIterator *, const struct RkKxGram *);
+
+/* nword.c */
+void _RkFreeBunq(struct nstore *);
+void _RkFreeQue(struct nstore *, int, int);
 int _RkRegisterNV(struct NV *, Wrec *, int, int);
-int FQopen(struct DM *, struct DM *, char *, int);
-void FQclose(struct RkContext *, struct DM *, struct DM *, char *);
+Wchar *_RkGetKanji(struct nword *, Wchar *, unsigned long);
+int _RkRenbun2(struct RkContext *, int);
 int _RkSubstYomi(struct RkContext *, int, int, Wchar *, int);
-long _RkCopyBits(unsigned char *, long, int, unsigned char *, long, int);
-int _RkIsInDDP(struct DD **, struct DD *);
+int _RkFlushYomi(struct RkContext *);
+void _RkLearnBun(struct RkContext *, int, int);
+
+/* permdic.c */
+int _Rkpopen(struct DM *, char *, int, struct RkKxGram *);
+int _Rkpclose(struct DM *, char *, struct RkKxGram *);
 int _RkEql(Wchar *, unsigned char *, int);
-int DMcheck(char *, char *);
-int copyFile(struct DM *, struct DM *);
-int DDchmod(struct DD *, int);
-int DMchmod(struct DM *, int);
+int _Rkpsearch(struct RkContext *, struct DM *, Wchar *, int, struct nread *, int, int *);
+int _Rkpio(struct DM *, struct ncache *, int);
+int _Rkpctl(struct DM *, struct DM *, int, Wchar *, struct RkKxGram *);
+int _Rkpsync(struct RkContext *, struct DM *, struct DM *);
+
+/* tempdic.c */
+int _Rktopen(struct DM *, char *, int, struct RkKxGram *);
+int _Rktclose(struct DM *, char *, struct RkKxGram *);
+int _Rktsearch(struct RkContext *, struct DM *, Wchar *, int, struct nread *, int, int *);
+int _Rktio(struct DM *, struct ncache *, int);
+int _Rktctl(struct DM *, struct DM *, int, Wchar *, struct RkKxGram *);
+int _Rktsync(struct RkContext *, struct DM *, struct DM *);
+
+/* util.c */
 int uslen(Wchar *);
+void usncopy(Wchar *, Wchar *, int);
 unsigned char *ustoeuc(Wchar *, int, unsigned char *, int);
 Wchar *euctous(unsigned char *, int, Wchar *, int);
-int _RkSubstYomi(struct RkContext *, int, int, Wchar *, int);
+void _Rkpanic(const char *, ...);
+void RkAssertFail(const char *, int, const char *);
+int _RkCalcUnlog2(int);
+Wchar uniqAlnum(int);
+void _RkClearHeader(struct HD *);
+int _RkReadHeader(int, struct HD *, off_t);
+unsigned char *_RkCreateHeader(struct HD *, size_t *);
+unsigned long _RkGetTick(int);
+int set_hdr_var(struct HD *, int, unsigned long);
+int _RkGetLink(struct ND *, long, unsigned long, unsigned long *, unsigned long *);
+unsigned long _RkGetOffset(struct ND *, unsigned char *);
 int HowManyChars(Wchar *, int);
 int HowManyBytes(Wchar *, int);
-int _RkFlushYomi(struct RkContext *);
 int parse_string(char *);
-
-#endif /* _RK_INTERN_FUNCTIONS_DEF_ */
 
 #endif /* _RKintern_h */
 /* vim: set sw=2: */

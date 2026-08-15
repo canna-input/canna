@@ -337,8 +337,7 @@ rkc_build_cannaserver_list(char **list)
 {
     char work[ MAX_HOSTNAME ];
     const char *hostp ;
-    char **listp = list, *getenv();
-    exp(char *) RkwGetServerName();
+    char **listp = list;
     FILE *hostfp ;
     
     increment_counter( 1 ) ;
@@ -728,11 +727,7 @@ RkcSendWRequest(const BYTE *Buffer, int size)
     register int todo, retval = 0;
     register int write_stat;
     register const BYTE *bufindex;
-#ifdef SIGNALRETURNSINT
-    static int (*Sig)(int);
-#else /* !SIGNALRETURNSINT */
-    static void (*Sig)(int);
-#endif /* !SIGNALRETURNSINT */
+    static sig_ret_type (*Sig)(int);
     struct timeval timeout, timeout2;
     rki_fd_set wfds, wfds2;
 

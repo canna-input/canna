@@ -862,6 +862,8 @@ struct CannaConfig { /* 以下のコメントはダイアログなどに記述するときなどに
 #define CANNA_MAX_CODE   3
 
 typedef int (* canna_callback_t)(uiContext, int, mode_context);
+typedef void (* canna_keyconv_callback_t)(int, char *, char *, int);
+struct map;
 
 /* for VC++ 4.0, by kon */
 
@@ -869,6 +871,10 @@ typedef int (* canna_callback_t)(uiContext, int, mode_context);
 extern int RkCvtNone(unsigned char *, int, unsigned char *, int);
 extern int RkCvtEuc(unsigned char *, int, unsigned char *, int);
 extern int RkwCvtNone(wchar_t *, int, wchar_t *, int);
+extern int RkwCvtHan(wchar_t *, int, wchar_t *, int);
+extern int RkwCvtHira(wchar_t *, int, wchar_t *, int);
+extern int RkwCvtKana(wchar_t *, int, wchar_t *, int);
+extern int RkwCvtZen(wchar_t *, int, wchar_t *, int);
 extern int RkwMapPhonogram(struct RkRxDic *, wchar_t *, int, wchar_t *, int, wchar_t, int,
        int *, int *, int *, int *);
 extern int RkwCvtRoma(struct RkRxDic *, wchar_t *, int, wchar_t *, int, int);
@@ -885,8 +891,15 @@ extern int enterAdjustMode(uiContext, yomiContext);
 extern int leaveAdjustMode(uiContext, yomiContext);
 extern void popForIchiranMode(uiContext);
 
+/* bushu.c */
+extern int initBushuTable(void);
+extern int getForIchiranContext(uiContext);
+extern int BushuMode(uiContext);
+extern int ConvertAsBushu(uiContext);
+
 /* chikuji.c */
 extern void clearHenkanContext(yomiContext);
+extern int chikujiInit(uiContext);
 extern int ChikujiSubstYomi(uiContext);
 extern int ChikujiTanDeletePrevious(uiContext);
 extern void moveToChikujiTanMode(uiContext);
@@ -894,7 +907,10 @@ extern void moveToChikujiYomiMode(uiContext);
 
 /* commondata.c */
 extern struct CannaConfig cannaconf;
+extern int (*jrBeepFunc)(void);
+extern canna_keyconv_callback_t keyconvCallback;
 extern void InitCannaConfig(struct CannaConfig *);
+extern void restoreBindings(void);
 
 /* defaultmap.c */
 extern int searchfunc(uiContext, KanjiMode, int, int, int);
@@ -905,6 +921,7 @@ extern int EUCListCallback(char *, int, wchar_t **, int, int *);
 extern int XKanjiControl2(unsigned int, unsigned int, unsigned int, BYTE *);
 
 /* empty.c */
+extern extraFunc *FindExtraFunc(int);
 extern int getBaseMode(yomiContext);
 extern void EmptyBaseModeInfo(uiContext, yomiContext);
 extern int EmptyBaseHira(uiContext);
@@ -919,13 +936,19 @@ extern int EmptyBaseHenkan(uiContext);
 /* engine.c */
 extern int RkSetServerName(char *);
 extern exp(char *) RkwGetServerName(void);
+extern char *RkGetServerHost(void);
+extern char *RkGetServerEngine(void);
 extern int RkwSetAppName(int, char *);
 extern void close_engine(void);
+
+/* hex.c */
+extern int HexMode(uiContext);
 
 /* henkan.c */
 extern int KanjiInit(void);
 extern int KanjiFin(void);
 extern void freeTanContext(tanContext);
+extern yomiContext newFilledYomiContext(mode_context, KanjiMode);
 extern int TanBubunMuhenkan(uiContext);
 extern int prepareHenkanMode(uiContext);
 extern int doHenkan(uiContext, int, wchar_t *);
@@ -942,6 +965,10 @@ extern int TanUpper(uiContext);
 extern int TanCapitalize(uiContext);
 extern int TanZenkaku(uiContext);
 extern int TanHankaku(uiContext);
+extern int TanKanaRotate(uiContext);
+extern int TanRomajiRotate(uiContext);
+extern int TanCaseRotateForward(uiContext);
+extern int YomiBubunKakutei(uiContext);
 extern int TanBeginningOfBunsetsu(uiContext);
 extern int TanEndOfBunsetsu(uiContext);
 extern int tanMuhenkan(uiContext, int);
@@ -958,6 +985,9 @@ extern int TbEndOfLine(uiContext);
 
 /* ichiran.c */
 extern int initIchiran(void);
+extern int allocIchiranBuf(uiContext);
+extern ichiranContext newIchiranContext(void);
+extern wchar_t **getIchiranList(int, int *, int *);
 extern void makeGlineStatus(uiContext);
 extern void freeIchiranBuf(ichiranContext);
 extern void freeGetIchiranList(wchar_t **);
@@ -988,6 +1018,7 @@ extern struct callback *pushCallback(uiContext, mode_context,
 extern void popCallback(uiContext);
 
 /* kctrl.c */
+extern uiContext keyToContext(unsigned int, unsigned int);
 extern int initRomeStruct(uiContext, int);
 extern void freeRomeStruct(uiContext);
 extern struct bukRec *internContext(unsigned int, unsigned int, uiContext);
@@ -1003,12 +1034,16 @@ extern int doFunc(uiContext, int);
 /* keydef.c */
 extern int initKeyTables(void);
 extern void restoreDefaultKeymaps(void);
+extern unsigned char *actFromHash(unsigned char *, int);
+extern struct map *mapFromHash(KanjiMode tbl, int key, struct map ***ppp);
+extern int askQuitKey(unsigned);
 
 /* kigo.c */
 extern void initKigoTable(void);
 extern int KigoIchiran(uiContext);
 
 /* lisp.c */
+extern int YYparse_by_rcfilename(char *);
 extern void clisp_fin(void);
 extern int parse_string(char *);
 extern void clisp_main(void);
@@ -1085,8 +1120,10 @@ extern void removeKana(uiContext, yomiContext, int, int);
 /* uiutil.c */
 #ifndef NO_EXTEND_MENU
 extern void freeMenu(menustruct *);
+extern menustruct *allocMenu(int, int);
 extern void finExtMenu(void);
 #endif
+extern int initExtMenu(void);
 extern int uiUtilIchiranTooSmall(uiContext, int, mode_context);
 #ifndef NO_EXTEND_MENU
 extern int prevMenuIfExist(uiContext);
@@ -1098,17 +1135,47 @@ extern int showmenu(uiContext, menustruct *);
 #endif
 
 /* uldefine.c */
+extern int dicTouroku(uiContext);
+extern int initHinshiTable(void);
+extern int dicTourokuTango(uiContext, canna_callback_t);
+extern int dicTourokuControl(uiContext, wchar_t *, canna_callback_t);
 extern int uuTTangoQuitCatch(uiContext, int, mode_context);
 
 /* uldelete.c */
+extern int dicSakujo(uiContext);
 extern void freeDic(tourokuContext);
 extern void freeAndPopTouroku(uiContext);
 
 /* ulhinshi.c */
+extern int initHinshiMessage(void);
+extern int initGyouTable(void);
 extern int dicTourokuHinshiDelivery(uiContext);
+extern int dicTourokuDictionary(uiContext, canna_callback_t, canna_callback_t);
+
+/* ulserver.c */
+extern int serverChange(uiContext);
+extern int serverFin(uiContext);
 
 /* ulmount.c */
+extern int getMountContext(uiContext);
+extern int dicMount(uiContext);
 extern void popMountMode(uiContext);
+
+/* onoff.c */
+extern int initOnoffTable(void);
+extern int selectOnOff(uiContext, wchar_t **, int *, int, int, int,
+       unsigned char *, canna_callback_t, canna_callback_t,
+       canna_callback_t, canna_callback_t);
+
+/* ulkigo.c */
+extern int initUlKigoTable(void);
+extern int initUlKeisenTable(void);
+extern int uuKigoGeneralExitCatch(uiContext, int, mode_context);
+extern int uuKigoMake(uiContext, wchar_t **, int, int, int, canna_callback_t,
+       int *);
+extern int kigoRussia(uiContext);
+extern int kigoGreek(uiContext);
+extern int kigoKeisen(uiContext);
 
 /* util.c */
 extern void GlineClear(uiContext);
@@ -1116,6 +1183,7 @@ extern void echostrClear(uiContext);
 extern int NothingChanged(uiContext);
 extern int NothingForGLine(uiContext);
 extern void CannaBeep(void);
+extern int checkGLineLen(uiContext);
 extern int NothingChangedWithBeep(uiContext);
 extern int NothingForGLineWithBeep(uiContext);
 extern int extractTanString(tanContext, wchar_t *, wchar_t *);
@@ -1153,6 +1221,11 @@ extern int confirmContext(uiContext, yomiContext);
 extern int abandonContext(uiContext, yomiContext);
 extern int makeRkError(uiContext, char *);
 extern char *KanjiInitError(void);
+extern int canna_alert(uiContext, char *, canna_callback_t);
+
+/* yesno.c */
+extern int getYesNoContext(uiContext, canna_callback_t, canna_callback_t,
+       canna_callback_t, canna_callback_t);
 
 /* unknown */
 extern int WCinit(void);

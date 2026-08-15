@@ -37,8 +37,6 @@
 extern int errno;
 #endif
 
-exp(int) RkwCreateDic();
-
 static int dicTourokuDo(uiContext),
            checkUsrDic(uiContext),
            dicTourokuYomi(uiContext),

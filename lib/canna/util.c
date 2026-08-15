@@ -217,8 +217,6 @@ NothingForGLine(uiContext d)
 void
 CannaBeep(void)
 {
-  extern int (*jrBeepFunc)(void);
-
   if (jrBeepFunc) {
     jrBeepFunc();
   }
@@ -681,7 +679,6 @@ int
 setWStrings(wchar_t **ws, char **s, int sz)
 {
   int f = sz;
-  wchar_t *WString();
 
   for (; (f && sz) || (!f && *s); ws++, s++, sz--) {
     *ws = WString(*s);
@@ -1018,12 +1015,7 @@ WStrncmp(wchar_t *w1, wchar_t *w2, int n)
  */
 
 int
-#ifdef __STDC__
 WWhatGPlain(wchar_t wc)
-#else
-WWhatGPlain(wc)
-wchar_t wc;
-#endif
 {
   static char plain[4] = {0, 2, 3, 1};
 
@@ -1046,45 +1038,25 @@ wchar_t wc;
 }
 
 int
-#ifdef __STDC__
 WIsG0(wchar_t wc)
-#else
-WIsG0(wc)
-wchar_t wc;
-#endif
 {
   return (WWhatGPlain(wc) == 0);
 }
 
 int
-#ifdef __STDC__
 WIsG1(wchar_t wc)
-#else
-WIsG1(wc)
-wchar_t wc;
-#endif
 {
   return (WWhatGPlain(wc) == 1);
 }
 
 int
-#ifdef __STDC__
 WIsG2(wchar_t wc)
-#else
-WIsG2(wc)
-wchar_t wc;
-#endif
 {
   return (WWhatGPlain(wc) == 2);
 }
 
 int
-#ifdef __STDC__
 WIsG3(wchar_t wc)
-#else
-WIsG3(wc)
-wchar_t wc;
-#endif
 {
   return (WWhatGPlain(wc) == 3);
 }
@@ -1416,12 +1388,7 @@ generalReplace(wchar_t *buf, BYTE *attr, int *startp, int *cursor, int *endp, in
 }
 
 int
-#ifdef __STDC__
 WToupper(wchar_t w)
-#else
-WToupper(w)
-wchar_t w;
-#endif
 {
   if ('a' <= w && w <= 'z')
     return((wchar_t) (w - 'a' + 'A'));
@@ -1430,12 +1397,7 @@ wchar_t w;
 }
 
 int
-#ifdef __STDC__
 WTolower(wchar_t w)
-#else
-WTolower(w)
-wchar_t w;
-#endif
 {
   if ('A' <= w && w <= 'Z') {
     return (wchar_t)(w - 'A' + 'a');

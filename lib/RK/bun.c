@@ -38,7 +38,6 @@
 #endif
 
 #define	STRCMP(d, s)	strcmp((char *)(d), (char *)(s))
-extern	void	usncopy();
 
 #ifdef RK_LOG
 #include	<stdio.h>
@@ -60,8 +59,8 @@ nword2str(struct RkContext *cx, struct nword *w, Wchar *yomi)
     struct nword *words[RK_CONC_NMAX], **p, *wp;
     int msg_idx = 0;
     char *hinsi;
-    Wchar *kanji, *_RkGetKanji();
-    unsigned char *ekanji, *ustoeuc();
+    Wchar *kanji;
+    unsigned char *ekanji;
 
     for (wp = w, p = words; wp; wp = wp->nw_left) 
 	*p++ = wp;
@@ -91,7 +90,7 @@ nword2str(struct RkContext *cx, struct nword *w, Wchar *yomi)
     return msg;
 }
 
-static
+static void
 dumpBunq(
 	struct RkContext *cx,
 	int from,
@@ -154,7 +153,7 @@ dumpBunq(
 	    if (log & 1) l->henkan = "";
 	    else if (log == 2) {
 		unsigned char msg[RK_LINE_BMAX];
-		unsigned char *ekanji, *ustoeuc();
+		unsigned char *ekanji;
 		ustoeuc(store->yomi + bun->nb_yoff, bun->nb_curlen,
 			msg, RK_LINE_BMAX);
 		fprintf(fp, "リテラル %s\n", msg);
@@ -1012,7 +1011,7 @@ addIt(
 	struct RkContext *cx)
 {
   struct nword	*lw;
-  Wchar		*y, *_RkGetKanji();
+  Wchar		*y;
   RkLex		lex;
   
   lw = cw->nw_left;
@@ -1461,7 +1460,7 @@ RkwQueryDic(int cx_num, char *dirname, char *dicname, struct DicInfo *status)
       return NOENT;
     }
   } else {
-    if (!(dm = _RkSearchUDDP(cx->ddpath, dicname))) {
+    if (!(dm = _RkSearchUDDP(cx->ddpath, (unsigned char *)dicname))) {
       CloseContext(new_cx_num);
       (void)free((char *)buff);
       return NOENT;

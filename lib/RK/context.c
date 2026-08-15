@@ -250,15 +250,13 @@ RkGetSystemDD(void)
  *	-> RKintern.h
  */
 struct RkContext *
-RkGetContext(cx_num)
-     int	cx_num;
+RkGetContext(int cx_num)
 {
   return(IsLiveCxNum(cx_num) ? &CX[cx_num] : (struct RkContext *)0);
 }
 
 struct RkContext *
-RkGetXContext(cx_num)
-     int	cx_num;
+RkGetXContext(int cx_num)
 {
   struct RkContext	*cx;
   

@@ -271,7 +271,6 @@ uuTHinshiYNQuitCatch(uiContext d, int retval, mode_context env)
   return(dicTourokuHinshi(d));
 }
 
-int dicTourokuDictionary(uiContext, int(*)(), int(*)()); /* ulhinshi.c */
 extern int dicTourokuTango(uiContext, canna_callback_t); /* uldefine.c */
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -452,7 +451,7 @@ uuTHinshiQNoCatch(uiContext d, int retval, mode_context env)
  * Ã±¸ìÅÐÏ¿¤ÎÉÊ»ìÁªÂò                                                        *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-static int makeHinshi();
+static int makeHinshi(uiContext);
 
 int
 dicTourokuHinshiDelivery(uiContext d)
@@ -947,10 +946,10 @@ uuTDicQuitCatch(uiContext d, int retval, mode_context env)
   return(dicTourokuHinshi(d));
 }
 
-extern int getForIchiranContext(uiContext); /* bushu.c */
 
 int
-dicTourokuDictionary(uiContext d, int (*exitfunc)(), int (*quitfunc)())
+dicTourokuDictionary(uiContext d, canna_callback_t exitfunc,
+                    canna_callback_t quitfunc)
 {
   tourokuContext tc = (tourokuContext)d->modec;
   forichiranContext fc;
@@ -1025,7 +1024,6 @@ tangoTouroku(uiContext d)
   char dicname[1024];
   extern int defaultContext;
   int linecnt;
-  wchar_t *WStraddbcpy();
 
   defineEnd(d);
   if(EWStrcmp(tc->hcode, "#KX") == 0 ||

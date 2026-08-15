@@ -38,14 +38,14 @@ int		debug_flags = D_CONC|D_PARSE|D_SUCC;
 int		debug_flags = D_PARSE|D_SUCC;
 */
 int		debug_flags = 0;
-static void	dumpSimpleWordRec(), dumpWordRec(), dumpAllBunq();
-static void	dumpXQH(), dumpXQ();
+static void	dumpSimpleWordRec(void), dumpWordRec(unsigned char *);
+static void	dumpAllBunq(struct nstore *);
+static void	dumpXQH(struct nword **, int), dumpXQ(struct nword *);
 
 #else
 #define rk_debug(file, fmt, a, b, c)
 #endif
 
-extern	void	usncopy();
 
 static void
 clearWord(			/* make word empty */
@@ -167,9 +167,6 @@ _RkFreeBunq(			/* freeWord = derefWord + killWord */
   bunq->nb_flags = (unsigned short)0;
   return;
 }
-
-extern unsigned	searchRut();
-extern int	entryRut();
 
 static struct nword *
 concWord( 		/* create the concatinated word p+q */
@@ -1782,7 +1779,6 @@ int
 _RkSubstYomi(struct RkContext *cx, int ys, int ye, Wchar *yomi, int newLen)
 {
   struct nstore		*st = cx->store;
-  extern struct nstore	*_RkReallocBunStorage();
   struct nbun	*bun;
   struct nqueue		*xq;
   struct nword		**xqh;
@@ -1949,7 +1945,6 @@ doLearn(struct RkContext *cx, struct nword *thisW)
       unsigned long	offset;
       int		i;
       int		current;
-      unsigned long	_RkGetOffset();
 
       cx->time = _RkGetTick(1);
       if (thisCache->nc_flags & NC_ERROR)

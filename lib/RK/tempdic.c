@@ -418,13 +418,8 @@ _Rktopen(struct DM *dm, char *file, int mode, struct RkKxGram *gram)
 /*
  * CLOSE
  */
-static int writeTD(struct TD *, struct RkKxGram *, int);
-
 static int
-writeTD(td, gram, fdes)
-     struct TD		*td;
-     struct RkKxGram	*gram;
-     int		fdes;
+writeTD(struct TD *td, struct RkKxGram *gram, int fdes)
 {
   int	i, tmpres;
   int	ecount = 0;
@@ -476,10 +471,7 @@ writeTD(td, gram, fdes)
 }
 
 int	
-_Rktclose(dm, file, gram)
-     struct DM	*dm;
-     char	*file;
-     struct RkKxGram	*gram;
+_Rktclose(struct DM *dm, char *file, struct RkKxGram *gram)
 {
   struct DF	*df = dm->dm_file;
   struct TD	*xdm = (struct TD *)dm->dm_td;
@@ -572,16 +564,8 @@ _Rktclose(dm, file, gram)
 }
 
 int
-_Rktsearch(cx, dm, key, n, nread, maxcache, cf)
-     struct RkContext	*cx;
-     struct DM		*dm;
-     Wchar		*key;
-     int		n;
-     struct nread	*nread;
-     int		maxcache;
-     int		*cf;
+_Rktsearch(struct RkContext *cx, struct DM *dm, Wchar *key, int n, struct nread *nread, int maxcache, int *cf)
 {
-  Wchar		uniqAlnum();
   struct TD	*xdm = (struct TD *)dm->dm_td;
   int		nc = 0;
   int		i, j;
@@ -666,10 +650,7 @@ _Rktsearch(cx, dm, key, n, nread, maxcache, cf)
  */
 /*ARGSUSED*/
 int	
-_Rktio(dm, cp, io)
-     struct DM		*dm;
-     struct ncache	*cp;
-     int		io;
+_Rktio(struct DM *dm, struct ncache *cp, int io)
 {
   if (io == 0) {
     cp->nc_word = ((struct TW *)cp->nc_address)->word;
@@ -684,12 +665,7 @@ _Rktio(dm, cp, io)
  * CTL
  */
 int	
-_Rktctl(dm, qm, what, arg, gram)
-     struct DM	*dm;
-     struct DM	*qm; /* no use : dummy*/
-     int	what;
-     Wchar	*arg;
-     struct RkKxGram	*gram;
+_Rktctl(struct DM *dm, struct DM *qm, int what, Wchar *arg, struct RkKxGram *gram)
 /* ARGSUSED */
 {
   struct TD	*xdm = (struct TD *)dm->dm_td;
@@ -738,9 +714,7 @@ _Rktctl(dm, qm, what, arg, gram)
 }
 
 int
-_Rktsync(cx, dm, qm)
-     struct RkContext *cx;
-     struct DM	*dm, *qm;
+_Rktsync(struct RkContext *cx, struct DM *dm, struct DM *qm)
 /* ARGSUSED */
 {
   struct RkKxGram  *gram = cx->gram->gramdic;

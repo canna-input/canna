@@ -316,8 +316,8 @@ extern int ckverbose;
 static struct RkRxDic *
 OpenRoma(char *table)
 {
-  struct RkRxDic *retval = (struct RkRxDic *)0, *RkwOpenRoma();
-  char *p, *getenv();
+  struct RkRxDic *retval = (struct RkRxDic *)0;
+  char *p;
 #ifndef USE_MALLOC_FOR_BIG_ARRAY
   char rdic[1024];
 #else
@@ -940,8 +940,6 @@ restoreChikujiIfBaseChikuji(yomiContext yc)
   }
 }
 
-int YomiInsert(uiContext);
-
 int
 YomiInsert(uiContext d)
 {
@@ -1106,12 +1104,7 @@ YomiInsert(uiContext d)
 int findSup(wchar_t);
 
 int
-#ifdef __STDC__
 findSup(wchar_t key)
-#else
-findSup(key)
-wchar_t key;
-#endif
 {
   int i;
   extern int nkeysup;
@@ -2483,7 +2476,7 @@ int YomiKakutei(uiContext);
 int
 YomiKakutei(uiContext d)
 {
-  yomiContext yc = (yomiContext)d->modec, newFilledYomiContext();
+  yomiContext yc = (yomiContext)d->modec;
   tanContext leftmost;
   int len, res;
   wchar_t *s = d->buffer_return, *e = s + d->n_buffer;
@@ -4053,8 +4046,8 @@ exitJishu(uiContext d)
   int len, srclen, i, pos;
   BYTE jishu, jishu_case, head = 1;
   int jishu_kEndp, jishu_rEndp;
-  int (*func1)(), (*func2)();
-  int RkwCvtZen(), RkwCvtKana(), RkwCvtHira(), RkwCvtHan();
+  int (*func1)(wchar_t *, int, wchar_t *, int);
+  int (*func2)(wchar_t *, int, wchar_t *, int);
   long savedgf;
   wchar_t *buf, *p;
 #ifndef USE_MALLOC_FOR_BIG_ARRAY

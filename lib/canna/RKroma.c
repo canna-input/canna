@@ -25,6 +25,7 @@
 #include "canna.h"
 
 #include <fcntl.h>
+#include <stdlib.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -43,9 +44,6 @@ struct romaRec {
   unsigned char bang;
 };
 
-#if !defined(__STDC__)
-extern void qsort();
-#endif
 
 int
 compar(struct romaRec *p, struct romaRec *q)

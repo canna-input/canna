@@ -21,21 +21,6 @@
  */
 
 
-extern int AlphaMode(), HenkanNyuryokuMode();
-#ifndef NO_EXTEND_MENU
-extern int HexMode(), BushuMode();
-#endif
-extern int KigoIchiran(), UiUtilMode();
-extern int YomiBaseHiraKataToggle(), YomiBaseZenHanToggle();
-extern int YomiBaseKanaEisuToggle(), YomiBaseKakuteiHenkanToggle();
-extern int YomiBaseRotateForw(), YomiBaseRotateBack();
-extern int DoFuncSequence(), UseOtherKeymap(), YomiModeBackup();
-extern int dicTouroku(uiContext), dicSakujo(uiContext);
-#ifndef NO_EXTEND_MENU
-extern int kigoRussia(), kigoGreek(), kigoKeisen();
-extern int dicMount(), serverChange(), serverFin();
-extern int chikujiInit();
-#endif
 
 #define NONE CANNA_FN_Undefined
 

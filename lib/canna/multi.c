@@ -34,9 +34,6 @@
 
 #define NONE CANNA_FN_Undefined
 
-extern int askQuitKey();
-extern int checkGLineLen();
-extern int NothingChangedWithBeep();
 
 static unsigned char *keyHistory;
 
@@ -47,7 +44,6 @@ struct map {
   struct map *next;
 };
 
-extern struct map *mapFromHash();
 
 static unsigned char *
 showChar(int c)
@@ -134,7 +130,7 @@ _DoFuncSequence( /* 複数の機能の割り当て */
   int prevEchoLen = -1, prevRevPos, prevRevLen;
   int prevGEchoLen, prevGRevPos, prevGRevLen;
   wchar_t *prevEcho, *prevGEcho;
-  BYTE *p, *actFromHash();
+  BYTE *p;
   wchar_t *malloc_echo = (wchar_t *)0, *malloc_gline = (wchar_t *)0;
 
   if (key == 0) {
@@ -246,7 +242,7 @@ DoFuncSequence( /* 複数の機能の割り当て */
 }
 
 int
-multiSequenceFunc(uiContext d, KanjiMode mode, int whattodo, unsigned key, int fnum)
+multiSequenceFunc(uiContext d, KanjiMode mode, int whattodo, int key, int fnum)
 {
   int i;
   unsigned char *p;

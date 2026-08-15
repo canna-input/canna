@@ -21,8 +21,6 @@
  */
 
 
-extern int DoFuncSequence(struct _uiContext *);
-extern int UseOtherKeymap(struct _uiContext *);
 
 static struct funccfunc tourokureibun_funcs[] = {
   {CANNA_FN_FunctionalInsert	,YesNo		},

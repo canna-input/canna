@@ -40,7 +40,7 @@ extern char *CANNA_initfilename;
 
 static char CANNA_rcfilename[BUF_LEN] = "";
 
-static void DISPLAY_to_hostname();
+static void DISPLAY_to_hostname(char *, char *, int);
 
 /* cfuncdef
 
@@ -52,7 +52,6 @@ static void DISPLAY_to_hostname();
 
 extern int ckverbose;
 
-extern int YYparse_by_rcfilename();
 
 /* cfuncdef
 
@@ -109,7 +108,7 @@ extern int clisp_init(void); /* lisp.c */
 void
 parse(void)
 {
-  char *p, *getenv();
+  char *p;
   int n;
   extern int iroha_debug;
   int home_canna_exist = 0;

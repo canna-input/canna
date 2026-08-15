@@ -1,3 +1,10 @@
+2026-08-15 AIDA Shinra <shinra@j10n.org>
+	* lib/RK/*: Fix prototypes
+	* lib/RKC/*: ditto
+	* lib/canna/*: ditto
+	* lib/canna/kctrl.c(KC_*): cast second arg if necessary
+	* lib/canna/lisp.c(initatom):cast SPECIAL/CMACRO functions
+
 2026-08-14 AIDA Shinra <shinra@j10n.org>
 	* ANSIfy (syntax only; prototypes are not yet complete)
 

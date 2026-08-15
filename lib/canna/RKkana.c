@@ -887,17 +887,9 @@ RkwMapRoma(struct RkRxDic *romaji, wchar_t *dst, int maxdst, wchar_t *src, int s
 }
 
 int
-#ifdef __STDC__
 RkwMapPhonogram(struct RkRxDic *romaji, wchar_t *dst, int maxdst,
 		wchar_t *src, int srclen, wchar_t key, int flags,
 		int *ulen, int *dlen, int *tlen, int *rule)
-#else
-RkwMapPhonogram(romaji, dst, maxdst, src, srclen, key, flags,
-		ulen, dlen, tlen, rule)
-struct RkRxDic *romaji;
-wchar_t *dst, *src, key;
-int maxdst, srclen, flags, *ulen, *dlen, *tlen, *rule;
-#endif
 {
   int status = 0;
   char tmpch;

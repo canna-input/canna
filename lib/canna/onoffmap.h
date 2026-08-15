@@ -24,10 +24,6 @@
 #ifdef NO_EXTEND_MENU
 static struct funccfunc onoff_funcs[] = {{0, 0},};
 #else
-extern  int DoFuncSequence(), UseOtherKeymap();
-extern  int IchiranForwardKouho(), IchiranBackwardKouho(), IchiranNextKouhoretsu();
-extern  int IchiranPreviousKouhoretsu(), IchiranBeginningOfKouho();
-extern  int IchiranEndOfKouho(), IchiranQuit(), IchiranNop();
 
 static struct funccfunc onoff_funcs[] = {
   {CANNA_FN_Forward		,IchiranForwardKouho		},

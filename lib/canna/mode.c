@@ -88,7 +88,6 @@ _sModeNames[CANNA_MODE_MAX_IMAGINARY_MODE] = {
 
 static wchar_t * _ModeNames[CANNA_MODE_MAX_IMAGINARY_MODE];
 
-extern extraFunc *FindExtraFunc();
 #define findExtraMode(mnum) \
  FindExtraFunc((mnum) - CANNA_MODE_MAX_IMAGINARY_MODE + CANNA_FN_MAX_FUNC)
 

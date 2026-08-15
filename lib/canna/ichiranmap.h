@@ -21,7 +21,6 @@
  */
 
 
-extern  int DoFuncSequence(), UseOtherKeymap();
 
 static struct funccfunc ichiran_funcs[] = {
   {CANNA_FN_FunctionalInsert	,IchiranBangoKouho		},
