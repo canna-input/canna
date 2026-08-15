@@ -207,6 +207,7 @@ void AllSync(void);
 void DetachTTY(void);
 
 /* convert.c */
+void getserver_version(void);
 int ir_nosession(ClientPtr *clientp, ClientBuf *client_buf);
 int ir_error(ClientPtr *clientp);
 #ifdef DEBUG
