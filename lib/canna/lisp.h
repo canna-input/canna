@@ -79,6 +79,9 @@
 typedef	POINTERINT	list;
 typedef POINTERINT	pointerint;
 
+typedef list (*subr_t)(int);
+typedef list (*special_t)(void);
+
 /* cell area */
 
 #define celloffset(x)	((x) & CELL_MASK)
@@ -119,8 +122,8 @@ struct atomcell {
   list	value;
   char	*pname;
   int	ftype;
-  list 	(*func)();
-  list  (*valfunc)();
+  subr_t func;
+  list  (*valfunc)(int, list);
   int	mid;
   int	fid;
   list	hlink;
@@ -138,7 +141,7 @@ struct gccell {
 struct atomdefs {
 	char	*symname;
 	int	symtype;
-	list	(*symfunc)();
+	subr_t symfunc;
 };
 
 struct cannafndefs {
@@ -153,5 +156,5 @@ struct cannamodedefs {
 
 struct cannavardefs {
   char *varname;
-  list (*varfunc)();
+  list (*varfunc)(int, list);
 };

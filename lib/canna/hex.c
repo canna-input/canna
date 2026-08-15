@@ -35,8 +35,7 @@
 #endif
 #define wchar_t cannawc
 
-static int quitHex();
-extern int checkGLineLen(uiContext); /* util.c */
+static int quitHex(uiContext, int, mode_context);
 extern int cvtAsHex(uiContext, wchar_t*, wchar_t*, int); /* romaji.c */
 extern int convertAsHex(uiContext); /* romaji.c */
 
@@ -123,7 +122,6 @@ quitHex(uiContext d, int retval, mode_context env)
   return prevMenuIfExist(d);
 }
 
-yomiContext GetKanjiString();
 
 static int
 hexMode(uiContext d, int major_mode)

@@ -32,11 +32,10 @@
 #endif
 #define wchar_t cannawc
 
-extern int WToupper(wchar_t);
 static void setInhibitInformation(yomiContext);
 static void jishuAdjustRome(uiContext), jishuAdjustRome(uiContext);
-static int JishuZenkaku();
-static int JishuHankaku();
+static int JishuZenkaku(uiContext);
+static int JishuHankaku(uiContext);
 
 /* yc->jishu_kc          何の文字種か
  * d->jishu_rEndp

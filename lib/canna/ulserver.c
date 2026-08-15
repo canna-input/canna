@@ -37,7 +37,7 @@ extern int errno;
 #endif
 #define wchar_t cannawc
 
-static int serverChangeDo();
+static int serverChangeDo(uiContext, int);
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * サーバの切り離し                                                          *
@@ -66,7 +66,6 @@ serverFin(uiContext d)
   return(retval);
 }
 
-extern int checkGLineLen(uiContext); /* util.c */
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * サーバの切り換え                                                          *
@@ -146,7 +145,6 @@ uuServerChangeQuitCatch(uiContext d, int retval, mode_context env)
   return prevMenuIfExist(d);
 }
 
-extern exp(char *) RkwGetServerName();
 #endif /* STANDALONE */
 
 int

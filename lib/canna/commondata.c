@@ -39,7 +39,7 @@ int defaultBushuContext = -1;
  * の時はその時で考えましょう。
  */
      
-struct RkRxDic *romajidic, *englishdic, *RkwOpenRoma();
+struct RkRxDic *romajidic, *englishdic;
 
 /* 未定義キー打鍵時の処理のしかた */
 
@@ -80,7 +80,7 @@ int FirstTime = 1;
  * ビープ音を鳴らす関数を格納するところ
  */
 
-int (*jrBeepFunc)() = (int (*)())NULL;
+int (*jrBeepFunc)(void) = (int (*)(void))NULL;
 
 /*
  * KC_INITIALIZE 直後に実行する機能の列
@@ -122,7 +122,7 @@ char *server_name = (char *)NULL;
 int chikuji_debug = 0;
 int auto_define = 0;
 
-void (*keyconvCallback)() = (void (*)())0;
+canna_keyconv_callback_t keyconvCallback = (canna_keyconv_callback_t)0;
 
 extraFunc *extrafuncp = (extraFunc *)NULL;
 struct dicname *kanjidicnames; /* .canna で指定している辞書リスト */
@@ -232,6 +232,6 @@ restoreBindings(void)
   nKouhoBunsetsu = 16;
   nkeysup = 0;
   chikuji_debug = 0;
-  keyconvCallback = (void (*)())0;
+  keyconvCallback = (canna_keyconv_callback_t)0;
   freeUInfo();
 }

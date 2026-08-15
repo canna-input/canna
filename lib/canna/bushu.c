@@ -36,12 +36,10 @@ extern int errno;
 #endif
 #define wchar_t cannawc
 
-extern wchar_t *WString();
-
-extern int uuslQuitCatch();
-extern int uuslIchiranQuitCatch();
-static int bushuHenkan(), makeBushuIchiranQuit();
-static int vBushuExitCatch(), bushuQuitCatch();
+static int bushuHenkan(uiContext, int, int, int, canna_callback_t);
+static int makeBushuIchiranQuit(uiContext, int);
+static int vBushuExitCatch(uiContext, int, mode_context);
+static int bushuQuitCatch(uiContext, int, mode_context);
 
 
 #define	BUSHU_SZ	150
@@ -624,7 +622,6 @@ bushuHenkan(uiContext d, int flag, int ext, int cur, int (*quitfunc)(uiContext, 
   int nelem, currentkouho, nbunsetsu, length, retval = 0;
   extern int defaultBushuContext;
   
-  wchar_t **getIchiranList();
 
   if(flag) {
     yomi = (wchar_t *)bushu_key[cur];

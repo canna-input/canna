@@ -21,9 +21,6 @@
  */
 
 
-extern int TanKouhoIchiran(uiContext), DoFuncSequence(uiContext);
-extern int UseOtherKeymap(uiContext);
-extern int YomiKakutei(uiContext), TanBubunKakutei(uiContext);
 
 static struct funccfunc tan_funcs[] = {
   {CANNA_FN_FunctionalInsert	,TanKakuteiYomiInsert	},

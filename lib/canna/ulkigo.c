@@ -33,7 +33,6 @@
 #define wchar_t cannawc
 
 #ifndef NO_EXTEND_MENU
-extern int uiUtilIchiranTooSmall();
 
 static
 char *srussia_data[] = 
@@ -254,10 +253,10 @@ uuKigoQuitCatch(uiContext d, int retval, mode_context env)
   return prevMenuIfExist(d);
 }
 
-extern int getForIchiranContext(uiContext); /* bushu.c */
 
 int
-uuKigoMake(uiContext d, wchar_t **allkouho, int size, int cur, int mode, int (*exitfunc)(), int *posp)
+uuKigoMake(uiContext d, wchar_t **allkouho, int size, int cur, int mode,
+           canna_callback_t exitfunc, int *posp)
 {
   forichiranContext fc;
   ichiranContext ic;

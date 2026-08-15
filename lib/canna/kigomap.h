@@ -24,7 +24,6 @@
 #ifdef NO_EXTEND_MENU
 static struct funccfunc kigo_funcs[] = {{0, 0},};
 #else
-extern int DoFuncSequence(), UseOtherKeymap();
 
 static struct funccfunc kigo_funcs[] = {
   {CANNA_FN_KigouMode		,KigoQuit		},

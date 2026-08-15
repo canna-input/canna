@@ -35,7 +35,7 @@
 #ifndef NO_EXTEND_MENU
 #define ICHISIZE 9
 
-static int makeOnOffIchiran();
+static int makeOnOffIchiran(uiContext, int, int, int, unsigned char *);
 
 static wchar_t *black;
 static wchar_t *white;
@@ -71,12 +71,16 @@ popOnOffMode(uiContext d)
  * 候補一覧行を作る
  */
 int
-selectOnOff(uiContext d, wchar_t **buf, int *ck, int nelem, int bangomax, int currentkouho, unsigned char *status, int (*everyTimeCallback)(), int (*exitCallback)(), int (*quitCallback)(), int (*auxCallback)())
+selectOnOff(uiContext d, wchar_t **buf, int *ck, int nelem, int bangomax,
+            int currentkouho, unsigned char *status,
+            canna_callback_t everyTimeCallback,
+            canna_callback_t exitCallback,
+            canna_callback_t quitCallback,
+            canna_callback_t auxCallback)
 {
   extern KanjiModeRec onoff_mode;
   ichiranContext oc;
   int retval = 0;
-  ichiranContext newIchiranContext();
 
   if(pushCallback(d, d->modec,
 	everyTimeCallback, exitCallback, quitCallback, auxCallback) == 0) {
@@ -107,7 +111,6 @@ selectOnOff(uiContext d, wchar_t **buf, int *ck, int nelem, int bangomax, int cu
   return(retval);
 }
 
-extern int allocIchiranBuf(uiContext); /* ichiran.c */
 
 /*
  * 候補一覧行を表示用のデータをテーブルに作成する

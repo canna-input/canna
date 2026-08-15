@@ -36,22 +36,45 @@ static char *memtop;
 
 static int ncells = CELLSIZE;
 
-static int initIS();
-static void finIS();
-static int allocarea(), skipspaces(), zaplin(), isterm();
-static void prins();
-static list mkatm(), read1(), ratom(), ratom2(), rstring();
-static int tyipeek(), tyi();
+static int initIS(void);
+static void finIS(void);
+static int allocarea(void);
+static int skipspaces(void);
+static int zaplin(void);
+static int isterm(int);
+static void prins(char *);
+static list mkatm(char *);
+static list read1(void);
+static list ratom(void);
+static list ratom2(int);
+static list rstring(void);
+static int tyipeek(void);
+static int tyi(void);
 static void tyo(int);
-static void defatms(), epush();
-static void push(), pop();
-static int  evpsh();
-static void freearea(), print();
-static list getatm(), getatmz(), newsymbol(), copystring();
-static list assq(), pop1();
-static list Lprogn(), Lcons(), Lread();
-static list Leval(), Lprint(), Lmodestr(), Lputd(), Lxcons(), Lncons();
-static list NumAcc(), StrAcc();
+static void defatms(void);
+static void epush(list);
+static void push(list);
+static void pop(int);
+static int evpsh(list);
+static void freearea(void);
+static void print(list);
+static list getatm(char *, int);
+static list getatmz(char *);
+static list newsymbol(char *);
+static list copystring(char *, int);
+static list assq(list, list);
+static list pop1(void);
+static list Lprogn(void);
+static list Lcons(int);
+static list Lread(int);
+static list Leval(int);
+static list Lprint(int);
+static list Lmodestr(int);
+static list Lputd(int);
+static list Lxcons(int);
+static list Lncons(int);
+static list NumAcc(int *, int, list);
+static list StrAcc(char **, int, list);
 
 /* parameter stack */
 
@@ -83,7 +106,9 @@ static char *readptr;		/* read pointer	*/
 
 /* error functions	*/
 
-static void	argnerr(), numerr(), error();
+static void argnerr(char *);
+static void numerr(char *, list);
+static void error(char *, list);
 
 /* multiple values */
 
@@ -130,7 +155,7 @@ static jmp_buf fatal_env;
 #ifdef __STDC__
 static list getatmz(char *);
 #else
-static list getatmz();
+static list getatmz(char *);
 #endif
 
 extern int changeModeName(int, char*); /* mode.c */
@@ -186,7 +211,7 @@ clisp_init(void)
 static void
 fillMenuEntry(void)
 {
-  extern extraFunc *FindExtraFunc(), *extrafuncp;
+  extern extraFunc *extrafuncp;
   extraFunc *p, *fp;
   int i, n, fid;
   menuitem *mb;
@@ -319,7 +344,7 @@ YYparse_by_rcfilename(char *s)
 #define WITH_MAIN
 #ifdef WITH_MAIN
 
-static void
+static RETSIGTYPE
 intr(int sig)
 /* ARGSUSED */
 {
@@ -381,8 +406,6 @@ parse_string(char *str)
   clisp_fin();
   return 0;
 }
-
-static void intr();
 
 void
 clisp_main(void)
@@ -768,8 +791,8 @@ mkatm(char *name)
   newatom->value = (*name == ':') ? (list)temp : (list)UNBOUND;
   newatom->plist = NIL;			/* set null plist	*/
   newatom->ftype = UNDEF;		/* set undef func-type	*/
-  newatom->func  = (list (*)())0;	/* Don't kill this line	*/
-  newatom->valfunc  = (list (*)())0;	/* Don't kill this line	*/
+  newatom->func  = (subr_t)0;	/* Don't kill this line	*/
+  newatom->valfunc  = (list (*)(int, list))0;	/* Don't kill this line	*/
   newatom->hlink = NIL;		/* no hash linking	*/
   newatom->mid = -1;
   newatom->fid = -1;
@@ -1051,7 +1074,7 @@ zaplin(void)
 	return(YES);
 }
 
-static void gc();
+static void gc(void);
 
 static list
 newcons(void)
@@ -1088,7 +1111,7 @@ newsymbol(char *name)
   return retval;
 }
 
-static void patom();
+static void patom(list);
 
 static void
 print(list l)
@@ -1131,7 +1154,7 @@ ratom(void)
 /* read atom with the first one character -
 	check if the token is numeric or pure symbol & return proper value */
 
-static int isnum();
+static int isnum(char *);
 
 static list 
 ratom2(int a)
@@ -1335,7 +1358,6 @@ untyi(int c)
 static int
 tyi(void)
 {
-  char *gets(), *fgets();
 
   if (untyibuf) {
     int ret = untyibuf[--untyip];
@@ -1526,7 +1548,7 @@ patom(list atm)
   }
 }
 
-static void markcopycell();
+static void markcopycell(list *);
 
 static char *oldcelltop;
 static char *oldcellp;
@@ -1585,7 +1607,7 @@ gc(void) /* コピー方式のガーベジコレクションである */
   under_gc = 0;
 }
 
-static char *Strncpy();
+static char *Strncpy(char *, char *, int);
 
 static list
 allocstring(int n)
@@ -1675,7 +1697,7 @@ markcopycell(list *addr)
     }
     markcopycell(&newatom->plist);
     if (newatom->ftype == EXPR || newatom->ftype == MACRO) {
-      markcopycell((int *)&newatom->func);
+      markcopycell((list *)&newatom->func);
     }
     addr = &newatom->hlink;
     goto redo;
@@ -1732,7 +1754,8 @@ static list
 Leval(int n)
 {
   list e, t, s, tmp, aa, *pe, *pt, *ps, *paa;
-  list fn, (*cfn)(), *pfn;
+  list fn, *pfn;
+  subr_t cfn;
   int i, j;
   argnchk("eval",1);
   e = sp[0];
@@ -1786,7 +1809,7 @@ Leval(int n)
       return (t);
     case SPECIAL:
       push(cdr(e));
-      t = (*(symbolpointer(fn)->func))();
+      t = (*(special_t)symbolpointer(fn)->func)();
       pop1();
       return (t);
     case EXPR:
@@ -1902,7 +1925,7 @@ Leval(int n)
       return (s);
     case CMACRO:
       push(e);
-      push(t = (*(symbolpointer(fn)->func))());
+      push(t = (*(special_t)symbolpointer(fn)->func)());
       push(t);
       s = Leval(1);
       t = pop1();
@@ -2085,7 +2108,7 @@ Lsetq(void)
   return(a);
 }
 
-static int equal();
+static int equal(list, list);
 
 static list 
 Lequal(int n)
@@ -2781,16 +2804,16 @@ Lputd(int n)
   }
   if (null(body)) {
     symp->ftype = UNDEF;
-    symp->func = (list (*)())UNDEF;
+    symp->func = (subr_t)UNDEF;
   }
   else if (consp(body)) {
     if (car(body) == _MACRO) {
       symp->ftype = MACRO;
-      symp->func = (list (*)())body;
+      symp->func = (subr_t)body;
     }
     else {
       symp->ftype = EXPR;
-      symp->func = (list (*)())body;
+      symp->func = (subr_t)body;
     }
   }
   return(a);
@@ -3100,7 +3123,6 @@ Ldefmode(void)
       /* モード構造体の作成 */
       kanjimode = (KanjiMode)malloc(sizeof(KanjiModeRec));
       if (kanjimode) {
-	int searchfunc();
 	extern KanjiModeRec empty_mode;
 	extern BYTE *emptymap;
 
@@ -3716,7 +3738,6 @@ Ldefmenu(void)
   menustruct *men;
   menuitem *menubody;
   wchar_t *wp, **wpp;
-  extern menustruct *allocMenu();
 
   form = sp[0];
   if (atom(form) || atom(cdr(form))) {
@@ -3877,7 +3898,7 @@ static list
 Lgetenv(int n)
 {
   list e;
-  char strbuf[256], *ret, *getenv();
+  char strbuf[256], *ret;
   list retval;
 
   argnchk("getenv",1);
@@ -3904,7 +3925,6 @@ Lgetenv(int n)
 static list
 LdefEscSeq(int n)
 {
-  extern void (*keyconvCallback)();
 
   argnchk("define-esc-sequence",3);
 
@@ -3958,7 +3978,6 @@ Lconcat(int n)
 
 /* lispfuncend */
 
-extern char *RkGetServerHost();
 
 static void
 ObtainVersion(void)
@@ -4069,11 +4088,11 @@ NumAcc(int *var, int setp, list arg)
 /* 実際のアクセス関数 */
 
 #define DEFVAR(fn, acc, ty, var) \
-static list fn(setp, arg) int setp; list arg; { \
+static list fn(int setp, list arg) { \
   extern ty var; return acc(&var, setp, arg); }
 
 #define DEFVAREX(fn, acc, var) \
-static list fn(setp, arg) int setp; list arg; { \
+static list fn(int setp, list arg) { \
   extern struct CannaConfig cannaconf; return acc(&var, setp, arg); }
 
 static list
@@ -4246,20 +4265,20 @@ DEFVAR(Vchikuji_debug, VTorNIL, int, chikuji_debug)
 /* Lisp の関数と C の関数の対応表 */
 
 static struct atomdefs initatom[] = {
-  {"quote"		,SPECIAL,Lquote		},
-  {"setq"		,SPECIAL,Lsetq		},
+  {"quote"		,SPECIAL,(subr_t)Lquote	},
+  {"setq"		,SPECIAL,(subr_t)Lsetq	},
   {"set"		,SUBR	,Lset		},
   {"equal"		,SUBR	,Lequal		},
   {"="			,SUBR	,Lequal		},
   {">"			,SUBR	,Lgreaterp	},
   {"<"			,SUBR	,Llessp		},
-  {"progn"		,SPECIAL,Lprogn		},
+  {"progn"		,SPECIAL,(subr_t)Lprogn	},
   {"eq"			,SUBR	,Leq   		},
-  {"cond"		,SPECIAL,Lcond		},
+  {"cond"		,SPECIAL,(subr_t)Lcond	},
   {"null"		,SUBR	,Lnull		},
   {"not"		,SUBR	,Lnull		},
-  {"and"		,SPECIAL,Land		},
-  {"or"			,SPECIAL,Lor		},
+  {"and"		,SPECIAL,(subr_t)Land	},
+  {"or"			,SPECIAL,(subr_t)Lor	},
   {"+"			,SUBR	,Lplus		},
   {"-"			,SUBR	,Ldiff		},
   {"*"			,SUBR	,Ltimes		},
@@ -4269,14 +4288,14 @@ static struct atomdefs initatom[] = {
   {"load"		,SUBR	,Lload		},
   {"list"		,SUBR	,Llist		},
   {"sequence"		,SUBR	,Llist		},
-  {"defun"		,SPECIAL,Ldefun		},
-  {"defmacro"		,SPECIAL,Ldefmacro	},
+  {"defun"		,SPECIAL,(subr_t)Ldefun	},
+  {"defmacro"		,SPECIAL,(subr_t)Ldefmacro	},
   {"cons"		,SUBR	,Lcons		},
   {"car"		,SUBR	,Lcar		},
   {"cdr"		,SUBR	,Lcdr		},
   {"atom"		,SUBR	,Latom		},
-  {"let"		,CMACRO	,Llet		},
-  {"if"			,CMACRO	,Lif		},
+  {"let"		,CMACRO	,(subr_t)Llet	},
+  {"if"			,CMACRO	,(subr_t)Lif	},
   {"boundp"		,SUBR	,Lboundp	},
   {"fboundp"		,SUBR	,Lfboundp	},
   {"getenv"		,SUBR	,Lgetenv	},
@@ -4288,11 +4307,11 @@ static struct atomdefs initatom[] = {
   {S_GSetKey		,SUBR	,Lgsetkey	},
   {S_UnbindKey		,SUBR	,Lunbindkey	},
   {S_GUnbindKey		,SUBR	,Lgunbindkey	},
-  {S_DefMode		,SPECIAL,Ldefmode	},
-  {S_DefSymbol		,SPECIAL,Ldefsym	},
+  {S_DefMode		,SPECIAL,(subr_t)Ldefmode	},
+  {S_DefSymbol		,SPECIAL,(subr_t)Ldefsym	},
 #ifndef NO_EXTEND_MENU
-  {S_DefSelection	,SPECIAL,Ldefselection	},
-  {S_DefMenu		,SPECIAL,Ldefmenu	},
+  {S_DefSelection	,SPECIAL,(subr_t)Ldefselection	},
+  {S_DefMenu		,SPECIAL,(subr_t)Ldefmenu	},
 #endif
   {S_SetInitFunc	,SUBR	,Lsetinifunc	},
   {S_defEscSequence	,SUBR	,LdefEscSeq	},

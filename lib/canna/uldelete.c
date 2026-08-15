@@ -389,7 +389,6 @@ getEffectDic(tourokuContext tc)
 {
   int workContext, currentkouho, nbunsetsu, nelem = tc->nudic;
   wchar_t **mdic, **cands, **work;
-  wchar_t **getIchiranList();
   char dicname[1024], tmpbuf[64];
   RkLex lex[5];
   deldicinfo *dic;
@@ -700,7 +699,7 @@ dicSakujoTango(uiContext d)
   tourokuContext tc = (tourokuContext)d->modec;
   forichiranContext fc;
   ichiranContext ic;
-  wchar_t **allDelCands, **getIchiranList();
+  wchar_t **allDelCands;
   BYTE inhibit = 0;
   int nbunsetsu, nelem, currentkouho, retval = 0;
   RkStat st;
@@ -889,8 +888,6 @@ uuSDicQuitCatch(uiContext d, int retval, mode_context env)
   return dicSakujoTango(d);
 }
 
-extern int selectOnOff(); /* onoff.c */
-extern int getMountContext(uiContext); /* ulmount.c */
 
 static int
 dicSakujoDictionary(uiContext d)
@@ -1032,7 +1029,6 @@ uuSDeleteYesCatch(uiContext d, int retval, mode_context env)
 {
   tourokuContext tc;
   char dicname[1024];
-  wchar_t *WStraddbcpy();
   deldicinfo *dic;
   int bufcnt, l;
   extern int defaultContext;

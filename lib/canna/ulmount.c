@@ -480,7 +480,6 @@ getDicList(uiContext d)
   return(dicLc);
 }
 
-extern int selectOnOff(); /* onoff.c */
 
 int
 dicMount(uiContext d)

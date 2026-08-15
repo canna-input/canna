@@ -29,7 +29,7 @@ extern int howToBehaveInCaseOfUndefKey;
 #define DEFAULTBEHAVIOR 0
 
 static int (*
-getfunc(struct funccfunc *tbl, int f))()
+getfunc(struct funccfunc *tbl, int f))(uiContext)
 {
   struct funccfunc *p;
 
@@ -38,7 +38,7 @@ getfunc(struct funccfunc *tbl, int f))()
       return p->cfunc;
     }
   }
-  return (int (*)())0;
+  return (int (*)(uiContext))0;
 }
 
 static int
@@ -80,7 +80,7 @@ simpleUndefBehavior(uiContext d)
 int
 searchfunc(uiContext d, KanjiMode mode, int whattodo, int key, int fnum)
 {
-  int (*func)();
+  int (*func)(uiContext);
 
   if (fnum == 0) {
     fnum = mode->keytbl[key];
@@ -122,7 +122,7 @@ searchfunc(uiContext d, KanjiMode mode, int whattodo, int key, int fnum)
       func = getfunc(mode->ftbl, CANNA_FN_UserMode);
       if (func) {
 	/* func のタイプが上と違ってて汚いなあ... */
-	return (*func)(d, fnum);
+	return (*(int (*)(uiContext, int))func)(d, fnum);
       }
     }
     /* そのモードで fnum に対応する機能がない。しかたがないので、
@@ -157,7 +157,7 @@ searchfunc(uiContext d, KanjiMode mode, int whattodo, int key, int fnum)
 int
 CYsearchfunc(uiContext d, KanjiMode mode, int whattodo, int key, int fnum)
 {
-  int (*func)();
+  int (*func)(uiContext);
   extern KanjiModeRec yomi_mode;
 
   if (fnum == 0) {
