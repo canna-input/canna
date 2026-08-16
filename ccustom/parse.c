@@ -334,7 +334,7 @@ YYparse_by_rcfilename(void)
 #define SYSRCDIR    "/usr/lib/iroha/"
 #define FILEENVNAME "IROHAFILE"
 
-int
+void
 parse(void)
 {
   char *p, *getenv();
@@ -441,7 +441,7 @@ parse(void)
 #define CRCFILENAME  ".canna"
 #define CFILEENVNAME "CANNAFILE"
 
-int
+void
 cparse(void)
 {
   char *p, *getenv();

@@ -38,10 +38,10 @@ extern int ChBasedMove, ReverseWidely, Gakushu, QuitIchiranIfEnd;
 extern int kakuteiIfEndOfBunsetsu, stayAfterValidate, BreakIntoRoman;
 extern int kouho_threshold, gramaticalQuestion;
 extern char *mode_mei[], null_mode[];
-int forceKana, kCount, chikuji, iListCB ,nKouhoBunsetsu;
-int keepCursorPosition, CannaVersion, abandonIllegalPhono;
-int hexCharacterDefiningStyle, kojin, ReverseWord , allowNextInput;
-int indexhankaku,ignorecase,romajiyuusen,autosync,nkeysuu,quicklyescape;
+extern int forceKana, kCount, chikuji, iListCB ,nKouhoBunsetsu;
+extern int keepCursorPosition, CannaVersion, abandonIllegalPhono;
+extern int hexCharacterDefiningStyle, kojin, ReverseWord , allowNextInput;
+extern int indexhankaku,ignorecase,romajiyuusen,autosync,nkeysuu,quicklyescape;
 
 extern char *allKey[], *alphaKey[], *yomiganaiKey[];
 extern char *yomiKey[], *jishuKey[], *tankouhoKey[];

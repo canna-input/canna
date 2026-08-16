@@ -537,7 +537,7 @@ extern int fail_malloc;
 
 extern makeGLineMessage();
 extern makeGLineMessageFromStrings();
-extern setWStrings();
+extern void setWStrings();
 extern WStrlen();
 extern wchar_t *WStrcat();
 extern wchar_t *WStrcpy();

@@ -490,7 +490,7 @@ changeKeyfuncOfAll(int key, int fnum, unsigned char *actbuff, unsigned char *key
 
 char *string;
 
-int
+void
 append_dic(int loc, char *dic)
 {
   switch(loc) {
@@ -542,7 +542,7 @@ append_dic(int loc, char *dic)
   }
 }
 
-int
+void
 delete_dic(int loc, int num)
 {
   switch(loc) {
@@ -575,7 +575,7 @@ delete_dic(int loc, int num)
   }
 }
 
-int
+void
 etc_action(int kinou, int which)
 {
   switch(kinou) {

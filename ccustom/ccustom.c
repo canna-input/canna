@@ -113,6 +113,8 @@ WINDOW *base_win,  *err_win,   *load_win,
        *mode1_win, *mode2_win, *dddic_win,
        *etc_win,   *_etc_win,  *end_win;
 
+static void initctm(void);
+
 void
 disp_block(WINDOW *win, int y, int x, char **block, int start, int end)
 {
@@ -230,7 +232,7 @@ inc_rev_print(WINDOW *win, int y, int x, char *str1, char *rev, char *str2)
   wclrtoeol(win);
 }
 
-int
+void
 loadFile(void)
 {
   char f_name[1024];
@@ -281,7 +283,7 @@ loadFile(void)
   }
 }
 
-int
+void
 saveFile(void)
 {
   FILE *f_save;
@@ -355,7 +357,7 @@ print_dic_list(int loc, int start, int end, int current)
     if (RomkanaTable)
       mvwaddstr(ddic_win, 0, L_MARGIN, RomkanaTable);
     wrefresh(ddic_win);
-    return;
+    return current;
   case 1 : /* システム辞書 */
     dic = kanjidicname;
     kazu = nkanjidics;
@@ -373,12 +375,12 @@ print_dic_list(int loc, int start, int end, int current)
     if (RengoGakushu)
       mvwaddstr(ddic_win, 0, L_MARGIN, RengoGakushu);
     wrefresh(ddic_win);
-    return;
+    return current;
   }
   werase(ddic_win);
   if (!kazu) {
     wrefresh(ddic_win);
-    return;
+    return current;
   }
   for (i = start; i <= end && i < kazu; i++) {
     if (i < (7+1))
@@ -407,7 +409,7 @@ print_dic_list(int loc, int start, int end, int current)
   return current;
 }
 
-int
+void
 confDic(void)
 {
   char d_name[512], *d_name2, *dic[16];
@@ -832,7 +834,7 @@ create_key_buff(int mode, int num, int kora, int ban, char *str1, char *rev, cha
   return len;
 }
 
-int
+void
 sp_disp(int mode, int top, int line, int kora, int ban)
 {
   int length, tate = 0, pate = 0, i, j, kazu, end_stat = 0, etent;
@@ -1151,7 +1153,7 @@ int i;
   undo_status = -1;
 }
 
-int
+void
 shinki(int mode, int kora, int num)
 {
   int N;
@@ -1258,7 +1260,7 @@ to_multi(int mode, int num, int kora, int ban, int which)
   sp_disp(mode, WDisp.top, WDisp.line, WDisp.kora, WDisp.ban);
 }
 
-int
+void
 okikae(int mode, int num, int kora, int ban, int obj)
 {
   if (dk_blocks[num].len > 200 ) {
@@ -1781,7 +1783,7 @@ actIn(int cus_mode, int status)
   return (t_location +2);
 }
 
-int
+void
 keyCustom(void)
 {
   int  y, x, location, c_location = 0;
@@ -1848,7 +1850,7 @@ char *hozon_mode_mei;
 
 #define BOTOM 14
 
-int
+void
 scrollDisplay(
 	WINDOW *win,
 	char **name_list,
@@ -1908,7 +1910,7 @@ scrollDisplay(
 }
 
 
-int
+void
 printCurrentName(WINDOW *win, int location)
 {
   char print_mode[512];
@@ -2224,7 +2226,7 @@ modeNameDisplay(void)
   return DONOT;
 }
 
-int
+void
 modeName(void)
 {
   int  y, x, page = 1; 
@@ -2428,7 +2430,7 @@ int s_point, c_point;
 
 */
 
-int
+void
 etcCustom(void)
 {
   int  y, x, 
@@ -2637,7 +2639,7 @@ etcCustom(void)
 
 char i_file[128], *getenv();
 
-int
+void
 get_save_file(void)
 {
   char *p;
@@ -2670,7 +2672,7 @@ get_save_file(void)
   return;
 }
 
-int
+void
 santaku(WINDOW *win, int y, int x, int which, char *a, char *b, char *c)
 {
   wmove(win, y, x);
@@ -2694,7 +2696,7 @@ santaku(WINDOW *win, int y, int x, int which, char *a, char *b, char *c)
   }
 }
 
-int
+void
 endCustom(void)
 {
   FILE *f_save;
@@ -2782,7 +2784,7 @@ endCustom(void)
   }
 }
 
-int
+static void
 initctm(void)
 {
   etc_ctm[0]  =  MID; /* initialMode */
@@ -2824,7 +2826,7 @@ initctm(void)
     nkeysuu = 5000;
 }
 
-static int (*func[])() = {
+static void (*func[])(void) = {
 /* カスタマイズファイルの読み込み   */  loadFile,
 /* カスタマイズファイルへの保存     */  saveFile,
 /* 使用する辞書の設定               */  confDic,
@@ -3192,8 +3194,10 @@ beep(void)
 {
   putchar(7); 
   fflush(stdout);
+  return OK;
 }
 
+int
 wsetscrreg(WINDOW *w,int t,int b)
 {
   int i;
@@ -3204,11 +3208,12 @@ wsetscrreg(WINDOW *w,int t,int b)
       scrreg[i].bm = b;
       break;
     }
+  return OK;
 }
 #endif /* __FreeBSD__ */
 
 
-int
+void
 exitccustom(void)
 {
     refresh();

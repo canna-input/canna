@@ -123,7 +123,7 @@ ujisncpy(unsigned char *dest, unsigned char *src, int n)
   return i; /* n バイトコピーしきれた */
 }
 
-int
+void
 setWStrings(wchar_t **ws, unsigned char **s, int sz)
 {
   int f = sz;
@@ -134,7 +134,7 @@ setWStrings(wchar_t **ws, unsigned char **s, int sz)
 }
 
 
-int
+void
 copyAttribute(BYTE *dest, BYTE *src, int n)
 {
   for (; n; n--)
@@ -195,7 +195,7 @@ WStrncpy(wchar_t *ws1, wchar_t *ws2, int cnt)
   wchar_t *ws;
 
   if  (ws2 == (wchar_t *) NULL)
-    return;
+    return ws1;
   if (ws2 < ws1 && ws1 < ws2 + cnt) {
     while (cnt--) {
       ws1[cnt] = ws2[cnt];
@@ -461,7 +461,7 @@ WString(unsigned char *s)
   return wsmemories[i];
 }
 
-int
+void
 WStringClose(void)
 {
   int i;
@@ -476,7 +476,7 @@ WStringClose(void)
   nwsmemories = 0;
 }
 
-int
+void
 WSfree(wchar_t *s)
 {
   int	i;
