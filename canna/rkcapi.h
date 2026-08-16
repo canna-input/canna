@@ -36,5 +36,21 @@ int RkcRecvWReply(unsigned char *buf, int bufsize,
 int RkcSendWRequest(const unsigned char *Buffer, int size);
 int RkwGetProtocolVersion(int *majorp, int *minorp);
 
+#ifndef OMIT_EUC_FUNCS
+int RkKillServer(void);
+int RkChmodDic(int cxnum, unsigned char *dicname, int mode);
+
+int RkListDic(int cxnum, unsigned char *dirname,
+      unsigned char *dicnames_return, int size);
+int RkCreateDic(int cxnum, unsigned char *dicname, int mode);
+int RkRemoveDic(int cxnum, unsigned char *dicname, int mode);
+int RkRenameDic(int cxnum, unsigned char *dicname,
+      unsigned char *newdicname, int mode);
+int RkCopyDic(int cxnum, unsigned char *dirname,
+      unsigned char *dicname, unsigned char *newdicname, int mode);
+int RkGetWordTextDic(int cxnum, unsigned char *dirname,
+      unsigned char *dicname, unsigned char *info, int infolen);
+#endif
+
 #endif /* RKCAPI_H */
 /* vim: set sw=2: */

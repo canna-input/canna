@@ -32,14 +32,13 @@
 #define CANNA_NEW_WCHAR_AWARE
 
 #ifdef SVR4
-extern char *gettxt();
+extern char *gettxt(const char *, const char *);
 #else
 #define	gettxt(x,y)  (y)
 #endif
 # include	<canna/RK.h>
 
-extern struct RkRxDic  *RkwOpenRoma() ;
-void printch();
+void printch(int);
 
 int
 main(int argc, char **argv)

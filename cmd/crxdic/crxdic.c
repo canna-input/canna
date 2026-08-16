@@ -144,7 +144,6 @@ int	type = JMWD;
 int	compat = 0;
 int	with_gram = 0;
 
-extern	Wchar	*euctous();
 int getp(struct node *);
 
 #define MAXLINE		1024
