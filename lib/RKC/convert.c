@@ -200,11 +200,7 @@ RkcSendERequest(const BYTE *Buffer, int size)
     register int todo, retval = YES;
     register int write_stat;
     register const BYTE *bufindex;
-#ifdef SIGNALRETURNSINT
     static sig_ret_type (*Sig)(int);
-#else /* !SIGNALRETURNSINT */
-    static sig_ret_type (*Sig)(int);
-#endif /* !SIGNALRETURNSINT */
     struct timeval timeout, timeout2;
     rki_fd_set wfds, wfds2;
 
