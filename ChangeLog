@@ -1,3 +1,14 @@
+2026-08-16 AIDA Shinra <shinra@j10n.org>
+	* canna/rkcapi.h: add prototypes necessary for cmd/catdic/*
+	* cmd/*: fix prototypes
+	* cmd/catdic/catdic.h: added
+	* dic/ideo/pubdic/pod.c: fix prototypes
+	* doc/man/guide/tex/cannaindex.c: Add includes
+	  (main): add a missing argument
+	* misc/is.c(main): return 0
+	* misc/zipcode/zen2han.c(eucjplen): fix return type
+	* server/*: Fix prototypes
+
 2026-08-15 AIDA Shinra <shinra@j10n.org>
 	* lib/RK/*: Fix prototypes
 	* lib/RKC/*: ditto

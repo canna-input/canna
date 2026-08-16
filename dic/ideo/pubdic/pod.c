@@ -64,11 +64,11 @@ static int hinshi_direction = INORDER; /* see above */
 # define WCG3 0x8000
 # define WCMSK 0x8080
 
-static int diccompar();
-static int dichindocompar();
-static int dichindocompar2();
-static int dicserialcompar();
-static int (*dic_compare_func)() = &diccompar;
+static int diccompar(const void *, const void *);
+static int dichindocompar(const void *, const void *);
+static int dichindocompar2(const void *, const void *);
+static int dicserialcompar(const void *, const void *);
+static int (*dic_compare_func)(const void *, const void *) = diccompar;
 
 int
 Mbstowcs(Wchar *d, char *ss, int n)
@@ -1109,8 +1109,10 @@ showentry(struct dicpack **pd, int n)
 }
 
 static int
-diccompar(struct dicpack **p1, struct dicpack **p2)
+diccompar(const void *v1, const void *v2)
 {
+  struct dicpack * const *p1 = v1;
+  struct dicpack * const *p2 = v2;
   int n;
   if (n = Wscmp((*p1)->yomi, (*p2)->yomi)) {
     return n;
@@ -1127,8 +1129,10 @@ diccompar(struct dicpack **p1, struct dicpack **p2)
 }
 
 static int
-dichindocompar(struct dicpack **p1, struct dicpack **p2)
+dichindocompar(const void *v1, const void *v2)
 {
+  struct dicpack * const *p1 = v1;
+  struct dicpack * const *p2 = v2;
   int n;
   if (n = Wscmp((*p1)->yomi, (*p2)->yomi)) {
     return n;
@@ -1148,8 +1152,10 @@ dichindocompar(struct dicpack **p1, struct dicpack **p2)
 }
 
 static int
-dichindocompar2(struct dicpack **p1, struct dicpack **p2)
+dichindocompar2(const void *v1, const void *v2)
 {
+  struct dicpack * const *p1 = v1;
+  struct dicpack * const *p2 = v2;
   int n;
   if (n = Wscmp((*p1)->yomi, (*p2)->yomi)) {
     return n;
@@ -1166,8 +1172,10 @@ dichindocompar2(struct dicpack **p1, struct dicpack **p2)
 }
 
 static int
-dicserialcompar(struct dicpack **p1, struct dicpack **p2)
+dicserialcompar(const void *v1, const void *v2)
 {
+  struct dicpack * const *p1 = v1;
+  struct dicpack * const *p2 = v2;
   int n;
 
   if (n = ((*p1)->serial - (*p2)->serial)) {
@@ -1405,7 +1413,7 @@ main(int argc, char *argv[])
 	pdic[j++] = p;
       }
     }
-    qsort((char *)pdic, ndicentries, sizeof(struct dicpack *), dic_compare_func);
+    qsort(pdic, ndicentries, sizeof(struct dicpack *), dic_compare_func);
     sortkind();
     showentry(pdic, ndicentries);
   }

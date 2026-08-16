@@ -118,8 +118,6 @@ Usage(void)
   FatalError(USAGE);
 }
 
-extern void getserver_version(void);
-
 void
 EarlyInit(int argc, char *argv[])	
 {

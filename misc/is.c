@@ -34,7 +34,7 @@
 
 */
 
-/* #define USED_AS_LIBRARY /* ライブラリとしてコンパイルする */
+/* #define USED_AS_LIBRARY */ /* ライブラリとしてコンパイルする */
 
 #include <canna/keydef.h>
 #include <stdio.h>
@@ -298,6 +298,7 @@ main(void)
     c = getchar();
   }
   finIS();
+  return 0;
 }
 
 static void

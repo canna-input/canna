@@ -30,7 +30,7 @@
 #endif
 
 #ifdef SVR4
-extern char *gettxt();
+extern char *gettxt(const char *, const char *);
 #else
 #define	gettxt(x,y)  (y)
 #endif

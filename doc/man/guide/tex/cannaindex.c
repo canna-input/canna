@@ -22,6 +22,9 @@
 
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <strings.h>
 #include "ccompat.h"
 
 static char *
@@ -119,7 +122,7 @@ freeentries(struct ind *e, int n)
 
 #define CHARBUFSIZE 1024
 
-static
+static int
 readindex(FILE *f, struct ind *e)
 {
   char buf[CHARBUFSIZE], *p, *q, *r, *ebuf;
@@ -188,7 +191,7 @@ main(int argc, char *argv[])
   }
   inf = fopen(argv[1], "r");
   if (!inf) {
-    fprintf(stderr, "%s: Can not open file \"%s\".\n", argv[1]);
+    fprintf(stderr, "%s: Can not open file \"%s\".\n", program, argv[1]);
     exit(1);
   }
   pages = readindex(inf, entries);

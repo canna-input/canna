@@ -2047,7 +2047,7 @@ irw_through(ClientPtr *clientp)
 int
 parse_wide_request(int *request, BYTE *data, size_t len, const char *username, const char *hostname)
 {
-    int (* ReqCallFunc)() ;
+    int (*ReqCallFunc)(BYTE *);
     BYTE *p = data;
     register wReq1 *req = &Request.type1 ;
     const char *username0 = username ? username : null;

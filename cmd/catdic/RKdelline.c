@@ -28,6 +28,7 @@
 #define CANNA_NEW_WCHAR_AWARE
 #include <canna/RK.h>
 #include "ccompat.h"
+#include "catdic.h"
 
 int
 RkDeleteLine(int cx_num, char *name, char *line)

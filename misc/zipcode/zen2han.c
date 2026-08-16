@@ -42,7 +42,7 @@ char* zen2han[][2] = {
   {"\243\271", "9"}  /* £¹ */
 };
 
-static size_t eucjplen(const unsigned char *p) {
+static int eucjplen(const unsigned char *p) {
   if (p[0] == 0)
     return 0;
   else if (!(p[0] & 0x80))
@@ -77,7 +77,7 @@ int main(int argc, char** argv) {
     buf = (unsigned char *)RkiGetLine(fp);
     if (!buf) break;
 
-    while(strlen(buf+idx)>0 ) {
+    while (buf[idx] != 0) {
       int ret = eucjplen(buf+idx);
       if( ret <= 0 ) {
         fprintf(stderr, "Illegal sequence found.\n");
@@ -88,7 +88,7 @@ int main(int argc, char** argv) {
         int i;
         int flag = 0;
         for( i=0;i<sizeof(zen2han)/sizeof(zen2han[0]);i++) {
-          if( strncmp(zen2han[i][0], buf+idx, ret) == 0 ) {
+          if( strncmp(zen2han[i][0], (char *)buf + idx, ret) == 0 ) {
             if (RkiStrbuf_add(&outbuf, zen2han[i][1]))
 	      goto nomem;
             flag = 1;

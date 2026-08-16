@@ -46,11 +46,8 @@
 #include <locale.h>
 #endif
 
-#ifdef SVR4
-extern  char *gettxt();
-#else
-#define	gettxt(x,y)  (y)
-#endif
+#include "rkcapi.h"
+#include "catdic.h"
 
 #define TRUE 1
 #define FALSE 0
@@ -66,44 +63,6 @@ extern  char *gettxt();
 #else
 #define SIGVAL void
 #endif
-
-#ifdef USE_VARARGS
-#ifdef __STDC__
-extern  void Message(char *,...);
-#else
-extern  void Message();
-#endif
-#else
-extern  void Message();
-#endif
-
-
-/* lib/RKC/rkc.c */
-extern	int RkwGetProtocolVersion(int*, int*);
-extern	int RkKillServer(void);
-extern	int RkListDic(int, unsigned char*, unsigned char*, int);
-extern	int RkCreateDic(int, unsigned char*, int);
-extern	int RkRemoveDic(int, unsigned char*, int);
-extern	int RkRenameDic(int, unsigned char*, unsigned char*, int);
-extern	int RkCopyDic(int, unsigned char*, unsigned char*, unsigned char*, int);
-extern	int RkGetWordTextDic(int, unsigned char*, unsigned char*, unsigned char*, int);
-extern	int RkChmodDic(int, unsigned char*, int);
-
-/* Rkdelline.c */
-extern	int RkDeleteLine(int, char*, char*);
-
-/* rutil.c */
-extern	int RkDefineLine(int, unsigned char*, char*);
-extern	int CopyDic(int, unsigned char*, unsigned char*, unsigned char*, int);
-extern	int PrintMessage(int, unsigned char*);
-extern	int makeDictionary(int, unsigned char*, int);
-extern	int rmDictionary(int, unsigned char*, int);
-
-/* can.c */
-int DownLoadDic(FILE*, unsigned char*);
-int renameDictionary(int, char*, char*, int);
-int scan_opt(int, char**, int*);
-void shrink_opt(int, char*[], int);
 
 char            init[RECSZ], *Progname;
 unsigned char	*r_dic;
@@ -507,7 +466,7 @@ searchgroup(void)
 static char *
 searchuname(void)
 {
-    char *username = NULL, *getenv(), *getlogin() ;
+    char *username = NULL;
     
     struct passwd *pass = getpwuid( getuid() ) ;
     if ( pass ) username = pass->pw_name ;
@@ -688,7 +647,7 @@ add_main(int argc, char **argv)
 void
 cat_main(int argc, char **argv)
 {
-    FILE *fopen(), *fp = stdout;
+    FILE *fp = stdout;
     unsigned char dirname[RECSZ*2];  /* ユーザ名または"iroha"またはNULL*/
     unsigned char filename[RECSZ*2]; /* ファイル名またはNULL */
     static int  i , errflg ;

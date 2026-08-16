@@ -31,6 +31,7 @@
 #include <stdio.h>
 #define CANNA_NEW_WCHAR_AWARE
 #include <canna/RK.h>
+#include "rkcapi.h"
 
 #ifdef __STDC__
 #define USE_VARARGS
@@ -54,26 +55,10 @@
 #include <unistd.h>
 #endif
 
-#ifdef SVR4
-extern  char *gettxt();
-#else
-#define	gettxt(x,y)  (y)
-#endif
+#include "catdic.h"
 
 #define  BUFLEN  1024        /* add 91.11.21. */ 
 #define  ERR_VALUE  1
-
-/* lib/RKC/rkc.c */
-extern int RkCreateDic(int, unsigned char*, int);
-extern int RkRemoveDic(int, unsigned char*, int);
-extern int RkGetWordTextDic(int, unsigned char*, unsigned char*, unsigned char*, int);
-
-/* can.c */
-extern char init[];
-
-/* rutil.c */
-void PrintMessage(int, unsigned char*);
-int rmDictionary(int, unsigned char*, int);
 
 static char  msg_mem[80];
 static char  msg_abnls[80];
