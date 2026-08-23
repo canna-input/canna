@@ -26,6 +26,8 @@
 #include "iroha.h"
 #endif /* NEWGEN */
 #include "canna.h"
+#include "ccustom.h"
+#include <unistd.h>
 
 #define KANJI
 
@@ -36,12 +38,11 @@ char *Dictionary;
 int IROHA_ParseError;
 static int ptr, len;
 #ifndef NEWGEN
-extern yylineno;
+extern int yylineno;
 #endif /* NEWGEN */
-extern char err_mess[];
+extern int yyparse(void);
 
 static FILE *rcfile;
-FILE *fopen();
 
 #define BUF_LEN 1024
 #define BACK_BUF 16
@@ -53,23 +54,8 @@ char CANNA_rcfilename[BUF_LEN] = "";
 #ifdef NEWGEN
 char readCannaFile[BUF_LEN] = "";
 #endif /* NEWGEN */
-extern char *allKey[], *alphaKey[], *yomiganaiKey[];
-extern char *yomiKey[], *jishuKey[], *tankouhoKey[];
-extern char *ichiranKey[], *zenHiraKey[], *zenKataKey[];
-extern char *zenAlphaKey[], *hanKataKey[], *hanAlphaKey[];
 
-extern char *allFunc[], *alphaFunc[], *yomiganaiFunc[];
-extern char *yomiFunc[], *jishuFunc[], *tankouhoFunc[];
-extern char *ichiranFunc[], *zenHiraFunc[], *zenKataFunc[];
-extern char *zenAlphaFunc[], *hanKataFunc[], *hanAlphaFunc[];
-
-extern int NallKeyFunc, NalphaKeyFunc, NyomiganaiKeyFunc, NyomiKeyFunc;
-extern int NjishuKeyFunc, NtankouhoKeyFunc,  NichiranKeyFunc;
-extern int NzenHiraKeyFunc, NzenKataKeyFunc, NzenAlphaKeyFunc;
-extern int NhanKataKeyFunc, NhanAlphaKeyFunc;
-extern char *RomkanaTable, *RengoGakushu;
-
-static
+static void
 DISPLAY_to_hostname(char *name, char *buf, int bufsize)
 {
   if (name[0] == ':' || !strncmp(name, "unix", 4)) {
@@ -91,7 +77,7 @@ DISPLAY_to_hostname(char *name, char *buf, int bufsize)
   }
 }
 
-int
+void
 before_parse(void)
 {
   int i;
@@ -260,7 +246,7 @@ before_parse(void)
 
 */
 
-int
+void
 parse_string(char *str)
 {
   rcfile = (FILE *)0;
@@ -279,7 +265,7 @@ parse_string(char *str)
 
 */
 
-static
+static void
 YYparse(FILE *f)
 {
   rcfile = f;
@@ -299,7 +285,7 @@ YYparse(FILE *f)
 
 */
 
-static 
+static int
 YYparse_by_rcfilename(void)
 {
   FILE *f;
@@ -334,13 +320,12 @@ YYparse_by_rcfilename(void)
 #define SYSRCDIR    "/usr/lib/iroha/"
 #define FILEENVNAME "IROHAFILE"
 
-int
+void
 parse(void)
 {
-  char *p, *getenv();
+  char *p;
   int n;
   int home_iroha_exist = 0;
-  extern char *initFileSpecified;
 
   if (initFileSpecified) {
     strcpy(IROHA_rcfilename, initFileSpecified);
@@ -441,16 +426,14 @@ parse(void)
 #define CRCFILENAME  ".canna"
 #define CFILEENVNAME "CANNAFILE"
 
-int
+void
 cparse(void)
 {
-  char *p, *getenv();
+  char *p;
   int n;
-  extern iroha_debug;
   int home_canna_exist = 0;
-  extern char *initFileSpecified;
 
-  if (clisp_init() == NULL)
+  if (clisp_init() == 0)
     exitccustom();
 
   if (initFileSpecified) {
@@ -559,7 +542,7 @@ IROHA_input(void)
     {
       if (rcfile == (FILE *)NULL
 	  || fgets(buff, BUF_LEN, rcfile) == (char *)NULL)
-	return (int)NULL;
+	return 0;
       
       yylineno++;
       

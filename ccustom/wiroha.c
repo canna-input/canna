@@ -25,37 +25,14 @@
 
 
 #include <stdio.h>
+#include "canna.h"
+#include "ccustom.h"
 
 #define ON   1
 #define OFF -1
 #define MID  2
 
-extern char *kanjidicname[], *userdicname[],  *bushudicname[], *localdicname[]; 
-extern char *funcList[];
-
-extern int  nkanjidics, nuserdics, nbushudics, nlocaldics;
-extern char *RomkanaTable, *RengoGakushu[], *KatakanaGakushu[];
-extern int InitialMode, CursorWrap, SelectDirect, HexkeySelect, BunsetsuKugiri;
-extern int ChBasedMove, ReverseWidely, Gakushu, QuitIchiranIfEnd;
-extern int kakuteiIfEndOfBunsetsu, stayAfterValidate, BreakIntoRoman;
-extern int kouho_threshold, gramaticalQuestion;
-extern char *mode_mei[], null_mode[];
-extern char *old_mode_ichiran2[], *old_mode_ichiran3[];
-extern char *allKey[], *alphaKey[], *yomiganaiKey[];
-extern char *yomiKey[], *jishuKey[], *tankouhoKey[];
-extern char *ichiranKey[], *zenHiraKey[], *zenKataKey[];
-extern char *zenAlphaKey[], *hanKataKey[], *hanAlphaKey[];
-extern char *allFunc[], *alphaFunc[], *yomiganaiFunc[];
-extern char *yomiFunc[], *jishuFunc[], *tankouhoFunc[];
-extern char *ichiranFunc[], *zenHiraFunc[], *zenKataFunc[];
-extern char *zenAlphaFunc[], *hanKataFunc[], *hanAlphaFunc[];
-extern int NallKeyFunc, NalphaKeyFunc, NyomiganaiKeyFunc, NyomiKeyFunc;
-extern int NjishuKeyFunc, NtankouhoKeyFunc,  NichiranKeyFunc;
-extern int NzenHiraKeyFunc, NzenKataKeyFunc, NzenAlphaKeyFunc;
-extern int NhanKataKeyFunc, NhanAlphaKeyFunc;
-extern char *showChar(int);
-
-int
+void
 init_mode_mei(void)
 {
   int i;
@@ -65,7 +42,7 @@ init_mode_mei(void)
   }
 }
 
-int
+void
 free_mode_mei(void)
 {
   int i;
@@ -117,7 +94,7 @@ print_buff(unsigned char *acts, unsigned char *keys)
   return _buff;
 }
 
-int
+void
 write_iroha(FILE *f)
 {
   int i;

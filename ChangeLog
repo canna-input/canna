@@ -1,3 +1,8 @@
+2026-08-23 AIDA Shinra <shinra@j10n.org>
+	* ccustom/*: fix prototypes and return types
+	* ccustom/ccustom.c: move definitions of vars here
+	* ccustom/ccustom.h: keep decls only
+
 2026-08-16 AIDA Shinra <shinra@j10n.org>
 	* canna/rkcapi.h: add prototypes necessary for cmd/catdic/*
 	* cmd/*: fix prototypes

@@ -55,16 +55,17 @@ typedef unsigned char BYTE;
  * キーマップテーブルは処理関数へのポインタの配列となっている。
  */
 
-typedef struct {
-  int (*func)();
+typedef struct _uiContext uiContextRec, *uiContext;
+typedef struct _kanjiMode {
+  int (*func)(uiContext, struct _kanjiMode *, int, int, int);
   unsigned char *keytbl;
   int flags;			/* 下を見よ */
-  int (**ftbl)();
+  int (**ftbl)(uiContext);
 } *KanjiMode, KanjiModeRec;
 
 struct funccfunc {
   unsigned char funcid;
-  int (*cfunc)();
+  int (*cfunc)(uiContext);
 };
 
 /* flags の情報 */
@@ -84,13 +85,13 @@ extern BYTE default_kmap[];
 
 typedef struct _menuitem {
   wchar_t *title;
-  int (*func)();
+  int (*func)(uiContext);
   struct _menuitem *menu_next;
   int *prev_kouho;
   int minorMode;
 } menuitem;
 
-#define NEXT_MENU (int (*)())0 /* menuitem の func フィールドに入る */
+#define NEXT_MENU (int (*)(uiContext))0 /* menuitem の func フィールドに入る */
 
 /*
  * glineinfo -- 候補一覧表示のための内部情報を格納しておくための構造体。
@@ -161,9 +162,10 @@ typedef struct {
 #define  ATAMAKIRE    32
 
 typedef char *mode_context;
+typedef int (*canna_callback_t)(uiContext, int, mode_context);
 
 struct callback {
-  int (*func[NCALLBACK])();
+  canna_callback_t func[NCALLBACK];
   mode_context    env;
   struct callback *next;
 };
@@ -217,7 +219,7 @@ typedef struct  _yomiContextRec {
   long		  generalFlags;		/* see below */
   char		  allowedChars;		/* see jrkanji.h */
   char		  henkanInhibition;	/* see below */
-  int		  (*henkanCallback)();	/* 変換を行う時にこの変数にアドレス
+  canna_callback_t henkanCallback;	/* 変換を行う時にこの変数にアドレス
              が設定されているならばそのアドレスの関数を通常の関数の代わりに
              呼ぶ。設定されていない時は通常の関数を呼ぶ。
                部首変換などで変換キーが押された時に特殊な処理が行われるのに
@@ -354,8 +356,8 @@ typedef struct _foirchiranContextRec {
 				とっておくところ */
   menuitem       *table;  /* 文字列と関数のテーブル */
   int            *prevcurp;  /* 前のカレント候補 */
-  int            (*prevfunc)();  /* 前の関数 */
-  int            (*curfunc)();  /* カレント関数 */
+  int (*prevfunc)(uiContext);  /* 前の関数 */
+  int (*curfunc)(uiContext);  /* カレント関数 */
 } forichiranContextRec, *forichiranContext;
 
 typedef struct _mountContextRec {
@@ -456,19 +458,6 @@ extern struct RkwRxDic *romajidic, *RkwOpenRoma();
 
 #define MAX_DICS 16
 
-extern char *kanjidicname[];
-extern int  nkanjidics;
-
-extern char *userdicname[];
-extern int  nuserdics;
-extern char userdicstatus[];
-
-extern char *bushudicname[];
-extern int nbushudics;
-
-extern char *localdicname[];
-extern int nlocaldics;
-
 /*
  * エラーのメッセージを入れておく変数
  */
@@ -478,8 +467,6 @@ extern char *necKanjiError;
 /*
  * デバグ文を表示するかどうかのフラグ
  */
-
-extern iroha_debug;
 
 /*
  * 16進コード入力を一覧行に表示するかどうかを調べる条件。
@@ -535,16 +522,16 @@ extern int fail_malloc;
 
 #define	_UTIL_FUNCTIONS_DEF_
 
-extern makeGLineMessage();
-extern makeGLineMessageFromStrings();
-extern setWStrings();
-extern WStrlen();
-extern wchar_t *WStrcat();
-extern wchar_t *WStrcpy();
-extern wchar_t *WStrncpy();
-extern WStrncmp();
-extern MBstowcs();
-extern wchar_t *WString();
+extern int makeGLineMessage(void);
+extern int makeGLineMessageFromStrings(void);
+extern void setWStrings(wchar_t **, unsigned char **, int);
+extern int WStrlen(wchar_t *);
+extern wchar_t *WStrcat(wchar_t *, wchar_t *);
+extern wchar_t *WStrcpy(wchar_t *, wchar_t *);
+extern wchar_t *WStrncpy(wchar_t *, wchar_t *, int);
+extern int WStrncmp(wchar_t *, wchar_t *, int);
+extern int MBstowcs(wchar_t *, unsigned char *, int);
+extern wchar_t *WString(unsigned char *);
 
 #endif	/* _UTIL_FUNCTIONS_DEF_ */
 
@@ -574,6 +561,13 @@ typedef struct {
 } keySupplement;
 
 #define MAX_KEY_SUP 64
+
+extern BYTE *initfunc;
+extern BYTE *emptymap;
+extern KanjiModeRec empty_mode;
+extern newmode OtherModes[];
+extern int nkeysup;
+extern keySupplement keysup[];
 
 #ifndef	DEBUG_CHIKUJI
 #define	debugging(a)

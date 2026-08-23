@@ -77,6 +77,8 @@
 
 #include "canna.h"
 
+int WIsG0(wchar_t);
+
 #ifdef SOMEONE_USE_THIS
 /* 誰も使っていないみたい。 */
 int
@@ -123,18 +125,17 @@ ujisncpy(unsigned char *dest, unsigned char *src, int n)
   return i; /* n バイトコピーしきれた */
 }
 
-int
+void
 setWStrings(wchar_t **ws, unsigned char **s, int sz)
 {
   int f = sz;
-  wchar_t *WString();
 
   for (; (f && sz) || (!f && *s); ws++, s++, sz--)
     *ws = WString(*s);
 }
 
 
-int
+void
 copyAttribute(BYTE *dest, BYTE *src, int n)
 {
   for (; n; n--)
@@ -152,8 +153,8 @@ WToupper(wchar_t w)
   if (WIsG0(w)) {
     if ('a' <= w && w <= 'z')
       return((wchar_t) (w - 'a' + 'A'));
-  } else
-    return(w);
+  }
+  return(w);
 }
 
 int
@@ -195,7 +196,7 @@ WStrncpy(wchar_t *ws1, wchar_t *ws2, int cnt)
   wchar_t *ws;
 
   if  (ws2 == (wchar_t *) NULL)
-    return;
+    return ws1;
   if (ws2 < ws1 && ws1 < ws2 + cnt) {
     while (cnt--) {
       ws1[cnt] = ws2[cnt];
@@ -259,6 +260,8 @@ WWhatGPlain(wchar_t wc)
   case 0x8000:
     return 3;
   }
+  /* NOTREACHED */
+  return 0;
 #else /* !_WCHAR16 */
   static char plain[4] = {0, 2, 3, 1};
 
@@ -461,7 +464,7 @@ WString(unsigned char *s)
   return wsmemories[i];
 }
 
-int
+void
 WStringClose(void)
 {
   int i;
@@ -476,7 +479,7 @@ WStringClose(void)
   nwsmemories = 0;
 }
 
-int
+void
 WSfree(wchar_t *s)
 {
   int	i;

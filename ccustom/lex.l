@@ -24,12 +24,11 @@
 
 #include "gram.h"
 #include "irkeydef.h"
+#include "ccustom.h"
 #ifndef Ctl
 #define Ctl(x)	((x) & 0x1F)
 #endif
 
-extern int IROHA_ParseError;
-extern char IROHA_rcfilename[];
 #ifdef __FreeBSD__			/* need this for flex, hir, 1993.1.3 */
 int yylineno;
 #endif

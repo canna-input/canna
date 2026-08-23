@@ -24,8 +24,10 @@
 %{
 
 #include <stdio.h>
+#include <string.h>
 #include "iroha.h"
 #include "irmfdef.h"
+#include "ccustom.h"
 
 #define PREVK 3
 #define NEXTK 2
@@ -37,14 +39,6 @@ static unsigned char actbuff[256],keybuff[128];
 static int special = NO;
 static int mode, localmode = NO;
 static int i = 0, j = 0;
-extern InitialMode, CursorWrap, SelectDirect;
-extern HexkeySelect, Gakushu, BreakIntoRoman, BunsetsuKugiri;
-extern QuitIchiranIfEnd, stayAfterValidate, kakuteiIfEndOfBunsetsu;
-extern kouho_threshold, gramaticalQuestion;
-extern ChBasedMove, ReverseWidely;
-extern char *RomkanaTable, *RengoGakushu, *KatakanaGakushu;
-extern char IROHA_rcfilename[];
-
 extern int yylineno;
 %}
 
@@ -461,7 +455,6 @@ act		: FORWARD	{ actbuff[i++] = IROHA_FN_Forward; }
 		;
 
 %%
-extern IROHA_ParseError;
 
 static void
 yyerror(char *s)

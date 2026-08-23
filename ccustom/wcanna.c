@@ -25,43 +25,18 @@
 
 
 #include <stdio.h>
+#include <string.h>
 #include "mfdef.h"
 #include "keydef.h"
 #include "symbolname.h"
+#include "ccustom.h"
 
 #define ON   1
 #define OFF -1
 #define MID  2
 
-extern char *kanjidicname[], *userdicname[],  *bushudicname[], *localdicname[]; 
-extern char *cfuncList[];
-
-extern int  nkanjidics, nuserdics, nbushudics, nlocaldics;
-extern char *RomkanaTable, *RengoGakushu[], *KatakanaGakushu[];
-extern int InitialMode, CursorWrap, SelectDirect, HexkeySelect, BunsetsuKugiri;
-extern int ChBasedMove, ReverseWidely, Gakushu, QuitIchiranIfEnd;
-extern int kakuteiIfEndOfBunsetsu, stayAfterValidate, BreakIntoRoman;
-extern int kouho_threshold, gramaticalQuestion;
-extern int kCount,kojin,chikuji,nKouhoBunsetsu;
-extern int abandonIllegalPhono, hexCharacterDefiningStyle,allowNextInput;
-extern int indexhankaku,ignorecase,romajiyuusen,autosync,nkeysuu,quicklyescape;
-extern char *mode_mei[], *null_mode[];
-extern char *mode_ichiran2[], *mode_ichiran3[];
-extern char *allKey[], *alphaKey[], *yomiganaiKey[];
-extern char *yomiKey[], *jishuKey[], *tankouhoKey[];
-extern char *ichiranKey[], *zenHiraKey[], *zenKataKey[];
-extern char *zenAlphaKey[], *hanKataKey[], *hanAlphaKey[];
-extern char *allFunc[], *alphaFunc[], *yomiganaiFunc[];
-extern char *yomiFunc[], *jishuFunc[], *tankouhoFunc[];
-extern char *ichiranFunc[], *zenHiraFunc[], *zenKataFunc[];
-extern char *zenAlphaFunc[], *hanKataFunc[], *hanAlphaFunc[];
-extern int NallKeyFunc, NalphaKeyFunc, NyomiganaiKeyFunc, NyomiKeyFunc;
-extern int NjishuKeyFunc, NtankouhoKeyFunc,  NichiranKeyFunc;
-extern int NzenHiraKeyFunc, NzenKataKeyFunc, NzenAlphaKeyFunc;
-extern int NhanKataKeyFunc, NhanAlphaKeyFunc;
-
 #ifdef NEWGEN
-int
+void
 init_mode_mei(void)
 {
   int i;
@@ -71,7 +46,7 @@ init_mode_mei(void)
   }
 }
 
-int
+void
 free_mode_mei(void)
 {
   int i;
@@ -293,7 +268,7 @@ chkeyrest(FILE *f, unsigned char *actbuff, unsigned char *keybuff)
   chkeyfn(f, actbuff, keybuff);
 }
 
-char *
+void
 print_acbuff(FILE *f, unsigned char *acts, unsigned char *keys)
 {
   if (keys[0] == CANNA_KEY_Undefine) {
@@ -304,10 +279,9 @@ print_acbuff(FILE *f, unsigned char *acts, unsigned char *keys)
     fprintf(f, "(%s \"", S_GSetKey);
     chkeyrest(f, acts, keys);
   }
-  return 0;
 }
 
-int
+void
 print_cbuff(FILE *f, unsigned char *acts, unsigned char *keys)
 {
   /* (set-key mode "keysequence" 'function)
@@ -321,11 +295,10 @@ print_cbuff(FILE *f, unsigned char *acts, unsigned char *keys)
     fprintf(f, "  (%s mode \"", S_SetKey);
     chkeyrest(f, acts, keys);
   }
-  return 0;
 }
 
 static void
-mode_style(FILE *f, char *mode, char *display, char *isnull)
+mode_style(FILE *f, char *mode, char *display, int isnull)
 {
   if (!isnull) {
     if (display) {
@@ -337,7 +310,7 @@ mode_style(FILE *f, char *mode, char *display, char *isnull)
   }
 }
 
-int
+void
 write_canna(FILE *f)
 {
   int i;

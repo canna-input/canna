@@ -35,15 +35,13 @@
 
 #include "symbolname.h"
 #include "set.h"
+#include "ccustom.h"
 
 #define PREVK 3
 #define NEXTK 2
 #define YES 1
 #define NO  0
 
-#ifndef NEWGEN
-extern is_icustom;
-#endif /* NEWGEN */
 
 char *
 showChar(int c)
@@ -220,7 +218,7 @@ scc(char *key)
   }
 }
 
-int
+void
 tilda(char *fileName)
 {
   char q[1024];
@@ -234,7 +232,7 @@ tilda(char *fileName)
   }
 }
 
-int
+void
 changeModeName(int mode, char *string)
 {
   char *p;
@@ -252,7 +250,7 @@ changeModeName(int mode, char *string)
   }
 }
 
-int
+void
 initKeyFunc(void)
 {
   allKey[0] = (char *)NULL;
@@ -289,7 +287,7 @@ specialen(unsigned char *block)
   return i;
 }
 
-int
+void
 specpy(unsigned char *a, unsigned char *b)
 {
   unsigned char *p;
@@ -311,6 +309,8 @@ copy_acts(unsigned char *acts)
       return (char *)p;
   } else {
       exitccustom();
+      /* NOTREACHED */
+      return NULL;
   }
 }
 
@@ -330,9 +330,11 @@ copy_keys(unsigned char *keys)
       return (char *)p;
   } 
   exitccustom();
+  /* NOTREACHED */
+  return NULL;
 }
 
-int
+void
 changeKeyfunc(int mode, int key, int fnum, unsigned char *actbuff, unsigned char *keybuff)
 {
   switch(mode) {
@@ -405,7 +407,7 @@ changeKeyfunc(int mode, int key, int fnum, unsigned char *actbuff, unsigned char
   }
 }
 
-int
+void
 cchangeKeyfunc(int mode, int key, int fnum, unsigned char *actbuff, unsigned char *keybuff)
 {
   switch(mode) {
@@ -479,7 +481,7 @@ cchangeKeyfunc(int mode, int key, int fnum, unsigned char *actbuff, unsigned cha
 }
 
 
-int
+void
 changeKeyfuncOfAll(int key, int fnum, unsigned char *actbuff, unsigned char *keybuff)
 {
     allKey[NallKeyFunc] = copy_keys(keybuff);
@@ -490,7 +492,7 @@ changeKeyfuncOfAll(int key, int fnum, unsigned char *actbuff, unsigned char *key
 
 char *string;
 
-int
+void
 append_dic(int loc, char *dic)
 {
   switch(loc) {
@@ -542,7 +544,7 @@ append_dic(int loc, char *dic)
   }
 }
 
-int
+void
 delete_dic(int loc, int num)
 {
   switch(loc) {
@@ -575,7 +577,7 @@ delete_dic(int loc, int num)
   }
 }
 
-int
+void
 etc_action(int kinou, int which)
 {
   switch(kinou) {
