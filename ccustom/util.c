@@ -77,6 +77,8 @@
 
 #include "canna.h"
 
+int WIsG0(wchar_t);
+
 #ifdef SOMEONE_USE_THIS
 /* 誰も使っていないみたい。 */
 int
@@ -127,7 +129,6 @@ void
 setWStrings(wchar_t **ws, unsigned char **s, int sz)
 {
   int f = sz;
-  wchar_t *WString();
 
   for (; (f && sz) || (!f && *s); ws++, s++, sz--)
     *ws = WString(*s);
@@ -152,8 +153,8 @@ WToupper(wchar_t w)
   if (WIsG0(w)) {
     if ('a' <= w && w <= 'z')
       return((wchar_t) (w - 'a' + 'A'));
-  } else
-    return(w);
+  }
+  return(w);
 }
 
 int
@@ -259,6 +260,8 @@ WWhatGPlain(wchar_t wc)
   case 0x8000:
     return 3;
   }
+  /* NOTREACHED */
+  return 0;
 #else /* !_WCHAR16 */
   static char plain[4] = {0, 2, 3, 1};
 

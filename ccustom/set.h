@@ -78,10 +78,16 @@ int romajiyuusen = -1;
 int autosync = 1;
 int nkeysuu = 500 ; 
 int quicklyescape = -1;
-int empty_mode, emptymap,nkeysup, keysup;
+KanjiModeRec empty_mode;
+BYTE *emptymap;
+int nkeysup;
+keySupplement keysup[MAX_KEY_SUP];
 unsigned char *initfunc = NULL;
 int forceKana, iListCB ;
 int keepCursorPosition, CannaVersion;
+#ifdef DEBUG
+int iroha_debug = 1;
+#endif /* DEBUG */
 
 newmode OtherModes[MAX_OTHER_MODES];
 

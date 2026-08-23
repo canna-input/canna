@@ -78,6 +78,8 @@
 
 typedef	canna_intptr_t	list;
 typedef canna_intptr_t	pointerint;
+typedef list (*subr_t)(int);
+typedef list (*special_t)(void);
 
 /* cell area */
 
@@ -93,7 +95,14 @@ typedef canna_intptr_t	pointerint;
 #define symbolpointer(x) ((struct atomcell *)(celltop + celloffset(x)))
 
 #define mknum(x)	(NUMBER_TAG | ((x) & CELL_MASK))
+
+#if SIZEOF_VOID_P == 8
+#define xnum(x)   ((((x) & 0x00800000)) ? (x | 0xffffffffff000000) : (x & 0x00ffffff))
+#elif SIZEOF_VOID_P == 4
 #define xnum(x)   ((((x) & 0x00800000)) ? (x | 0xff000000) : (x & 0x00ffffff))
+#else
+#error unsupported memory model
+#endif
 
 #define xstring(x) (((struct stringcell *)(celltop + celloffset(x)))->str)
 #define xstrlen(x) (((struct stringcell *)(celltop + celloffset(x)))->length)
@@ -112,8 +121,8 @@ struct atomcell {
   list	value;
   char	*pname;
   int	ftype;
-  list 	(*func)();
-  list  (*valfunc)();
+  subr_t func;
+  list  (*valfunc)(int, list);
   int	mid;
   int	fid;
   list	hlink;
@@ -131,7 +140,7 @@ struct gccell {
 struct atomdefs {
 	char	*symname;
 	int	symtype;
-	list	(*symfunc)();
+	subr_t symfunc;
 };
 
 struct cannafndefs {
@@ -146,5 +155,5 @@ struct cannamodedefs {
 
 struct cannavardefs {
   char *varname;
-  list (*varfunc)();
+  list (*varfunc)(int, list);
 };

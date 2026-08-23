@@ -22,19 +22,6 @@
 
 #define MAX_DICS 16
 
-extern char *kanjidicname[];
-extern int  nkanjidics;
-
-extern char *userdicname[];
-extern int  nuserdics;
-extern char userdicstatus[];
-
-extern char *bushudicname[];
-extern int nbushudics;
-
-extern char *localdicname[];
-extern int nlocaldics;
-
 /*
  * エラーのメッセージを入れておく変数
  */
@@ -44,8 +31,6 @@ extern char *necKanjiError;
 /*
  * デバグ文を表示するかどうかのフラグ
  */
-
-extern iroha_debug;
 
 /*
  * キーシーケンスを発生するようなキー

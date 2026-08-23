@@ -30,6 +30,8 @@
 #include <curses.h>
 #endif
 #include <signal.h>
+#include <time.h>
+#include <unistd.h>
 #ifdef SIGNALRETURNSINT
 typedef int sig_ret_type;
 #define SIG_RETVAL 0
@@ -839,6 +841,14 @@ WINDOW *base_win,  *err_win,   *load_win,
        *kctm_win,  *disp_win,  *kutl_win,
        *mode1_win, *mode2_win, *dddic_win,
        *etc_win,   *_etc_win,  *end_win;
+
+int keyIn(int, int);
+int actIn(int, int);
+int ustam_scroll(WINDOW *, int);
+void root_ctm(void);
+sig_ret_type int_exit(int);
+sig_ret_type proc_delete_key(int);
+sig_ret_type on_suspend(int);
 void
 disp_block(WINDOW *win, int y, int x, char **block, int start, int end)
 {
@@ -875,7 +885,7 @@ disp_block(WINDOW *win, int y, int x, char **block, int start, int end)
   wrefresh(win);
 }
 
-int
+void
 err_word(char *format, char *string)
 {
 #ifdef __FreeBSD__
@@ -892,7 +902,7 @@ err_word(char *format, char *string)
   wrefresh(err_win);
 }
 
-int
+void
 current_word(WINDOW *win, char *format, char *string)
 {
 #ifdef __FreeBSD__
@@ -909,7 +919,7 @@ current_word(WINDOW *win, char *format, char *string)
   wrefresh(win);
 }
 
-int
+void
 clr_cul_to_end(WINDOW *win, int y, int x)
 {
   wmove(win, y, x);
@@ -947,7 +957,7 @@ current_print2(WINDOW *win, int y, int x, char *string, char *copy)
   return (x + i/2 -1);
 }
 
-int
+void
 inc_rev_print(WINDOW *win, int y, int x, char *str1, char *rev, char *str2)
 {
   mvwaddstr(win, y, x, str1);
@@ -974,7 +984,7 @@ loadFile(void)
     werase(err_win);
     wrefresh(err_win);
     if (*f_name != '\0') {
-      *err_mess = (char)NULL;
+      *err_mess = 0;
       tilda(f_name);
       if (initFileSpecified)
 	free(initFileSpecified);
@@ -1067,6 +1077,8 @@ ask_dic(int loc)
   case 4 : /* 連語変換 */
     return 0;
   }
+  /* NOTREACHED */
+  return 0;
 }
 
 int
@@ -1379,13 +1391,9 @@ m_set(int ph_mode)
     current_keys = cc_keys;
     return 1;
   }
+  /* NOTREACHED */
+  return 1;
 }
-
-#ifdef __STDC__
-extern char *showChar(int);
-#else
-extern char *showChar();
-#endif
 
 int
 create_key_buff(int mode, int num, int kora, int ban, char *str1, char *rev, char *str2)
@@ -1732,7 +1740,7 @@ sp_disp(int mode, int top, int line, int kora, int ban)
   WDisp.ban = ban;
 }
 
-int
+void
 set_dk_blocks(int mode, int n)
 {
   char str1[256], rev[256], str2[256];
@@ -1747,7 +1755,7 @@ set_dk_blocks(int mode, int n)
   dk_blocks[n].gyousu = howManyLines(str1, rev, str2, COLS);
 }
 
-int
+void
 init_dk_blocks(int mode)
 {
   int i;
@@ -1757,7 +1765,7 @@ init_dk_blocks(int mode)
   dk_blocks[i].str = (char *)NULL;
 }
 
-int
+void
 copy_dk_blocks(int a, int b)
 {
   dk_blocks[a].len = dk_blocks[b].len;
@@ -1767,7 +1775,7 @@ copy_dk_blocks(int a, int b)
   dk_blocks[a].gyousu = dk_blocks[b].gyousu;
 }
 
-int
+void
 fin_dk_blocks(void)
 {
   int i;
@@ -1775,7 +1783,7 @@ fin_dk_blocks(void)
       free(dk_blocks[i].str);
 }
 
-int
+void
 tourokuN(int ph_mode, int N)
 {
   switch(ph_mode) {
@@ -1818,7 +1826,7 @@ tourokuN(int ph_mode, int N)
   }
 }
 
-int
+void
 for_UNDO(int status)
 {
   char *p, *q, *s;
@@ -1845,11 +1853,11 @@ for_UNDO(int status)
   U_WDisp.current = WDisp.current;
 }
 
-int
+void
 from_UNDO(void)
 {
   char *p, *q, *s;
-int i;
+  int i;
   touroku_start = undo_ts;
   current_acts[U_WDisp.current] = (char *)malloc(strlen(undo_acts)+1);
   strcpy(current_acts[U_WDisp.current], undo_acts);
@@ -1919,7 +1927,7 @@ shinki(int mode, int kora, int num)
   }
 }
 
-int
+void
 to_multi(int mode, int num, int kora, int ban, int which)
 {
   int atai, hosei, kazu, i;
@@ -2007,7 +2015,7 @@ okikae(int mode, int num, int kora, int ban, int obj)
   sp_disp(mode, WDisp.top, WDisp.line, WDisp.kora, WDisp.ban);
 }
 
-int
+void
 delete_obj(int mode, int num, int kora, int ban)
 {
   int i;
@@ -2036,7 +2044,7 @@ delete_obj(int mode, int num, int kora, int ban)
 }
     
 
-int
+void
 kill_G(int mode, int num)
 {
   int kazu, i;
@@ -2056,7 +2064,7 @@ kill_G(int mode, int num)
     touroku_start--;
 }
 
-int
+void
 kill_UNDO(int mode)
 {
   int kazu, i, num;
@@ -2072,7 +2080,7 @@ kill_UNDO(int mode)
   from_UNDO();
 }
 
-int
+void
 dispIn(int cus_mode)
 {
   char *p;
@@ -2965,7 +2973,7 @@ modeName(void)
   return;
 }
 
-int
+void
 on_off(WINDOW *win, int ctm)
 {
   int y, x;
@@ -3003,7 +3011,7 @@ on_off(WINDOW *win, int ctm)
   wrefresh(win);
 }
 
-int
+void
 etcScroll(
 	int s_point,
 	int c_point,
@@ -3095,6 +3103,7 @@ etcScroll(
 }
 
 /*
+void
 etcScroll(s_point, c_point)
 int s_point, c_point;
 {
@@ -3361,7 +3370,7 @@ etcCustom(void)
 }
 
 
-char i_file[128], *getenv();
+char i_file[128];
 
 void
 get_save_file(void)
@@ -3538,7 +3547,7 @@ initctm(void)
   etc_ctm[24] = autosync;
   etc_ctm[25] = MID;
   etc_ctm[26] = quicklyescape;
-  etc_ctm[27] = (char)NULL;
+  etc_ctm[27] = 0;
 
   if (kouho_threshold > 9999)
     kouho_threshold = 9999;
@@ -3583,8 +3592,6 @@ checkLocale(void)
 int
 main(int argc, char *argv[])
 {
-  void root_ctm(), int_exit(), on_suspend();
-  void proc_delete_key();
   char *term;
 
 #ifdef HAVE_LOCALE
@@ -3778,7 +3785,7 @@ root_ctm(void)
 }
 
 sig_ret_type
-int_exit(void)
+int_exit(int sig)
 {
   endwin();
   exit(0);
@@ -3804,7 +3811,7 @@ proc_delete_key(int sig)
   }
   prev_time = cur_time;
   if (counter > 2) {
-    int_exit();
+    int_exit(0);
   }
   else {
     signal(SIGINT, proc_delete_key);

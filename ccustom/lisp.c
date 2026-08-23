@@ -31,6 +31,7 @@
 #include "keydef.h"
 #include "mfdef.h"
 #include "canna.h"
+#include "ccustom.h"
 #include "symbolname.h"
 
 static int version = 1 ;
@@ -39,19 +40,99 @@ static FILE *outstream = (FILE *)0;
 static char *celltop, *cellbtm, *freecell;
 static char *memtop;
 
-static initIS(), finIS();
-static allocarea(), skipspaces(), zaplin(), prins(), isterm();
-static list mkatm(), read1(), ratom(), ratom2(), rstring();
-static int tyipeek(), tyi(), tyo(int);
-static void defatms(), epush();
-static void push(), pop();
-static int  evpsh();
-static void freearea(), print();
-static list getatm(), getatmz(), newsymbol(), copystring();
-static list assq(), pop1();
-static list Lnvcons(), Lprogn(), Lcons(), Lread();
-static list Leval(), Lprint(), Lmodestr(), Lputd(), Lxcons(), Lncons();
-static list NumAcc(), StrAcc();
+static int initIS(void);
+static void finIS(void);
+static int allocarea(void);
+static int skipspaces(void);
+static int zaplin(void);
+static void prins(char *);
+static int isterm(int);
+static list mkatm(char *);
+static list read1(void);
+static list ratom(void);
+static list ratom2(int);
+static list rstring(void);
+static list rcharacter(void);
+static int tyipeek(void);
+static int tyi(void);
+static void tyo(int);
+static void defatms(void);
+static void epush(list);
+static void push(list);
+static void pop(int);
+static int evpsh(list);
+static void freearea(void);
+static void print(list);
+static list getatm(char *, int);
+static list getatmz(char *);
+static list newsymbol(char *);
+static list copystring(char *, int);
+static list assq(list, list);
+static list pop1(void);
+static list Lprogn(void);
+static list Lread(int);
+static list Leval(int);
+static list Lprint(int);
+static list Lmodestr(int);
+static list Lputd(int);
+static list Lxcons(int);
+static list Lncons(int);
+static list Lquote(void);
+static list Lsetq(void);
+static list Lset(int);
+static list Lequal(int);
+static list Lgreaterp(int);
+static list Llessp(int);
+static list Leq(int);
+static list Lcond(void);
+static list Lnull(int);
+static list Lor(void);
+static list Land(void);
+static list Lplus(int);
+static list Ltimes(int);
+static list Ldiff(int);
+static list Lquo(int);
+static list Lrem(int);
+static list Lgc(int);
+static list Lusedic(int);
+static list Llist(int);
+static list Lcopysym(int);
+static list Lload(int);
+static list Lcons(int);
+static list Ldefun(void);
+static list Ldefmacro(void);
+static list Lcar(int);
+static list Lcdr(int);
+static list Latom(int);
+static list Llet(void);
+static list Lif(void);
+static list Lunbindkey(int);
+static list Lgunbindkey(int);
+static list Ldefmode(void);
+static list Ldefsym(void);
+static list Lsetkey(int);
+static list Lgsetkey(int);
+static list Lsetinifunc(int);
+static list VTorNIL(int *, int, list);
+static list NumAcc(int *, int, list);
+static list StrAcc(char **, int, list);
+static void gc(void);
+static void patom(list);
+static int isnum(char *);
+static int equal(list, list);
+static void argnerr(char *);
+static void numerr(char *, list);
+static void strerr(char *, list);
+static void argerr(char *, list);
+static void untyi(int);
+static list newcons(void);
+static list epop(void);
+static int psh(list);
+static list bindall(list, list, list, list);
+static list copycons(struct cell *);
+static void markcopycell(list *);
+static void SetString(unsigned char **, list);
+static void error(char *, list);
 
 
 /* parameter stack */
@@ -77,7 +158,6 @@ static char *readptr;		/* read pointer	*/
 
 /* error functions	*/
 
-static void	argnerr(), numerr(), error();
 
 /* multiple values */
 
@@ -118,12 +198,6 @@ static int  jmpenvp = MAX_DEPTH;
 
  */
 
-static void freearea();
-#ifdef __STDC__
-static list getatmz(char *);
-#else
-static list getatmz();
-#endif
 
 int
 clisp_init(void)
@@ -175,7 +249,7 @@ clisp_fin(void)
   }
 }
 
-extern before_parse();
+
 
 static jmp_buf fatal_env;
 
@@ -195,7 +269,6 @@ fatal(char *msg, list v)
 int
 LLparse_by_rcfilename(char *s)
 {
-  extern ckverbose;
   int retval = 0;
   FILE *f;
   FILE *saved_outstream;
@@ -270,7 +343,7 @@ intr(int sig)
 void
 clisp_main(void)
 {
-  if (clisp_init() == NULL) {	/* initialize data area	& etc..	*/
+  if (clisp_init() == 0) {	/* initialize data area	& etc..	*/
     fprintf(stderr, "CannaLisp: initialization failed.\n");
     exit(1);
   }
@@ -387,7 +460,7 @@ static int nseqtbl;		/* 状態の数。状態の数だけ表がある */
 static int nseq;
 static int seqline;
 
-static
+static int
 initIS(void)
 {
   SeqToID *p;
@@ -478,7 +551,7 @@ initIS(void)
   return 0;
 }
 
-static
+static void
 finIS(void) /* identifySequence に用いたメモリ資源を開放する */
 {
   int i;
@@ -502,7 +575,7 @@ finIS(void) /* identifySequence に用いたメモリ資源を開放する */
 #define CONTINUE 1
 #define END	 0
 
-static
+static int
 identifySequence(unsigned c, int *val)
 {
   int nextline;
@@ -538,7 +611,7 @@ alloccell(void)
     return 0;
   }
   memtop = p;
-  odd = (unsigned int)memtop % sizeof(list);
+  odd = (int)((pointerint)memtop % sizeof(list));
   freecell = celltop = memtop + (odd ? sizeof(list) - odd : 0);
   cellbtm = memtop + cellsize - odd;
   return 1;
@@ -546,7 +619,7 @@ alloccell(void)
 
 /* うまく行かなかったら０を返す */
 
-static
+static int
 allocarea(void)
 {
   /* まずはセル領域 */
@@ -648,8 +721,8 @@ mkatm(char *name)
   newatom->value = (*name == ':') ? (list)temp : (list)UNBOUND;
   newatom->plist = NIL;			/* set null plist	*/
   newatom->ftype = UNDEF;		/* set undef func-type	*/
-  newatom->func  = (list (*)())0;	/* Don't kill this line	*/
-  newatom->valfunc  = (list (*)())0;	/* Don't kill this line	*/
+  newatom->func  = (subr_t)0;	/* Don't kill this line	*/
+  newatom->valfunc  = (list (*)(int, list))0;	/* Don't kill this line	*/
   newatom->hlink = NIL;		/* no hash linking	*/
   newatom->mid = -1;
   newatom->fid = -1;
@@ -684,8 +757,6 @@ static void
 error(char *msg, list v)
 /* ARGSUSED */
 {
-  void print();
-
   prins(msg);
   if (v != (list)NON)
     print(v);
@@ -736,9 +807,7 @@ argerr(char *fn, list arg)
 static list
 Lread(int n)
 {
-  list t, read1();
-  void push();
-
+  list t;
   argnchk("read",0);
   valuec = 1;
   if ((t = read1()) == (list)ERROR) {
@@ -767,8 +836,8 @@ static list rcharacter(void);
 static list
 read1(void)
 {
-  int  c, tyi(), tyipeek();
-  list p, *pp, Lncons();
+  int c;
+  list p, *pp;
   list t;
   char *eofmsg = "EOF hit in reading a list : ";
 
@@ -845,10 +914,10 @@ read1(void)
 /* skipping spaces function -
 	if eof read then return NO	*/
 
-static
+static int
 skipspaces(void)
 {
-  int c, tyi();
+  int c;
 
   while ((c = tyi()) <= ' ') {
     if ( !c )
@@ -864,10 +933,10 @@ skipspaces(void)
 /* skip reading until '\n' -
 	if eof read then return NO	*/
 
-static
+static int
 zaplin(void)
 {
-	int c, tyi();
+	int c;
 
 	while ((c = tyi()) != '\n')
 		if ( !c )
@@ -875,7 +944,6 @@ zaplin(void)
 	return(YES);
 }
 
-static void gc();
 
 static list
 newcons(void)
@@ -912,7 +980,6 @@ newsymbol(char *name)
   return retval;
 }
 
-static void patom();
 
 static void
 print(list l)
@@ -949,20 +1016,16 @@ print(list l)
 static list 
 ratom(void)
 {
-	list ratom2();
-
 	return(ratom2(tyi()));
 }
 
 /* read atom with the first one character -
 	check if the token is numeric or pure symbol & return proper value */
 
-static isnum();
 
 static list 
 ratom2(int a)
 {
-  list mkatm(), getatmz();
   int  i, c, flag;
   char atmbuf[BUFSIZE];
 
@@ -1083,7 +1146,7 @@ rcharacter(void)
   return retval;
 }
 
-static
+static int
 isnum(char *name)
 {
 	if (*name == '-') {
@@ -1133,8 +1196,6 @@ untyi(int c)
 static int
 tyi(void)
 {
-  char *gets(), *fgets();
-
   if (untyibuf) {
     int ret = untyibuf[--untyip];
     if (untyip == 0) {
@@ -1186,7 +1247,7 @@ tyipeek(void)
 
 /* tyo -- output one character	*/
 
-static
+static void
 tyo(int c)
 {
   if (outstream) {
@@ -1198,7 +1259,7 @@ tyo(int c)
 /* prins -
 	print string	*/
 
-static
+static void
 prins(char *s)
 {
 	while (*s) {
@@ -1210,7 +1271,7 @@ prins(char *s)
 /* isterm -
 	check if the character is terminating the lisp expression	*/
 
-static
+static int
 isterm(int c)
 {
 	if (c <= ' ')
@@ -1258,9 +1319,9 @@ pop1(void)
 {
   if (sp >= &stack[STKSIZE]) {
     error("stack under flow",NON);
+    /* NOTREACHED */
   }
-  else
-    return(*sp++);
+  return(*sp++);
 }
 
 static void
@@ -1278,9 +1339,9 @@ epop(void)
 {
   if (esp >= &estack[STKSIZE]) {
     error("lstack under flow",NON);
+    /* NOTREACHED */
   }
-  else
-    return(*esp++);
+  return(*esp++);
 }
 
 
@@ -1302,7 +1363,7 @@ patom(list atm)
 
   if (constp(atm)) {
     if (numberp(atm)) {
-      (void)sprintf(namebuf,"%d",xnum(atm));
+      (void)sprintf(namebuf,"%d",(int)xnum(atm));
       prins(namebuf);
     }
     else {		/* this is a string */
@@ -1320,8 +1381,6 @@ patom(list atm)
     prins(symbolpointer(atm)->pname);
   }
 }
-
-static void markcopycell();
 
 char *oldcelltop;
 static char *oldcellp;
@@ -1372,15 +1431,13 @@ gc(void) /* コピー方式のガーベジコレクションである */
   free(oldcellp);
 }
 
-static char *Strncpy();
+static char *Strncpy(char *, char *, int);
 
 static list
 copystring(char *s, int n)
 {
   int namesize;
   list retval;
-  char *Strncpy();
-
   namesize = ((n + sizeof(pointerint) + 1 + 3)/ sizeof(list)) * sizeof(list);
   if (freecell + namesize >= cellbtm) { /* gc 中は起こり得ないはず */
     gc();
@@ -1454,7 +1511,7 @@ markcopycell(list *addr)
     }
     markcopycell(&newatom->plist);
     if (newatom->ftype == EXPR || newatom->ftype == MACRO) {
-      markcopycell(&newatom->func);
+      markcopycell((list *)&newatom->func);
     }
     addr = &newatom->hlink;
     goto redo;
@@ -1484,15 +1541,14 @@ bindall(list var, list par, list a, list e)
   }
   else if (atom(par)) {
     error("Bad macro form ",e);
+    /* NOTREACHED */
   }
-  else {
-    push(par);
-    push(var);
-    *pa = bindall(car(var),car(par),*pa,*pe);
-    var = cdr(pop1());
-    par = cdr(pop1());
-    goto retry;
-  }
+  push(par);
+  push(var);
+  *pa = bindall(car(var),car(par),*pa,*pe);
+  var = cdr(pop1());
+  par = cdr(pop1());
+  goto retry;
 }
 
 static list
@@ -1511,7 +1567,8 @@ static list
 Leval(int n)
 {
   list e, a, t, s, tmp, aa, *pe, *pt, *ps, *paa;
-  list fn, (*cfn)(), *pfn;
+  list fn, *pfn;
+  subr_t cfn;
   int i, j;
   argnchk("eval",1);
   e = sp[0];
@@ -1530,7 +1587,7 @@ Leval(int n)
       }
       else if ((sym = symbolpointer(e))->valfunc) {
 	(void)pop1();
-	return (sym->valfunc)(VALGET, 0);
+	return (*(sym->valfunc))(VALGET, 0);
       }
       else {
 	if ((t = (sym->value)) != (list)UNBOUND) {
@@ -1552,7 +1609,7 @@ Leval(int n)
       error("eval: Undefined function ", fn);
       break;
     case SUBR:
-      cfn = symbolpointer(fn)->func;
+      cfn = (subr_t)symbolpointer(fn)->func;
       i = evpsh(cdr(e));
       epush(NIL);
       t = (*cfn)(i);
@@ -1561,7 +1618,7 @@ Leval(int n)
       return (t);
     case SPECIAL:
       push(cdr(e));
-      t = (*(symbolpointer(fn)->func))();
+      t = (*(special_t)symbolpointer(fn)->func)();
       pop1();
       return (t);
     case EXPR:
@@ -1677,7 +1734,7 @@ Leval(int n)
       return (s);
     case CMACRO:
       push(e);
-      push(t = (*(symbolpointer(fn)->func))());
+      push(t = (*(special_t)symbolpointer(fn)->func)());
       push(t);
       s = Leval(1);
       if (atom(t = pop1()))
@@ -1697,6 +1754,8 @@ Leval(int n)
     aa = *esp; /* previous environment is also used */
     goto expr;
   }
+  /* NOTREACHED */
+  return NIL;
 }
 
 static list
@@ -1766,8 +1825,6 @@ static list
 Lcons(int n)
 {
 	list temp;
-	void gc();
-
 	argnchk("cons",2);
 	temp = newcons();
 	cdr(temp) = pop1();
@@ -1779,8 +1836,6 @@ static list
 Lncons(int n)
 {
 	list temp;
-	void gc();
-
 	argnchk("ncons",1);
 	temp = newcons();
 	car(temp) = pop1();
@@ -1792,8 +1847,6 @@ static list
 Lxcons(int n)
 {
 	list temp;
-	void gc();
-
 	argnchk("cons",2);
 	temp = newcons();
 	car(temp) = pop1();
@@ -1804,8 +1857,6 @@ Lxcons(int n)
 static list 
 Lprint(int n)
 {
-	void print();
-
 	print(sp[0]);
 	pop(n);
 	return (T);
@@ -1814,7 +1865,7 @@ Lprint(int n)
 static list
 Lset(int n)
 {
-  list val, a, t, assq();
+  list val, a, t;
   list var;
   struct atomcell *sym;
 
@@ -1838,7 +1889,7 @@ Lset(int n)
 static list
 Lsetq(void)
 {
-  list a, *pp, Leval(), Lset();
+  list a, *pp;
 
   a = NIL;
   for (pp = sp; consp(*pp) ; *pp = cdr(*pp)) {
@@ -1854,7 +1905,6 @@ Lsetq(void)
   return(a);
 }
 
-static int equal();
 
 static list 
 Lequal(int n)
@@ -1996,7 +2046,7 @@ Leq(int n)
 static list
 Lcond(void)
 {
-  list *pp, t, a, e, c, Lprogn(), Leval();
+  list *pp, t, a, e, c;
 
   pp = sp;
   for (; consp(*pp) ; *pp = cdr(*pp)) {
@@ -2202,8 +2252,6 @@ Lrem(int n)
 static list 
 Lgc(int n)
 {
-  void gc();
-
   argnchk("gc",0);
   gc();
   return(NIL);
@@ -2213,12 +2261,9 @@ static list
 Lusedic(int n)
 {
   int i;
-  extern char *kanjidicname[], *userdicname[], *bushudicname[];
-  extern int nkanjidics, nuserdics, nbushudics;
   char **pdicname;
   int *counter, arrayp;
   list retval = NIL, temp;
-  extern char *RengoGakushu;
 
   for (i = n ; i ; i--) {
     pdicname = kanjidicname;
@@ -2306,8 +2351,8 @@ Lcopysym(int n)
 static list
 Lload(int n)
 {
-  list p, t, Lread(), Leval(), Lncons();
-  FILE *instream, *fopen();
+  list p, t;
+  FILE *instream;
 
   argnchk("load",1);
   p = pop1();
@@ -2471,16 +2516,16 @@ Lputd(int n)
   }
   if (null(body)) {
     symp->ftype = UNDEF;
-    symp->func = (list (*)())UNDEF;
+    symp->func = (subr_t)UNDEF;
   }
   else if (consp(body)) {
     if (car(body) == _MACRO) {
       symp->ftype = MACRO;
-      symp->func = (list (*)())body;
+      symp->func = (subr_t)body;
     }
     else {
       symp->ftype = EXPR;
-      symp->func = (list (*)())body;
+      symp->func = (subr_t)body;
     }
   }
   return(a);
@@ -2489,7 +2534,7 @@ Lputd(int n)
 static list
 Ldefun(void)
 {
-  list form, res, Lputd();
+  list form, res;
 
   form = sp[0];
   if (atom(form)) {
@@ -2507,7 +2552,7 @@ Ldefun(void)
 static list
 Ldefmacro(void)
 {
-  list form, res, Lputd();
+  list form, res;
 
   form = sp[0];
   if (atom(form)) {
@@ -2531,10 +2576,11 @@ Lcar(int n)
   f = pop1();
   if (!f)
     return(NIL);
-  else if (atom(f))
+  else if (atom(f)) {
     error("Bad arg to car ",f);
-  else
-    return(car(f));
+    /* NOTREACHED */
+  }
+  return(car(f));
 }
 
 static list
@@ -2546,10 +2592,11 @@ Lcdr(int n)
   f = pop1();
   if (!f)
     return(NIL);
-  else if (atom(f))
+  else if (atom(f)) {
     error("Bad arg to cdr ",f);
-  else
-    return(cdr(f));
+    /* NOTREACHED */
+  }
+  return(cdr(f));
 }
 
 static list
@@ -2722,8 +2769,6 @@ static list
 Ldefmode(void)
 {
   list form, *sym, e, *p, fn, rd, md, us;
-  extern int nothermodes;
-  extern newmode OtherModes[];
   int i, j;
   KanjiMode kanjimode;
 
@@ -2804,8 +2849,6 @@ Ldefmode(void)
   kanjimode = (KanjiMode)malloc(sizeof(KanjiModeRec));
   if (kanjimode) {
 /*    int searchfunc(); いらないので削除 */
-    extern KanjiModeRec empty_mode;
-    extern BYTE *emptymap;
 
 /*    kanjimode->func = searchfunc; いらないので削除 */
     kanjimode->keytbl = emptymap;
@@ -2887,11 +2930,9 @@ Ldefmode(void)
 static list
 Ldefsym(void)
 {
-  list form, res, e, Lputd();
+  list form, res, e;
   int key, i, j, k, ncand, group;
   wchar_t cand[1024], *p, *mcand, **acand;
-  extern nkeysup;
-  extern keySupplement keysup[];
 
   form = sp[0];
   if (atom(form)) {
@@ -2976,8 +3017,6 @@ Lsetinifunc(int n)
   unsigned char fseq[256];
   int i, len;
   list ret = NIL;
-  extern BYTE *initfunc;
-  extern int InitialMode;
 
   argnchk(S_SetInitFunc, 1);
 
@@ -3055,6 +3094,7 @@ StrAcc(char **var, int setp, list arg)
 	}
 	else {
 	  error("Not enough memory.", NON);
+	  /* NOTREACHED */
 	}
       }
       else {
@@ -3064,16 +3104,17 @@ StrAcc(char **var, int setp, list arg)
     }
     else {
       strerr((char *)0, arg);
+      /* NOTREACHED */
     }
+  }
+  /* else { .. */
+  if (*var) {
+    return copystring(*var, strlen(*var));
   }
   else {
-    if (*var) {
-      return copystring(*var, strlen(*var));
-    }
-    else {
-      return NIL;
-    }
+    return NIL;
   }
+  /* end else .. } */
 }
 
 static list
@@ -3086,26 +3127,16 @@ NumAcc(int *var, int setp, list arg)
     }
     else {
       numerr((char *)0, arg);
+      /* NOTREACHED */
     }
   }
-  else {
-    return mknum(*var);
-  }
+  return mknum(*var);
 }
 
 /* ここから下がカスタマイズの追加等で良くいじる部分 */
 
 /* 実際のアクセス関数 */
 
-extern int Gakushu, CursorWrap, SelectDirect, HexkeySelect, BunsetsuKugiri;
-extern int ChBasedMove, ReverseWidely, ReverseWord, QuitIchiranIfEnd;
-extern int kakuteiIfEndOfBunsetsu, stayAfterValidate, BreakIntoRoman;
-extern int gramaticalQuestion, forceKana, kCount, chikuji, iListCB;
-extern int kouho_threshold, nKouhoBunsetsu, keepCursorPosition;
-extern char *RomkanaTable, *RengoGakushu;
-extern int CannaVersion, abandonIllegalPhono, hexCharacterDefiningStyle;
-extern int kojin, allowNextInput,indexhankaku,ignorecase,romajiyuusen,autosync;
-extern int nkeysuu , quicklyescape;
 
 static list
 Vgakushu(int setp, list arg)
@@ -3199,7 +3230,6 @@ VCannaVersion(int setp, list arg)
 static list
 VProtoVer(int setp, list arg)
 {
-  extern protocol_version;
 
   if (protocol_version < 0) {
 /*    ObtainVersion(); いらないので削除 */
@@ -3210,8 +3240,6 @@ VProtoVer(int setp, list arg)
 static list
 VServVer(int setp, list arg)
 {
-  extern server_version;
-
   if (server_version < 0) {
 /*    ObtainVersion(); いらないので削除 */
   }
@@ -3270,20 +3298,20 @@ VQuicklyEscape(int setp, list arg)
 /* Lisp の関数と C の関数の対応表 */
 
 static struct atomdefs initatom[] = {
-  {"quote"		,SPECIAL,Lquote		},
-  {"setq"		,SPECIAL,Lsetq		},
+  {"quote"		,SPECIAL,(subr_t)Lquote		},
+  {"setq"		,SPECIAL,(subr_t)Lsetq		},
   {"set"		,SUBR	,Lset		},
   {"equal"		,SUBR	,Lequal		},
   {"="			,SUBR	,Lequal		},
   {">"			,SUBR	,Lgreaterp	},
   {"<"			,SUBR	,Llessp		},
-  {"progn"		,SPECIAL,Lprogn		},
+  {"progn"		,SPECIAL,(subr_t)Lprogn		},
   {"eq"			,SUBR	,Leq   		},
-  {"cond"		,SPECIAL,Lcond		},
+  {"cond"		,SPECIAL,(subr_t)Lcond		},
   {"null"		,SUBR	,Lnull		},
   {"not"		,SUBR	,Lnull		},
-  {"and"		,SPECIAL,Land		},
-  {"or"			,SPECIAL,Lor		},
+  {"and"		,SPECIAL,(subr_t)Land		},
+  {"or"			,SPECIAL,(subr_t)Lor		},
   {"+"			,SUBR	,Lplus		},
   {"-"			,SUBR	,Ldiff		},
   {"*"			,SUBR	,Ltimes		},
@@ -3293,14 +3321,14 @@ static struct atomdefs initatom[] = {
   {"load"		,SUBR	,Lload		},
   {"list"		,SUBR	,Llist		},
   {"sequence"		,SUBR	,Llist		},
-  {"defun"		,SPECIAL,Ldefun		},
-  {"defmacro"		,SPECIAL,Ldefmacro	},
+  {"defun"		,SPECIAL,(subr_t)Ldefun		},
+  {"defmacro"		,SPECIAL,(subr_t)Ldefmacro	},
   {"cons"		,SUBR	,Lcons		},
   {"car"		,SUBR	,Lcar		},
   {"cdr"		,SUBR	,Lcdr		},
   {"atom"		,SUBR	,Latom		},
-  {"let"		,CMACRO	,Llet		},
-  {"if"			,CMACRO	,Lif		},
+  {"let"		,CMACRO	,(subr_t)Llet		},
+  {"if"			,CMACRO	,(subr_t)Lif		},
   {"copy-symbol"	,SUBR	,Lcopysym	},
   {S_FN_UseDictionary	,SUBR	,Lusedic	},
   {S_SetModeDisp	,SUBR	,Lmodestr	},
@@ -3308,8 +3336,8 @@ static struct atomdefs initatom[] = {
   {S_GSetKey		,SUBR	,Lgsetkey	},
   {S_UnbindKey		,SUBR	,Lunbindkey	},
   {S_GUnbindKey		,SUBR	,Lgunbindkey	},
-  {S_DefMode		,SPECIAL,Ldefmode	},
-  {S_DefSymbol		,SPECIAL,Ldefsym	},
+  {S_DefMode		,SPECIAL,(subr_t)Ldefmode	},
+  {S_DefSymbol		,SPECIAL,(subr_t)Ldefsym	},
   {S_SetInitFunc	,SUBR	,Lsetinifunc	},
   {0			,UNDEF	,0		}, /* DUMMY */
 };
@@ -3521,8 +3549,6 @@ defcannafunc(void)
 static void
 defatms(void)
 {
-  list getatmz();
-
   deflispfunc();
   defcannavar();
   defcannamode();

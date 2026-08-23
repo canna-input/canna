@@ -34,20 +34,11 @@
  * キーマップテーブルは処理関数へのポインタの配列となっている。
  */
 
-typedef struct {
-  int (*func)();
-  unsigned char *keytbl;
-  int flags;			/* 下を見よ */
-  int (**ftbl)();
-} *KanjiMode, KanjiModeRec;
-
 /* flags の情報 */
 #define IROHA_KANJIMODE_TABLE_SHARED	01
 #define IROHA_KANJIMODE_EMPTY_MODE	02
 
 extern unsigned char default_kmap[];
-extern int  simplefunc();
-extern int  multiSequenceFunc();
 
 /* モード */
 
