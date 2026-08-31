@@ -31,12 +31,20 @@
 #endif
 
 #if (defined(__FreeBSD__) && __FreeBSD_version < 500000) \
-    || defined(__NetBSD__) || defined(__OpenBSD__)
+    || defined(__NetBSD__)
 # include <machine/ansi.h>
 #endif
 
-#if (defined(__FreeBSD__) && __FreeBSD_version < 500000) \
-    || defined(__NetBSD__) || defined(__OpenBSD__)
+#if defined(__OpenBSD__)
+#define _WCHAR_T_DEFINED_
+# ifdef WCHAR16
+typedef unsigned short wchar_t;
+# else
+typedef unsigned long wchar_t;
+# endif
+# define _WCHAR_T
+#elif (defined(__FreeBSD__) && __FreeBSD_version < 500000) \
+    || defined(__NetBSD__)
 # ifdef _BSD_WCHAR_T_
 #  undef _BSD_WCHAR_T_
 #  ifdef WCHAR16
