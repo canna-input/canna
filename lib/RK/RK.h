@@ -222,6 +222,7 @@ canna_export(int) RkwQueryDic(int, char *, char *, struct DicInfo *);
 canna_export(void) RkwCloseRoma(struct RkRxDic *);
 canna_export(struct) RkRxDic * RkwOpenRoma(char *);
 canna_export(int) RkwSetUserInfo(char *, char *, char *);
+canna_export(int) RkwSetAppName(int, char *);
 canna_export(char *) RkwGetServerName(void);
 canna_export(int) RkwGetServerVersion(int *, int *);
 canna_export(int) RkwListDic(int, char *, char *, int);

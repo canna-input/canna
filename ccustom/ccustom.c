@@ -24,10 +24,14 @@
  */
 
 
-#ifdef __FreeBSD__
+#if 0 && defined(__FreeBSD__)
 #include <ncurses.h>
+#define HAVE_OLD_BSD_CURSES
 #else
 #include <curses.h>
+#if 0 && !defined(SVR4)
+#define HAVE_OLD_SYSV_CURSES
+#endif
 #endif
 #include <signal.h>
 #include <time.h>
@@ -42,7 +46,7 @@ typedef void sig_ret_type;
 #include "ccustom.h"
 #include "ccompat.h"
 
-#if (defined(SVR4) || defined(__STDC__)) && !defined(__FreeBSD__)
+#if (defined(SVR4) || defined(__STDC__)) && !defined(HAVE_OLD_BSD_CURSES)
 #define HAVE_LOCALE
 #endif
 
@@ -59,10 +63,10 @@ typedef void sig_ret_type;
 #define _KEY_D       0x64
 #define _KEY_I       0x69
 #define _KEY_N       0x6e
-#ifndef __FreeBSD__
-#define _KEY_K       0x6b
-#else
+#ifdef HAVE_OLD_BSD_CURSES
 #define _KEY_K       'K'
+#else
+#define _KEY_K       0x6b
 #endif
 #define _KEY_U       0x75
 #define _KEY_Q       0x71
@@ -94,6 +98,11 @@ typedef void sig_ret_type;
 #define NON_UNDO  -1
 
 static void initctm(void);
+#if defined(HAVE_OLD_BSD_CURSES) || defined(HAVE_OLD_SYSV_CURSES)
+int ustam_scroll(WINDOW *win, int n);
+#else
+#define ustam_scroll wscrl
+#endif
 
 char **fList;
 
@@ -820,7 +829,7 @@ offを指定すると最左文節がカレント文節になります。デフォルトはoffです。",
 };
 
 
-#ifdef __FreeBSD__
+#ifdef HAVE_OLD_BSD_CURSES
 #if 0
  #define KEY_DOWN 	'j'
  #define KEY_UP		'k'
@@ -833,7 +842,9 @@ struct {
 } scrreg[2] = {{NULL,0,0},{NULL,0,0}};
 #else
 SCREEN *trm;
+#ifdef HAVE_OLD_SYSV_CURSES
 SCREEN *set_term();
+#endif
 #endif
 
 WINDOW *base_win,  *err_win,   *load_win,
@@ -888,13 +899,13 @@ disp_block(WINDOW *win, int y, int x, char **block, int start, int end)
 void
 err_word(char *format, char *string)
 {
-#ifdef __FreeBSD__
+#ifdef HAVE_OLD_BSD_CURSES
   wstandout(err_win);
 #else
   wattron(err_win,A_BLINK);
 #endif
   wprintw(err_win, format, string);
-#ifdef __FreeBSD__
+#ifdef HAVE_OLD_BSD_CURSES
   wstandend(err_win);
 #else
   wattroff(err_win,A_BLINK);
@@ -905,13 +916,13 @@ err_word(char *format, char *string)
 void
 current_word(WINDOW *win, char *format, char *string)
 {
-#ifdef __FreeBSD__
+#ifdef HAVE_OLD_BSD_CURSES
   wstandout(win);
 #else
   wattron(win, A_REVERSE);
 #endif
   wprintw(win, format, string);
-#ifdef __FreeBSD__
+#ifdef HAVE_OLD_BSD_CURSES
   wstandend(win);
 #else
   wattroff(win, A_REVERSE);
@@ -930,13 +941,13 @@ clr_cul_to_end(WINDOW *win, int y, int x)
 void
 current_print(WINDOW *win, int y, int x, char *string)
 {
-#ifdef __FreeBSD__
+#ifdef HAVE_OLD_BSD_CURSES
   wstandout(win);
 #else
   wattron(win, A_REVERSE);
 #endif
   mvwaddstr(win, y, x, string);
-#ifdef __FreeBSD__
+#ifdef HAVE_OLD_BSD_CURSES
   wstandend(win);
 #else
   wattroff(win, A_REVERSE);
@@ -1197,7 +1208,7 @@ confDic(void)
       if (ask_dic(c_location) < 15) {
 	getyx(dic_win, y, x);
 	mvwaddstr(dic_win, y, x +1,":");
-#ifdef __FreeBSD__
+#ifdef HAVE_OLD_BSD_CURSES
 	wrefresh(dic_win);
 #endif
 	echo();
@@ -2620,18 +2631,10 @@ scrollDisplay(
     break;
   case 2:
     if (c_point == 0 ) {                /* マイナススクロール  */
-#ifdef SVR4
-      wscrl(win, -1);
-#else /* SVR4 */
       (void)ustam_scroll(win, -1);
-#endif /* SVR4 */
       mvwaddstr(win, 3+1, L_MARGIN, name_list[s_point+1]);
     } else if ( c_point == BOTOM-1 ) {  /* プラススクロール */
-#ifdef SVR4
-      wscrl(win, 1);
-#else /* SVR4 */
       (void)ustam_scroll(win, 1);
-#endif /* SVR4 */
       mvwaddstr(win, 3+c_point-1,   L_MARGIN, name_list[s_point+c_point-1]);
     }
     break;
@@ -2980,13 +2983,13 @@ on_off(WINDOW *win, int ctm)
 
   getyx(win, y, x);
   if (ctm == ON) {
-#ifdef __FreeBSD__
+#ifdef HAVE_OLD_BSD_CURSES
     wstandout(win);
 #else
     wattron(win, A_REVERSE);
 #endif
     wprintw(win,"%s","O N");
-#ifdef __FreeBSD__
+#ifdef HAVE_OLD_BSD_CURSES
     wstandend(win);
 #else
     wattroff(win, A_REVERSE);
@@ -2996,13 +2999,13 @@ on_off(WINDOW *win, int ctm)
   }
   else {
     wprintw(win,"%s","O N    ");
-#ifdef __FreeBSD__
+#ifdef HAVE_OLD_BSD_CURSES
     wstandout(win);
 #else
     wattron(win, A_REVERSE);
 #endif
     wprintw(win,"%s","OFF");
-#ifdef __FreeBSD__
+#ifdef HAVE_OLD_BSD_CURSES
     wstandend(win);
 #else
     wattroff(win, A_REVERSE);
@@ -3058,18 +3061,10 @@ etcScroll(
     break;
   case 2:	/* スクロールさせる */
     if (c_point == 0 ) { 		/* マイナススクロール */
-#ifdef SVR4
-      wscrl(etc_win, -1);
-#else /* SVR4 */
       (void)ustam_scroll(etc_win, -1);
-#endif /* SVR4 */
       mvwaddstr(etc_win, 3+1, L_MARGIN, etc_menu[s_point+1]);
     } else if ( c_point == BOTOM-1 ) { 	/* プラススクロール */
-#ifdef SVR4
-      wscrl(etc_win, 1);
-#else /* SVR4 */
       (void)ustam_scroll(etc_win, 1);
-#endif /* SVR4 */
       mvwaddstr(etc_win, 3+c_point-1,   L_MARGIN, etc_menu[s_point+c_point-1]);
     }
     break;
@@ -3493,20 +3488,20 @@ endCustom(void)
 	  beep();
 	  break;
 	}
-#ifdef __FreeBSD__
+#ifdef HAVE_OLD_BSD_CURSES
 	werase(curscr);
 #endif
 	endwin();
-#ifdef __FreeBSD__
+#ifdef HAVE_OLD_BSD_CURSES
 	putchar('\n');
 #endif
 	exit(0);
       case 2 :
-#ifdef __FreeBSD__
+#ifdef HAVE_OLD_BSD_CURSES
 	werase(curscr);
 #endif
 	endwin();
-#ifdef __FreeBSD__
+#ifdef HAVE_OLD_BSD_CURSES
 	putchar('\n');
 #endif
 	exit(0);
@@ -3634,7 +3629,7 @@ main(int argc, char *argv[])
     fprintf(stderr, "環境変数:TERMが設定されていませんでした。\n");
     exit(1);
   }
-#ifdef __FreeBSD__
+#ifdef HAVE_OLD_BSD_CURSES
   initscr();
 #else
 #ifdef sun
@@ -3657,7 +3652,7 @@ main(int argc, char *argv[])
   signal(SIGTTIN, on_suspend);
   signal(SIGTTOU, on_suspend);
 #endif
-#ifndef __FreeBSD__
+#ifndef HAVE_OLD_BSD_CURSES
   keypad(stdscr, TRUE);
 #endif
 
@@ -3694,7 +3689,7 @@ main(int argc, char *argv[])
   _etc_win = newwin(4, COLS -20, 18, 10);
   end_win = newwin(18, COLS, 0, 0);
 
-#ifndef __FreeBSD__
+#ifndef HAVE_OLD_BSD_CURSES
   keypad(base_win, TRUE);
   keypad(err_win, TRUE);
   keypad(load_win, TRUE);
@@ -3835,8 +3830,7 @@ on_suspend(int signo)
 	return SIG_RETVAL;
 }
 
-#ifndef SVR4
-#ifdef __FreeBSD__
+#ifdef HAVE_OLD_BSD_CURSES
 int
 ustam_scroll(WINDOW *win, int n)
 {
@@ -3875,7 +3869,7 @@ ustam_scroll(WINDOW *win, int n)
   touchwin(win);
   return OK;
 }
-#else
+#elif HAVE_OLD_SYSV_CURSES
 int
 ustam_scroll(WINDOW *win, int n)
 {
@@ -3916,10 +3910,9 @@ ustam_scroll(WINDOW *win, int n)
 	touchwin(win);
 	return OK;
 }
-#endif /* __FreeBSD__ */
-#endif /* SVR4 */
+#endif /* HAVE_OLD_SYSV_CURSES */
 
-#ifdef __FreeBSD__
+#ifdef HAVE_OLD_BSD_CURSES
 int
 beep(void)
 {
@@ -3941,7 +3934,7 @@ wsetscrreg(WINDOW *w,int t,int b)
     }
   return OK;
 }
-#endif /* __FreeBSD__ */
+#endif /* HAVE_OLD_BSD_CURSES */
 
 
 void

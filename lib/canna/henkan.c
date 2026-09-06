@@ -51,7 +51,6 @@ extern struct dicname *RengoGakushu, *KatakanaGakushu, *HiraganaGakushu;
 extern KanjiModeRec cy_mode, cb_mode, yomi_mode, tankouho_mode, empty_mode;
 extern char saveapname[];
 extern int mountnottry;
-extern exp(int) RkwGetServerVersion(int *, int *);
 
 #define DICERRORMESGLEN 78
 
