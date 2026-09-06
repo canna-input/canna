@@ -25,6 +25,7 @@
 ** main program of lisp 
 */
 #include "lisp.h"
+#include "rkcapi.h"
 #include "patchlevel.h"
 
 #include <signal.h>
@@ -161,7 +162,6 @@ static list getatmz(char *);
 extern int changeModeName(int, char*); /* mode.c */
 extern int changeKeyfunc(int, int, int, unsigned char*, unsigned char*); /* keydef.c */
 extern int changeKeyfuncOfAll(int, int, unsigned char*, unsigned char*); /* keydef.c */
-extern int RkwGetProtocolVersion(int*, int*); /* engine.c */
 
 /*********************************************************************
  *                      wchar_t replace begin                        *

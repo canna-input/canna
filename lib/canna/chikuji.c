@@ -22,6 +22,7 @@
 
 
 #include	"canna.h"
+#include	"rkcapi.h"
 
 #ifdef MEASURE_TIME
 #include	<sys/types.h>
@@ -40,8 +41,6 @@ extern int yomiInfoLevel, nKouhoBunsetsu, KeepCursorPosition;
 extern int defaultContext;
 extern KanjiModeRec tankouho_mode, cy_mode, cb_mode;
 extern void makeYomiReturnStruct(uiContext);
-extern exp(int) RkwGetServerVersion(int *, int *);
-extern exp(int) RkwGetProtocolVersion(int *, int *);
 
 int forceRomajiFlushYomi(uiContext);
 void moveToChikujiTanMode(uiContext);

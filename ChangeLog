@@ -1,3 +1,7 @@
+2026-09-06 AIDA Shinra <shinra@j10n.org>
+	* lib/RK/RK.h(RkwSetAppName): declare here
+	* lib/canna/*: remove decls duplicated with RK.h
+
 2026-08-24 AIDA Shinra <shinra@j10n.org>
 	* ccustom/ccustom.c: disable old curses support
 

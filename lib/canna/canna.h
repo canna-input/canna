@@ -935,10 +935,8 @@ extern int EmptyBaseHenkan(uiContext);
 
 /* engine.c */
 extern int RkSetServerName(char *);
-extern exp(char *) RkwGetServerName(void);
 extern char *RkGetServerHost(void);
 extern char *RkGetServerEngine(void);
-extern int RkwSetAppName(int, char *);
 extern void close_engine(void);
 
 /* hex.c */
