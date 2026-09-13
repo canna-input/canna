@@ -159,9 +159,6 @@ static list getatmz(char *);
 static list getatmz(char *);
 #endif
 
-extern int changeModeName(int, char*); /* mode.c */
-extern int changeKeyfunc(int, int, int, unsigned char*, unsigned char*); /* keydef.c */
-extern int changeKeyfuncOfAll(int, int, unsigned char*, unsigned char*); /* keydef.c */
 
 /*********************************************************************
  *                      wchar_t replace begin                        *
@@ -211,7 +208,6 @@ clisp_init(void)
 static void
 fillMenuEntry(void)
 {
-  extern extraFunc *extrafuncp;
   extraFunc *p, *fp;
   int i, n, fid;
   menuitem *mb;
@@ -281,7 +277,6 @@ clisp_fin(void)
 int
 YYparse_by_rcfilename(char *s)
 {
-  extern int ckverbose;
   int retval = 0;
   FILE *f;
   FILE *saved_outstream;
@@ -2499,13 +2494,7 @@ Lusedic(int n)
   int i;
   list retval = NIL, temp;
   int dictype;
-  extern struct dicname *kanjidicnames;
   struct dicname *kanjidicname;
-  extern int auto_define;
-  extern char *kataautodic;
-#ifdef HIRAGANAAUTO
-  extern char *hiraautodic;
-#endif
 
   for (i = n ; i ; i--) {
     temp = sp[i - 1];
@@ -3055,8 +3044,6 @@ static list
 Ldefmode(void)
 {
   list form, *sym, e, *p, fn, rd, md, us;
-  extern extraFunc *extrafuncp;
-  extern int nothermodes;
   extraFunc *extrafunc = (extraFunc *)0;
   int i, j;
   int ecode;
@@ -3123,8 +3110,6 @@ Ldefmode(void)
       /* モード構造体の作成 */
       kanjimode = (KanjiMode)malloc(sizeof(KanjiModeRec));
       if (kanjimode) {
-	extern KanjiModeRec empty_mode;
-	extern BYTE *emptymap;
 
 	kanjimode->func = searchfunc;
 	kanjimode->keytbl = emptymap;
@@ -3251,8 +3236,6 @@ Ldefsym(void)
   int i, ncand, group;
   wchar_t cand[1024], *p, *mcand, **acand, key, xkey;
   int mcandsize;
-  extern int nkeysup;
-  extern keySupplement keysup[];
 
   form = sp[0];
   if (atom(form)) {
@@ -3500,8 +3483,6 @@ static list
 Ldefselection(void)
 {
   list form, sym, e, e2, md, kigo_list, buf;
-  extern extraFunc *extrafuncp;
-  extern int nothermodes;
   int i, len, cs, nkigo_data = 0, kigolen = 0;
   wchar_t *p, *kigo_str, **akigo_data;
   extraFunc *extrafunc = (extraFunc *)0;
@@ -3730,8 +3711,6 @@ static list
 Ldefmenu(void)
 {
   list form, sym, e;
-  extern extraFunc *extrafuncp;
-  extern int nothermodes;
   extraFunc *extrafunc = (extraFunc *)0;
   int i, n, clen, len;
   wchar_t foo[512];
@@ -3813,7 +3792,6 @@ Lsetinifunc(int n)
   unsigned char fseq[256];
   int i, len;
   list ret = NIL;
-  extern BYTE *initfunc;
 
   argnchk(S_SetInitFunc, 1);
 
@@ -3985,8 +3963,6 @@ ObtainVersion(void)
 #if !defined(STANDALONE) && !defined(WIN_CANLISP)
   int a, b;
   char *serv;
-  extern int protocol_version, server_version;
-  extern char *server_name;
 
   serv = RkGetServerHost();
   if (!serv) {
@@ -4089,16 +4065,15 @@ NumAcc(int *var, int setp, list arg)
 
 #define DEFVAR(fn, acc, ty, var) \
 static list fn(int setp, list arg) { \
-  extern ty var; return acc(&var, setp, arg); }
+  return acc(&var, setp, arg); }
 
 #define DEFVAREX(fn, acc, var) \
 static list fn(int setp, list arg) { \
-  extern struct CannaConfig cannaconf; return acc(&var, setp, arg); }
+  return acc(&var, setp, arg); }
 
 static list
 Vnkouhobunsetsu(int setp, list arg)
 {
-  extern int nKouhoBunsetsu;
 
   arg = NumAcc(&nKouhoBunsetsu, setp, arg);
 #ifdef RESTRICT_NKOUHOBUNSETSU
@@ -4116,7 +4091,6 @@ static list
 VProtoVer(int setp, list arg)
 {
 #ifndef STANDALONE
-  extern int protocol_version;
 
   if (protocol_version < 0) {
     ObtainVersion();
@@ -4129,7 +4103,6 @@ static list
 VServVer(int setp, list arg)
 {
 #ifndef STANDALONE
-  extern int server_version;
 
   if (server_version < 0) {
     ObtainVersion();
@@ -4142,7 +4115,6 @@ static list
 VServName(int setp, list arg)
 {
 #ifndef STANDALONE
-  extern char *server_name;
 
   if (!server_name) {
     ObtainVersion();
@@ -4167,7 +4139,6 @@ VCannaDir(int setp, list arg)
 static list
 VCodeInput(int setp, list arg)
 {
-  extern struct CannaConfig cannaconf;
   static char *input_code[CANNA_MAX_CODE] = {"jis", "sjis", "kuten"};
 
   if (setp == VALSET) {

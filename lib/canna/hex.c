@@ -36,8 +36,6 @@
 #define wchar_t cannawc
 
 static int quitHex(uiContext, int, mode_context);
-extern int cvtAsHex(uiContext, wchar_t*, wchar_t*, int); /* romaji.c */
-extern int convertAsHex(uiContext); /* romaji.c */
 
 /* cfuncdef
 

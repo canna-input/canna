@@ -37,15 +37,12 @@
 
 #define DEFAULT_COLUMN_WIDTH	70
 
-extern char *CANNA_initfilename;
-extern char saveapname[];
 
 static int insertEmptySlots(uiContext);
 static int callCallback(uiContext, int);
 static void freeKeysup(void);
 static void freeBuffer(void);
 static void freeExtra(void);
-extern int ckverbose;
 
 static int
 doInitializeFunctions(uiContext d)
@@ -53,7 +50,6 @@ doInitializeFunctions(uiContext d)
   BYTE *p;
   int res = 0;
   wcKanjiStatus ks, *pks;
-  extern BYTE *initfunc;
   wchar_t xxxx[10];
 
   d->ch = 0;
@@ -78,11 +74,7 @@ doInitializeFunctions(uiContext d)
 int
 initRomeStruct(uiContext d, int flg)
 {
-  extern KanjiModeRec alpha_mode, empty_mode;
-  extern KanjiModeRec kzhr_mode, kzkt_mode, kzal_mode;
-  extern KanjiModeRec khkt_mode, khal_mode;
   yomiContext yc;
-  extern int defaultContext, defaultBushuContext;
 
   bzero(d, sizeof(uiContextRec));
 
@@ -209,7 +201,6 @@ freeRomeStruct(uiContext d)
 static int
 insertEmptySlots(uiContext d)
 {
-  extern KanjiModeRec	empty_mode;
   yomiContext		yc;
 
   if (pushCallback(d, (mode_context) NULL, NO_CALLBACK, NO_CALLBACK,
@@ -474,7 +465,6 @@ static int
 KC_initialize(uiContext d, char *arg)
      /* ARGSUSED */
 {
-  extern int FirstTime;
 
   if (FirstTime) {
 #ifdef ENGINE_SWITCH
@@ -607,8 +597,6 @@ static void
 freeKeysup(void)
 {
   int i;
-  extern keySupplement keysup[];
-  extern int nkeysup;
 
   for (i = 0 ; i < nkeysup ; i++) {
     if (keysup[i].cand) {
@@ -623,7 +611,6 @@ freeKeysup(void)
   nkeysup = 0;
 }
 
-extern int nothermodes;
 
 static void
 freeBuffer(void)
@@ -637,7 +624,6 @@ freeBuffer(void)
 static void
 freeExtra(void)
 {
-  extern extraFunc *extrafuncp;
   extraFunc *p, *q;
 
   for (p = extrafuncp ; p ; p = q) {
@@ -674,7 +660,6 @@ static int
 KC_finalize(uiContext d, char *arg)
      /* ARGSUSED */
 {
-  extern int FirstTime;
   int res;
   
   /* ウォーニングメッセージの初期化 */
@@ -882,7 +867,6 @@ KC_changeMode(uiContext d, char *garg)
 static int
 baseModeP(uiContext d)
 {
-  extern KanjiModeRec alpha_mode, empty_mode;
 
   return (d->current_mode == &alpha_mode) ||
     (d->current_mode == &empty_mode
@@ -937,7 +921,6 @@ static int
 KC_setUFunc(uiContext d, caddr_t arg)
      /* ARGSUSED */
 {
-  extern int howToBehaveInCaseOfUndefKey;
 
   howToBehaveInCaseOfUndefKey = (int)(POINTERINT)arg;
   return 0;
@@ -948,7 +931,6 @@ KC_setModeInfoStyle(uiContext d, caddr_t arg)
      /* ARGSUSED */
 {
   int	tmpval;
-  extern int howToReturnModeInfo;
 
   if ((tmpval = (int)(POINTERINT)arg) < 0 || tmpval > MaxModeInfoStyle)
     return(-1);
@@ -973,7 +955,6 @@ KC_inhibitHankakuKana(uiContext d, caddr_t arg)
 }
 
 #ifndef NO_EXTEND_MENU
-extern void popTourokuMode(uiContext);
 
 static int
 popTourokuWithGLineClear(uiContext d, int retval, mode_context env)
@@ -995,7 +976,6 @@ popTourokuWithGLineClear(uiContext d, int retval, mode_context env)
 }
 #endif
 
-extern int dicTourokuControl(uiContext, wchar_t*, canna_callback_t); /* uldefine.c */
 
 static int
 KC_defineKanji(uiContext d, char *garg)
@@ -1151,7 +1131,6 @@ KC_modekeys(uiContext d, char *garg)
   unsigned char *arg = (unsigned char *)garg;
   int n = 0;
   int i;
-  extern KanjiModeRec alpha_mode;
   int func;
 
   for (i = 0 ; i < 256 ; i++) {
@@ -1179,7 +1158,6 @@ static int
 KC_queryConnection(uiContext d, char *arg)
      /* ARGSUSED */
 {
-  extern int defaultContext;
 
   if (defaultContext != -1) {
     return 1;
@@ -1225,7 +1203,6 @@ static int
 KC_storeYomi(uiContext d, char *garg)
 {
   wcKanjiStatusWithValue *arg = (wcKanjiStatusWithValue *)garg;
-  extern KanjiModeRec yomi_mode, cy_mode;
   coreContext cc;
   wchar_t *p, *q;
   int len = 0;
@@ -1556,7 +1533,6 @@ KC_getContext(uiContext d, char *garg)
      /* ARGSUSED */
 {
   int arg = (int)(POINTERINT)garg;
-  extern int defaultContext, defaultBushuContext;
 
   switch (arg)
     {
@@ -1576,7 +1552,6 @@ static int
 KC_closeUIContext(uiContext d, char *garg)
 {
   wcKanjiStatusWithValue *arg = (wcKanjiStatusWithValue *)garg;
-  extern struct ModeNameRecs ModeNames[];
   int ret;
 
   d->buffer_return = arg->buffer;
@@ -1685,8 +1660,6 @@ KC_queryMaxModeStr(uiContext d, char *arg)
      /* ARGSUSED */
 {
   int i, maxcolumns = 0, ncols;
-  extern struct ModeNameRecs ModeNames[];
-  extern extraFunc *extrafuncp;
   extraFunc *ep;
 
   for (i = 0 ; i < CANNA_MODE_MAX_IMAGINARY_MODE ; i++) {
@@ -1739,7 +1712,6 @@ KC_setVerbose(uiContext d, char *garg)
      /* ARGSUSED */
 {
   int arg = (int)(POINTERINT)garg;
-  extern int ckverbose;
 
   ckverbose = arg;
   return 0;
@@ -1801,8 +1773,6 @@ int
 ToggleChikuji(uiContext d, int flg)
 {
   yomiContext	yc = (yomiContext)d->modec;
-  extern KanjiModeRec empty_mode;
-  extern struct CannaConfig cannaconf;
 
   if ((yc->generalFlags & CANNA_YOMI_CHIKUJI_MODE) &&
       yc->context != -1) {
@@ -1858,7 +1828,6 @@ KC_setAppName(uiContext d, char *garg)
 /* ARGSUSED */
 {
   unsigned char *arg = (unsigned char *)garg;
-  extern int defaultContext;
 
   if (strlen((char *)arg) > CANNA_MAXAPPNAME) {
     strncpy(saveapname, (char *)arg, CANNA_MAXAPPNAME);
@@ -1877,7 +1846,6 @@ KC_debugmode(uiContext d, char *garg)
 /* ARGSUSED */
 {
   int arg = (int)(POINTERINT)garg;
-  extern int iroha_debug;
 
   iroha_debug = arg;
   return 0;
@@ -2004,7 +1972,6 @@ static int
 KC_queryPhono(uiContext d, char *arg)
 /* ARGSUSED */
 {
-  extern struct RkRxDic *romajidic;
   struct RkRxDic **foo = (struct RkRxDic **)arg;
 
   *foo = romajidic;
@@ -2015,7 +1982,6 @@ static int
 KC_changeServer(uiContext d, char *arg)
 /* ARGSUSED */
 {
-  extern int defaultContext;
   char *p;
 
   if (!arg) {
@@ -2070,7 +2036,6 @@ KC_setUserInfo(uiContext d, char *garg)
 /* ARGSUSED */
 {
   jrUserInfoStruct *arg = (jrUserInfoStruct *)garg;
-  extern jrUserInfoStruct *uinfo;
   int ret = -1;
   char *uname, *gname, *srvname, *topdir, *cannafile, *romkanatable;
 #ifndef USE_MALLOC_FOR_BIG_ARRAY
@@ -2164,7 +2129,6 @@ KC_queryCustom(uiContext d, char *garg)
 /* ARGSUSED */
 {
   jrCInfoStruct *arg = (jrCInfoStruct *)garg;
-  extern struct CannaConfig cannaconf;
   static char *input_code[CANNA_MAX_CODE] = {"jis", "sjis", "kuten"};
 
   if (/* 0 <= cannaconf.code_input && // unsigned なので必ず真 */

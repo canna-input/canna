@@ -24,7 +24,6 @@
 #include "canna.h"
 #include "patchlevel.h"
 
-extern KanjiModeRec yomi_mode, cy_mode;
 
 /* EmptySelfInsert -- 自分自身を確定文字列として返す関数。
  * 
@@ -203,7 +202,6 @@ EmptyDeletePrevious(uiContext d)
 extraFunc *
 FindExtraFunc(int fnum)
 {
-  extern extraFunc *extrafuncp;
   extraFunc *extrafunc;
 
   for (extrafunc = extrafuncp; extrafunc; extrafunc = extrafunc->next) {
@@ -512,7 +510,6 @@ EmptyBaseHenkan(uiContext d)
   return 0;
 }
 
-extern int ToggleChikuji(uiContext, int); /* kctrl.c */
 
 #ifndef NO_EXTEND_MENU
 static int
@@ -573,7 +570,6 @@ showServer(uiContext d)
 #ifndef STANDALONE /* This is not used in Windows environment 1996.7.30 kon */
   int retval = 0;
   char s[512];
-  extern int defaultContext;
   yomiContext yc = (yomiContext)d->modec;
 
   if (yc->generalFlags & CANNA_YOMI_CHGMODE_INHIBITTED) {
@@ -635,7 +631,6 @@ showInitFile(uiContext d)
 {
   int retval = 0;
   char s[512];
-  extern char *CANNA_initfilename;
   yomiContext yc = (yomiContext)d->modec;
 
   if (yc->generalFlags & CANNA_YOMI_CHGMODE_INHIBITTED) {
@@ -668,7 +663,6 @@ showRomkanaFile(uiContext d)
 {
   int retval = 0;
   char s[512];
-  extern char *RomkanaTable;
   yomiContext yc = (yomiContext)d->modec;
 
   if (yc->generalFlags & CANNA_YOMI_CHGMODE_INHIBITTED) {
@@ -702,7 +696,6 @@ dicSync(uiContext d)
 {
   int retval = 0;
   char s[512];
-  extern int defaultContext;
   yomiContext yc = (yomiContext)d->modec;
 
   if (yc->generalFlags & CANNA_YOMI_CHGMODE_INHIBITTED) {

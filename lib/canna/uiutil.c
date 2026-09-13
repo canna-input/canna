@@ -486,7 +486,6 @@ findMenuInfo(menuinfo *p, menustruct *ms)
   return (menuinfo *)0;
 }
 
-extern int getForIchiranContext(uiContext); /* bushu.c */
 
 /*
  * showmenu -- メニューの表示

@@ -34,7 +34,6 @@
 #endif
 #define wchar_t cannawc
 
-extern char *CANNA_initfilename;
 
 #define BUF_LEN 1024
 
@@ -50,7 +49,6 @@ static void DISPLAY_to_hostname(char *, char *, int);
 
 */
 
-extern int ckverbose;
 
 
 /* cfuncdef
@@ -103,17 +101,13 @@ fit_initfilename(void)
   }
 }
 
-extern int clisp_init(void); /* lisp.c */
 
 void
 parse(void)
 {
   char *p;
   int n;
-  extern int iroha_debug;
   int home_canna_exist = 0;
-  extern char *initFileSpecified;
-  extern int auto_define;
 #ifndef USE_MALLOC_FOR_BIG_ARRAY
   char buf[256];
 #else

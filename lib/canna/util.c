@@ -250,8 +250,6 @@ Insertable(int ch)
 }
 #endif /* SOMEONE_USE_THIS */
 
-extern int extractJishuString(yomiContext, wchar_t *,  wchar_t *,
-				   wchar_t **,  wchar_t **);
 
 /*
   extractSimpleYomiString -- yomiContext の読み部分だけを取り出す
@@ -727,7 +725,6 @@ checkModec(uiContext d)
                 /* ■ 深さ */
   debug_message("EXIT_CALLBACK = 0x%x\n", d->cb->func[EXIT_CALLBACK],0,0);
   {
-    extern KanjiModeRec yomi_mode;
     if (d->current_mode == &yomi_mode) {
       yomiContext yc = (yomiContext)d->modec;
       if (yc->kana_buffer[yc->kEndp]) {
@@ -742,8 +739,7 @@ static char pbufstr[] = " o|do?b%";
 int
 showRomeStruct(unsigned int dpy, unsigned int win)
 {
-  uiContext d, keyToContext();
-  extern int defaultContext;
+  uiContext d;
   static int n = 0;
   int i;
   char buf[1024];
@@ -813,7 +809,6 @@ showRomeStruct(unsigned int dpy, unsigned int win)
 }
 #endif /* DEBUG */
 
-extern char *jrKanjiError;
 
 int
 NoMoreMemory(void)
@@ -848,7 +843,6 @@ GLineNGReturnFI(uiContext d)
 int
 GLineNGReturnTK(uiContext d)
 {
-  extern void popTourokuMode(uiContext);
   popTourokuMode(d);
   popCallback(d);
   GLineNGReturn(d);
@@ -1448,7 +1442,6 @@ key2wchar(int key, int *check)
 int
 confirmContext(uiContext d, yomiContext yc)
 {
-  extern int defaultContext;
 
   if (yc->context < 0) {
     if (d->contextCache >= 0) {
@@ -1479,7 +1472,6 @@ confirmContext(uiContext d, yomiContext yc)
 int
 abandonContext(uiContext d, yomiContext yc)
 {
-  extern int defaultContext;
 
   if (yc->context >= 0) {
     if (d->contextCache >= 0) {
@@ -1546,7 +1538,6 @@ static void
 cannaMessageMode(uiContext d, canna_callback_t cnt)
 {
   coreContext cc;
-  extern coreContext newCoreContext(void);
 
 
   cc = newCoreContext();

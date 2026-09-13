@@ -152,8 +152,6 @@ serverChange(uiContext d)
 {
   int retval = 0;
   wchar_t *w;
-  extern KanjiModeRec yomi_mode;
-  extern int defaultContext;
   yomiContext yc = (yomiContext)d->modec;
 
 #ifndef STANDALONE
@@ -200,7 +198,6 @@ serverChangeDo(uiContext d, int len)
   wchar_t newServerName[256];
   wchar_t w1[512];
   char tmpServName[256];
-  extern int defaultContext;
   char *p;
 
   d->status = 0;

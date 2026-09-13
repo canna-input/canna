@@ -521,7 +521,6 @@ convBushuQuitCatch(uiContext d, int retval, mode_context env)
  * 引き数	uiContext
  * 戻り値	正常終了時 0	異常終了時 -1
  */
-int ConvertAsBushu(uiContext);
 
 int
 ConvertAsBushu(uiContext d)
@@ -569,7 +568,6 @@ static int
 bushuBgnBun(RkStat *st, wchar_t *yomi, int length)
 {
   int nbunsetsu;
-  extern int defaultBushuContext;
 
   /* 連文節変換を開始する *//* 辞書にある候補のみ取り出す */
   if ((defaultBushuContext == -1)) {
@@ -620,7 +618,6 @@ bushuHenkan(uiContext d, int flag, int ext, int cur, int (*quitfunc)(uiContext, 
   wchar_t *yomi, **allBushuCands;
   RkStat	st;
   int nelem, currentkouho, nbunsetsu, length, retval = 0;
-  extern int defaultBushuContext;
   
 
   if(flag) {
@@ -744,7 +741,6 @@ bushuHenkan(uiContext d, int flag, int ext, int cur, int (*quitfunc)(uiContext, 
 static int
 makeBushuIchiranQuit(uiContext d, int flag)
 {
-  extern int defaultBushuContext;
 
   /* 部首変換は学習しない。 */
   if(RkwEndBun(defaultBushuContext, 0) == -1) { /* 0:学習しない */

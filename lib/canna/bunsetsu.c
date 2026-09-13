@@ -24,7 +24,6 @@
 #include <errno.h>
 #include "canna.h"
 
-extern int BunsetsuKugiri;
 
 static char *e_message[] = {
 #ifdef CODED_MESSAGE
@@ -45,7 +44,6 @@ static char *e_message[] = {
 int
 enterAdjustMode(uiContext d, yomiContext yc)
 {
-  extern KanjiModeRec bunsetsu_mode;
   int i, n = 0;
   RkStat rst;
 
@@ -75,12 +73,10 @@ enterAdjustMode(uiContext d, yomiContext yc)
   return 0;
 }
 
-int leaveAdjustMode(uiContext, yomiContext);
 
 int
 leaveAdjustMode(uiContext d, yomiContext yc)
 {
-  extern KanjiModeRec bunsetsu_mode;
 
   yc->bunlen = yc->kanjilen = 0;
   yc->minorMode = yc->tanMinorMode;

@@ -70,7 +70,6 @@ static int JishuHankaku(uiContext);
 void
 enterJishuMode(uiContext d, yomiContext yc)
 {
-  extern KanjiModeRec jishu_mode;
   int pos;
 
   yc->jishu_kc = JISHU_HIRA;/* 今はひらがなモードです */
@@ -105,7 +104,6 @@ enterJishuMode(uiContext d, yomiContext yc)
 void
 leaveJishuMode(uiContext d, yomiContext yc)
 {
-  extern KanjiModeRec yomi_mode, cy_mode;
 
   yc->jishu_kEndp = 0;
   if (yc->generalFlags & CANNA_YOMI_CHIKUJI_MODE) {

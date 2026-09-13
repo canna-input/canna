@@ -33,7 +33,6 @@
 #endif
 #define wchar_t cannawc
 
-extern int howToReturnModeInfo;
 
 static wchar_t *inbuf = 0;
 static int inbufsize = 0;
