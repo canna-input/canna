@@ -154,6 +154,11 @@ struct rkcproto {
 #endif /* EXTENSION */
 };
 
+extern struct rkcproto wideproto;
+extern struct rkcproto eucproto;
+extern int ServerFD;
+extern unsigned int ServerTimeout;
+
 /* BASIC TYPE:
  *	subete no data ha MSB first(Motorolla order) de tenkai sareru
  *		unsigned char	w
