@@ -256,7 +256,6 @@ initGyouTable(void)
 }
 
 
-extern int dicTourokuHinshi(uiContext); /* uldefine.c */
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * 単語登録の品詞選択 〜Yes/No 共通 Quit〜                                   *
@@ -271,7 +270,6 @@ uuTHinshiYNQuitCatch(uiContext d, int retval, mode_context env)
   return(dicTourokuHinshi(d));
 }
 
-extern int dicTourokuTango(uiContext, canna_callback_t); /* uldefine.c */
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * 単語登録の品詞選択 〜Yes/No 第２段階 共通コールバック〜                   *
@@ -328,8 +326,6 @@ uuTHinshi2NoCatch(uiContext d, int retval, mode_context env)
   return(retval);
 }
 
-extern int getYesNoContext(uiContext, canna_callback_t, canna_callback_t, canna_callback_t, canna_callback_t); /* yesno.c */
-extern int GLineNGReturnTK(uiContext); /* util.c */
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * 単語登録の品詞選択 〜Yes/No 第１段階 コールバック〜                       *
@@ -1022,7 +1018,6 @@ tangoTouroku(uiContext d)
   wchar_t line[ROMEBUFSIZE], line2[ROMEBUFSIZE];
   wchar_t xxxx[1024];
   char dicname[1024];
-  extern int defaultContext;
   int linecnt;
 
   defineEnd(d);

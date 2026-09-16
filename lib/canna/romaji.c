@@ -48,14 +48,10 @@ extern int errno;
 #endif
 #define wchar_t cannawc
 
-int forceRomajiFlushYomi(uiContext);
 static int KanaYomiInsert(uiContext);
 static int chikujiEndBun(uiContext);
-extern void EWStrcat(wchar_t *, char *);
 
-extern int yomiInfoLevel;
 
-extern struct RkRxDic *englishdic;
 
 /*
  * int d->rStartp;     ro shu c|h    shi f   ローマ字 スタート インデックス
@@ -311,7 +307,6 @@ makeYomiReturnStruct(uiContext d)
   makeKanjiStatusReturn(d, yc);
 }
 
-extern int ckverbose;
 
 static struct RkRxDic *
 OpenRoma(char *table)
@@ -338,7 +333,6 @@ OpenRoma(char *table)
 
     if (retval == (struct RkRxDic *)NULL) {
       /* もし辞書がオープンできなければエラー */
-      extern jrUserInfoStruct *uinfo;
 
       rdic[0] = '\0';
       if (uinfo && uinfo->topdir && uinfo->uname) {
@@ -366,7 +360,6 @@ OpenRoma(char *table)
       }
 
       if (retval == (struct RkRxDic *)NULL) { /* これもオープンできない */
-        extern jrUserInfoStruct *uinfo;
 
         rdic[0] = '\0';
         if (uinfo && uinfo->topdir) {
@@ -389,7 +382,6 @@ OpenRoma(char *table)
       }
 
       if (retval == (struct RkRxDic *)NULL) { /* added for Debian by ISHIKAWA Mutsumi <ishikawa@linux.or.jp> */
-        extern jrUserInfoStruct *uinfo;
 	
         rdic[0] = '\0';
         if (uinfo && uinfo->topdir) {
@@ -413,7 +405,6 @@ OpenRoma(char *table)
       
 #if 0 /* currently CANNASHAREDDIR is not defined */
       if (retval == (struct RkRxDic *)NULL) { /* added for Debian by ISHIKAWA Mutsumi <ishikawa@linux.or.jp> */
-        extern jrUserInfoStruct *uinfo;
 	
         rdic[0] = '\0';
         if (uinfo && uinfo->topdir) {
@@ -462,10 +453,7 @@ OpenRoma(char *table)
 int
 RomkanaInit(void)
 {
-  extern char *RomkanaTable, *EnglishTable;
-  extern extraFunc *extrafuncp;
   extraFunc *extrafunc1, *extrafunc2;
-  extern jrUserInfoStruct *uinfo;
 
   /* ローマ字かな変換テーブルのオープン */
   if (uinfo) {
@@ -587,14 +575,10 @@ RomkanaInit(void)
 
 /* ローマ字かな変換テーブルのクローズ */
 
-extern keySupplement keysup[];
-extern exp(void) RkwCloseRoma(struct RkRxDic *);
 
 void
 RomkanaFin(void)
 {
-  extern char *RomkanaTable, *EnglishTable;
-  extern int nkeysup;
   int i;
 
   /* ローマ字かな変換テーブルのクローズ */
@@ -696,7 +680,6 @@ newYomiContext(wchar_t *buf, int bufsize, int allowedc, int chmodinhibit, int qu
 yomiContext
 GetKanjiString(uiContext d, wchar_t *buf, int bufsize, int allowedc, int chmodinhibit, int quitTiming, int hinhibit, canna_callback_t everyTimeCallback, canna_callback_t exitCallback, canna_callback_t quitCallback)
 {
-  extern KanjiModeRec empty_mode;
   yomiContext yc;
 
   if ((pushCallback(d, d->modec, everyTimeCallback, exitCallback, quitCallback,
@@ -818,9 +801,6 @@ checkIfYomiQuit(uiContext d, int retval)
   return retval;
 }
 
-#ifdef __STDC__
-void fitmarks(yomiContext);
-#endif
 
 void
 fitmarks(yomiContext yc)
@@ -866,7 +846,6 @@ ReCheckStartp(yomiContext yc)
   }
 }
 
-extern void setMode(uiContext d, tanContext tan, int forw);
 
 void
 removeCurrentBunsetsu(uiContext d, tanContext tan)
@@ -1101,13 +1080,11 @@ YomiInsert(uiContext d)
    見つからない時は０を返す。
  */
 
-int findSup(wchar_t);
 
 int
 findSup(wchar_t key)
 {
   int i;
-  extern int nkeysup;
 
   for (i = 0 ; i < nkeysup ; i++) {
     if (key == keysup[i].key) {
@@ -2233,7 +2210,6 @@ doKakutei(uiContext d, tanContext st, tanContext et, wchar_t *s, wchar_t *e, yom
   yomiContext yc;
   int len, res;
   wchar_t *ss = s;
-  extern int auto_define;
   autoDef autotop = NULL, autocur;
   KanjiMode kmsv = d->current_mode;
 
@@ -2379,11 +2355,6 @@ doKakutei(uiContext d, tanContext st, tanContext et, wchar_t *s, wchar_t *e, yom
   for (autocur = autotop; autocur; autocur = autocur->next) {
     wchar_t line[ROMEBUFSIZE];
     int cnt;
-    extern int defaultContext;
-    extern char *kataautodic;
-#ifdef HIRAGANAAUTO
-    extern char *hiraautodic;
-#endif
 
     WStraddbcpy(line, autocur->yomibuf, ROMEBUFSIZE);
     EWStrcat(line, " ");
@@ -2469,9 +2440,7 @@ cutOffLeftSide(uiContext d, yomiContext yc, int n)
   return 0;
 }
 
-extern KanjiModeRec cy_mode;
 
-int YomiKakutei(uiContext);
 
 int
 YomiKakutei(uiContext d)
@@ -2965,7 +2934,6 @@ simplePopCallback(uiContext d, int retval, mode_context env)
 int
 alphaMode(uiContext d)
 {
-  extern KanjiModeRec alpha_mode;
   coreContext cc;
   char *bad = "\245\341\245\342\245\352\244\254\302\255\244\352\244\336"
 	"\244\273\244\363";
@@ -3221,7 +3189,6 @@ mapAsHex(uiContext d)
   wchar_t *hexbuf;
   wchar_t buf[2];
   static int allowTwoByte = 1;
-  extern struct CannaConfig cannaconf;
 
   if (yc->kCurs < yc->cmark) {
     int tmp = yc->kCurs;
@@ -3350,7 +3317,6 @@ static int
 ConvertAsHex(uiContext d)
 {
   yomiContext yc = (yomiContext)d->modec;
-  extern struct CannaConfig cannaconf;
 
   if (yc->henkanInhibition & CANNA_YOMI_INHIBIT_ASHEX) {
     return NothingChangedWithBeep(d);
@@ -3470,7 +3436,6 @@ static void
 replaceSup(int ind, int n)
 {
   int i, group;
-  extern int nkeysup;
 
   group = keysup[ind].groupid;
   for (i = 0 ; i < nkeysup ; i++) {
@@ -3559,7 +3524,6 @@ selectKeysup(uiContext d, yomiContext yc, int ind)
 {
   int retval;
   ichiranContext ic;
-  extern int nkeysup;
 
   yc->cursup = 0;
   retval = selectOne(d, keysup[ind].cand, &(yc->cursup), keysup[ind].ncand,
@@ -3764,9 +3728,6 @@ YomiHenkanOrNothing(uiContext d)
 
 /* ベース文字の切り替え */
 
-extern int EmptyBaseHira(uiContext), EmptyBaseKata(uiContext);
-extern int EmptyBaseEisu(uiContext);
-extern int EmptyBaseZen(uiContext), EmptyBaseHan(uiContext);
 
 static int YomiBaseHira(uiContext);
 
@@ -3856,7 +3817,6 @@ YomiBaseHenkan(uiContext d)
   return 0;
 }
 
-int YomiBaseHiraKataToggle(uiContext);
 
 int
 YomiBaseHiraKataToggle(uiContext d)
@@ -3875,7 +3835,6 @@ YomiBaseHiraKataToggle(uiContext d)
   return 0;
 }
 
-int YomiBaseZenHanToggle(uiContext);
 
 int
 YomiBaseZenHanToggle(uiContext d)
@@ -3894,7 +3853,6 @@ YomiBaseZenHanToggle(uiContext d)
   return 0;
 }
 
-int YomiBaseRotateForw(uiContext);
 
 int
 YomiBaseRotateForw(uiContext d)
@@ -3925,7 +3883,6 @@ YomiBaseRotateForw(uiContext d)
   return 0;
 }
 
-int YomiBaseRotateBack(uiContext);
 
 int
 YomiBaseRotateBack(uiContext d)
@@ -3955,7 +3912,6 @@ YomiBaseRotateBack(uiContext d)
   return 0;
 }
 
-int YomiBaseKanaEisuToggle(uiContext);
 
 int
 YomiBaseKanaEisuToggle(uiContext d)
@@ -3974,7 +3930,6 @@ YomiBaseKanaEisuToggle(uiContext d)
   return 0;
 }
 
-int YomiBaseKakuteiHenkanToggle(uiContext);
 
 int
 YomiBaseKakuteiHenkanToggle(uiContext d)
@@ -3993,7 +3948,6 @@ YomiBaseKakuteiHenkanToggle(uiContext d)
   return 0;
 }
 
-int YomiModeBackup(uiContext);
 
 int
 YomiModeBackup(uiContext d)
@@ -4339,7 +4293,6 @@ replaceEnglish(uiContext d, yomiContext yc, int start, int end, int RKflag, int 
   yc->rStartp = yc->rCurs;
 }
 
-int YomiMark(uiContext);
 
 int
 YomiMark(uiContext d)
@@ -4448,7 +4401,6 @@ Yomisearchfunc(uiContext d, KanjiMode mode, int whattodo, int key, int fnum)
 {
   yomiContext yc = (yomiContext)0;
   int len;
-  extern KanjiModeRec yomi_mode;
 
   if (d) {
     yc = (yomiContext)d->modec;
@@ -4567,9 +4519,7 @@ TbBubunKakutei(uiContext d)
 }
 #endif
 
-int doTanConvertTb(uiContext, yomiContext);
 
-int TanBubunKakutei(uiContext);
 
 int
 TanBubunKakutei(uiContext d)
@@ -4606,7 +4556,6 @@ TanBubunKakutei(uiContext d)
 int
 TanBubunKakutei(uiContext d)
 {
-  extern KanjiModeRec cy_mode, yomi_mode;
   wchar_t *ptr = d->buffer_return, *eptr = ptr + d->n_buffer;
   yomiContext yc = (yomiContext)d->modec;
   tanContext tan;

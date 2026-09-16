@@ -32,7 +32,6 @@
 #endif
 #define wchar_t cannawc
 
-extern int howToReturnModeInfo;
 static wchar_t numMode[2];
 static wchar_t *bad = (wchar_t *)0;
 struct ModeNameRecs ModeNames[CANNA_MODE_MAX_IMAGINARY_MODE];
@@ -94,7 +93,6 @@ static wchar_t * _ModeNames[CANNA_MODE_MAX_IMAGINARY_MODE];
 newmode *
 findExtraKanjiMode(int mnum)
 {
-  extern extraFunc *extrafuncp;
   extraFunc *extrafunc;
   register int fnum =
     mnum - CANNA_MODE_MAX_IMAGINARY_MODE + CANNA_FN_MAX_FUNC;
@@ -112,7 +110,6 @@ findExtraKanjiMode(int mnum)
   return (newmode *)0;
 }
 
-extern int nothermodes;
 
 static wchar_t *
 modestr(int mid)
@@ -253,7 +250,6 @@ AlphaMode(uiContext d)
 int
 HenkanNyuryokuMode(uiContext d)
 {
-  extern KanjiModeRec empty_mode;
   yomiContext yc = (yomiContext)d->modec;
 
   if (yc->generalFlags & CANNA_YOMI_CHGMODE_INHIBITTED) {

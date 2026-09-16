@@ -125,6 +125,20 @@ extern w_char *return_buf;
 
 
 extern char Term_Name[];
+extern int Term_LineWidth;
+extern int Term_RowWidth;
+extern int cursor_colum;
+extern int ptyfd, ttyfd;
+extern char *prog;
+extern char *Term_UnderScoreStart;
+extern char *Term_UnderScoreEnd;
+extern char *Term_ClrScreen;
+extern char *Term_ClrEofLine;
+extern char *Term_ThrowCursor;
+extern char *Term_StandOutStart;
+extern char *Term_StandOutEnd;
+extern char *Term_BoldOutStart;
+extern char *Term_BoldOutEnd;
 
 extern int rubout_code;         /* rubout に使われるコードを保持する */
 extern int kk_on;               /* 仮名漢字変換可能モードか否かを示すフラグ */

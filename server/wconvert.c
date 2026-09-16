@@ -82,10 +82,10 @@ typedef struct {
   int (*extdat)(BYTE *);
 } reqproc;
 
-extern const char *WideProtoName[], *ExtensionRequest[];
-extern const reqproc WideVector[];
+static const char *WideProtoName[], *ExtensionRequest[];
+static const reqproc WideVector[];
 #ifdef EXTENSION
-extern const reqproc ExtensionWideVector[];
+static const reqproc ExtensionWideVector[];
 #endif
 
 static int RkThrough(int cx, int command, char *buf,
@@ -844,7 +844,6 @@ irw_mount_dictionary(ClientPtr *clientp)
     ClientPtr client = *clientp ;
     char *dicname ;
     int cxnum = Request.type15.context, stat = -1;
-    extern int MMountFlag;
 
     if (validcontext(cxnum, client, wMountDictionary)) {
 	dicname = Request.type15.dicname ;
@@ -2703,7 +2702,7 @@ RkThrough(int cx, int command, char *buf, int content_size, int buffer_size)
 }
 /* #endif *//* DEBUG_TOOL */					/* S000:end */
 
-const reqproc WideVector[] =
+static const reqproc WideVector[] =
 {
 /* 0x00 */	{ ir_error,		   ProcWideReq0 },
 /* 0x01 */	{ ir_error /* hack */,	   ProcWideReq0 },
@@ -2744,7 +2743,7 @@ const reqproc WideVector[] =
 /* 0x24 */	{ irw_killserver,	   ProcWideReq1 },
 } ;
 
-const char *ExtensionRequest[] = {
+static const char *ExtensionRequest[] = {
     /* Request Name */
 #ifdef EXTENSION
     /*
@@ -2766,7 +2765,7 @@ const char *ExtensionRequest[] = {
 } ;
 
 #ifdef EXTENSION
-const reqproc ExtensionWideVector[] =
+static const reqproc ExtensionWideVector[] =
 {
 /* 0x00 */	{ ir_error,		   ProcWideReq0 },
 /* 0x01 */	{ irw_server_stat,	   ProcWideReq1 },		
@@ -2783,7 +2782,7 @@ const reqproc ExtensionWideVector[] =
 #endif /* EXTENSION */
 
 
-const char *WideProtoName[] = {
+static const char *WideProtoName[] = {
     "Initialize",
     "Finalize",
     "CreateContext",

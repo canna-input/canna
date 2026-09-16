@@ -50,7 +50,7 @@
 #endif
 #define MIN RKI_MIN
 static int ProcReq0(char *buf, int size);
-extern const char *ProtoName[];
+static const char *ProtoName[];
 
 #ifdef DEBUGPROTO
 static void
@@ -83,12 +83,12 @@ typedef struct {
   int (*extdat)(char *, int);
 } oreqproc;
 
-extern oreqproc Vector[];
+static oreqproc Vector[];
 #ifdef EXTENSION
-extern oreqproc ExtensionVector[];
+static oreqproc ExtensionVector[];
 #endif /* EXTENSION */
 #ifdef USE_EUC_PROTOCOL
-extern const char *ExtensionName[][2] ;
+static const char *ExtensionName[][2];
 #endif /* USE_EUC_PROTOCOL */
 
 static IRReq	Request ;
@@ -99,8 +99,7 @@ local_buffer[ LOCAL_BUFSIZE ],
 local_buffer2[ LOCAL_BUFSIZE ] ;
 #endif /* USE_EUC_PROTOCOL */
 
-unsigned int
-TotalRequestTypeCount[ MAXREQUESTNO ] ;
+static unsigned int TotalRequestTypeCount[ MAXREQUESTNO ] ;
 int canna_server_hi = 0 ;
 int canna_server_lo = 0 ;
 
@@ -578,7 +577,6 @@ ir_mount_dictionary(ClientPtr *clientp)
     ClientPtr client = *clientp ;
     char *dicname ;
     int cxnum, mode, ret = -1;
-    extern MMountFlag;
 
     cxnum = req->context;
     if (chk_cxt(client, cxnum)) {
@@ -1980,7 +1978,7 @@ RkwGetWordTextDic(int cxnum, char *dirname, char *dicname, char *info, int infol
 
 #endif /* PROTO */
 
-oreqproc Vector[] =
+static oreqproc Vector[] =
 {
 #ifdef USE_EUC_PROTOCOL
 /* 0x00 */	{ ir_error,		   ProcReq0 },
@@ -2062,7 +2060,7 @@ static oreqproc ExtensionVector[] =
 } ;
 #endif /* EXTENSION */
 
-const char *ProtoName[] = {
+static const char *ProtoName[] = {
     "IR_INIT",
     "IR_FIN",	
     "IR_CRE_CON",	
@@ -2123,7 +2121,7 @@ const char *DebugProc[][2] = {
 } ;			
 #endif
 
-const char *ExtensionName[][2] = {
+static const char *ExtensionName[][2] = {
     /* Request Name		Start Protocol Number */					
 #ifdef EXTENSION
     { REMOTE_DIC_UTIL,		"65536" }, /* 0x10000 */

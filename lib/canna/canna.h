@@ -29,6 +29,7 @@
 #include "cannaconf.h"
 #include "ccompat.h"
 #include <stdio.h>
+#include <sys/types.h>
 
 #define CANNA_NEW_WCHAR_AWARE
 #include <canna/RK.h>
@@ -85,6 +86,8 @@ typedef unsigned char BYTE;
 #define KEY_SET   2
 
 extern BYTE default_kmap[];
+extern BYTE alpha_kmap[];
+extern BYTE empty_kmap[];
 
 /* menuitem -- メニュー表示の項目を定義するテーブル */
 
@@ -509,6 +512,8 @@ struct ModeNameRecs {
   wchar_t       *name;
 };
 
+extern struct ModeNameRecs ModeNames[];
+
 /* 一覧の番号のセパレーターのデフォルトの定義 */
 
 #define DEFAULTINDEXSEPARATOR     '.'
@@ -631,9 +636,16 @@ struct callback {
   struct callback *next;
 };
 
+extern KanjiModeRec alpha_mode, empty_mode, yomi_mode;
+extern KanjiModeRec jishu_mode, ce_mode, cy_mode, cb_mode;
+extern KanjiModeRec tankouho_mode, ichiran_mode, onoff_mode;
+extern KanjiModeRec khal_mode, khkt_mode, kzal_mode, kzhr_mode, kzkt_mode;
+extern KanjiModeRec kigo_mode, tourokureibun_mode, bunsetsu_mode;
+
 /* ローマ字かな変換テーブル */
      
 extern struct RkRxDic *romajidic;
+extern struct RkRxDic *englishdic;
 extern struct RkRxDic *RkwOpenRoma(char *);
 
 /*
@@ -662,6 +674,7 @@ struct dicname {
 #define DIC_MOUNT_FAILED 2
 
 extern struct dicname *kanjidicnames;
+extern struct dicname *RengoGakushu, *KatakanaGakushu, *HiraganaGakushu;
 
 /*
  * エラーのメッセージを入れておく変数
@@ -674,6 +687,29 @@ extern char *jrKanjiError;
  */
 
 extern int iroha_debug;
+extern int defaultContext, defaultBushuContext;
+extern int howToBehaveInCaseOfUndefKey;
+extern int ckverbose;
+extern int FirstTime;
+extern int howToReturnModeInfo;
+extern int nKouhoBunsetsu, KeepCursorPosition;
+extern int nothermodes;
+extern int nkeysup;
+extern int mountnottry;
+extern int protocol_version, server_version;
+extern int auto_define;
+extern int chikuji_debug;
+extern int yomiInfoLevel;
+extern char saveapname[];
+extern char *CANNA_initfilename;
+extern char *initFileSpecified;
+extern char *RomkanaTable, *EnglishTable;
+extern char *kataautodic;
+#ifdef HIRAGANAAUTO
+extern char *hiraautodic;
+#endif /* HIRAGANAAUTO */
+extern char *server_name;
+extern unsigned char context_table[];
 
 /*
  * キーシーケンスを発生するようなキー
@@ -748,6 +784,8 @@ typedef struct {
 
 #define MAX_KEY_SUP 64
 
+extern keySupplement keysup[];
+
 #define HEX_USUAL     0
 #define HEX_IMMEDIATE 1
 
@@ -779,12 +817,16 @@ typedef struct _extra_func {
   struct _extra_func *next;
 } extraFunc;
 
+extern extraFunc *extrafuncp;
+extern jrUserInfoStruct *uinfo;
+extern BYTE *initfunc, *emptymap;
+
 #define EXTRA_FUNC_DEFMODE	1
 #define EXTRA_FUNC_DEFSELECTION	2
 #define EXTRA_FUNC_DEFMENU	3
 
 #define tanbunMode(d, tan) /* tanContext 関連モードへの移行 */ \
-  { extern KanjiModeRec tankouho_mode; (d)->current_mode = &tankouho_mode; \
+  { (d)->current_mode = &tankouho_mode; \
     (d)->modec = (mode_context)(tan); currentModeInfo(d); }
 
 #define freeForIchiranContext(fc) free((char *)fc)
@@ -898,6 +940,8 @@ extern int BushuMode(uiContext);
 extern int ConvertAsBushu(uiContext);
 
 /* chikuji.c */
+extern int forceRomajiFlushYomi(uiContext);
+extern int ToggleChikuji(uiContext, int);
 extern void clearHenkanContext(yomiContext);
 extern int chikujiInit(uiContext);
 extern int ChikujiSubstYomi(uiContext);
@@ -934,12 +978,17 @@ extern int EmptyBaseKakutei(uiContext);
 extern int EmptyBaseHenkan(uiContext);
 
 /* engine.c */
+#if defined(ENGINE_SWITCH) && !defined(DL)
+extern struct rkfuncs cannaRkFuncs, wnnRkFuncs;
+#endif
 extern int RkSetServerName(char *);
 extern char *RkGetServerHost(void);
 extern char *RkGetServerEngine(void);
 extern void close_engine(void);
 
 /* hex.c */
+extern int cvtAsHex(uiContext, wchar_t *, wchar_t *, int);
+extern int convertAsHex(uiContext);
 extern int HexMode(uiContext);
 
 /* henkan.c */
@@ -973,6 +1022,7 @@ extern int tanMuhenkan(uiContext, int);
 extern int TanMuhenkan(uiContext);
 extern int TanDeletePrevious(uiContext);
 extern void finishTanKakutei(uiContext);
+extern void setMode(uiContext, tanContext, int);
 extern int TanKakutei(uiContext);
 extern int TanPrintBunpou(uiContext);
 extern void jrKanjiPipeError(void);
@@ -1007,6 +1057,7 @@ extern void enterJishuMode(uiContext, yomiContext);
 extern void leaveJishuMode(uiContext, yomiContext);
 
 /* jrbind.c */
+extern int kanjiControl(int, uiContext, caddr_t);
 extern int XwcLookupKanji2(unsigned int, unsigned int, wchar_t *, int,
                                 int, int, wcKanjiStatus *);
 extern int XwcKanjiControl2(unsigned int, unsigned int, unsigned int, BYTE *);
@@ -1027,6 +1078,7 @@ extern void makeAllContextToBeClosed(int);
 extern int _doFunc(uiContext, int);
 extern int _afterDoFunc(uiContext, int);
 extern int doFunc(uiContext, int);
+extern int _do_func_slightly(uiContext, int, mode_context, KanjiMode);
 /* extern int kanjiControl(int, uiContext, caddr_t); */
 
 /* keydef.c */
@@ -1035,13 +1087,18 @@ extern void restoreDefaultKeymaps(void);
 extern unsigned char *actFromHash(unsigned char *, int);
 extern struct map *mapFromHash(KanjiMode tbl, int key, struct map ***ppp);
 extern int askQuitKey(unsigned);
+extern int multiSequenceFunc(struct _uiContext *, struct _kanjiMode *, int, int, int);
+extern int changeKeyfunc(int, int, int, unsigned char *, unsigned char *);
+extern int changeKeyfuncOfAll(int, int, unsigned char *, unsigned char *);
 
 /* kigo.c */
 extern void initKigoTable(void);
 extern int KigoIchiran(uiContext);
+extern int makeKigoIchiran(uiContext, int);
 
 /* lisp.c */
 extern int YYparse_by_rcfilename(char *);
+extern int clisp_init(void);
 extern void clisp_fin(void);
 extern int parse_string(char *);
 extern void clisp_main(void);
@@ -1055,6 +1112,7 @@ extern int JapaneseMode(uiContext);
 extern int AlphaMode(uiContext);
 extern int HenkanNyuryokuMode(uiContext);
 extern int queryMode(uiContext, wchar_t *);
+extern int changeModeName(int, char *);
 
 /* multi.c */
 extern int UseOtherKeymap(uiContext);
@@ -1073,6 +1131,12 @@ extern void parse(void);
 
 /* romaji.c */
 extern void kPos2rPos(yomiContext, int, int, int *, int *);
+extern coreContext newCoreContext(void);
+extern yomiContext dupYomiContext(yomiContext);
+extern void trimYomi(uiContext, int, int, int, int);
+extern void restoreChikujiIfBaseChikuji(yomiContext);
+extern void ReCheckStartp(yomiContext);
+extern void fitmarks(yomiContext);
 extern void makeYomiReturnStruct(uiContext);
 extern int RomkanaInit(void);
 extern void RomkanaFin(void);
@@ -1113,6 +1177,7 @@ extern int exitJishu(uiContext);
 extern int YomiMark(uiContext);
 extern int Yomisearchfunc(uiContext, KanjiMode, int, int, int);
 extern int TanBubunKakutei(uiContext);
+extern int doTanConvertTb(uiContext, yomiContext);
 extern void removeKana(uiContext, yomiContext, int, int);
 
 /* uiutil.c */
@@ -1137,6 +1202,11 @@ extern int dicTouroku(uiContext);
 extern int initHinshiTable(void);
 extern int dicTourokuTango(uiContext, canna_callback_t);
 extern int dicTourokuControl(uiContext, wchar_t *, canna_callback_t);
+extern wchar_t **getUserDicName(uiContext);
+extern void popTourokuMode(uiContext);
+extern void clearYomi(uiContext);
+extern int getTourokuContext(uiContext);
+extern int dicTourokuHinshi(uiContext);
 extern int uuTTangoQuitCatch(uiContext, int, mode_context);
 
 /* uldelete.c */
@@ -1187,6 +1257,7 @@ extern int NothingForGLineWithBeep(uiContext);
 extern int extractTanString(tanContext, wchar_t *, wchar_t *);
 extern int extractTanYomi(tanContext, wchar_t *, wchar_t *);
 extern int extractTanRomaji(tanContext, wchar_t *, wchar_t *);
+extern int extractJishuString(yomiContext, wchar_t *, wchar_t *, wchar_t **, wchar_t **);
 extern void makeKanjiStatusReturn(uiContext, yomiContext);
 extern void makeGLineMessage(uiContext, wchar_t *, int);
 extern void makeGLineMessageFromString(uiContext, char *);
@@ -1194,6 +1265,7 @@ extern int setWStrings(wchar_t **, char **, int);
 extern int NoMoreMemory(void);
 extern int GLineNGReturn(uiContext);
 extern int GLineNGReturnFI(uiContext);
+extern int GLineNGReturnTK(uiContext);
 extern int WStrlen(wchar_t *);
 extern wchar_t *WStrcpy(wchar_t *, wchar_t *);
 extern wchar_t *WStrncpy(wchar_t *, wchar_t *, int);
@@ -1204,6 +1276,7 @@ extern int WStrncmp(wchar_t *, wchar_t *, int);
 extern int WWhatGPlain(wchar_t);
 extern int WIsG0(wchar_t), WIsG1(wchar_t);
 extern int WIsG2(wchar_t), WIsG3(wchar_t);
+extern void EWStrcat(wchar_t *, char *);
 extern int CANNA_mbstowcs(wchar_t *, char *, int);
 extern int CNvW2E(wchar_t *, int, char *, int);
 extern int CANNA_wcstombs(char *, wchar_t *, int);

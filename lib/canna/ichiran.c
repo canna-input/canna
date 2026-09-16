@@ -419,7 +419,6 @@ selectOne(uiContext d, wchar_t **buf, int *ck, int nelem, int bangomax,
 	  canna_callback_t everyTimeCallback, canna_callback_t exitCallback,
 	  canna_callback_t quitCallback, canna_callback_t auxCallback)
 {
-  extern KanjiModeRec ichiran_mode;
   ichiranContext ic;
 
   if (allowcallback != WITHOUT_LIST_CALLBACK &&

@@ -86,11 +86,8 @@ rkc_call_flag = 0x00   ; /* RkInitializeが呼ばれてRkFinalizeが呼ばれるまで */
 
 static short ProtocolMinor = 0 ;
 static short ProtocolMajor = 0;
-static int ServerFD = 0;					/* S004 */
 
-extern struct rkcproto wideproto;
 #ifdef USE_EUC_PROTOCOL
-extern struct rkcproto eucproto;
 static struct rkcproto *RKCP = &eucproto;
 #else /* !USE_EUC_PROTOCOL */
 static struct rkcproto *RKCP = &wideproto;
@@ -226,7 +223,6 @@ getCC(int clientcx, int type)
     return( cx ) ;
 }
 
-int RkwSetUserInfo(char *, char *, char *);
 
 static RkUserInfo *uinfo;
 
@@ -302,6 +298,7 @@ RkwInitialize(char *hostname) /* とりあえずrkcの場合は、引き数を無視する */
     register long  server ;
     register RkcContext *cx ;
     char *username, *data ;
+    int server_fd;
 
     if( rkc_call_flag == BUSY )
 		return( 0 );	
@@ -324,7 +321,7 @@ RkwInitialize(char *hostname) /* とりあえずrkcの場合は、引き数を無視する */
         strcpy(ServerNameSpecified, hostname);
     }
 
-    if( (ServerFD = rkc_Connect_Iroha_Server( ConnectIrohaServerName )) < 0 ) { /* S004 */
+    if( (server_fd = rkc_Connect_Iroha_Server( ConnectIrohaServerName )) < 0 ) { /* S004 */
 	errno = EPIPE ;
         goto init_err;
     }
@@ -360,7 +357,7 @@ RkwInitialize(char *hostname) /* とりあえずrkcの場合は、引き数を無視する */
         /* サーバに初期化を要求し、サーバのコンテクストを取得する */
 	if ((server = (*RKCP->initialize)( data )) < 0) {
 	    /* 既にコンテクストを確保しているので、それを解放する */
-	    if( (ServerFD = rkc_Connect_Iroha_Server( ConnectIrohaServerName )) < 0 ) { /* S004 */
+	    if( (server_fd = rkc_Connect_Iroha_Server( ConnectIrohaServerName )) < 0 ) { /* S004 */
 		freeCC( cx->client ) ;
 		RkcFree(data);
 		errno = EPIPE ;
@@ -375,7 +372,7 @@ RkwInitialize(char *hostname) /* とりあえずrkcの場合は、引き数を無視する */
     if (!*ProtoVerTbl[i]) {
       freeCC(cx->client);
       errno = EPIPE;
-      (void)close(ServerFD);
+      (void)close(server_fd);
       goto init_err;
     }
 
@@ -1987,7 +1984,6 @@ RkwSync(int cxnum, char *dicname)
  *  0 or -1
  */
 
-int RkwSetAppName(int, char *);
 
 int
 RkwSetAppName(int cxnum, char *apname)
@@ -2000,7 +1996,6 @@ RkwSetAppName(int cxnum, char *apname)
     return( -1 ) ;
 }
 
-int RkSetAppName(int, char *);
 
 /*
  *  RkwChmodDic ()

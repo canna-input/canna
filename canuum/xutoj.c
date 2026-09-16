@@ -904,7 +904,7 @@ iujis_to_jis8(
 
 #ifdef  JIS7
 /*      外部 U-jis を 7bit jis コードに変換します       */
-extern int
+int
 eujis_to_jis(unsigned char *jis, unsigned char *eujis, int eusiz)
 {
   static int kanji1 = 0;
@@ -1085,7 +1085,7 @@ jis_to_eujis(unsigned char *eujis, unsigned char *jis, int jsiz)
 
 /*      外部 U-jis を S-jis コードに変換します
         文字列の長さを返します                  */
-extern int
+int
 eujis_to_sjis(
 	unsigned char *sjis,       /*      sjisコードになったものをおくbuf */
 	unsigned char *eujis,      /*      eujisコードのものをおいてくるbuf */
@@ -2161,7 +2161,7 @@ ksc_change_mode(int *mode, int new_mode)
 
 /*      内部 U-ksc を ksc コードに変換します
         文字列の長さを返します                  */
-extern int
+int
 iuksc_to_ksc(
 	unsigned char *ksc,        /*      kscコードになったものをおくbuf  */
 	unsigned char *iuksc,     /*      iukscコードのものをおいてくるbuf */
@@ -2191,7 +2191,7 @@ iuksc_to_ksc(
 
 
 /*      外部 U-ksc を ksc コードに変換します    */
-extern int
+int
 euksc_to_ksc(unsigned char *ksc, unsigned char *euksc, int eusiz)
 {
   static int kanji1 = 0;
@@ -2247,7 +2247,7 @@ euksc_to_ksc(unsigned char *ksc, unsigned char *euksc, int eusiz)
 }
 
 /*      内部 U-ksc を 外部 U-ksc コードに変換します     */
-extern int
+int
 iuksc_to_euksc(unsigned char *euksc, unsigned char *iuksc, int iusiz)
 {
   static int first = 0;

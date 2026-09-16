@@ -114,7 +114,6 @@ freeKigoContext(ichiranContext kc)
 static int
 getKigoContext(uiContext d, canna_callback_t everyTimeCallback, canna_callback_t exitCallback, canna_callback_t quitCallback, canna_callback_t auxCallback)
 {
-  extern KanjiModeRec kigo_mode;
   ichiranContext kc;
   int retval = 0;
 
@@ -307,8 +306,6 @@ kigoIchiranQuitCatch(uiContext d, int retval, mode_context env)
 }
 #endif /* NO_EXTEND_MENU */
 
-int makeKigoIchiran(uiContext, int); /* kigo.c */
-extern int allocIchiranBuf(uiContext); /* ichiran.c */
 
 int
 KigoIchiran(uiContext d)

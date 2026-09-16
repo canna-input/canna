@@ -37,14 +37,7 @@
 #endif
 #define wchar_t cannawc
 
-extern int yomiInfoLevel, nKouhoBunsetsu, KeepCursorPosition;
-extern int defaultContext;
-extern KanjiModeRec tankouho_mode, cy_mode, cb_mode;
-extern void makeYomiReturnStruct(uiContext);
 
-int forceRomajiFlushYomi(uiContext);
-void moveToChikujiTanMode(uiContext);
-void moveToChikujiYomiMode(uiContext);
 
 static void clearHenkanContent(yomiContext);
 
@@ -68,7 +61,6 @@ clearHenkanContext(yomiContext yc)
   return;
 }
 
-extern int NothingChanged(uiContext);
 
 /*
   restoreChikujiYomi
@@ -196,7 +188,6 @@ doesSupportChikuji(void)
   return(a > 1);
 }
 
-extern int ToggleChikuji(uiContext, int); /* kctrl.c */
 
 #ifndef NO_EXTEND_MENU
 int

@@ -1,3 +1,10 @@
+2026-09-16 AIDA Shinra <shinra@j10n.org>
+	* lib/RK/*: declare global vars and funcs in RKintern.h
+	* lib/RKC/*: declare global variables in rkc.h
+	* lib/canna/*: declare global vars and funcs in canna.h
+	* server/*: declare global vars in server.h or change to be static
+	* canuum/*: declare global vars and funcs in sheader.h
+
 2026-09-06 AIDA Shinra <shinra@j10n.org>
 	* lib/RK/RK.h(RkwSetAppName): declare here
 	* lib/canna/*: remove decls duplicated with RK.h

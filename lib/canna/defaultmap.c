@@ -24,7 +24,6 @@
 #include "canna.h"
 #include <canna/mfdef.h>
 
-extern int howToBehaveInCaseOfUndefKey;
 
 #define DEFAULTBEHAVIOR 0
 
@@ -90,7 +89,6 @@ searchfunc(uiContext d, KanjiMode mode, int whattodo, int key, int fnum)
     /* アルファベットモードが strokelimit ストローク以上続いたら
        サーバとの接続を切る */
     if (cannaconf.strokelimit > 0) {
-      extern KanjiModeRec alpha_mode;
       if (mode == &alpha_mode) {
 	d->strokecounter++;
 #ifdef DEBUG
@@ -158,7 +156,6 @@ int
 CYsearchfunc(uiContext d, KanjiMode mode, int whattodo, int key, int fnum)
 {
   int (*func)(uiContext);
-  extern KanjiModeRec yomi_mode;
 
   if (fnum == 0) {
     fnum = mode->keytbl[key];

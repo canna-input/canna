@@ -43,9 +43,6 @@
 
 #ifdef USE_EUC_PROTOCOL
 
-extern int ServerFD ;
-extern unsigned int ServerTimeout ;
-
 #define SENDBUFSIZE 1024
 #define RECVBUFSIZE 1024
 

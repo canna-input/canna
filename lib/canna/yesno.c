@@ -64,7 +64,6 @@ freeYesNoContext(coreContext qc)
 int
 getYesNoContext(uiContext d, canna_callback_t everyTimeCallback, canna_callback_t exitCallback, canna_callback_t quitCallback, canna_callback_t auxCallback)
 {
-  extern KanjiModeRec tourokureibun_mode;
   coreContext qc;
   int retval = 0;
 

@@ -43,14 +43,6 @@ extern int errno;
 #endif
 #define wchar_t cannawc
 
-extern int defaultBushuContext;
-extern int yomiInfoLevel;
-extern int ckverbose;
-extern int defaultContext;
-extern struct dicname *RengoGakushu, *KatakanaGakushu, *HiraganaGakushu;
-extern KanjiModeRec cy_mode, cb_mode, yomi_mode, tankouho_mode, empty_mode;
-extern char saveapname[];
-extern int mountnottry;
 
 #define DICERRORMESGLEN 78
 
@@ -150,9 +142,6 @@ KanjiInit(void)
   char *ptr, *kodmesg = ""/* 辞書の種別毎のメッセージ */;
   int con;
   struct dicname *stp;
-  extern struct dicname *kanjidicnames;
-  extern int FirstTime;
-  extern jrUserInfoStruct *uinfo;
   int ret = -1;
 #ifndef USE_MALLOC_FOR_BIG_ARRAY
   char buf[256];
@@ -335,7 +324,6 @@ KanjiInit(void)
           }
           if (RkwMountDic(con, stp->name,
 			  cannaconf.kojin ? PL_ALLOW : PL_INHIBIT) == -1) {
-            extern int auto_define;
 
             stp->dicflag = DIC_MOUNT_FAILED;
             if (stp->dictype == DIC_KATAKANA
@@ -362,11 +350,6 @@ KanjiInit(void)
                   )) {
                 /* V3.3 以前で、カタカナ辞書が katakana、ひらがな辞書が
                    hiragana の場合はエラーにしないため                  */
-                extern char *kataautodic;
-#ifdef HIRAGANAAUTO
-                extern char *hiraautodic;
-#endif
-
                 if (!auto_define ||
                     ((kataautodic && strcmp(stp->name, kataautodic))
 #ifdef HIRAGANAAUTO
@@ -551,10 +534,7 @@ copyTaninfo2Yomi(tanContext tan, yomiContext yc)
   yc->henkanInhibition = tan->henkanInhibition;
 }
 
-extern yomiContext dupYomiContext(yomiContext);
-extern void setMode(uiContext, tanContext, int);
 
-extern void trimYomi(uiContext, int, int, int, int);
 
 /*
  * 学習を可能にするためtanContextをyomiContextにする。
@@ -946,11 +926,7 @@ doTanBubunMuhenkan(uiContext d, yomiContext yc)
   return ret;
 }
 
-extern void restoreChikujiIfBaseChikuji(yomiContext);
-extern void ReCheckStartp(yomiContext);
-extern void fitmarks(yomiContext);
 
-int YomiBubunKakutei(uiContext);
 
 int
 YomiBubunKakutei(uiContext d)
@@ -1120,7 +1096,6 @@ tanbunToYomi(uiContext d, tanContext tan, wchar_t *kanji)
 
   yc = newFilledYomiContext(tan->next, tan->prevMode);
   if (yc) {
-    extern KanjiModeRec tankouho_mode;
 
     appendTan2Yomi(tan, yc);
     copyTaninfo2Yomi(tan, yc);
@@ -1265,7 +1240,6 @@ static int
 doYomiHenkan(uiContext d, int len, wchar_t *kanji, yomiContext yc)
 {
   unsigned int mode;
-  extern int defaultContext;
 
 #if defined(DEBUG)
   if (iroha_debug) {
@@ -1689,7 +1663,6 @@ TanHankaku(uiContext d)
   return tanJishuHenkan(d, CANNA_FN_Hankaku);
 }
 
-int TanKanaRotate(uiContext);
 
 int
 TanKanaRotate(uiContext d)
@@ -1697,7 +1670,6 @@ TanKanaRotate(uiContext d)
   return tanJishuHenkan(d, CANNA_FN_KanaRotate);
 }
 
-int TanRomajiRotate(uiContext);
 
 int
 TanRomajiRotate(uiContext d)
@@ -1705,7 +1677,6 @@ TanRomajiRotate(uiContext d)
   return tanJishuHenkan(d, CANNA_FN_RomajiRotate);
 }
 
-int TanCaseRotateForward(uiContext);
 
 int
 TanCaseRotateForward(uiContext d)
@@ -1784,7 +1755,6 @@ TanEndOfBunsetsu(uiContext d)
 int
 tanMuhenkan(uiContext d, int kCurs)
 {
-  extern KanjiModeRec yomi_mode;
   yomiContext yc = (yomiContext)d->modec;
   int autoconvert = (yc->generalFlags & CANNA_YOMI_CHIKUJI_MODE);
 
@@ -2146,7 +2116,6 @@ TanKakuteiYomiInsert(uiContext d)
 	return YomiInsert(d);
       }
       else { /* 逐次じゃない場合 */
-	extern int nKouhoBunsetsu;
     
 	yc->curbun = yc->nbunsetsu;
 	if (doTanBubunMuhenkan(d, yc) < 0) {
@@ -2384,7 +2353,6 @@ TanPrintTime(uiContext d)
 void
 jrKanjiPipeError(void)
 {
-  extern int defaultContext, defaultBushuContext;
 
   defaultContext = -1;
   defaultBushuContext = -1;

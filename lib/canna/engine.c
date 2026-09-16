@@ -64,7 +64,6 @@ DSOHANDLE dlh = (DSOHANDLE)0;
 
 #else /* !DL */
 
-extern struct rkfuncs cannaRkFuncs, wnnRkFuncs;
 
 typedef struct engines{
   char *name;
@@ -118,7 +117,6 @@ getengines(int *nengines)
   struct engines *res = (struct engines *)0;
   int n = 0;
 #ifdef USE_MALLOC_FOR_BIG_ARRAY
-  extern jrUserInfoStruct *uinfo;
   char *buf, *winbuf;
   struct engines *ebuf;
 

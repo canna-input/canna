@@ -78,7 +78,6 @@ selectOnOff(uiContext d, wchar_t **buf, int *ck, int nelem, int bangomax,
             canna_callback_t quitCallback,
             canna_callback_t auxCallback)
 {
-  extern KanjiModeRec onoff_mode;
   ichiranContext oc;
   int retval = 0;
 
