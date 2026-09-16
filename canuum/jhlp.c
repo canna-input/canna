@@ -1213,7 +1213,6 @@ do_main(void)
       do_end ();
     }
 #else /* CANNA */
-  extern void canna_mainloop();
 #endif /* CANNA */
 
   FD_SET(ptyfd, &sel_ptn);
@@ -1240,7 +1239,6 @@ do_main(void)
 #endif /* CANNA */
 }
 
-unsigned char keyin0 ();
 
 static int
 keyin2(void)
@@ -1290,7 +1288,6 @@ keyin0(void)
   fd_set rfds, mask;
   int i, j;
   unsigned char *p;
-  extern int henkan_off_flag;
   struct timeval time_out;      /* If your OS's select was implemented as 
                                    a pointer for int, you must modify the
                                    time_out variable to integer           */
@@ -1514,7 +1511,6 @@ exec_cmd(char **argv)
 #endif
 #ifdef USE_LINUX_TERM
   struct winsize win;
-  extern Term_RowWidth, crow;
 #endif
 #endif /* (!USE_LIBSPT && !HAVE_SETSID) || USE_LINUX_TERM */
 
@@ -2177,7 +2173,6 @@ setsize ()
 {
   int i;
   struct winsize win;
-  extern int Term_LineWidth, Term_RowWidth, maxlength, crow;
 
   if (ioctl (ttyfd, TIOCGWINSZ, &win) < 0)
     {
@@ -2204,7 +2199,6 @@ change_size ()
 {
   int i;
   struct winsize win;
-  extern int Term_LineWidth, Term_RowWidth, maxlength, crow;
 
   if (ioctl (ttyfd, TIOCGWINSZ, &win) < 0)
     {

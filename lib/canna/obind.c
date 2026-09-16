@@ -65,8 +65,6 @@ typedef struct {
 typedef canna_uint16_t cannawc16;
 typedef canna_uint32_t cannawc32;
 
-extern int howToReturnModeInfo;
-extern char *context_table;
 
 exp(int) wcKanjiString(const int, const int, wchar_t *, const int,
 			    owcKanjiStatus *);

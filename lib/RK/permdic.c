@@ -40,7 +40,6 @@
 #include <sys/types.h>  /* mmap */
 #include <sys/mman.h>   /* mmap */
 #include <fcntl.h>      /* mmap */
-extern int fd_dic;      /* mmap */
 #endif
 
 static int

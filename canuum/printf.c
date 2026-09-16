@@ -36,7 +36,6 @@
 #include "sdefine.h"
 #include "sheader.h"
 
-extern int cursor_colum;
 
 static int
 char_q_len(w_char x)

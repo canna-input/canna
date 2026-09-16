@@ -1072,6 +1072,9 @@ struct DD *RkGetSystemDD(void);
 struct RkContext *RkGetContext(int);
 struct RkContext *RkGetXContext(int);
 void _RkEndBun(struct RkContext *);
+#ifdef STANDALONE
+int RkwGetProtocolVersion(int *, int *);
+#endif
 
 /* dd.c */
 char *allocStr(char *);
@@ -1172,6 +1175,9 @@ int _RkFlushYomi(struct RkContext *);
 void _RkLearnBun(struct RkContext *, int, int);
 
 /* permdic.c */
+#ifdef MMAP
+extern int fd_dic;
+#endif
 int _Rkpopen(struct DM *, char *, int, struct RkKxGram *);
 int _Rkpclose(struct DM *, char *, struct RkKxGram *);
 int _RkEql(Wchar *, unsigned char *, int);

@@ -197,7 +197,6 @@ popTourokuMode(uiContext d)
 }
 
 
-extern int checkGLineLen(uiContext); /* util.c */
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * 単語登録の単語の入力                                                      *
@@ -293,7 +292,6 @@ uuTTangoQuitCatch(uiContext d, int retval, mode_context env)
   return prevMenuIfExist(d);
 }
 
-extern int _do_func_slightly(uiContext, int, mode_context, KanjiMode); /* kctrl.c */
 
 static int
 uuT2TangoEveryTimeCatch(uiContext d, int retval, mode_context env)
@@ -309,7 +307,6 @@ uuT2TangoEveryTimeCatch(uiContext d, int retval, mode_context env)
   checkModec(d);
 #endif
   if(d->kanji_status_return->info & KanjiThroughInfo) {
-    extern KanjiModeRec yomi_mode;
     _do_func_slightly(d, 0, (mode_context)nyc, &yomi_mode);
   } else if(retval > 0){
     /* 挿入する */
@@ -385,8 +382,6 @@ uuT2TangoQuitCatch(uiContext d, int retval, mode_context env)
   return(0);
 }
 
-extern int GLineNGReturn(uiContext); /* util.c */
-int dicTourokuTango(uiContext, canna_callback_t); /* uldefine.c */
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * 単語登録の辞書作成                                                        *
@@ -399,7 +394,6 @@ uuTMakeDicYesCatch(uiContext d, int retval, mode_context env)
   int err = 0, perr = 0;
   tourokuContext tc;
   wchar_t **dp;
-  extern int defaultContext;
 
   popCallback(d); /* yesNo をポップ */
 
@@ -494,7 +488,6 @@ getUserDicName(uiContext d)
   int nmudic; /* マウントされているユーザ辞書の数 */
   struct dicname *p;
   wchar_t **tourokup, **tp;
-  extern int defaultContext;
 
   if(defaultContext < 0) {
     if((KanjiInit() < 0) || (defaultContext < 0)) {
@@ -569,7 +562,6 @@ dicTourokuDo(uiContext d)
 {
   tourokuContext tc;
   wchar_t **up;
-  wchar_t **getUserDicName();
 
   d->status = 0;
 
@@ -615,7 +607,6 @@ findUsrDic(void)
   return res;
 }
 
-extern int getYesNoContext(uiContext, canna_callback_t, canna_callback_t, canna_callback_t, canna_callback_t); /* yesno.c */
 
 /* 
  * マウントされている辞書のチェック
@@ -796,7 +787,6 @@ uuTYomiEveryTimeCatch(uiContext d, int retval, mode_context env)
   return retval;
 }
 
-int dicTourokuHinshi(uiContext); /* uldefine.c */
 
 static int
 uuTYomiExitCatch(uiContext d, int retval, mode_context env)
@@ -843,7 +833,6 @@ acDicTourokuYomi(uiContext d, int dn, mode_context dm)
   return dicTourokuYomi(d);
 }
 
-extern int canna_alert(uiContext, char*, canna_callback_t); /* util.c */
 
 static int
 dicTourokuYomiDo(uiContext d, canna_callback_t quitfunc)
@@ -936,8 +925,6 @@ uuTHinshiQuitCatch(uiContext d, int retval, mode_context env)
   return(dicTourokuYomi(d));
 }
 
-extern int GLineNGReturnTK(uiContext); /* util.c */
-extern int getForIchiranContext(uiContext); /* bushu.c */
 
 int
 dicTourokuHinshi(uiContext d)

@@ -180,6 +180,7 @@ extern int (*CallFunc)(ClientPtr *clientp);
 extern ACLPtr ACLHead ;
 extern int canna_server_hi;
 extern int canna_server_lo;
+extern int MMountFlag;
 
 /* misc.c */
 #ifdef __STDC__

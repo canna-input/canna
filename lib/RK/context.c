@@ -473,7 +473,6 @@ RkwCloseContext(int cx_num)
 /* RkDuplicateContext
  *	onaji naiyou no context wo sakuseisuru
  */
-int RkwDuplicateContext(int);
 
 int
 RkwDuplicateContext(int cx_num)
@@ -927,7 +926,6 @@ RkwDeleteDic(int cx_num, char *name, Wchar *word)
  lib/RKC API.  In case STANDALONE, it becomes possible for libRK to be
  linked with libcanna directly. */
 
-int RkwSetAppName(int, char *);
 
 int
 RkwSetAppName(int Context, char *name)
@@ -935,7 +933,6 @@ RkwSetAppName(int Context, char *name)
   return 0;
 }
 
-char *RkwGetServerName(void);
 
 char *
 RkwGetServerName(void)
@@ -943,7 +940,6 @@ RkwGetServerName(void)
   return (char *)NULL;
 }
 
-int RkwGetProtocolVersion(int *, int *);
 
 int
 RkwGetProtocolVersion(int *majorp, int *minorp)
@@ -953,7 +949,6 @@ RkwGetProtocolVersion(int *majorp, int *minorp)
     return 0;
 }
 
-int RkwGetServerVersion(int *, int *);
 
 int
 RkwGetServerVersion(int *majorp, int *minorp)

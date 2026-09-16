@@ -53,7 +53,6 @@
 
  */
 
-extern int FirstTime;
 
 exp(int)
 wcKanjiString(const int context_id, const int ch, wchar_t *buffer_return, const int nbuffer, wcKanjiStatus *kanji_status_return)
@@ -81,7 +80,6 @@ wcKanjiControl(const int context, const int request, char *arg)
 static uiContext
 newUiContext(unsigned int dpy, unsigned int win)
 {
-  extern struct CannaConfig cannaconf;
   uiContext d;
 
   if ((d = (uiContext)malloc(sizeof(uiContextRec))) != (uiContext)0) {
@@ -96,7 +94,6 @@ newUiContext(unsigned int dpy, unsigned int win)
   return (uiContext)0;
 }
 
-extern int kanjiControl(int, uiContext, caddr_t);
 
 int
 XwcLookupKanji2(unsigned int dpy, unsigned int win, wchar_t *buffer_return, int nbuffer, int nbytes, int functionalChar, wcKanjiStatus *kanji_status_return)
@@ -156,7 +153,6 @@ XwcLookupKanji2(unsigned int dpy, unsigned int win, wchar_t *buffer_return, int 
   }
 }
 
-uiContext keyToContext(unsigned int, unsigned int);
 
 int
 XwcKanjiControl2(unsigned int display, unsigned int window, unsigned int request, BYTE *arg)

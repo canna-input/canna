@@ -25,16 +25,7 @@
 #include <canna/mfdef.h>
 #include <canna/keydef.h>
 
-extern KanjiModeRec alpha_mode, empty_mode, yomi_mode;
-extern KanjiModeRec jishu_mode, ce_mode, cy_mode, cb_mode;
-extern KanjiModeRec tankouho_mode, ichiran_mode, onoff_mode;
-extern KanjiModeRec khal_mode, khkt_mode, kzal_mode, kzhr_mode, kzkt_mode;
-extern KanjiModeRec kigo_mode;
-extern KanjiModeRec tourokureibun_mode;
-extern KanjiModeRec bunsetsu_mode;
-extern KanjiModeRec cy_mode, cb_mode;
 
-extern int multiSequenceFunc(struct _uiContext *, struct _kanjiMode *, int, int, int);
 
 static void undefineKeyfunc(unsigned char *, unsigned);
 static int regist_key_hash(unsigned char *, unsigned char *, unsigned char *);
@@ -120,7 +111,6 @@ initKeyTables(void)
 {
   int i;
   unsigned char *tbl;
-  extern unsigned char default_kmap[], alpha_kmap[], empty_kmap[];
 
   defaultmap = duplicatekmap(default_kmap);
   if (defaultmap) {
@@ -185,7 +175,6 @@ restoreDefaultKeymaps(void)
 
  */
 
-extern int nothermodes;
 
 int
 changeKeyfunc(int modenum, int key, int fnum, unsigned char *actbuff, unsigned char *keybuff)
@@ -326,7 +315,6 @@ changeKeyOnSomeCondition(KanjiMode mode, int key, int fnum, unsigned char *actbu
 int
 changeKeyfuncOfAll(int key, int fnum, unsigned char *actbuff, unsigned char *keybuff)
 {
-  extern extraFunc *extrafuncp;
   extraFunc *ep;
   KanjiMode mode;
   int i, retval = 0;

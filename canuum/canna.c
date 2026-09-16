@@ -147,7 +147,6 @@ char *terminalname;
   Canna rewrote these functions.
 
   w_char *Strncpy();
-  int eu_columlen();
 
  */
 
@@ -322,8 +321,6 @@ int
 init_uum(void) /* originally defined in prologue.c */
 {
   char **msg, *p;
-  extern char *prog;
-  extern void ring_bell();
 
   for (p = prog ; *p ; p++) { /* use basename */
     if (*p == '/' && *(p + 1)) {
@@ -406,7 +403,6 @@ epilogue(void) /* originally defined in epilogue.c */
   epilogue_no_close();
 }
 
-extern int ptyfd, ttyfd;
 
 static void
 ptyout(w_char *s, int n)
@@ -948,9 +944,6 @@ romkan_offmode(void)
   And these two functions are for messaging facility.  Here canna
   rewrote them as dummy functions.
 
-  struct msg_cat *msg_open();
-  char *get_msg();
-
  */
 
 /* ARGSUSED */
@@ -1369,10 +1362,6 @@ canna_mainloop(void)
   The following 3 functions are defined in Wnn system.
 
   Canna rewrote them.
-
-  char *wnn_perror();
-  char *get_server_env();
-  char *get_kbd_env();
 
  */
 

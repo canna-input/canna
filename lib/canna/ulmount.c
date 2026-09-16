@@ -129,7 +129,6 @@ popMountMode(uiContext d)
 static struct dicname *
 findDic(char *s)
 {
-  extern struct dicname *kanjidicnames;
   struct dicname *dp;
 
   for (dp = kanjidicnames ; dp ; dp = dp->next) {
@@ -150,7 +149,6 @@ uuMountExitCatch(uiContext d, int retval, mode_context env)
 {
   mountContext mc;
   int i, nmount = 0;
-  extern int defaultContext;
   struct dicname *dp;
 
   killmenu(d);
@@ -324,7 +322,6 @@ getDicList(uiContext d)
   char *wptr, **Lp, **Mp;
   BYTE *sop, *snp, *soldp, *snewp;
   int dicLc, dicMc, i;
-  extern int defaultContext;
 
   if((dicLbuf = malloc(ROMEBUFSIZE)) == (char *)NULL) {
 #ifndef CODED_MESSAGE

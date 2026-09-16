@@ -76,8 +76,6 @@ freeDic(tourokuContext tc)
   freeWorkDic(tc);
 }
 
-extern void popTourokuMode(uiContext); /* uldefine.c */
-
 void
 freeAndPopTouroku(uiContext d)
 {
@@ -88,7 +86,6 @@ freeAndPopTouroku(uiContext d)
   popCallback(d);
 }
 
-extern int checkGLineLen(uiContext); /* util.c */
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * 単語削除の読みの入力                                                      *
@@ -154,7 +151,6 @@ uuSYomiExitCatch(uiContext d, int retval, mode_context env)
   return dicSakujoTango(d);
 }
 
-extern void clearYomi(uiContext); /* uldefine.c */
 
 static int
 uuSYomiQuitCatch(uiContext d, int retval, mode_context env)
@@ -223,7 +219,6 @@ getMountDicName(uiContext d, int *num_return)
   int nmmdic, check, majv, minv;
   struct dicname *p;
   wchar_t **tourokup, **tp;
-  extern int defaultContext;
 
   if (defaultContext < 0) {
     if ((KanjiInit() < 0) || (defaultContext < 0)) {
@@ -314,7 +309,6 @@ getMountDicName(uiContext d, int *num_return)
   return tourokup;
 }
 
-extern int getTourokuContext(uiContext); /* uldefine.c */
 
 int
 dicSakujo(uiContext d)
@@ -530,7 +524,6 @@ getEffectDic(tourokuContext tc)
   return 0;
 }
 
-extern int GLineNGReturnTK(uiContext); /* util.c */
 
 static int
 uuSTangoExitCatch(uiContext d, int retval, mode_context env)
@@ -687,8 +680,6 @@ dicSakujoEndBun(uiContext d)
   return(0);
 }
 
-extern int getForIchiranContext(uiContext); /* bushu.c */
-extern int canna_alert(uiContext, char*, canna_callback_t); /* util.c */
 
 static int
 dicSakujoTango(uiContext d)
@@ -1028,7 +1019,6 @@ uuSDeleteYesCatch(uiContext d, int retval, mode_context env)
   char dicname[1024];
   deldicinfo *dic;
   int bufcnt, l;
-  extern int defaultContext;
 
   deleteEnd(d);
   popCallback(d); /* yesNo をポップ */
@@ -1151,7 +1141,6 @@ uuSDeleteNoCatch(uiContext d, int retval, mode_context env)
   return(retval);
 }
 
-extern int getYesNoContext(uiContext, canna_callback_t, canna_callback_t, canna_callback_t, canna_callback_t); /* yesno.c */
 
 static int
 dicSakujoDo(uiContext d)
