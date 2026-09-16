@@ -917,16 +917,6 @@ extern int RkwCvtHan(wchar_t *, int, wchar_t *, int);
 extern int RkwCvtHira(wchar_t *, int, wchar_t *, int);
 extern int RkwCvtKana(wchar_t *, int, wchar_t *, int);
 extern int RkwCvtZen(wchar_t *, int, wchar_t *, int);
-extern int RkwMapPhonogram(struct RkRxDic *, wchar_t *, int, wchar_t *, int, wchar_t, int,
-       int *, int *, int *, int *);
-extern int RkwCvtRoma(struct RkRxDic *, wchar_t *, int, wchar_t *, int, int);
-extern int RkMapRoma(struct RkRxDic *, unsigned char *, int, unsigned char *, int,
-       int, int *);
-extern int RkMapPhonogram(struct RkRxDic *, unsigned char *, int, unsigned char *, int,
-       unsigned, int,
-       int *, int *, int *, int *);
-extern int RkCvtRoma(struct RkRxDic *, unsigned char *, int, unsigned char *, int,
-       unsigned);
 
 /* bunsetsu.c */
 extern int enterAdjustMode(uiContext, yomiContext);

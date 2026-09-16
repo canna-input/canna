@@ -1,4 +1,9 @@
 2026-09-16 AIDA Shinra <shinra@j10n.org>
+	* lib/RK/RK.h: declare RKroma functions here
+	* lib/canna/canna.h: remove decls of RKroma functions
+	* canuum/canna.c: ditto
+
+2026-09-16 AIDA Shinra <shinra@j10n.org>
 	* lib/RK/*: declare global vars and funcs in RKintern.h
 	* lib/RKC/*: declare global variables in rkc.h
 	* lib/canna/*: declare global vars and funcs in canna.h
