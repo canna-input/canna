@@ -216,11 +216,20 @@ canna_export(int) RkwCvtHira(cannawc *, int, cannawc *, int);
 canna_export(int) RkwCvtKana(cannawc *, int, cannawc *, int);
 canna_export(int) RkwCvtHan(cannawc *, int, cannawc *, int);
 canna_export(int) RkwCvtZen(cannawc *, int, cannawc *, int);
+#if 0 /* unused */
 canna_export(int) RkwCvtEuc(cannawc *, int, cannawc *, int);
+#endif
 canna_export(int) RkwCreateDic(int, char *, int);
 canna_export(int) RkwQueryDic(int, char *, char *, struct DicInfo *);
+#if 1 /* RKroma APIs; actually part of uilib(libcanna) rather than RK */
 canna_export(void) RkwCloseRoma(struct RkRxDic *);
-canna_export(struct) RkRxDic * RkwOpenRoma(char *);
+canna_export(struct RkRxDic *) RkwOpenRoma(char *);
+canna_export(int) RkwMapPhonogram(
+	    struct RkRxDic *, cannawc *, int, cannawc *, int,
+	    cannawc, int, int *, int *, int *, int *);
+canna_export(int) RkwCvtRoma(
+	    struct RkRxDic *, cannawc *, int, cannawc *, int, int);
+#endif /* RKroma */
 canna_export(int) RkwSetUserInfo(char *, char *, char *);
 canna_export(int) RkwSetAppName(int, char *);
 canna_export(char *) RkwGetServerName(void);
@@ -283,6 +292,19 @@ int	RkCvtZen(unsigned char *, int, unsigned char *, int);
 int	RkCvtNone(unsigned char *, int, unsigned char *, int);
 int	RkCvtEuc(unsigned char *, int, unsigned char *, int);
 int	RkQueryDic(int, char *, char *, struct DicInfo *);
+#if 1 /* RKroma APIs; actually part of uilib(libcanna) rather than RK */
+void	RkCloseRoma(struct RkRxDic *);
+struct RkRxDic *RkOpenRoma(char *);
+int	RkMapRoma(
+	    struct RkRxDic *, unsigned char *, int, unsigned char *, int,
+	    int, int *);
+int	RkMapPhonogram(
+	    struct RkRxDic *, unsigned char *, int, unsigned char *, int,
+	    unsigned, int, int *, int *, int *, int *);
+int	RkCvtRoma(
+	    struct RkRxDic *, unsigned char *, int, unsigned char *, int,
+	    unsigned);
+#endif /* RKroma */
 
 #ifdef __cplusplus
 }

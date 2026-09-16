@@ -90,13 +90,6 @@
 #define PARTIALREDRAW 1
 #define NOREDRAW      0
 
-extern int RkMapPhonogram(
-	struct RkRxDic *, unsigned char *, int, unsigned char *, int,
-	unsigned, int, int *, int *, int *, int *);
-extern int RkCvtRoma(
-	struct RkRxDic *, unsigned char *, int, unsigned char *, int,
-	unsigned);
-extern void RkCloseRoma(struct RkRxDic *);
 static int colwidth(const w_char *, int);
 static int skipchars(const w_char *, int, int *);
 static int cannakeyentry(char *, int);
