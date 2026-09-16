@@ -49,22 +49,12 @@
 #undef putchar
 #endif
 
-extern char Term_Name[];
-extern char *Term_UnderScoreStart;
-extern char *Term_UnderScoreEnd;
-extern char *Term_ClrScreen;
-extern char *Term_ClrEofLine;
-extern char *Term_ThrowCursor;
-extern char *Term_StandOutStart;
-extern char *Term_StandOutEnd;
-extern char *Term_BoldOutStart;
-extern char *Term_BoldOutEnd;
 static int bold_mode_fun = 0;
 
 int
 openTermData(void)
 {
-  char *cp, *get_kbd_env ();
+  char *cp;
   int status;
   int k;
   char lcode[10];
