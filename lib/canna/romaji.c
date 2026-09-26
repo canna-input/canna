@@ -36,10 +36,6 @@
 #define DEFAULT_ROMKANA_TABLE "/dic/default.kp"
 #endif
 
-#ifdef luna88k
-extern int errno;
-#endif
-
 /*********************************************************************
  *                      wchar_t replace begin                        *
  *********************************************************************/

@@ -24,10 +24,6 @@
 #include	<errno.h>
 #include	"canna.h"
 
-#ifdef luna88k
-extern int errno;
-#endif
-
 /* cfunc yesNoContext
  *
  * yesNoContext

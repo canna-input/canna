@@ -33,10 +33,6 @@
 #define wchar_t cannawc
 
 #if !defined(NO_EXTEND_MENU)
-#ifdef luna88k
-extern int errno;
-#endif
-
 static int dicTourokuDo(uiContext),
            checkUsrDic(uiContext),
            dicTourokuYomi(uiContext),
