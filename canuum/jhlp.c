@@ -64,9 +64,7 @@
 #  include <fcntl.h>
 #endif
 #include <pwd.h>
-#ifdef HAVE_UNISTD_H
-#  include <unistd.h>
-#endif
+#include <unistd.h>
 
 #ifndef CANNA
 #include "jllib.h"
@@ -145,13 +143,6 @@ char *prog;
 spt_handle *spth = NULL;
 int need_utmp_clear = 0;
 #endif
-
-#ifndef HAVE_UNISTD_H
-extern char *optarg;
-extern int optind;
-
-extern char *ttyname ();
-#endif /* !HAVE_UNISTD_H */
 
 static int j_term_init(void);
 static void save_signals(void);
@@ -1672,7 +1663,6 @@ exec_cmd(char **argv)
 int
 setenv(char *var, char *value, int overwrite)
 {
-  extern char **environ;
   char **newenv;
   int i, j;
 
@@ -1824,7 +1814,6 @@ set_sony_jterm(int ttyfd, int ttypfd)
 int ptyno;
 char *ptynm = "/dev/pty";
 #ifdef sgi
-extern char *_getpty (int *, int, mode_t, int);
 char *ttypnm = "/dev/ttyqxxx";
 #else
 char *ttypnm = "/dev/tty";

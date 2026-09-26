@@ -26,7 +26,7 @@
 #endif
 
 #ifdef SVR4
-extern char *gettxt(const char *, const char *);
+#include <nl_types.h>
 #else
 #define	gettxt(x,y)  (y)
 #endif
