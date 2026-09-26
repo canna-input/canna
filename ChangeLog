@@ -1,3 +1,9 @@
+2026-09-26 AIDA Shinra <shinra@j10n.org>
+	* lib/canna/*: remove "extern int errno"
+	* cmd/*: include <nl_types.h> on SVR4 rather than declare gettxt()
+	* canuum/jhlp.c: don't declare libc vars (environ, optarg, ...)
+	* canuum/xutoj.c: don't declare getenv()
+
 2026-09-16 AIDA Shinra <shinra@j10n.org>
 	* lib/RK/RK.h: declare RKroma functions here
 	* lib/canna/canna.h: remove decls of RKroma functions
