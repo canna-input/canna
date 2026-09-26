@@ -205,12 +205,15 @@ copylenstr(char *name, BYTE *p)
  */
 
 static int
-SendType1Reply(ClientPtr client, int majo, int mino, int stat, int majorv, int minorv, int curtime, int nproto, char **protonames, unsigned int *protofreqs, int nclients, int ncontexts, ClientPtr *who)
+SendType1Reply(ClientPtr client, int majo, int mino, int stat,
+	int majorv, int minorv, int curtime, int nproto,
+	const char **protonames, unsigned int *protofreqs,
+	int nclients, int ncontexts, ClientPtr *who)
 {
   int namelen, fillednamelen;
   int i, j, len, requiredsize, size, clinfolen, retval;
   BYTE lbuf[DEFAULTBUFSIZE], *bufp = lbuf, *p;
-  char **cp;
+  const char **cp;
 
   /* まずリプライするのに必要なバッファの長さを求めよう */
   requiredsize = 

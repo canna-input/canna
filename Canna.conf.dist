@@ -305,7 +305,10 @@ DEPRKLIB = $(CANNAROOT)/lib/RK/LibraryTargetName(RK)
 RKLIB = -L$(CANNAROOT)/lib/RK -lRK
 DEPRKINDEPLIB = $(CANNAROOT)/lib/RKindep/LibraryTargetName(RKindep)
 RKINDEPLIB = -L$(CANNAROOT)/lib/RKindep -lRKindep
-XCOMM CDEBUGFLAGS = -Wno-deprecated-non-prototype -Wno-implicit-int -Wno-pointer-sign -Wno-parentheses -Wno-invalid-source-encoding -Wno-implicit-function-declaration -Wno-unused-variable
+#if 0
+#define LibraryCDebugFlags -Wno-invalid-source-encoding
+CDEBUGFLAGS = LibraryCDebugFlags
+#endif
 LDOPTIONS = $(CDEBUGFLAGS) $(CCOPTIONS) $(LOCAL_LDFLAGS)
 #if ModernElfLink
 /* best effort */

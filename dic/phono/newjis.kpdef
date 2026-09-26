@@ -69,7 +69,7 @@ K	も
 O	や
 #ifndef ASCII
 +	ゆ
-#else/* ASCII */
+#else /* ASCII */
 :	ゆ
 #endif /* ASCII */
 G	よ

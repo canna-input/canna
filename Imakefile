@@ -144,7 +144,7 @@ MakeDirectoriesLong(mkerrdir, $(ErrDir), $(cannaOwner), $(cannaGroup))
 LinkFileList(includes,cannaconf.h,$(CANNAROOT)/include,..)
 LinkFileList(includes,accanna.h,$(CANNAROOT)/include,..)
 LinkFileList(includes,pubconf.h,$(CANNAROOT)/include/canna,../..)
-InstallMultiple(pubconf.h,$(cannaIncDir))
+InstallMultipleDest(install instsgs instmost,pubconf.h,$(cannaIncDir))
 
 canna:: 
 	@echo ""

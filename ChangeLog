@@ -1,3 +1,9 @@
+2026-09-27 AIDA Shinra <shinra@j10n.org>
+	* Canna.conf.dist(CDEBUGFLAGS): most are no longer necessary
+	* Imakefile: install pubconf.h also in instsgs and instmost
+	* dic/phono/newjis.kpdef: fix unportable comment (from FreeBSD)
+	* server/wconvert.c(SendType1Reply): fix constness
+
 2026-09-26 AIDA Shinra <shinra@j10n.org>
 	* lib/canna/*: remove "extern int errno"
 	* cmd/*: include <nl_types.h> on SVR4 rather than declare gettxt()
