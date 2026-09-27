@@ -15,7 +15,7 @@ LintLibraryTarget(RKindep,$(SRCS))
 DependTarget()
 
 .SUFFIXES: .exp .sub
-.exp.sub: ../canna/GSYM.awk
+.exp.sub:
 	awk -f ../canna/GSYM.awk < $< > $@
 
 NormalProgramTarget(mkcrctab, mkcrctab.o,,,)

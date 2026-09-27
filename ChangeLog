@@ -1,4 +1,8 @@
 2026-09-27 AIDA Shinra <shinra@j10n.org>
+	* canuum/wnn_os.h(intfnptr): argument type was missing
+	* lib/RKindep/Imakefile: remove prerequisites from .exp.sub rule
+
+2026-09-27 AIDA Shinra <shinra@j10n.org>
 	* Portability fixes (from Debian)
 	* cmd/crxdic/crxdic.c(main): use O_RDONLY instead of bare 0
 	* lib/RK/dd.c(_RkRealizeDD): use time_t instead of long
