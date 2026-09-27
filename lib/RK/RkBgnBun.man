@@ -21,7 +21,7 @@
 .\"
 .TH "RKBGNBUN" "3"
 .SH "NAME"
-\f4RkBgnBun\f1 / \f4RkwBgnBun\f1 \- convert the reading of a specified length to kanji
+\f4RkBgnBun\f1, \f4RkwBgnBun\f1 \- convert the reading of a specified length to kanji
 .SH "SYNOPSIS"
 .nf
 .ft 4

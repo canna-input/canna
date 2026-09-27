@@ -34,7 +34,7 @@ int srclen;
 .ft 1
 .fi
 .SH "DESCRIPTION"
-\f2RkCvtEuc\f1 converts the \f2srclen\f1 bytes of shift JIS code data to EUC code, starting at the area \f2src\f1.  A null character in \f2src\f1 is not interpreted as the end of the string.  The conversion result is stored in the area \f2dst\f1.  Characters that are not subject to conversion are copied as they are.  The conversion result is truncated to adjust to character boundaries in the EUC code when its byte length exceeds \f2maxdst\f1 -1.  \f2dst\f1 is padded with null characters at the end if possible.
+\f2RkCvtEuc\f1 converts the \f2srclen\f1 bytes of shift JIS code data to EUC code, starting at the area \f2src\f1.  A null character in \f2src\f1 is not interpreted as the end of the string.  The conversion result is stored in the area \f2dst\f1.  Characters that are not subject to conversion are copied as they are.  The conversion result is truncated to adjust to character boundaries in the EUC code when its byte length exceeds \f2maxdst\f1 \-1.  \f2dst\f1 is padded with null characters at the end if possible.
 .P
 \f4NULL\f1 can be specified in \f2dst\f1.  \f4NULL\f1 overrides the entire conversion result.
 .SH "RETURN VALUE"

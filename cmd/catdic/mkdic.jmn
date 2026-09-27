@@ -52,7 +52,7 @@ mkdic \- 辞書の作成／アップロードを行う
 .SH "使用例"
 
 .IP
-catdic -cs host1 srcdic | mkdic -cs host2 - objdic 
+catdic \-cs host1 srcdic | mkdic \-cs host2 \- objdic 
 .br  
 host1のsrcdicをhost2のobjdicにコピーします．
 

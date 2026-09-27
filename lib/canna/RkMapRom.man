@@ -37,7 +37,7 @@ int *status;
 .ft 1
 .fi
 .SH "DESCRIPTION"
-\f2RkMapRoma\f1 performs Romaji-kana conversion by using a specified Romaji-kana conversion table.  \f2romaji\f1 specifies a pointer to the Romaji-kana conversion table that has been returned by \f2RkOpenRoma(3)\f1.  \f2RkMapRoma\f1 interprets the \f2srclen\f1 bytes of contiguous data starting at the area \f2src\f1 as a Romaji character string and searches through the Romaji-kana conversion table for the rule of Romaji-kana conversion that matches the beginning of the Romaji character string.  If the corresponding conversion rule is found, the corresponding kana character string is stored in the area \f2dst\f1.  The resulting character string is truncated when its byte length exceeds \f2maxdst\f1 -1.  \f2dst\f1 is padded with null characters at the end if possible.
+\f2RkMapRoma\f1 performs Romaji-kana conversion by using a specified Romaji-kana conversion table.  \f2romaji\f1 specifies a pointer to the Romaji-kana conversion table that has been returned by \f2RkOpenRoma(3)\f1.  \f2RkMapRoma\f1 interprets the \f2srclen\f1 bytes of contiguous data starting at the area \f2src\f1 as a Romaji character string and searches through the Romaji-kana conversion table for the rule of Romaji-kana conversion that matches the beginning of the Romaji character string.  If the corresponding conversion rule is found, the corresponding kana character string is stored in the area \f2dst\f1.  The resulting character string is truncated when its byte length exceeds \f2maxdst\f1 \-1.  \f2dst\f1 is padded with null characters at the end if possible.
 .P
 \f2flags\f1 is a combination of the following Romaji-kana conversion flags connected by or:
 .P

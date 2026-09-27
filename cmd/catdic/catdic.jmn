@@ -56,7 +56,7 @@ cannaserver(1M)が動作しているマシン(以下，リモートホスト)の
 出力します．
 
 .nf
-   catdic test -l test2.t 
+   catdic test \-l test2.t 
 リモートホストにある辞書名testの辞書ファイルをカレントディレ
 クトリのtest2.tというファイルに出力します．
 

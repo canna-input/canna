@@ -35,7 +35,7 @@ Wnnと本日本語入力システムの品詞対応情報を
 .fi
 .SH "使用例"
 .nf
-  wtoc -f tsuikahinshi kihon.u kihon.t
+  wtoc \-f tsuikahinshi kihon.u kihon.t
 .fi
 .sp
 品詞対応情報をtsuikahinshiより入力しWnnテキスト形式辞書kihon.uを本日本語入力

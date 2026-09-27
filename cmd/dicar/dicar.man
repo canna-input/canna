@@ -28,7 +28,7 @@ dicar \- Archive Binary Dictionary
 archives binary dictionary
 .I bindic1.
 The hyphen of each option may be omitted.
-.OPTIONS
+.SH OPTIONS
 .TP
 .B \-t
 Displays the dictionaries contained in binary dictionary file

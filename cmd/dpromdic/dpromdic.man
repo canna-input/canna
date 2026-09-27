@@ -1,7 +1,7 @@
 .TH DPROMDIC 1 
-.S HNAME
+.SH NAME
 dpromdic \- Convert the binary-form Romaji-to-Kana conversion table into the text-form table
-.SHSYNOPSYS
+.SH SYNOPSYS
 .B dpromdic
 [
 .I file

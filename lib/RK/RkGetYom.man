@@ -33,6 +33,6 @@ int maxyomi;
 .ft 1
 .fi
 .SH "DESCRIPTION"
-\f2RkGetYomi\f1 gets the reading of the current clause and sets it in the area \f2yomi\f1.  The resulting character string is truncated when its byte length exceeds \f2maxyomi\f1 -1.
+\f2RkGetYomi\f1 gets the reading of the current clause and sets it in the area \f2yomi\f1.  The resulting character string is truncated when its byte length exceeds \f2maxyomi\f1 \-1.
 .SH "RETURN VALUE"
 This function returns the length of the reading of the current clause, or returns \f4-1\f1, without doing anything, if it has been run in a nonconversion mode context.

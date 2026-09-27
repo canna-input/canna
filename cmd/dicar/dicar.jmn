@@ -72,7 +72,7 @@ chimei.d shima.d shima.mwd.d
 % dicar r shima.d chimei.d　(shima.dにchimei.dを追加します)
 
 .br
-% dicar -t shima.d
+% dicar \-t shima.d
 .br
 (テキスト辞書ファイル名 [バージョン(辞書作成時刻)] = 総単語数 + 総読み数)
 .br

@@ -41,13 +41,13 @@ mkbindic \- テキスト形式の辞書ファイルからバイナリ形式の辞書ファイルと
 形式辞書の user.cbd ファイルと学習辞書の user.cld ファイルを作成します．
 .fi
 .sp
-% mkbindic -s user2.ctd
+% mkbindic \-s user2.ctd
 
 テキスト形式辞書の user2.ctd ファイルから，付属語辞書としてバイナリ
 形式辞書の user2.cbd ファイルと学習辞書の user2.cld ファイルを作成します．
 .fi
 .sp
-% mkbindic -m -name foo.d user3.ctd
+% mkbindic \-m \-name foo.d user3.ctd
 
 テキスト形式辞書の user3.ctd ファイルから，自立語辞書としてバイナリ
 形式辞書の foo.d ファイルと学習辞書の user3.cld ファイルを作成します．

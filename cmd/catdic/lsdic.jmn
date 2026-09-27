@@ -45,7 +45,7 @@ lsdic \- 辞書の一覧の表示
 .IP "\-l" 12
 辞書のアクセス権を表示します。 \-i,\-g,\-u,\-a と組み合わせて使用することはできません.
 .SH "使用例"
-lsdic  -u  username 
+lsdic  \-u  username 
 .SH "関連情報"
 cpdic(1), mkdic(1), mvdic(1), rmdic(1)
 

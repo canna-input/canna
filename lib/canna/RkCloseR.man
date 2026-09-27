@@ -21,7 +21,7 @@
 .\"
 .TH "RkCloseContext" "3"
 .SH "NAME"
-\f4RkCloseRoma\f1 / \f4RkwCloseRoma\f1 \- close the dictionary used for Romaji-kana conversion
+\f4RkCloseRoma\f1 , \f4RkwCloseRoma\f1 \- close the dictionary used for Romaji-kana conversion
 .SH "SYNOPSIS"
 .nf
 .ft 4

@@ -21,7 +21,7 @@
 .\"
 .TH "DICLIBINTRO" "3"
 .SH "NAME"
-\f4DICLib intro\f1 \- dictionary access library introduction
+\f4DICLib_intro\f1 \- dictionary access library introduction
 .SH "DESCRIPTION"
 The dictionary access library provides basic functions for kana-kanji conversion.  The following files are prerequisite to using the dictionary access library:
 .IP "Header file" 

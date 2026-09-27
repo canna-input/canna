@@ -1,4 +1,11 @@
 2026-09-27 AIDA Shinra <shinra@j10n.org>
+	* Fix syntax errors of manpages (from Debian)
+	* cmd/*/*.{man,jmn}: fix syntax errors of manpages
+	* lib/RK/*.{man,jmn}: ditto
+	* lib/canna/*.[man,jmn}: ditto
+	* server/*.[man,jmn}: ditto
+
+2026-09-27 AIDA Shinra <shinra@j10n.org>
 	* Fix spelling errors (from Debian)
 	* cmd/catdic/can.c: fix spelling errors
 	* cmd/crfreq/crfreq.c: ditto

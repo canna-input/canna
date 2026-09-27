@@ -33,6 +33,6 @@ int maxkanji;
 .ft 1
 .fi
 .SH "DESCRIPTION"
-\f2RkGetKanji\f1 sets kanji in the area \f2kanji\f1.  The resulting character string is truncated when its byte length exceeds \f2maxkanji\f1 -1.
+\f2RkGetKanji\f1 sets kanji in the area \f2kanji\f1.  The resulting character string is truncated when its byte length exceeds \f2maxkanji\f1 \-1.
 .SH "RETURN VALUE"
 This function returns the length of the current candidate, or returns \f4-1\f1, without doing anything, if it has been run in a nonconversion mode context.

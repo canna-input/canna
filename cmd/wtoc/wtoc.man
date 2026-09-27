@@ -28,7 +28,7 @@ while delimiting by a space(s) or tab.
 .fi
 .SH "EXAMPLE"
 .nf
-% wtoc -f tsuikahinshi kihon.u kihon.t
+% wtoc \-f tsuikahinshi kihon.u kihon.t
 .fi
 .sp
 Inputs word-type correspondence information from tsuikahinshi,

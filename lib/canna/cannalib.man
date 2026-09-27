@@ -22,7 +22,7 @@
 .if t .pn 575
 .TH CANNALIB 3
 .SH "NAME"
-CannaLib intro \(em Kana-to-Kanji Conversion Library Intro
+CannaLib_intro \(em Kana-to-Kanji Conversion Library Intro
 .SH "DESCRIPTION"
 .PP
 Canna provides the following three libraries:

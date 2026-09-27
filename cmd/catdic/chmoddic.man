@@ -25,8 +25,8 @@
 .SH "SYNOPSIS"
 .nf
 .ft 4
-chmoddic [{(-cs | - cannaserver} \f2canna-server\f4] {+ | -}{r|w|rw|wr} 
-[-G] \f2dicname\f4
+chmoddic [{(\-cs | \- cannaserver} \f2canna-server\f4] {+ | \-}{r|w|rw|wr} 
+[\-G] \f2dicname\f4
 .ft 1
 .fi
 .SH "DESCRIPTION"
