@@ -186,7 +186,7 @@ main(int argc, char *argv[])
 #endif
   }
   else { /* 引数が不正 */
-    fprintf(stderr,gettxt("cannacmd:50", "Usage: wtoc [-f part-of-speach table] [wnndic] [cannadic]\n"));
+    fprintf(stderr,gettxt("cannacmd:50", "Usage: wtoc [-f part-of-speech table] [wnndic] [cannadic]\n"));
     exit(2);
   }
   if( argc >= (2 + option*2) ) { /* Ｗｎｎ辞書をオープン */

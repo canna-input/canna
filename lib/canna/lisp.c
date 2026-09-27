@@ -3543,7 +3543,7 @@ Ldefselection(void)
         numtostr(xnum(e2), ee);
         num = howManyCharsAre(ss, ee, &sku, &sten, &cs);
         if (num <= 0) {
-          error("Inconsistent range of charcter code ", buf);
+          error("Inconsistent range of character code ", buf);
           /* NOTREACHED */
         }
         kigolen = kigolen + (cswidth[cs] + 1) * num;

@@ -191,7 +191,7 @@ main(int argc, char *argv[])
 
   if ((fr = create(freqfile, 0666)) == -1) {
     (void)close(fd);
-    (void)fprintf(stderr, "%s: cannot create freqency file %s\n", program, freqfile);
+    (void)fprintf(stderr, "%s: cannot create frequency file %s\n", program, freqfile);
     exit(1);
   }
 #ifdef __CYGWIN32__

@@ -248,9 +248,9 @@ main(int argc, char *argv[])
       hinshis = chghinshi(h, hinshiSize, taiou, fsize);
       if (!strcmp(hinshis,"")) {
 	fprintf(stderr,gettxt("cannacmd:13", 
-	      "reading:%s nomination:%s a part of speach:%s\n"),y,k,h);
+	      "reading:%s nomination:%s a part of speech:%s\n"),y,k,h);
 	fprintf(stderr,gettxt("cannacmd:14", 
-	      "This part of speach is undefined. Cannot convert.\n"));
+	      "This part of speech is undefined. Cannot convert.\n"));
       }
       else {
 	for ( ; *hinshis; hinshis++, p++) {

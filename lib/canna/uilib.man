@@ -807,7 +807,7 @@ data input:
 	    int length;		        /* length of echo string */
 	    int revPos;                 /* reverse position  */
 	    int revLen;                 /* reverse length    */
-	    unsigned long info;		/* other informations */
+	    unsigned long info;		/* other information */
 	    unsigned char *mode;	/* mode information */
 	    struct {
 		unsigned char *line;	/* a grance of Kanji characters */

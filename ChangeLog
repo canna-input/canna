@@ -1,4 +1,17 @@
 2026-09-27 AIDA Shinra <shinra@j10n.org>
+	* Fix spelling errors (from Debian)
+	* cmd/catdic/can.c: fix spelling errors
+	* cmd/crfreq/crfreq.c: ditto
+	* cmd/ctow/ctow.c: ditto
+	* cmd/wtoc/wtoc.c: ditto
+	* lib/canna/lisp.c: ditto
+	* lib/canna/uilib.jmn: ditto
+	* lib/canna/uilib.man: ditto
+	* server/convert.c: ditto
+	* server/misc.c: ditto
+	* server/wconvert.c.c: ditto
+
+2026-09-27 AIDA Shinra <shinra@j10n.org>
 	* Canna.conf.dist(CDEBUGFLAGS): most are no longer necessary
 	* Imakefile: install pubconf.h also in instsgs and instmost
 	* dic/phono/newjis.kpdef: fix unportable comment (from FreeBSD)

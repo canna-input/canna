@@ -747,7 +747,7 @@ XCompose構造体へのポインタを指定します。
 	    int revPos;                 /* reverse position  */
 	    int revLen;                 /* reverse length    */
 .mc \(br
-	    unsigned long info;		/* other informations */
+	    unsigned long info;		/* other information */
 	    unsigned char *mode;	/* mode information */
 	    struct {
 		unsigned char *line;	/* a grance of Kanji characters */

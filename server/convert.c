@@ -854,7 +854,7 @@ ir_store_yomi(ClientPtr *clientp)
 	if ((ret = RkwStoreYomi( cxnum, (Ushort *)cbuf, ret )) >= 0) {
 	    size = getFirstKouho(cxnum, bunsetu, ret, &stat, &lbufp);
 	} else {
-	    PrintMsg("%s RkwStoreYomi faild\n", irerrhdr(client));
+	    PrintMsg("%s RkwStoreYomi failed\n", irerrhdr(client));
 	}
     } else {
 	print_context_error(client);

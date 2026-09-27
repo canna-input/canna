@@ -262,7 +262,7 @@ StopAll(int sig)
      */
     (void) RkFinalize();
     fprintf(stderr,"\n");
-    Message(gettxt("cannacmd:232", "Process was intrrupted."));
+    Message(gettxt("cannacmd:232", "Process was interrupted."));
     exit(ERR_VALUE);
 }
 
@@ -303,7 +303,7 @@ RefreshAll(int sig)
 	(void) RkFinalize();
     }
     
-    Message(gettxt("cannacmd:232", "Process was intrrupted."));
+    Message(gettxt("cannacmd:232", "Process was interrupted."));
     exit(ERR_VALUE);
 }
 
@@ -1438,7 +1438,7 @@ renameDictionary(int cn, char *dicname1, char *dicname2, int force)
     }
     else {
       fprintf(stderr, gettxt("cannacmd:174",
-	     "Specified dictionary \"%s\" does not overwite.\n"),dicname2);
+	     "Specified dictionary \"%s\" does not overwrite.\n"),dicname2);
       ret = 1;
     }
     break;
