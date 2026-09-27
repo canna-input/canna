@@ -1160,7 +1160,7 @@ main(int argc, char **argv)
     if (!(dic->gramdata = RkiReadWholeFile(fp, &dic->gramsz)))
       goto gram_err;
     fclose(fp);
-    if ((fd = open(gfile, 0)) < 0 || !(gram = RkReadGram(fd, dic->gramsz)))
+    if ((fd = open(gfile, O_RDONLY)) < 0 || !(gram = RkReadGram(fd, dic->gramsz)))
       goto gram_err;
     close(fd);
     goto gram_ok;

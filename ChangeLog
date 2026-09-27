@@ -1,4 +1,9 @@
 2026-09-27 AIDA Shinra <shinra@j10n.org>
+	* Portability fixes (from Debian)
+	* cmd/crxdic/crxdic.c(main): use O_RDONLY instead of bare 0
+	* lib/RK/dd.c(_RkRealizeDD): use time_t instead of long
+
+2026-09-27 AIDA Shinra <shinra@j10n.org>
 	* Fix syntax errors of manpages (from Debian)
 	* cmd/*/*.{man,jmn}: fix syntax errors of manpages
 	* lib/RK/*.{man,jmn}: ditto

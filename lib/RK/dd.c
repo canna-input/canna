@@ -700,7 +700,7 @@ _RkRealizeDD(struct DD *dd)
   int ret = -1;
   int tmpres;
   int			fdes;
-  long		tloc;
+  time_t		tloc;
 #ifdef __EMX__
   struct stat		statbuf;
 #endif
